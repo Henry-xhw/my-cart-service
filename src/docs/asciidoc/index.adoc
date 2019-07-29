@@ -1,0 +1,25 @@
+= Cart-service API doc
+https://gitlab.dev.activenetwork.com/PlatformServices/cart-service
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[Introduction]
+= *Introduction*
+
+This document shows the example APIs of Cart Service. Import these endpoints with link:./api-spec/postman-collection.json[image:postman-logo.png[Postman, title="Postman", width=100]].
+
+[HTTP-verbs]
+= *HTTP verbs*
+include::http-verbs.adoc[]
+[HTTP-status-codes]
+= *HTTP status codes*
+include::http-statuses.adoc[]
+
+
+[APIs]
+= *APIs*
+include::api-cart.adoc[]

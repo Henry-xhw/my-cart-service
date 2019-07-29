@@ -1,0 +1,6 @@
+dependencies {
+    implementation 'javax.validation:validation-api'
+    
+    testImplementation 'org.hibernate.validator:hibernate-validator'
+    testImplementation 'junit:junit'
+}

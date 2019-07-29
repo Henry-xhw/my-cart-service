@@ -1,0 +1,6 @@
+|===
+| Verb | Usage
+
+| `POST`
+| Used to create a new resource
+|===

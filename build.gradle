@@ -1,0 +1,117 @@
+buildscript {
+    dependencies {
+        classpath("com.epages:restdocs-api-spec-gradle-plugin:0.9.4")
+    }
+}
+plugins {
+    id 'com.active.aw-service' version '2.0.8'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply plugin: 'com.epages.restdocs-api-spec'
+
+allprojects {
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE'
+            mavenBom 'com.active.platform:platform-dependencies:+'
+        }
+    }
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+}
+
+dependencies {
+    implementation project(':api')
+
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.7.0'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+
+    implementation 'org.drools:drools-core:7.22.0.Final'
+    implementation 'org.drools:drools-decisiontables:7.22.0.Final'
+    implementation 'org.drools:drools-compiler:7.22.0.Final'
+    implementation 'org.apache.commons:commons-csv:1.5'
+    implementation 'com.google.guava:guava:28.0-jre'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        exclude group: 'junit', module: 'junit'
+    }
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
+    testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testCompile 'com.epages:restdocs-api-spec-mockmvc:0.9.4'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+active {
+    coverage {
+        lineMinimum = 0.0
+        branchMinimum = 0.0
+    }
+
+    library {
+        includeSource = true
+        //includeDoc = true
+    }
+}
+
+// for API document
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+postman {
+    title = 'Cart Service'
+    baseUrl = '{{cart-service}}'
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+    attributes 'imagesdir': './images'
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+
+import org.gradle.internal.os.OperatingSystem
+
+task publishDocs(type: Exec, dependsOn: ['postman', 'asciidoctor', 'copyPostManCollection']) {
+    ignoreExitValue true
+    if (OperatingSystem.current().isLinux() || OperatingSystem.current().isUnix()) {
+        commandLine './publishDocs.sh'
+        doLast {
+            logger.info("Pushing API doc status code:{}", execResult.exitValue)
+        }
+    } else {
+        logger.error("Publishing doc task does NOT support such OS:{}", OperatingSystem.current().getName())
+    }
+}
+
+task copyPostManCollection(type: Copy, dependsOn: ['postman', 'asciidoctor']) {
+    from "$buildDir/api-spec"
+    into "$buildDir/asciidoc/html5/api-spec"
+}
+
+//test.finalizedBy publishDocs
+
+checkstyle {
+    checkstyleTest.enabled = false
+}
