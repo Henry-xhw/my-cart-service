@@ -19,6 +19,7 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateCartRequest {
+    private String currency;
     @Valid
     @NotEmpty
     private List<CartItem> cartItems;

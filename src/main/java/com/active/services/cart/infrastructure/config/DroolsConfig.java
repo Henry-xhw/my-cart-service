@@ -19,12 +19,12 @@ import java.io.IOException;
 @Slf4j
 @Configuration
 public class DroolsConfig {
-    private static final String RULES_PATH = "com/active/services/cart/application/impl/";
+    private static final String RULES_PATH = "com/active/services/cart/domain/rule/";
 
     @Bean
     public KieFileSystem kieFileSystem() throws IOException {
         KieFileSystem kieFileSystem = getKieServices().newKieFileSystem();
-        Resource[] rules = new PathMatchingResourcePatternResolver().getResources("classpath*:" + RULES_PATH + "**/*.xlsx");
+        Resource[] rules = new PathMatchingResourcePatternResolver().getResources("classpath*:" + RULES_PATH + "**/*.drl");
         for (Resource file : rules) {
             String ruleFilePath = RULES_PATH + file.getFilename();
             LOG.debug("Kie file system loading rule file: {}", ruleFilePath);
@@ -45,11 +45,11 @@ public class DroolsConfig {
         LOG.debug("Kie build takes {}ms", System.currentTimeMillis() - start);
         start = System.currentTimeMillis();
 
-        LOG.info("Decision table info: {}", kieBuilder.getResults().getMessages(Message.Level.INFO));
-        LOG.warn("Decision table warning: {}", kieBuilder.getResults().getMessages(Message.Level.WARNING));
+        LOG.info("Rule info: {}", kieBuilder.getResults().getMessages(Message.Level.INFO));
+        LOG.warn("Rule warning: {}", kieBuilder.getResults().getMessages(Message.Level.WARNING));
         if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
-            LOG.error("Decision table errors: {}", kieBuilder.getResults().getMessages(Message.Level.ERROR));
-            throw new BeanInitializationException("Error creating KieContainer as error in decision tables");
+            LOG.error("Rule errors: {}", kieBuilder.getResults().getMessages(Message.Level.ERROR));
+            throw new BeanInitializationException("Error creating KieContainer as error in rule");
         }
 
         KieContainer kieContainer = getKieServices().newKieContainer(kieRepository.getDefaultReleaseId());

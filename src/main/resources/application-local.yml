@@ -77,3 +77,6 @@ spring:
         idleTimeout: 180000
         minIdle: 5
         maximumPoolSize: 100
+
+endpoint.soap:
+  order.service.base: http://order-vip.pint.aw.dev.activenetwork.com

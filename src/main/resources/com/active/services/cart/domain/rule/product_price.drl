@@ -1,0 +1,21 @@
+package com.active.services.cart.domain.rule
+
+import com.active.services.product.Fee;
+
+rule "Time based / single price"
+    when
+        $fact: ProductFact(feeType == "TIME_BASED" || feeType == "SINGLE", $fees: fees)
+        $fee: Fee((startDate == null || startDate <= $fact.pricingDt)
+            && (endDate == null || $fact.pricingDt < endDate)) from $fees
+    then
+        $fact.setResult($fee);
+end
+
+rule "Volume based price"
+    when
+        $fact: ProductFact(feeType == "VOLUME_BASED", $fees: fees)
+        $fee: Fee((minVolume == null || minVolume <= $fact.volume)
+            && (maxVolume == null || $fact.volume <= maxVolume)) from $fees
+    then
+        $fact.setResult($fee);
+end
