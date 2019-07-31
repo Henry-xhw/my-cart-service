@@ -4,7 +4,7 @@ sleep 20s
 
 echo 'create database after 20 seconds of wait'
 SQL_DIR=sql
-/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${SA_PASSWORD} -i ${SQL_DIR}/create_oms_db.sql
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${SA_PASSWORD} -i ${SQL_DIR}/create_cart_db.sql
 
 echo 'Create schemas....'
 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${SA_PASSWORD} -d cart_service -i ${SQL_DIR}/Tables/*.sql
