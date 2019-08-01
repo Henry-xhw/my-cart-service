@@ -24,8 +24,7 @@ public class RuleEngineImpl implements RuleEngine {
 
     @Override
     public void runRule(List<?> facts) {
-        long start = 0L;
-        start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
         StatelessKieSession session = kieContainer.newStatelessKieSession();
         LOG.debug("Create stateless session takes: {}ms", System.currentTimeMillis() - start);

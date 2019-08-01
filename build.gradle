@@ -48,8 +48,10 @@ dependencies {
     implementation 'com.sun.xml.bind:jaxb-core:2.2.11'
     implementation 'com.sun.xml.bind:jaxb-impl:2.2.11'
 
+    //needed by oms
     implementation group: 'com.active.platform', name: 'core-services-api-migration', version: '6.0.6', ext: 'jar', configuration: 'runtime'
     implementation group: 'com.active.services', name: 'order-management-service', classifier: 'api', version: '3.128.1.8', ext: 'jar', configuration: 'runtime'
+    implementation 'commons-lang:commons-lang:2.6'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
