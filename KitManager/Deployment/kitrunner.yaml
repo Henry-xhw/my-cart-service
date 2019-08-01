@@ -1,0 +1,6 @@
+project: Cart Service
+max_kit: 1
+replace_from: /develop/
+replace_to: /PROMOTE_VERSION/
+extra_kits:
+- 6298
