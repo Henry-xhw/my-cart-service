@@ -33,7 +33,7 @@ public class DroolsPriceRuleDemo {
 
     public static void demo() {
         // fact
-        ProductFact productFact = ProductFact.builder()
+        Fact productFact = ProductFact.builder()
                 .pricingDt(new DateTime(LocalDateTime.now())).build();
 
         // time based conditions
