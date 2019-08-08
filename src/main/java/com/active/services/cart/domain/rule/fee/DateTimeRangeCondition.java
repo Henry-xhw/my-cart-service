@@ -3,10 +3,9 @@ package com.active.services.cart.domain.rule.fee;
 import java.util.Optional;
 
 import com.active.services.cart.domain.rule.Fact;
-import com.active.services.cart.domain.rule.fee.FeeCondition;
 import com.active.services.domain.DateTime;
 
-public class DateTimeRangeCondition extends FeeCondition {
+public class DateTimeRangeCondition extends SingleFieldCondition {
     private final DateTime start;
     private final DateTime end;
 

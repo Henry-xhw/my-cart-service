@@ -17,6 +17,7 @@ public class ProductPriceRule implements Rule {
     @Getter private String identifier = UUID.randomUUID().toString();
     @Getter @Setter private String name;
     @Getter @Setter private int priority;
+    @Getter private boolean exclusive;
     private Condition condition;
     private Fee action;
 
@@ -31,7 +32,7 @@ public class ProductPriceRule implements Rule {
     }
 
     @Override
-    public boolean fire(Fact fact) {
+    public boolean evaluate(Fact fact) {
         return condition.satisfy(fact);
     }
 
@@ -41,6 +42,6 @@ public class ProductPriceRule implements Rule {
     }
 
     public String ruleExpression() {
-        return getClass().getName() + "(identifier == '" + identifier + "', fire($fact))";
+        return getClass().getName() + "(identifier == '" + identifier + "', evaluate($fact))";
     }
 }

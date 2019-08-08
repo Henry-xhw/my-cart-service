@@ -7,19 +7,19 @@ import java.util.List;
 import com.active.services.cart.domain.rule.Condition;
 import com.active.services.cart.domain.rule.Fact;
 
-public class FeeConditionGroup implements Condition {
+public class ConditionGroup implements Condition {
     private List<Condition> conditions = new ArrayList<>();
-    private List<FeeConditionGroup> groups = new ArrayList<>();
+    private List<ConditionGroup> groups = new ArrayList<>();
 
     private ConditionGroupOperator groupOperator;
 
-    public FeeConditionGroup and(Condition...conditions) {
+    public ConditionGroup and(Condition...conditions) {
         groupOperator = ConditionGroupOperator.AND;
         this.conditions.addAll(Arrays.asList(conditions));
         return this;
     }
 
-    public FeeConditionGroup or(Condition...conditions) {
+    public ConditionGroup or(Condition...conditions) {
         groupOperator = ConditionGroupOperator.OR;
         this.conditions.addAll(Arrays.asList(conditions));
         return this;

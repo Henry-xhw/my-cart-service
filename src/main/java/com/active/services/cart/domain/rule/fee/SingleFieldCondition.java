@@ -8,7 +8,7 @@ import com.active.services.cart.domain.rule.Fact;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class FeeCondition implements Condition {
+public abstract class SingleFieldCondition implements Condition {
     private final String field;
     private boolean reverse;
 

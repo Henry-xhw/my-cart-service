@@ -14,6 +14,7 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.StatelessKieSession;
 
+import com.active.services.cart.application.impl.NativeRuleEngineImpl;
 import com.active.services.cart.domain.rule.Fact;
 import com.active.services.cart.domain.rule.Rule;
 import com.active.services.cart.domain.rule.fee.DateTimeRangeCondition;
@@ -27,11 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DroolsPriceRuleDemo {
-    public static void main(String[] args) {
-        demo();
-    }
+    private NativeRuleEngineImpl ruleEngine = new NativeRuleEngineImpl();
 
-    public static void demo() {
+    public static void main(String[] args) {
         // fact
         Fact productFact = ProductFact.builder()
                 .pricingDt(new DateTime(LocalDateTime.now())).build();
@@ -64,14 +63,25 @@ public class DroolsPriceRuleDemo {
 
         // run rules
         List<Rule> rules = Arrays.asList(janRule, febRule);
+
+        DroolsPriceRuleDemo demo = new DroolsPriceRuleDemo();
+        demo.runByRuleTemplate(rules, productFact);
+        demo.runByNativeRuleEngine(rules, productFact);
+    }
+
+    private void runByNativeRuleEngine(List<Rule> rules, Fact fact) {
+        ruleEngine.runRules(rules, fact);
+    }
+
+    private void runByRuleTemplate(List<Rule> rules, Fact fact) {
         ProductPriceFactRuleProvider dataProvider = new ProductPriceFactRuleProvider(ProductFact.class, rules.iterator());
         String drl = compileTemplate(dataProvider);
         LOG.info("{}", drl);
 
-        runRule(drl, productFact, rules);
+        runRule(drl, fact, rules);
     }
 
-    static private void runRule(String drl, Fact fact, List<Rule> rules) {
+    private void runRule(String drl, Fact fact, List<Rule> rules) {
         KieServices kieServices = KieServices.Factory.get();
         KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
         kieFileSystem.write("src/main/resources/com/active/services/platform/cart/domain/rule/rule.drl", drl);
@@ -86,7 +96,7 @@ public class DroolsPriceRuleDemo {
         statelessKieSession.execute(facts);
     }
 
-    static private String compileTemplate(DataProvider dp) {
+    private String compileTemplate(DataProvider dp) {
         DataProviderCompiler dataProviderCompiler = new DataProviderCompiler();
 
         return dataProviderCompiler.compile(dp,
