@@ -25,11 +25,6 @@ public class DroolsTemplateRuleEngineImpl implements RuleEngine {
     private static final String DEFAULT_RULE = "src/main/resources/com/active/services/platform/cart/domain/rule/rule.drl";
 
     @Override
-    public void runRule(List<?> facts) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void runRules(List<Rule> rules, Fact fact) {
         ProductPriceFactRuleProvider dataProvider = new ProductPriceFactRuleProvider(ProductFact.class, rules.iterator());
         String drl = compileTemplate(dataProvider);

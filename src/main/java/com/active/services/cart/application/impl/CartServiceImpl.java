@@ -29,7 +29,10 @@ public class CartServiceImpl implements CartService {
         for (CartItem item : cart.getCartItems()) {
             List<Rule> prodRules = productRepo.findProductFeeRulesByProductId(item.getProductId());
             CartItemFact cif = item.getCartItemFact();
-            ruleEngine.runRules(prodRules, new ProductFact(cif.getKvFactPairs()));
+            ProductFact fact = new ProductFact(cif.getKvFactPairs());
+            ruleEngine.runRules(prodRules, fact);
+            LOG.info("rule execution result: {}", fact.getResult());
+            item.setPrice(fact.getResult().getAmount());
         }
         return null;
     }
