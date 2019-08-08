@@ -15,6 +15,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.StatelessKieSession;
 
 import com.active.services.cart.domain.rule.Fact;
+import com.active.services.cart.domain.rule.Rule;
 import com.active.services.cart.domain.rule.fee.DateTimeRangeCondition;
 import com.active.services.cart.domain.rule.product.ProductFact;
 import com.active.services.cart.domain.rule.product.ProductPriceFactRuleProvider;
@@ -49,20 +50,20 @@ public class DroolsPriceRuleDemo {
         augFee.setAmount(BigDecimal.TEN);
 
         // rule
-        ProductPriceRule janRule = new ProductPriceRule()
+        Rule janRule = new ProductPriceRule()
                 .setName("jul rule")
                 .setPriority(1)
                 .given(jul)
                 .then(julFee);
 
-        ProductPriceRule febRule = new ProductPriceRule()
+        Rule febRule = new ProductPriceRule()
                 .setName("aug rule")
                 .setPriority(2)
                 .given(aug)
                 .then(augFee);
 
         // run rules
-        List<ProductPriceRule> rules = Arrays.asList(janRule, febRule);
+        List<Rule> rules = Arrays.asList(janRule, febRule);
         ProductPriceFactRuleProvider dataProvider = new ProductPriceFactRuleProvider(ProductFact.class, rules.iterator());
         String drl = compileTemplate(dataProvider);
         LOG.info("{}", drl);
@@ -70,7 +71,7 @@ public class DroolsPriceRuleDemo {
         runRule(drl, productFact, rules);
     }
 
-    static private void runRule(String drl, Fact fact, List<ProductPriceRule> rules) {
+    static private void runRule(String drl, Fact fact, List<Rule> rules) {
         KieServices kieServices = KieServices.Factory.get();
         KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
         kieFileSystem.write("src/main/resources/com/active/services/platform/cart/domain/rule/rule.drl", drl);

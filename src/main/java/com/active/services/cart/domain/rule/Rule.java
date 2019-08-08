@@ -6,4 +6,10 @@ public interface Rule {
     boolean fire(Fact fact);
 
     void doAction(Fact fact);
+
+    String getName();
+
+    int getPriority();
+
+    String ruleExpression();
 }

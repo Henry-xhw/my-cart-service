@@ -4,11 +4,13 @@ import java.util.Iterator;
 
 import org.drools.template.DataProvider;
 
+import com.active.services.cart.domain.rule.Rule;
+
 public class ProductPriceFactRuleProvider implements DataProvider {
     private Class<?> factClazz;
-    private Iterator<ProductPriceRule> rules;
+    private Iterator<Rule> rules;
 
-    public ProductPriceFactRuleProvider(Class<?> factClazz, Iterator<ProductPriceRule> rules) {
+    public ProductPriceFactRuleProvider(Class<?> factClazz, Iterator<Rule> rules) {
         this.factClazz = factClazz;
         this.rules = rules;
     }
@@ -20,7 +22,7 @@ public class ProductPriceFactRuleProvider implements DataProvider {
 
     @Override
     public String[] next() {
-        ProductPriceRule rule = rules.next();
+        Rule rule = rules.next();
         return new String[]{factClazz.getName(),
                 rule.getName(),
                 String.valueOf(rule.getPriority()),
