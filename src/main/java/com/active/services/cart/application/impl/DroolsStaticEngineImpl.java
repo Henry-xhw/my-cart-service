@@ -1,5 +1,6 @@
 package com.active.services.cart.application.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.kie.api.runtime.KieContainer;
@@ -19,12 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RuleEngineImpl implements RuleEngine {
-    @NonNull
-    private final KieContainer kieContainer;
+public class DroolsStaticEngineImpl implements RuleEngine {
+    @NonNull private final KieContainer kieContainer;
 
     @Override
-    public void runRule(List<?> facts) {
+    public void runRules(List<Rule> rules, Fact fact) {
         long start = System.currentTimeMillis();
 
         StatelessKieSession session = kieContainer.newStatelessKieSession();
@@ -34,13 +34,8 @@ public class RuleEngineImpl implements RuleEngine {
         session.setGlobal("LOG", LOG);
         session.addEventListener(new DroolsAgendaEventListener());
         session.addEventListener(new DroolsDebugRuntimeEventListener());
-        session.execute(facts);
+        session.execute(Collections.singletonList(fact));
 
         LOG.debug("Execute rule takes {}ms", System.currentTimeMillis() - start);
-    }
-
-    @Override
-    public void runRules(List<Rule> rules, Fact fact) {
-
     }
 }

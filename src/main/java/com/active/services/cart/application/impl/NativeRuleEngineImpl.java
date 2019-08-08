@@ -8,9 +8,6 @@ import com.active.services.cart.domain.rule.Fact;
 import com.active.services.cart.domain.rule.Rule;
 
 public class NativeRuleEngineImpl implements RuleEngine {
-    @Override
-    public void runRule(List<?> facts) {
-    }
 
     @Override
     public void runRules(List<Rule> rules, Fact fact) {

@@ -4,12 +4,10 @@ import com.active.services.cart.domain.rule.Fact;
 
 public class SimpleCondition extends SingleFieldCondition {
     private final String value;
-    private ConditionOperator operator;
 
-    public SimpleCondition(String field, String value, ConditionOperator operator) {
+    public SimpleCondition(String field, String value) {
         super(field);
         this.value = value;
-        this.operator = operator;
     }
 
     @Override

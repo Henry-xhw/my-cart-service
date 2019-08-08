@@ -7,11 +7,23 @@ import java.util.List;
 import com.active.services.cart.domain.rule.Condition;
 import com.active.services.cart.domain.rule.Fact;
 
-public class ConditionGroup implements Condition {
+public class ConditionGroup extends AbstractCondition {
     private List<Condition> conditions = new ArrayList<>();
     private List<ConditionGroup> groups = new ArrayList<>();
 
     private ConditionGroupOperator groupOperator;
+
+    public static ConditionGroup all(Condition...conditions) {
+        ConditionGroup group = new ConditionGroup();
+        group.and(conditions);
+        return group;
+    }
+
+    public static ConditionGroup any(Condition...conditions) {
+        ConditionGroup group = new ConditionGroup();
+        group.or(conditions);
+        return group;
+    }
 
     public ConditionGroup and(Condition...conditions) {
         groupOperator = ConditionGroupOperator.AND;
@@ -26,7 +38,7 @@ public class ConditionGroup implements Condition {
     }
 
     @Override
-    public boolean satisfy(Fact fact) {
+    protected boolean test(Fact fact) {
         if (groupOperator == ConditionGroupOperator.AND) {
             return conditions.stream().allMatch(cond -> cond.satisfy(fact));
         }

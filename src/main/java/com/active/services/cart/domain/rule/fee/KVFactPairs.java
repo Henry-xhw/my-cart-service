@@ -1,12 +1,15 @@
 package com.active.services.cart.domain.rule.fee;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.active.services.cart.model.KVFactPair;
 
 public class KVFactPairs {
     private Map<String, Object> keyToValue = new HashMap<>();
 
-    public KVFactPairs(KVFactPair...pairs) {
+    public KVFactPairs(List<KVFactPair> pairs) {
         for (KVFactPair kv : pairs) {
             keyToValue.put(kv.getKey(), kv.getValue());
         }

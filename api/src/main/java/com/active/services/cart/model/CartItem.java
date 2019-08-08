@@ -1,11 +1,11 @@
 package com.active.services.cart.model;
 
+import java.math.BigDecimal;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -16,4 +16,6 @@ public class CartItem {
     private int quantity;
     private BigDecimal price;
     private BigDecimal priceOverride;
+
+    private CartItemFact cartItemFact;
 }

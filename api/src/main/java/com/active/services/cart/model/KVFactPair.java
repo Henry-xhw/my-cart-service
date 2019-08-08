@@ -1,4 +1,4 @@
-package com.active.services.cart.domain.rule.fee;
+package com.active.services.cart.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
