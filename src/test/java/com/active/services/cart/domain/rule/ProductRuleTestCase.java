@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.active.services.cart.application.RuleEngine;
+import com.active.services.cart.domain.rule.product.ProductFact;
 import com.active.services.domain.DateTime;
 import com.active.services.product.Fee;
 import com.active.services.product.FeeType;

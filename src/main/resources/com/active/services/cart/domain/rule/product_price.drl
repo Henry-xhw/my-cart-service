@@ -7,7 +7,7 @@ global org.slf4j.Logger LOG;
 
 rule "Time based / single price"
     when
-        $fact: ProductFact(feeType == FeeType.TIME_BASED || feeType == "SINGLE", $fees: fees)
+        $fact: ProductFact(feeType == FeeType.TIME_BASED || feeType == FeeType.SINGLE, $fees: fees)
         $fee: Fee((startDate == null || startDate <= $fact.pricingDt)
             && (endDate == null || $fact.pricingDt < endDate)) from $fees
     then

@@ -1,0 +1,22 @@
+template header
+
+fact
+ruleName
+priority
+rule
+
+package com.active.services.cart.domain.rule;
+global org.slf4j.Logger LOG;
+
+template "product_price"
+
+rule "product_price_@{ruleName}" salience @{priority}
+    when
+        $fact:@{fact}()
+        $rule:@{rule}
+    then
+        LOG.debug("@{ruleName} fired");
+        $rule.doAction($fact);
+end
+
+end template
