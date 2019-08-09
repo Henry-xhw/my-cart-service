@@ -11,7 +11,7 @@ public class SimpleConditionTestCase {
 
     @Test
     public void simpleConditionStringEquals() {
-        Condition aTrue = new SimpleCondition("boolean", "true");
+        Condition aTrue = new SimpleCondition<>("boolean", "true");
 
         Fact fact = new Fact() {
             @Override
@@ -25,7 +25,7 @@ public class SimpleConditionTestCase {
 
     @Test
     public void simpleConditionStringNotEquals() {
-        Condition aFalse = new SimpleCondition("boolean", "false");
+        Condition aFalse = new SimpleCondition<>("boolean", "false");
 
         Fact fact = new Fact() {
             @Override

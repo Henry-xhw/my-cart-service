@@ -5,10 +5,10 @@ import com.active.services.cart.domain.rule.Fact;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SimpleCondition extends SingleFieldCondition {
-    private final String value;
+public class SimpleCondition<T> extends SingleFieldCondition {
+    private final T value;
 
-    public SimpleCondition(String field, String value) {
+    public SimpleCondition(String field, T value) {
         super(field);
         this.value = value;
     }
