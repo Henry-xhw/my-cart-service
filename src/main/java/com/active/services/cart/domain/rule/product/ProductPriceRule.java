@@ -1,7 +1,5 @@
 package com.active.services.cart.domain.rule.product;
 
-import java.util.UUID;
-
 import com.active.services.cart.domain.rule.Condition;
 import com.active.services.cart.domain.rule.Fact;
 import com.active.services.cart.domain.rule.Rule;
@@ -14,10 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ProductPriceRule implements Rule {
-    @Getter private String identifier = UUID.randomUUID().toString();
     @Getter @Setter private String name;
     @Getter @Setter private int priority;
-    @Getter private boolean exclusive;
+    @Getter @Setter private boolean exclusive;
     private Condition condition;
     private Fee action;
 

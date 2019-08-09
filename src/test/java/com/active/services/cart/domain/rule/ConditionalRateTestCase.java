@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.Test;
 
@@ -132,18 +131,19 @@ public class ConditionalRateTestCase {
                 .given(ConditionGroup.all(aug, pm, mon, ConditionGroup.any(junior, senior).reverse(), residency))
                 .then(augFee);
 
-        return Arrays.asList(augMonMorningJuniorResidency,
-                augMonMorningJuniorNonResidency,
-                augMonMorningSeniorResidency,
-                augMonMorningSeniorNonResidency,
-                augMonMorningOthersNonResidency,
-                augMonMorningOthersResidency,
-                augMonPMOthersNonResidency,
-                augMonPMOthersResidency,
-                augMonPMJuniorResidency,
-                augMonPMJuniorNonResidency,
-                augMonPMSeniorResidency,
-                augMonPMSeniorNonResidency);
+//        return Arrays.asList(augMonMorningJuniorResidency,
+//                augMonMorningJuniorNonResidency,
+//                augMonMorningSeniorResidency,
+//                augMonMorningSeniorNonResidency,
+//                augMonMorningOthersNonResidency,
+//                augMonMorningOthersResidency,
+//                augMonPMOthersNonResidency,
+//                augMonPMOthersResidency,
+//                augMonPMJuniorResidency,
+//                augMonPMJuniorNonResidency,
+//                augMonPMSeniorResidency,
+//                augMonPMSeniorNonResidency);
+        return Arrays.asList(augMonMorningSeniorResidency);
     }
 
     @Test
@@ -152,11 +152,14 @@ public class ConditionalRateTestCase {
         facts.add(new KVFactPair("pricingDt", LocalDate.now()));
         facts.add(new KVFactPair("pricingTime", LocalTime.now()));
         facts.add(new KVFactPair("weekday", DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT, Locale.US)));
-        facts.add(new KVFactPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
-        facts.add(new KVFactPair("residency", String.valueOf(ThreadLocalRandom.current().nextInt(1, 2) % 2 == 0)));
+//        facts.add(new KVFactPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
+//        facts.add(new KVFactPair("residency", String.valueOf(ThreadLocalRandom.current().nextInt(1, 2) % 2 == 0)));
+        facts.add(new KVFactPair("age", 66L));
+        facts.add(new KVFactPair("residency", "true"));
 
         ProductFact fact = new ProductFact(facts);
-        ruleEngine.runRules(RULES, fact);
+        boolean fired = ruleEngine.runRules(RULES, fact);
+        assertThat(fired).isTrue();
         assertThat(fact.getResult()).isNotNull();
     }
 }

@@ -13,13 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 public class NativeRuleEngineImpl implements RuleEngine {
 
     @Override
-    public void runRules(List<Rule> rules, Fact fact) {
-        rules.sort(Comparator.comparingInt(Rule::getPriority));
+    public boolean runRules(List<Rule> rules, Fact fact) {
+        boolean anyRuleFired = false;
 
+        rules.sort(Comparator.comparingInt(Rule::getPriority));
         for (Rule r : rules) {
             boolean toFire = r.evaluate(fact);
             LOG.debug("rule: {}, priority: {}, to fire: {}", r.getName(), r.getPriority(), toFire);
             if (toFire) {
+                anyRuleFired = true;
                 LOG.info("rule: {}, priority: {} fired, exclusive: {}", r.getName(), r.getPriority(), r.isExclusive());
                 r.doAction(fact);
                 if (r.isExclusive()) {
@@ -27,5 +29,7 @@ public class NativeRuleEngineImpl implements RuleEngine {
                 }
             }
         }
+
+        return anyRuleFired;
     }
 }

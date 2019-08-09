@@ -6,5 +6,5 @@ import com.active.services.cart.domain.rule.Fact;
 import com.active.services.cart.domain.rule.Rule;
 
 public interface RuleEngine {
-    void runRules(List<Rule> rules, Fact fact);
+    boolean runRules(List<Rule> rules, Fact fact);
 }
