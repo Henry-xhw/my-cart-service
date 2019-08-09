@@ -17,10 +17,10 @@ import org.junit.Test;
 
 import com.active.services.cart.application.RuleEngine;
 import com.active.services.cart.application.impl.NativeRuleEngineImpl;
-import com.active.services.cart.domain.rule.fee.LocalDateRangeCondition;
-import com.active.services.cart.domain.rule.fee.LocalTimeRangeCondition;
-import com.active.services.cart.domain.rule.fee.LongRangeCondition;
-import com.active.services.cart.domain.rule.fee.SimpleCondition;
+import com.active.services.cart.domain.rule.condition.LocalDateRangeCondition;
+import com.active.services.cart.domain.rule.condition.LocalTimeRangeCondition;
+import com.active.services.cart.domain.rule.condition.LongRangeCondition;
+import com.active.services.cart.domain.rule.condition.SimpleCondition;
 import com.active.services.cart.domain.rule.product.ProductFact;
 import com.active.services.cart.model.KVFactPair;
 import com.active.services.product.Fee;
