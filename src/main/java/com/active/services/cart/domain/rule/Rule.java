@@ -1,13 +1,19 @@
 package com.active.services.cart.domain.rule;
 
-public interface Rule {
-    boolean evaluate(Fact fact);
+import lombok.NonNull;
 
-    void doAction(Fact fact);
-
+public interface Rule<T extends Fact> {
     String getName();
 
     int getPriority();
 
     boolean isExclusive();
+
+    Rule<T> given(@NonNull Condition condition);
+
+    Rule<T> then(Action<T> action);
+
+    boolean evaluate(T fact);
+
+    void doAction(T fact);
 }

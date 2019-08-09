@@ -1,11 +1,8 @@
-package com.active.services.cart.domain.rule.fee;
+package com.active.services.cart.domain.rule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.active.services.cart.domain.rule.Condition;
-import com.active.services.cart.domain.rule.Fact;
 
 public class ConditionGroup extends AbstractCondition {
     private List<Condition> conditions = new ArrayList<>();

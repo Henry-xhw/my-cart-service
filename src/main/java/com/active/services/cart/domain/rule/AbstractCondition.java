@@ -1,7 +1,4 @@
-package com.active.services.cart.domain.rule.fee;
-
-import com.active.services.cart.domain.rule.Condition;
-import com.active.services.cart.domain.rule.Fact;
+package com.active.services.cart.domain.rule;
 
 public abstract class AbstractCondition implements Condition {
     private boolean reverse;

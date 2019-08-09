@@ -11,21 +11,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.Test;
 
 import com.active.services.cart.application.RuleEngine;
 import com.active.services.cart.application.impl.NativeRuleEngineImpl;
-import com.active.services.cart.domain.rule.fee.ConditionGroup;
 import com.active.services.cart.domain.rule.fee.LocalDateRangeCondition;
 import com.active.services.cart.domain.rule.fee.LocalTimeRangeCondition;
 import com.active.services.cart.domain.rule.fee.LongRangeCondition;
 import com.active.services.cart.domain.rule.fee.SimpleCondition;
 import com.active.services.cart.domain.rule.product.ProductFact;
-import com.active.services.cart.domain.rule.product.ProductPriceRule;
 import com.active.services.cart.model.KVFactPair;
 import com.active.services.product.Fee;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ConditionalRateTestCase {
     private static List<Rule> RULES = setupRules();
     private RuleEngine ruleEngine = new NativeRuleEngineImpl();
@@ -51,110 +53,108 @@ public class ConditionalRateTestCase {
         Condition residency = new SimpleCondition("residency", "true");
 
         // rule result which is the fee
-        Fee julFee = new Fee();
-        julFee.setAmount(BigDecimal.ONE);
-
         Fee augFee = new Fee();
         augFee.setAmount(BigDecimal.TEN);
+        Action<ProductFact> setAugFee = fact -> fact.setResult(augFee);
+        Action<ProductFact> logAction = fact -> LOG.info("===================rule fired===================");
+        Action<ProductFact> chain = ActionChain.all(Arrays.asList(setAugFee, logAction));
 
         // rules
-        Rule augMonMorningJuniorResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonMorningJuniorResidency = new BaseRule<ProductFact>()
                 .setName("aug mon am junior residency")
                 .setPriority(1)
                 .given(ConditionGroup.all(aug, am, mon, junior, residency))
-                .then(julFee);
+                .then(chain);
 
-        Rule augMonMorningJuniorNonResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonMorningJuniorNonResidency = new BaseRule<ProductFact>()
                 .setName("aug mon am junior non residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, am, mon, junior, residency.reverse()))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonMorningSeniorResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonMorningSeniorResidency = new BaseRule<ProductFact>()
                 .setName("aug mon am senior residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, am, mon, senior, residency))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonMorningSeniorNonResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonMorningSeniorNonResidency = new BaseRule<ProductFact>()
                 .setName("aug mon am senior non residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, am, mon, senior, residency.reverse()))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonMorningOthersNonResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonMorningOthersNonResidency = new BaseRule<ProductFact>()
                 .setName("aug mon am other non residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, am, mon, ConditionGroup.any(junior, senior).reverse(), residency.reverse()))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonMorningOthersResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonMorningOthersResidency = new BaseRule<ProductFact>()
                 .setName("aug mon am other residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, am, mon, ConditionGroup.any(junior, senior).reverse(), residency))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonPMJuniorResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonPMJuniorResidency = new BaseRule<ProductFact>()
                 .setName("aug mon pm junior residency")
                 .setPriority(1)
                 .given(ConditionGroup.all(aug, pm, mon, junior, residency))
-                .then(julFee);
+                .then(chain);
 
-        Rule augMonPMJuniorNonResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonPMJuniorNonResidency = new BaseRule<ProductFact>()
                 .setName("aug mon pm junior non residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, pm, mon, junior, residency.reverse()))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonPMSeniorResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonPMSeniorResidency = new BaseRule<ProductFact>()
                 .setName("aug mon pm senior residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, pm, mon, senior, residency))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonPMSeniorNonResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonPMSeniorNonResidency = new BaseRule<ProductFact>()
                 .setName("aug mon pm senior non residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, pm, mon, senior, residency.reverse()))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonPMOthersNonResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonPMOthersNonResidency = new BaseRule<ProductFact>()
                 .setName("aug mon pm other non residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, pm, mon, ConditionGroup.any(junior, senior).reverse(),
                         residency.reverse()))
-                .then(augFee);
+                .then(chain);
 
-        Rule augMonPMOthersResidency = new ProductPriceRule()
+        Rule<ProductFact> augMonPMOthersResidency = new BaseRule<ProductFact>()
                 .setName("aug mon pm other residency")
                 .setPriority(2)
                 .given(ConditionGroup.all(aug, pm, mon, ConditionGroup.any(junior, senior).reverse(), residency))
-                .then(augFee);
+                .then(chain);
 
-//        return Arrays.asList(augMonMorningJuniorResidency,
-//                augMonMorningJuniorNonResidency,
-//                augMonMorningSeniorResidency,
-//                augMonMorningSeniorNonResidency,
-//                augMonMorningOthersNonResidency,
-//                augMonMorningOthersResidency,
-//                augMonPMOthersNonResidency,
-//                augMonPMOthersResidency,
-//                augMonPMJuniorResidency,
-//                augMonPMJuniorNonResidency,
-//                augMonPMSeniorResidency,
-//                augMonPMSeniorNonResidency);
-        return Arrays.asList(augMonMorningSeniorResidency);
+        return Arrays.asList(augMonMorningJuniorResidency,
+                augMonMorningJuniorNonResidency,
+                augMonMorningSeniorResidency,
+                augMonMorningSeniorNonResidency,
+                augMonMorningOthersNonResidency,
+                augMonMorningOthersResidency,
+                augMonPMOthersNonResidency,
+                augMonPMOthersResidency,
+                augMonPMJuniorResidency,
+                augMonPMJuniorNonResidency,
+                augMonPMSeniorResidency,
+                augMonPMSeniorNonResidency);
     }
 
     @Test
-    public void test() {
+    public void runRulesWithFact() {
         List<KVFactPair> facts = new ArrayList<>();
         facts.add(new KVFactPair("pricingDt", LocalDate.now()));
         facts.add(new KVFactPair("pricingTime", LocalTime.now()));
         facts.add(new KVFactPair("weekday", DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT, Locale.US)));
-//        facts.add(new KVFactPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
+        facts.add(new KVFactPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
 //        facts.add(new KVFactPair("residency", String.valueOf(ThreadLocalRandom.current().nextInt(1, 2) % 2 == 0)));
-        facts.add(new KVFactPair("age", 66L));
         facts.add(new KVFactPair("residency", "true"));
 
         ProductFact fact = new ProductFact(facts);

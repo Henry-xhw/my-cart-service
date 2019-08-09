@@ -2,6 +2,7 @@ package com.active.services.cart.domain.rule.fee;
 
 import java.util.Optional;
 
+import com.active.services.cart.domain.rule.AbstractCondition;
 import com.active.services.cart.domain.rule.Fact;
 
 import lombok.RequiredArgsConstructor;
