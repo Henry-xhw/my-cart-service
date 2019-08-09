@@ -2,6 +2,9 @@ package com.active.services.cart.domain.rule.fee;
 
 import com.active.services.cart.domain.rule.Fact;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SimpleCondition extends SingleFieldCondition {
     private final String value;
 
@@ -12,6 +15,8 @@ public class SimpleCondition extends SingleFieldCondition {
 
     @Override
     public boolean test(Fact fact) {
-        return fact(fact).filter(f -> f.equals(value)).isPresent();
+        boolean conditionMet = fact(fact).filter(f -> f.equals(value)).isPresent();
+        LOG.debug("{} == {} return {}", fact(fact), value, conditionMet);
+        return conditionMet;
     }
 }

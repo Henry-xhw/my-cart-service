@@ -40,8 +40,4 @@ public class ProductPriceRule implements Rule {
     public void doAction(Fact fact) {
         LOG.info("{} fired, final fee: {}", name, action.getAmount());
     }
-
-    public String ruleExpression() {
-        return getClass().getName() + "(identifier == '" + identifier + "', evaluate($fact))";
-    }
 }

@@ -9,8 +9,6 @@ import com.active.services.cart.domain.rule.Fact;
 
 public class ConditionGroup extends AbstractCondition {
     private List<Condition> conditions = new ArrayList<>();
-    private List<ConditionGroup> groups = new ArrayList<>();
-
     private ConditionGroupOperator groupOperator;
 
     public static ConditionGroup all(Condition...conditions) {
