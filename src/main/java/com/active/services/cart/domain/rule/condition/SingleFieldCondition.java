@@ -1,11 +1,11 @@
 package com.active.services.cart.domain.rule.condition;
 
-import java.util.Optional;
-
 import com.active.services.cart.domain.rule.AbstractCondition;
 import com.active.services.cart.domain.rule.Fact;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public abstract class SingleFieldCondition extends AbstractCondition {

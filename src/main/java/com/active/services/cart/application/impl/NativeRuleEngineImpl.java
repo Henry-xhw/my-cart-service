@@ -1,13 +1,13 @@
 package com.active.services.cart.application.impl;
 
-import java.util.Comparator;
-import java.util.List;
-
 import com.active.services.cart.application.RuleEngine;
 import com.active.services.cart.domain.rule.Fact;
 import com.active.services.cart.domain.rule.Rule;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Comparator;
+import java.util.List;
 
 @Slf4j
 public class NativeRuleEngineImpl implements RuleEngine {

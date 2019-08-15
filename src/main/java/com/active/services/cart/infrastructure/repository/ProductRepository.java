@@ -1,25 +1,23 @@
 package com.active.services.cart.infrastructure.repository;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
-
 import com.active.services.cart.domain.rule.Action;
 import com.active.services.cart.domain.rule.BaseRule;
 import com.active.services.cart.domain.rule.Condition;
 import com.active.services.cart.domain.rule.ConditionGroup;
 import com.active.services.cart.domain.rule.Rule;
-import com.active.services.cart.domain.rule.condition.LocalDateRangeCondition;
-import com.active.services.cart.domain.rule.condition.LocalTimeRangeCondition;
-import com.active.services.cart.domain.rule.condition.LongRangeCondition;
+import com.active.services.cart.domain.rule.condition.RangeCondition;
 import com.active.services.cart.domain.rule.condition.SimpleCondition;
 import com.active.services.cart.domain.rule.product.ProductFact;
 import com.active.services.product.Fee;
 import com.active.services.product.api.v1.soap.ProductServiceSOAPEndPoint;
 
 import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class ProductRepository {
@@ -33,22 +31,22 @@ public class ProductRepository {
     private List<Rule> fakeRules() {
         // conditions
         // date based conditions
-        Condition aug = new LocalDateRangeCondition("pricingDt", LocalDate.of(2019, 8, 1), LocalDate.of(2019, 8, 31));
+        Condition aug = new RangeCondition<>("pricingDt", LocalDate.of(2019, 8, 1), LocalDate.of(2019, 8, 31));
 
         // time based conditions
-        Condition am = new LocalTimeRangeCondition("pricingTime", LocalTime.of(8, 0, 0), LocalTime.of(12, 0, 0));
-        Condition pm = new LocalTimeRangeCondition("pricingTime", LocalTime.of(12, 0, 0), LocalTime.of(18, 0, 0));
+        Condition am = new RangeCondition<>("pricingTime", LocalTime.of(8, 0, 0), LocalTime.of(12, 0, 0));
+        Condition pm = new RangeCondition<>("pricingTime", LocalTime.of(12, 0, 0), LocalTime.of(18, 0, 0));
 
         // weekday condition
-        Condition mon = new SimpleCondition("weekday", "Mon");
-        Condition fri = new SimpleCondition("weekday", "Fri");
+        Condition mon = new SimpleCondition<>("weekday", "Mon");
+        Condition fri = new SimpleCondition<>("weekday", "Fri");
 
         // age based conditions
-        Condition junior = new LongRangeCondition("age", 10L, 20L);
-        Condition senior = new LongRangeCondition("age", 60L, 100L);
+        Condition junior = new RangeCondition<>("age", 10L, 20L);
+        Condition senior = new RangeCondition<>("age", 60L, 100L);
 
         // residency conditions
-        Condition residency = new SimpleCondition("residency", "true");
+        Condition residency = new SimpleCondition<>("residency", "true");
 
         // rule result which is the fee
         Fee augFee = new Fee();

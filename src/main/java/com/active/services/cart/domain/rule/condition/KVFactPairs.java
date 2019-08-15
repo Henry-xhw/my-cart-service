@@ -1,10 +1,10 @@
 package com.active.services.cart.domain.rule.condition;
 
+import com.active.services.cart.model.KVFactPair;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.active.services.cart.model.KVFactPair;
 
 public class KVFactPairs {
     private Map<String, Object> keyToValue = new HashMap<>();

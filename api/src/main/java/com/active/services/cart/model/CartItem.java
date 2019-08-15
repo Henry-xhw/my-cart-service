@@ -1,11 +1,11 @@
 package com.active.services.cart.model;
 
-import java.math.BigDecimal;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter

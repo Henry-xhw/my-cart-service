@@ -1,13 +1,13 @@
 package com.active.services.cart.domain.rule.product;
 
-import java.util.List;
-
 import com.active.services.cart.domain.rule.Fact;
 import com.active.services.cart.domain.rule.condition.KVFactPairs;
 import com.active.services.cart.model.KVFactPair;
 import com.active.services.product.Fee;
 
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class ProductFact implements Fact {

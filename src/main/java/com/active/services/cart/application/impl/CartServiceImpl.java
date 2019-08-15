@@ -1,9 +1,5 @@
 package com.active.services.cart.application.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.active.services.cart.application.CartService;
 import com.active.services.cart.application.RuleEngine;
 import com.active.services.cart.domain.rule.Rule;
@@ -16,6 +12,9 @@ import com.active.services.cart.model.CreateCartRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
