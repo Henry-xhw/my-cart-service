@@ -20,9 +20,8 @@ public class RangeCondition<T extends Comparable> extends SingleFieldCondition {
     @Override
     public boolean test(Fact fact) {
         Optional<T> datetime = fact(fact);
-        boolean conditionMet = datetime.filter(dt -> (start == null || dt.compareTo(start) >= 0)
-                && (end == null || dt.compareTo(end) < 0))
-                .isPresent();
+        boolean conditionMet = datetime.filter(dt -> (start == null || dt.compareTo(start) >= 0) &&
+                (end == null || dt.compareTo(end) < 0)).isPresent();
 
         LOG.debug("{} <= {} < {} return {}", start, datetime, end, conditionMet);
         return conditionMet;
