@@ -17,7 +17,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import java.io.IOException;
 
 @Slf4j
-@Configuration
 public class DroolsConfig {
     private static final String RULES_PATH = "com/active/services/cart/domain/rule/";
 

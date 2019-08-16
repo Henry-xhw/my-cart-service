@@ -12,6 +12,7 @@ import com.active.services.product.Fee;
 import com.active.services.product.api.v1.soap.ProductServiceSOAPEndPoint;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Repository
 public class ProductRepository {
     private final ProductServiceSOAPEndPoint prdSvc;
 
