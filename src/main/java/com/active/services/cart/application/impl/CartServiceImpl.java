@@ -8,6 +8,7 @@ import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartItem;
 import com.active.services.cart.model.CartItemFact;
 import com.active.services.cart.model.CreateCartRequest;
+import com.active.services.cart.model.CreateCartResp;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepo;
 
     @Override
-    public CreateCartRequest createCart(CreateCartRequest cart) {
+    public CreateCartResp createCart(CreateCartRequest cart) {
         for (CartItem item : cart.getCartItems()) {
             List<Rule> prodRules = productRepo.findProductFeeRulesByProductId(item.getProductId());
             CartItemFact cif = item.getCartItemFact();
