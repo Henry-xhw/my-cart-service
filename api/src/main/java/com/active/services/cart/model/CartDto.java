@@ -16,7 +16,8 @@ public class CartDto {
     @Valid
     @NotEmpty
     private List<CartItemDto> cartItemDtos;
-    //?private Long agencyId;
+    // build tax item...
+    private Long agencyId;
     //?private String orgIdentifier;
 
     private BigDecimal subtotal;

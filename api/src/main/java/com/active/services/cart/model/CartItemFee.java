@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 @Getter
 public class CartItemFee {
-    private String name;
-    private BigDecimal unitPrice;
-    private Integer units;
-    private BigDecimal subtotal;
+        private String name;
+        private BigDecimal unitPrice;
+        private Integer units;
+        private BigDecimal subtotal;
 }
