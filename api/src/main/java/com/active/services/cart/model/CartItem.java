@@ -8,11 +8,13 @@ import java.util.List;
 
 @Data
 public class CartItem {
+    private Long id;
     private Long productId;
     private int quantity;
     private CartItemOption option;
     private BigDecimal priceOverride;
     private CartItemFacts cartItemFacts;
+    //?private Long agencyId;
 
     private List<CartItemFee> fees;
     private BigDecimal itemTotal;

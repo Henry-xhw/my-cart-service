@@ -10,10 +10,14 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class CartDto {
+    private Long id;
+    private String identifier;
     private String currency;
     @Valid
     @NotEmpty
     private List<CartItem> cartItems;
+    //?private Long agencyId;
+    //?private String orgIdentifier;
 
     private BigDecimal subtotal;
     private BigDecimal feeTotal;
