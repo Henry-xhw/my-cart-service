@@ -2,7 +2,7 @@ package com.active.services.cart.web.rs;
 
 import com.active.services.cart.application.CartService;
 import com.active.services.cart.model.CartItem;
-import com.active.services.cart.model.CartItemFact;
+import com.active.services.cart.model.CartItemFacts;
 import com.active.services.cart.model.CreateCartRequest;
 import com.active.services.cart.model.CreateCartResp;
 import com.active.services.cart.model.KVFactPair;
@@ -48,7 +48,7 @@ public class TransientCartController {
         CartItem item = CartItem.builder()
                 .productId(ThreadLocalRandom.current().nextLong())
                 .quantity(ThreadLocalRandom.current().nextInt(100))
-                .cartItemFact(new CartItemFact()
+                .cartItemFacts(new CartItemFacts()
                         .setKvFactPairs(facts))
                 .build();
         request.setCartItems(Collections.singletonList(item));

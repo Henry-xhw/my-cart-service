@@ -6,7 +6,7 @@ import com.active.services.cart.domain.rule.Rule;
 import com.active.services.cart.domain.rule.product.ProductFact;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartItem;
-import com.active.services.cart.model.CartItemFact;
+import com.active.services.cart.model.CartItemFacts;
 import com.active.services.cart.model.CreateCartRequest;
 import com.active.services.cart.model.CreateCartResp;
 
@@ -28,7 +28,7 @@ public class CartServiceImpl implements CartService {
     public CreateCartResp createCart(CreateCartRequest cart) {
         for (CartItem item : cart.getCartItems()) {
             List<Rule> prodRules = productRepo.findProductFeeRulesByProductId(item.getProductId());
-            CartItemFact cif = item.getCartItemFact();
+            CartItemFacts cif = item.getCartItemFacts();
             ProductFact fact = new ProductFact(cif.getKvFactPairs());
             ruleEngine.runRules(prodRules, fact);
             LOG.info("rule execution result: {}", fact.getResult());

@@ -5,6 +5,6 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CartItemFact {
+public class CartItemFacts {
     private List<KVFactPair> kvFactPairs;
 }

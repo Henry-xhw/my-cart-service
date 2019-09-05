@@ -7,11 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-
 @Getter
 @Setter
 @ToString
@@ -19,8 +14,5 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateCartRequest {
-    private String currency;
-    @Valid
-    @NotEmpty
-    private List<CartItem> cartItems;
+    private CartDto cart;
 }
