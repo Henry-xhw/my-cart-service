@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class CartItemFacts {
-    private List<KVFactPair> kvFactPairs;
+    private List<FactKVPair> factKVPairs;
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class KVFactPair {
+public class FactKVPair {
     private String key;
     private Object value;
 }
