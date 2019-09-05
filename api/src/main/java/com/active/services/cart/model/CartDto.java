@@ -1,11 +1,14 @@
 package com.active.services.cart.model;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
+@Data
 public class CartDto {
     private String currency;
     @Valid
