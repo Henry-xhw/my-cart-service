@@ -15,7 +15,7 @@ public class CartDto {
     private String currency;
     @Valid
     @NotEmpty
-    private List<CartItem> cartItems;
+    private List<CartItemDto> cartItemDtos;
     //?private Long agencyId;
     //?private String orgIdentifier;
 
