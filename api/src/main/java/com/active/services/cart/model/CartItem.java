@@ -17,8 +17,10 @@ public class CartItem {
     private int quantity;
     private CartItemOption option;
     private BigDecimal priceOverride;
-
     private CartItemFacts cartItemFacts;
+
     private List<CartItemFee> fees;
     private BigDecimal itemTotal;
+    private BigDecimal feeTotal;
+    private BigDecimal taxTotal;
 }

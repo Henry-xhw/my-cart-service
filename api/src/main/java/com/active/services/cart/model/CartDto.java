@@ -11,5 +11,8 @@ public class CartDto {
     @Valid
     @NotEmpty
     private List<CartItem> cartItems;
+
     private BigDecimal subtotal;
+    private BigDecimal feeTotal;
+    private BigDecimal taxTotal;
 }
