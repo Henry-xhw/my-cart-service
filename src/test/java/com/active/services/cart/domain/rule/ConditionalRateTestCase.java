@@ -148,7 +148,7 @@ public class ConditionalRateTestCase {
     @Test
     public void runRulesWithFact() {
         List<KVFactPair> facts = new ArrayList<>();
-        facts.add(new KVFactPair("pricingDt", LocalDate.now()));
+        facts.add(new KVFactPair("pricingDt", LocalDate.of(2019, 8, 20)));
         facts.add(new KVFactPair("pricingTime", LocalTime.now()));
         facts.add(new KVFactPair("weekday", DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT, Locale.US)));
         facts.add(new KVFactPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
