@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +27,26 @@ public class PersistedCartController {
 
     @PostMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
     public CreateCartResp create(@RequestBody @Valid CreateCartRequest request) {
+        return null;
+    }
+
+    @PutMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
+    public CreateCartResp addItemToCart(@RequestBody @Valid CreateCartRequest request) {
+        return null;
+    }
+
+    @PutMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
+    public CreateCartResp applyDiscountToCart(@RequestBody @Valid CreateCartRequest request) {
+        return null;
+    }
+
+    @DeleteMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
+    public CreateCartResp removeItemFromCart(@RequestBody @Valid CreateCartRequest request) {
+        return null;
+    }
+
+    @DeleteMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
+    public CreateCartResp deleteCart(@RequestBody @Valid CreateCartRequest request) {
         return null;
     }
 }
