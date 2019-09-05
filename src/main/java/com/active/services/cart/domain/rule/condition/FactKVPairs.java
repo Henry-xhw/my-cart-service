@@ -1,21 +1,21 @@
 package com.active.services.cart.domain.rule.condition;
 
-import com.active.services.cart.model.KVFactPair;
+import com.active.services.cart.model.FactKVPair;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KVFactPairs {
+public class FactKVPairs {
     private Map<String, Object> keyToValue = new HashMap<>();
 
-    public KVFactPairs(List<KVFactPair> pairs) {
-        for (KVFactPair kv : pairs) {
+    public FactKVPairs(List<FactKVPair> pairs) {
+        for (FactKVPair kv : pairs) {
             keyToValue.put(kv.getKey(), kv.getValue());
         }
     }
 
-    public KVFactPairs add(String key, Object value) {
+    public FactKVPairs add(String key, Object value) {
         keyToValue.put(key, value);
         return this;
     }

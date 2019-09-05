@@ -20,7 +20,7 @@ import com.active.services.cart.application.impl.NativeRuleEngineImpl;
 import com.active.services.cart.domain.rule.condition.RangeCondition;
 import com.active.services.cart.domain.rule.condition.SimpleCondition;
 import com.active.services.cart.domain.rule.product.ProductFact;
-import com.active.services.cart.model.KVFactPair;
+import com.active.services.cart.model.FactKVPair;
 import com.active.services.product.Fee;
 
 import lombok.extern.slf4j.Slf4j;
@@ -147,13 +147,13 @@ public class ConditionalRateTestCase {
 
     @Test
     public void runRulesWithFact() {
-        List<KVFactPair> facts = new ArrayList<>();
-        facts.add(new KVFactPair("pricingDt", LocalDate.now()));
-        facts.add(new KVFactPair("pricingTime", LocalTime.now()));
-        facts.add(new KVFactPair("weekday", DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT, Locale.US)));
-        facts.add(new KVFactPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
-//        facts.add(new KVFactPair("residency", String.valueOf(ThreadLocalRandom.current().nextInt(1, 2) % 2 == 0)));
-        facts.add(new KVFactPair("residency", "true"));
+        List<FactKVPair> facts = new ArrayList<>();
+        facts.add(new FactKVPair("pricingDt", LocalDate.of(2019, 8, 20)));
+        facts.add(new FactKVPair("pricingTime", LocalTime.now()));
+        facts.add(new FactKVPair("weekday", DayOfWeek.MONDAY.getDisplayName(TextStyle.SHORT, Locale.US)));
+        facts.add(new FactKVPair("age", ThreadLocalRandom.current().nextLong(1, 100)));
+//        facts.add(new FactKVPair("residency", String.valueOf(ThreadLocalRandom.current().nextInt(1, 2) % 2 == 0)));
+        facts.add(new FactKVPair("residency", "true"));
 
         ProductFact fact = new ProductFact(facts);
         boolean fired = ruleEngine.runRules(RULES, fact);

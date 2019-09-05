@@ -1,0 +1,10 @@
+
+rule "Membership discount"
+    when
+        $fact: PurchaseFact(productType != MEMBERSHIP && hasMembershipDiscount, $fees: fees)
+        $fee: Fee((startDate == null || startDate <= $fact.pricingDt)
+            && (endDate == null || $fact.pricingDt < endDate)) from $fees
+    then
+        $fact.setResult($fee);
+        LOG.debug("Time based / single price rule executed");
+end
