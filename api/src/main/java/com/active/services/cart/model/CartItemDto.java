@@ -14,7 +14,7 @@ public class CartItemDto {
     private CartItemOption option;
     private BigDecimal priceOverride;
     private CartItemFacts cartItemFacts;
-    //?private Long agencyId;
+    private String agencyId;
 
     private List<CartItemFee> fees;
     private BigDecimal itemTotal;

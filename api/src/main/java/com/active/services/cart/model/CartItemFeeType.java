@@ -4,5 +4,7 @@ public enum CartItemFeeType {
     PRICE,
     PROCESSING_FLAT,
     PROCESSING_PERCENTAGE,
-    TAX
+    TAX,
+    SURCHARGE,
+    DISCOUNT
 }
