@@ -1,23 +1,49 @@
 package com.active.services.cart.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CartItemDto {
-    // a specific string to mark the cart item.
+    /**
+     * A specific string to mark the cart item.
+     */
+    @NotBlank
+    @Size(min = 1, max = 255, message = "must be 1-255 chars")
     private String identifier;
+
+    @NotNull
     private Long productId;
+
     private int quantity;
+
     private CartItemOption option;
-    // for pricing override
+
+    /**
+     * It can override the cartItem's price
+     */
     private BigDecimal priceOverride;
-    // it will take some dynamical properties
+
+    /**
+     * It will take some dynamical properties
+     */
     private CartItemFacts cartItemFacts;
-    // indicate parent-child relationships between cartItems
+
+    /**
+     * Indicate parent-child relationships between cartItems
+     */
     private String parentIdentifier;
 
 }
