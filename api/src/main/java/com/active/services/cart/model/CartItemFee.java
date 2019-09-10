@@ -1,15 +1,19 @@
 package com.active.services.cart.model;
 
-import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
-public class CartItemFee {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
+@Builder
+public class CartItemFee {
     private Long id;
     private String name;
+    private String description;
     private CartItemFeeType feeType;
     private FeeTransactionType transactionType;
     private BigDecimal unitPrice;

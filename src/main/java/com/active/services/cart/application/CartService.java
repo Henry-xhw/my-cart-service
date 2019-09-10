@@ -1,8 +1,10 @@
 package com.active.services.cart.application;
 
+import java.util.List;
+
 import com.active.services.cart.model.CartDto;
-import com.active.services.cart.model.CreateCartResp;
+import com.active.services.cart.model.CreateCartsResp;
 
 public interface CartService {
-    CreateCartResp createCart(CartDto cart);
+    CreateCartsResp createCarts(List<CartDto> carts);
 }

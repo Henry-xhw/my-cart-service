@@ -1,18 +1,19 @@
 package com.active.services.cart.web.rs;
 
-import com.active.services.cart.application.CartService;
-import com.active.services.cart.model.CreateCartRequest;
-import com.active.services.cart.model.CreateCartResp;
+import javax.validation.Valid;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import com.active.services.cart.application.CartService;
+import com.active.services.cart.model.CreateCartsReq;
+import com.active.services.cart.model.CreateCartsResp;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -22,8 +23,8 @@ import javax.validation.Valid;
 public class TransientCartController {
     private final CartService cartService;
 
-    @PostMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartResp create(@RequestBody @Valid CreateCartRequest request) {
+    @PostMapping(value = "/carts", consumes = "application/vnd.active.cart-service.v1+json")
+    public CreateCartsResp createCarts(@RequestBody @Valid CreateCartsReq request) {
         return null;
     }
 }

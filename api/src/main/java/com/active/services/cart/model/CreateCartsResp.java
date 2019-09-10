@@ -1,5 +1,7 @@
 package com.active.services.cart.model;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,6 +9,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CreateCartResp {
-    private CartDto cart;
+public class CreateCartsResp {
+    private List<CartResult> cartResults;
 }
