@@ -36,16 +36,35 @@ public class CreateCartsReq {
 ```java
 public class CartDto {
     
-    // a specific string to mark the cart
-    private String identifier;
-    private String currency;
-    @Valid
-    @NotEmpty
-    private List<CartItemDto> cartItemDtos;
-    // a organization identifier likes agencyId
-    private String orgIdentifier;
-    // a price date of the cart
-    private LocalDateTime priceDate;
+        /**
+         * A specific string to mark the cart
+         */
+        @NotBlank
+        @Size(min = 1, max = 255, message = "must be 1-255 chars")
+        private String identifier;
+    
+        /**
+         * The currency code used to represent a monetary values associated with the cart,
+         * all cart items under the cart should use the same currency code.
+         */
+        @NotBlank
+        @Length(min = 3, max = 3, message = "must be 3 chars")
+        private String currency;
+    
+        @Valid
+        @NotEmpty
+        private List<CartItemDto> cartItemDtos;
+    
+        /**
+         * A organization identifier, it can be a agencyId, and so on.
+         */
+        @NotBlank
+        private String orgIdentifier;
+    
+        /**
+         * A specific pricing date for the cart
+         */
+        private LocalDateTime priceDate;
 
 }
 ```
@@ -55,18 +74,34 @@ public class CartDto {
 ```java
 public class CartItemDto {
 
+        /**
+         * A specific string to mark the cart item.
+         */
+        @NotBlank
+        @Size(min = 1, max = 255, message = "must be 1-255 chars")
+        private String identifier;
     
-    // a specific string to mark the cart item.
-    private String identifier;
-    private Long productId;
-    private int quantity;
-    private CartItemOption option;
-    // for pricing override
-    private BigDecimal priceOverride;
-    // it will take some dynamical properties
-    private CartItemFacts cartItemFacts;
-    // indicate parent-child relationships between cartItems
-    private String parentIdentifier;
+        @NotNull
+        private Long productId;
+    
+        private int quantity;
+    
+        private CartItemOption option;
+    
+        /**
+         * It can override the cartItem's price
+         */
+        private BigDecimal priceOverride;
+    
+        /**
+         * It will take some dynamical properties
+         */
+        private CartItemFacts cartItemFacts;
+    
+        /**
+         * Indicate parent-child relationships between cartItems
+         */
+        private String parentIdentifier;
 
 }
 ```
