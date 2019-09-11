@@ -1,0 +1,12 @@
+===== Request using curl
+include::{snippets}/api-cart-createcarts-success/curl-request.adoc[]
+===== Request using HTTPie
+include::{snippets}/api-cart-createcarts-success/httpie-request.adoc[]
+===== HTTP request
+include::{snippets}/api-cart-createcarts-success/http-request.adoc[]
+===== Request body
+include::{snippets}/api-cart-createcarts-success/request-body.adoc[]
+===== HTTP response
+include::{snippets}/api-cart-createcarts-success/http-response.adoc[]
+===== Response body
+include::{snippets}/api-cart-createcarts-success/response-body.adoc[]

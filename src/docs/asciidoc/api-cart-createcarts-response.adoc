@@ -1,0 +1,150 @@
+
+=== *Response structure*
+
+==== CreateCartsResp
+
+This object is a wrapper of creating carts result, includes the cart result data (see cartItemResult) for each cartItem. +
+
+|===
+| Fields | Type | Comment
+
+| cartResults
+| List<CartResult>
+|
+
+|===
+
+
+==== CartResult
+
+|===
+| Fields | Type | Comment
+
+| identifier
+| String
+| A corresponding value of the field 'identifier' in request cartDto.
+
+| currency
+| String
+| A corresponding value of the field 'currency' in request cartDto.
+
+| cartItemResults
+| List<CartItemResult>
+| A list of CartItemResult
+
+| orgIdentifier
+| String
+| A corresponding value of the field 'orgIdentifier' in request cartDto.
+
+| priceDate
+| LocalDateTime
+| A corresponding value of the field 'priceDate' in request cartDto.
+
+| subtotal
+| BigDecimal
+| A subtotal of the cart
+
+| feeTotal
+| BigDecimal
+| A fee total of the cart
+
+| taxTotal
+| BigDecimal
+| A tax total of the cart
+
+|===
+
+
+==== CartItemResult
+
+|===
+| Fields | Type | Comment
+
+| identifier
+| String
+| A corresponding value of the field 'identifier' in request cartItemDto.
+
+| productId
+| Long
+| A corresponding value of the field 'productId' in request cartItemDto.
+
+| quantity
+| int
+| A corresponding value of the field 'quantity' in request cartItemDto.
+
+| option
+| CartItemOption
+| A corresponding value of the field 'option' in request cartItemDto.
+
+| priceOverride
+| BigDecimal
+| A corresponding value of the field 'priceOverride' in request cartItemDto.
+
+| cartItemFacts
+| CartItemFacts
+| A corresponding value of the field 'cartItemFacts' in request cartItemDto.
+
+| parentIdentifier
+| String
+| A corresponding value of the field 'parentIdentifier' in request cartItemDto.
+
+| cartItemFees
+| List<CartItemFee>
+| A list of CartItemFee, the cartItemFees indicate all kinds of fees generated when pricing a cartItem.
+
+| itemTotal
+| BigDecimal
+| A subtotal of the cart item.
+
+| feeTotal
+| BigDecimal
+| A fee total of the cart item.
+
+| taxTotal
+| BigDecimal
+| A tax total of the cart item.
+
+|===
+
+
+==== CartItemFee
+
+|===
+| Fields | Type | Comment
+
+| id
+| Long
+|
+
+| name
+| String
+|
+
+| description
+| String
+|
+
+| feeType
+| CartItemFeeType
+| Enum representing types of fees that can be applied to a cart item.  These types are used in conjunction with
+the FeeTransactionType for an cartItemFee to determine how the fee is applied.
+
+| unitPrice
+| BigDecimal
+| A unit price
+
+| units
+| Integer
+|
+
+| subtotal
+| BigDecimal
+| A subtotal of the cartItemFee
+
+| derivedFees
+| List<CartItemFee>
+|
+
+
+|===
+

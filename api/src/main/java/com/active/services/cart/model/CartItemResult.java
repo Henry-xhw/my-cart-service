@@ -19,7 +19,7 @@ public class CartItemResult {
     private BigDecimal priceOverride;
     private CartItemFacts cartItemFacts;
     private String parentIdentifier;
-    private List<CartItemFee> cartItemFeeList;
+    private List<CartItemFee> cartItemFees;
     private BigDecimal itemTotal;
     private BigDecimal feeTotal;
     private BigDecimal taxTotal;

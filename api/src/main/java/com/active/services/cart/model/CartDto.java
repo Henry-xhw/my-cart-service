@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +32,7 @@ public class CartDto {
      * all cart items under the cart should use the same currency code.
      */
     @NotBlank
-    @Length(min = 3, max = 3, message = "must be 3 chars")
+    @Size(min = 3, max = 3, message = "must be 3 chars")
     private String currency;
 
     @Valid

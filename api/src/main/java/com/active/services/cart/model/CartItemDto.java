@@ -42,7 +42,7 @@ public class CartItemDto {
     private CartItemFacts cartItemFacts;
 
     /**
-     * Indicate parent-child relationships between cartItems
+     * It can indicate parent-child relationships between two cartItems
      */
     private String parentIdentifier;
 

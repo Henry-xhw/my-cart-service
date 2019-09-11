@@ -1,0 +1,96 @@
+=== *Request structure*
+
+==== CreateCartsReq
+
+This object is a wrapper of creating carts request, includes the necessary data for creating carts.
+
+|===
+| Fields | Type | Comment | Validations
+
+| carts
+| List<CartDto>
+| A list of cartDto.
+| must not be empty. +
+can not contain null elements.
+
+|===
+
+
+==== CartDto
+
+|===
+| Fields | Type | Comment | Validations
+
+| identifier
+| String
+| A specific string to mark the cart.
+| must not be blank. +
+should be 1-255 chars.
+
+| currency
+| String
+| The currency code used to represent a monetary values associated with the cart, all cart items under the cart should use the same currency code. +
+| must not be blank. +
+should be 3 chars.
+
+| cartItemDtos
+| List<CartItemDto>
+| A list of CartItemDto
+| must not be empty. +
+can not contain null elements.
+
+| orgIdentifier
+| String
+| A organization identifier likes agencyId. +
+| must not be blank. +
+
+| priceDate
+| LocalDateTime
+| A specific pricing date for the cart
+| can not be null.
+
+|===
+
+==== CartItemDto
+
+|===
+| Fields | Type | Comment | Validations
+
+| identifier
+| String
+| A specific string to mark the cart item.
+| must not be blank. +
+should be 1-255 chars.
+
+| productId
+| Long
+| product id, a cart item is associated with a product. +
+| must not be null. +
+
+| quantity
+| int
+|
+|
+
+
+| option
+| CartItemOption
+| Some options associated with a cart item, likes bookingDurations, and so on. +
+|
+
+| priceOverride
+| BigDecimal
+| It can override the cart item's price
+|
+
+| cartItemFacts
+| CartItemFacts
+| It will take some dynamical properties
+|
+
+| parentIdentifier
+| String
+| It can indicate parent-child relationships between two cartItems
+|
+
+|===
