@@ -6,8 +6,10 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CartItemFee {
@@ -16,6 +18,7 @@ public class CartItemFee {
     private String description;
     private CartItemFeeType feeType;
     private FeeTransactionType transactionType;
+    private CartItemFeeOrigin cartItemFeeOrigin;
     private BigDecimal unitPrice;
     private Integer units;
     private BigDecimal subtotal;
