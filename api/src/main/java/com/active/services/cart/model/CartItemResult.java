@@ -17,11 +17,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CartItemResult {
 
-    /**
-     * A specific string to mark the cart
-     */
-    @NotBlank
-    @Size(min = 1, max = 255, message = "must be 1-255 chars")
     private String identifier;
     private String referenceId;
     private List<CartItemFee> cartItemFees;
