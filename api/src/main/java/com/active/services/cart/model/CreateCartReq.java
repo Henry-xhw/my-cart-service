@@ -1,9 +1,7 @@
 package com.active.services.cart.model;
 
-import java.util.List;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCartsReq {
+public class CreateCartReq {
     @Valid
-    @NotEmpty
-    private List<CartDto> carts;
+    @NotNull
+    private CartDto cart;
 }

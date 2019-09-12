@@ -18,7 +18,7 @@ public class CartItemFee {
     private String description;
     private CartItemFeeType feeType;
     private FeeTransactionType transactionType;
-    private CartItemFeeOrigin cartItemFeeOrigin;
+    private String cartItemFeeOrigin;
     private BigDecimal unitPrice;
     private Integer units;
     private BigDecimal subtotal;

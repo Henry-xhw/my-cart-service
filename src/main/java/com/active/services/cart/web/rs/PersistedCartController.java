@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.active.services.cart.application.CartService;
-import com.active.services.cart.model.CreateCartsReq;
-import com.active.services.cart.model.CreateCartsResp;
+import com.active.services.cart.model.CreateCartReq;
+import com.active.services.cart.model.CreateCartResp;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,27 +26,27 @@ public class PersistedCartController {
     private final CartService cartService;
 
     @PostMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartsResp create(@RequestBody @Valid CreateCartsReq request) {
+    public CreateCartResp create(@RequestBody @Valid CreateCartReq request) {
         return null;
     }
 
     @PutMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartsResp addItemToCart(@RequestBody @Valid CreateCartsReq request) {
+    public CreateCartResp addItemToCart(@RequestBody @Valid CreateCartReq request) {
         return null;
     }
 
     @PutMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartsResp applyDiscountToCart(@RequestBody @Valid CreateCartsReq request) {
+    public CreateCartResp applyDiscountToCart(@RequestBody @Valid CreateCartReq request) {
         return null;
     }
 
     @DeleteMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartsResp removeItemFromCart(@RequestBody @Valid CreateCartsReq request) {
+    public CreateCartResp removeItemFromCart(@RequestBody @Valid CreateCartReq request) {
         return null;
     }
 
     @DeleteMapping(value = "/", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartsResp deleteCart(@RequestBody @Valid CreateCartsReq request) {
+    public CreateCartResp deleteCart(@RequestBody @Valid CreateCartReq request) {
         return null;
     }
 }

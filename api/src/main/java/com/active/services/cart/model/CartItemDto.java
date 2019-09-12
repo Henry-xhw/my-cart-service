@@ -17,12 +17,24 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class CartItemDto {
+
     /**
-     * A specific string to mark the cart item.
+     * A specific string to mark the cart item
      */
     @NotBlank
     @Size(min = 1, max = 255, message = "must be 1-255 chars")
     private String identifier;
+
+    /**
+     * A reference id will link cart item and external system object
+     */
+    private String referenceId;
+
+    /**
+     * A organization identifier, it can be a agencyId, and so on.
+     */
+    @NotBlank
+    private String orgIdentifier;
 
     @NotNull
     private Long productId;
@@ -42,8 +54,8 @@ public class CartItemDto {
     private CartItemFacts cartItemFacts;
 
     /**
-     * It can indicate parent-child relationships between two cartItems in a cart
+     * It can indicate parent-child relationships
      */
-    private String parentIdentifier;
+    private List<CartItemDto> cartItemDtos;
 
 }

@@ -12,10 +12,9 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class CartResult {
-    private String identifier;
+    private String referenceId;
     private String currency;
     private List<CartItemResult> cartItemResults;
-    private String orgIdentifier;
     private LocalDateTime priceDate;
     private BigDecimal subtotal;
     private BigDecimal feeTotal;

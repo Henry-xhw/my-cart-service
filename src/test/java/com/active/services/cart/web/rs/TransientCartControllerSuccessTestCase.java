@@ -37,7 +37,7 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CartItemOption;
 import com.active.services.cart.model.CartItemResult;
 import com.active.services.cart.model.CartResult;
-import com.active.services.cart.model.CreateCartsReq;
+import com.active.services.cart.model.CreateCartReq;
 import com.active.services.cart.model.FactKVPair;
 import com.active.services.cart.model.FeeTransactionType;
 
@@ -71,9 +71,9 @@ public class TransientCartControllerSuccessTestCase {
         CartItemDto cartItemDto = buildCartItemDto();
         cartItemDtos.add(cartItemDto);
 
-        CartDto cartDto = CartDto.builder().identifier(UUID.randomUUID().toString()).currency("USD").cartItemDtos(cartItemDtos).orgIdentifier("3456").build();
+        CartDto cartDto = CartDto.builder().identifier(UUID.randomUUID().toString()).currency("USD").cartItemDtos(cartItemDtos).orgIdentifier("3456").priceDate(LocalDateTime.now()).build();
         carts.add(cartDto);
-        CreateCartsReq req = new CreateCartsReq(carts);
+        CreateCartReq req = new CreateCartReq(carts);
 
         List<CartResult> cartResults = new ArrayList<>();
         CartResult cartResult = buildCartResult(cartDto);
@@ -109,7 +109,7 @@ public class TransientCartControllerSuccessTestCase {
         cartItemOption.setBookingDurations(bookingDurations);
 
         CartItemDto cartItemDto =
-            CartItemDto.builder().identifier(UUID.randomUUID().toString()).productId(50L).quantity(2).priceOverride(new BigDecimal("50.00"))
+            CartItemDto.builder().identifier(UUID.randomUUID().toString()).productId(50L).quantity(2).option(cartItemOption).priceOverride(new BigDecimal("50.00"))
                 .cartItemFacts(cartItemFacts).build();
         return cartItemDto;
     }
@@ -137,6 +137,13 @@ public class TransientCartControllerSuccessTestCase {
         CartResult cartResult = CartResult.builder().identifier(cartDto.getIdentifier()).currency(cartDto.getCurrency())
             .orgIdentifier(cartDto.getOrgIdentifier()).priceDate(cartDto.getPriceDate()).build();
         return cartResult;
+    }
+
+    @Test
+    public void testLocalDateTime() {
+        LocalDateTime test = LocalDateTime.now();
+        String jsonStr = toJSONString(test);
+        System.out.println(jsonStr);
     }
 
 

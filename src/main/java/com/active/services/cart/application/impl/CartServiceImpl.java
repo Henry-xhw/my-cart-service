@@ -1,7 +1,5 @@
 package com.active.services.cart.application.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.active.services.cart.application.CartService;
@@ -21,7 +19,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepo;
 
     @Override
-    public List<CartResult> createCarts(List<CartDto> carts) {
+    public CartResult createCart(CartDto cartDto) {
         return null;
     }
 }
