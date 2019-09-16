@@ -12,7 +12,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class CartResult {
-    private String referenceId;
+    private String identifier;
     private String currency;
     private List<CartItemResult> cartItemResults;
     private LocalDateTime priceDate;

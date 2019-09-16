@@ -20,9 +20,11 @@ import lombok.NoArgsConstructor;
 public class CartDto {
 
     /**
-     * A reference id will link cart and external system object
+     * A specific string to mark the cart
      */
-    private String referenceId;
+    @NotBlank
+    @Size(min = 1, max = 255, message = "must be 1-255 chars")
+    private String identifier;
 
     /**
      * The currency code used to represent a monetary values associated with the cart,
@@ -32,8 +34,6 @@ public class CartDto {
     @Size(min = 3, max = 3, message = "must be 3 chars")
     private String currency;
 
-    @Valid
-    @NotEmpty
     private List<CartItemDto> cartItemDtos;
 
     /**

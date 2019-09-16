@@ -26,11 +26,6 @@ public class CartItemDto {
     private String identifier;
 
     /**
-     * A reference id will link cart item and external system object
-     */
-    private String referenceId;
-
-    /**
      * A organization identifier, it can be a agencyId, and so on.
      */
     @NotBlank
@@ -39,7 +34,7 @@ public class CartItemDto {
     @NotNull
     private Long productId;
 
-    private int quantity;
+    private Integer quantity;
 
     private CartItemOption option;
 

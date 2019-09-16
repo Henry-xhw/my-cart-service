@@ -3,17 +3,12 @@ package com.active.services.cart.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class CartItemFee {
-    private Long id;
+@Getter
+@Setter
+public class CartItemFeeResult {
     private String name;
     private String description;
     private CartItemFeeType feeType;
@@ -23,5 +18,5 @@ public class CartItemFee {
     private Integer units;
     private BigDecimal subtotal;
 
-    private List<CartItemFee> derivedFees;
+    private List<CartItemFeeResult> derivedFeeResults;
 }

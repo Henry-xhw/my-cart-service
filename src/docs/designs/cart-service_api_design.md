@@ -8,8 +8,8 @@
 
 ```java
 	
-    @PostMapping(value = "/carts", consumes = "application/vnd.active.cart-service.v1+json")
-    public CreateCartsResp createCarts(@RequestBody @Valid CreateCartsReq request) {
+    @PostMapping(value = "/cart", consumes = "application/vnd.active.cart-service.v1+json")
+    public CreateCartResp createCart(@RequestBody @Valid CreateCartReq request) {
         
         
     }
@@ -19,12 +19,12 @@
 
 ### Request
 
-##### CreateCartsReq
+##### CreateCartReq
 
 ```java
-public class CreateCartsReq {
+public class CreateCartReq {
     
-    private List<CartDto> carts;
+    private CartDto cart;
 }
 ```
 
@@ -37,34 +37,26 @@ public class CreateCartsReq {
 public class CartDto {
     
         /**
-         * A specific string to mark the cart
-         */
-        @NotBlank
-        @Size(min = 1, max = 255, message = "must be 1-255 chars")
-        private String identifier;
-    
-        /**
-         * The currency code used to represent a monetary values associated with the cart,
-         * all cart items under the cart should use the same currency code.
-         */
-        @NotBlank
-        @Length(min = 3, max = 3, message = "must be 3 chars")
-        private String currency;
-    
-        @Valid
-        @NotEmpty
-        private List<CartItemDto> cartItemDtos;
-    
-        /**
-         * A organization identifier, it can be a agencyId, and so on.
-         */
-        @NotBlank
-        private String orgIdentifier;
-    
-        /**
-         * A specific pricing date for the cart
-         */
-        private LocalDateTime priceDate;
+             * A specific string to mark the cart
+             */
+            @NotBlank
+            @Size(min = 1, max = 255, message = "must be 1-255 chars")
+            private String identifier;
+        
+            /**
+             * The currency code used to represent a monetary values associated with the cart,
+             * all cart items under the cart should use the same currency code.
+             */
+            @NotBlank
+            @Size(min = 3, max = 3, message = "must be 3 chars")
+            private String currency;
+        
+            private List<CartItemDto> cartItemDtos;
+        
+            /**
+             * A specific pricing date for the cart
+             */
+            private LocalDateTime priceDate;
 
 }
 ```
@@ -75,33 +67,39 @@ public class CartDto {
 public class CartItemDto {
 
         /**
-         * A specific string to mark the cart item.
-         */
-        @NotBlank
-        @Size(min = 1, max = 255, message = "must be 1-255 chars")
-        private String identifier;
-    
-        @NotNull
-        private Long productId;
-    
-        private int quantity;
-    
-        private CartItemOption option;
-    
-        /**
-         * It can override the cartItem's price
-         */
-        private BigDecimal priceOverride;
-    
-        /**
-         * It will take some dynamical properties
-         */
-        private CartItemFacts cartItemFacts;
-    
-        /**
-         * Indicate parent-child relationships between cartItems
-         */
-        private String parentIdentifier;
+             * A specific string to mark the cart item
+             */
+            @NotBlank
+            @Size(min = 1, max = 255, message = "must be 1-255 chars")
+            private String identifier;
+        
+            /**
+             * A organization identifier, it can be a agencyId, and so on.
+             */
+            @NotBlank
+            private String orgIdentifier;
+        
+            @NotNull
+            private Long productId;
+        
+            private Integer quantity;
+        
+            private CartItemOption option;
+        
+            /**
+             * It can override the cartItem's price
+             */
+            private BigDecimal priceOverride;
+        
+            /**
+             * It will take some dynamical properties
+             */
+            private CartItemFacts cartItemFacts;
+        
+            /**
+             * It can indicate parent-child relationships
+             */
+            private List<CartItemDto> cartItemDtos;
 
 }
 ```
@@ -153,15 +151,16 @@ public class FactKVPair {
 public class CartItemFee {
     
     private Long id;
-    private String name;
-    private String description;
-    private CartItemFeeType feeType;
-    private FeeTransactionType transactionType;
-    private BigDecimal unitPrice;
-    private Integer units;
-    private BigDecimal subtotal;
-
-    private List<CartItemFee> derivedFees;
+        private String name;
+        private String description;
+        private CartItemFeeType feeType;
+        private FeeTransactionType transactionType;
+        private String cartItemFeeOrigin;
+        private BigDecimal unitPrice;
+        private Integer units;
+        private BigDecimal subtotal;
+    
+        private List<CartItemFee> derivedFees;
 
 }
 ```
@@ -199,45 +198,16 @@ public enum FeeTransactionType {
 
 }
 ```
-##### CartItemFeeOrigin
-
-```java
-public class CartItemFeeOrigin {
-    
-    
-    ACL,
-
-    TIMING,
-
-    TIMING_CHIP,
-
-    TIMER,
-
-    VEB_PLAN,
-
-    VEB_PLAN_ADD_ON,
-
-    TAX_CONSUMER_ABSORBED,
-
-    TAX_AGENCY_ABSORBED,
-
-    TAX_ACTIVE_PRODUCT
-    
-
-}
-```
-
-
 
 ### Response
 
-##### CreateCartsResp
+##### CreateCartResp
 
 
 ```java
 public class CreateCartsResp {
     
-    private List<CartResult> cartResults;
+    private CartResult cartResult;
 }
 
 ```
@@ -248,13 +218,12 @@ public class CreateCartsResp {
 public class CartResult {
     
     private String identifier;
-    private String currency;
-    private List<CartItemResult> cartItemResults;
-    private String orgIdentifier;
-    private LocalDateTime priceDate;
-    private BigDecimal subtotal;
-    private BigDecimal feeTotal;
-    private BigDecimal taxTotal;
+        private String currency;
+        private List<CartItemResult> cartItemResults;
+        private LocalDateTime priceDate;
+        private BigDecimal subtotal;
+        private BigDecimal feeTotal;
+        private BigDecimal taxTotal;
 
 }
 ```
@@ -265,16 +234,134 @@ public class CartResult {
 public class CartItemResult {
 
     private String identifier;
-    private Long productId;
-    private int quantity;
-    private CartItemOption option;
-    private BigDecimal priceOverride;
-    private CartItemFacts cartItemFacts;
-    private String parentIdentifier;
-    private List<CartItemFee> cartItemFeeList;
-    private BigDecimal itemTotal;
-    private BigDecimal feeTotal;
-    private BigDecimal taxTotal;
+        private List<CartItemFeeResult> cartItemFeeResults;
+        private List<CartItemResult> cartItemResults;
+        private BigDecimal itemTotal;
+        private BigDecimal feeTotal;
+        private BigDecimal taxTotal;
 
+}
+```
+
+
+#### REST API definition
+
+```java
+	
+    @GetMapping(value = "/cart", consumes = "application/vnd.active.cart-service.v1+json")
+        public GetCartResp getCart(@RequestBody @Valid GetCartReq request) {
+            return null;
+        }
+```
+
+### Request
+
+##### GetCartReq
+
+```java
+public class GetCartReq {
+    private String identifier;
+}
+```
+
+### Request
+
+##### GetCartResp
+
+```java
+public class GetCartResp {
+    private CartResult cartResult;
+}
+```
+
+
+#### REST API definition
+
+```java
+	
+@PutMapping(value = "/cart", consumes = "application/vnd.active.cart-service.v1+json")
+    public AddItemToCartResp addItemToCart(@RequestBody @Valid AddItemToCartReq request) {
+        return null;
+    }
+```
+
+### Request
+
+##### AddItemToCartReq
+
+```java
+public class AddItemToCartReq {
+    private String cartIdentifier;
+    private CartItemDto cartItemDto;
+}
+```
+
+### Response
+
+##### AddItemToCartResp
+
+```java
+public class AddItemToCartResp {
+    private CartResult cartResult;
+}
+```
+
+#### REST API definition
+
+```java
+	
+@DeleteMapping(value = "/cart", consumes = "application/vnd.active.cart-service.v1+json")
+    public RemoveItemFromCartResp removeItemFromCart(@RequestBody @Valid RemoveItemFromCartReq request) {
+        return null;
+    }
+```
+
+### Request
+
+##### RemoveItemFromCartReq
+
+```java
+public class RemoveItemFromCartReq {
+    private String cartIdentifier;
+    private String cartItemIdentifier;
+}
+```
+
+### Response
+
+##### RemoveItemFromCartResp
+
+```java
+public class RemoveItemFromCartResp {
+    private CartResult cartResult;
+}
+```
+#### REST API definition
+
+```java
+	
+@DeleteMapping(value = "/cart", consumes = "application/vnd.active.cart-service.v1+json")
+    public DeleteCartResp deleteCart(@RequestBody @Valid DeleteCartReq request) {
+        return null;
+    }
+```
+
+### Request
+
+##### DeleteCartReq
+
+```java
+public class DeleteCartReq {
+    private String cartIdentifier;
+}
+```
+
+### Response
+
+##### DeleteCartResp
+
+```java
+public class DeleteCartResp {
+    private CartResult cartResult;
 }
 ```

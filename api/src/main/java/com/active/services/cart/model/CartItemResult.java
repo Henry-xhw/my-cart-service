@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 public class CartItemResult {
 
     private String identifier;
-    private String referenceId;
-    private List<CartItemFee> cartItemFees;
+    private List<CartItemFeeResult> cartItemFeeResults;
+    private List<CartItemResult> cartItemResults;
     private BigDecimal itemTotal;
     private BigDecimal feeTotal;
     private BigDecimal taxTotal;
