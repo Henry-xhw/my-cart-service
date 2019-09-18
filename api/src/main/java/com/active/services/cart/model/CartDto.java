@@ -17,12 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CartDto {
 
-    /**
-     * A specific string to mark the cart
-     */
-    @NotBlank
-    @Size(min = 1, max = 255, message = "must be 1-255 chars")
-    private String identifier;
+    private String referenceId;
 
     /**
      * The currency code used to represent a monetary values associated with the cart,

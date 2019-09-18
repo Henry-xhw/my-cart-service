@@ -18,12 +18,7 @@ import javax.validation.constraints.Size;
 @Builder
 public class CartItemDto {
 
-    /**
-     * A specific string to mark the cart item
-     */
-    @NotBlank
-    @Size(min = 1, max = 255, message = "must be 1-255 chars")
-    private String identifier;
+    private String referenceId;
 
     /**
      * A organization identifier, it can be a agencyId, and so on.
