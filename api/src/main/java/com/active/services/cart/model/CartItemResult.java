@@ -20,6 +20,7 @@ public class CartItemResult {
     private String identifier;
     private List<CartItemFeeResult> cartItemFeeResults;
     private List<CartItemResult> cartItemResults;
+    private boolean paymentOptionAvailable;
     private BigDecimal itemTotal;
     private BigDecimal feeTotal;
     private BigDecimal taxTotal;
