@@ -7,13 +7,13 @@ REMOTE_DOC_PATH='/opt/active/docs/oms/cart-service'
 
 echo 'Making dir if not exist'
 echo "Current version is ${CURRENT_VERSION}"
-ssh ${REMOTE_SERVER} "[ -d ${REMOTE_DOC_PATH}/${CURRENT_VERSION} ] && echo ok || mkdir -p ${REMOTE_DOC_PATH}/${CURRENT_VERSION}"
+ssh -o StrictHostKeyChecking=no ${REMOTE_SERVER} "[ -d ${REMOTE_DOC_PATH}/${CURRENT_VERSION} ] && echo ok || mkdir -p ${REMOTE_DOC_PATH}/${CURRENT_VERSION}"
 echo 'Making dir done'
 
 echo 'Publishing API doc'
-uploadDocCmd="scp -r ${LOCAL_DOC_PATH}/* ${REMOTE_SERVER}:${REMOTE_DOC_PATH}/${CURRENT_VERSION}"
+uploadDocCmd="scp -o StrictHostKeyChecking=no -r ${LOCAL_DOC_PATH}/* ${REMOTE_SERVER}:${REMOTE_DOC_PATH}/${CURRENT_VERSION}"
 #upload the files to doc server:path
-#e.g. rsync -avz -e ssh build/asciidoc/html5/* sharedoc@share-apidocs.activenetwork.com:/opt/active/docs/oms/cart-service/0.0.1-SNAPSHOT
+#e.g. rsync -avz -e ssh build/asciidoc/html5/* sshuai@share-apidocs.activenetwork.com:/opt/active/docs/fbi/tax-service/0.0.9-SNAPSHOT
 ${uploadDocCmd}
 
 #change the remote latest.html to load the index.html in the latest version folder
