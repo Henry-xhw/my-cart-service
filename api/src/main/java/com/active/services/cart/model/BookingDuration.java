@@ -1,13 +1,15 @@
 package com.active.services.cart.model;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDateTime;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingDuration {
-    private final LocalDateTime from;
-    private final LocalDateTime to;
+    private LocalDateTime from;
+    private LocalDateTime to;
 }

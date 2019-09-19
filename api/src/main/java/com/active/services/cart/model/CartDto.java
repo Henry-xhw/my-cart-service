@@ -1,25 +1,36 @@
 package com.active.services.cart.model;
 
-import lombok.Data;
-
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
-@Data
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartDto {
-    private Long id;
-    private String identifier;
-    private String currency;
-    @Valid
-    @NotEmpty
-    private List<CartItemDto> cartItemDtos;
-    //?private Long agencyId;
-    //?private String orgIdentifier;
 
-    private BigDecimal subtotal;
-    private BigDecimal feeTotal;
-    private BigDecimal taxTotal;
+    private String referenceId;
+
+    /**
+     * The currency code used to represent a monetary values associated with the cart,
+     * all cart items under the cart should use the same currency code.
+     */
+    @NotBlank
+    @Size(min = 3, max = 3, message = "must be 3 chars")
+    private String currency;
+
+    private List<CartItemDto> cartItemDtos;
+
+    /**
+     * A specific pricing date for the cart
+     */
+    private LocalDateTime priceDate;
 }

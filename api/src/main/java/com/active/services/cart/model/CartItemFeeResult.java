@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CartItemFee {
-    private Long id;
+public class CartItemFeeResult {
     private String name;
     private String description;
     private CartItemFeeType feeType;
@@ -23,5 +22,5 @@ public class CartItemFee {
     private Integer units;
     private BigDecimal subtotal;
 
-    private List<CartItemFee> derivedFees;
+    private List<CartItemFeeResult> derivedFeeResults;
 }

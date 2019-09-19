@@ -1,32 +1,51 @@
 package com.active.services.cart.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CartItemDto {
-    private Long id;
+
+    private String referenceId;
+
+    /**
+     * A organization identifier, it can be a agencyId, and so on.
+     */
+    @NotBlank
+    private String orgIdentifier;
+
+    @NotNull
     private Long productId;
-    private int quantity;
+
+    private Integer quantity;
+
     private CartItemOption option;
+
+    /**
+     * It can override the cartItem's price
+     */
     private BigDecimal priceOverride;
+
+    /**
+     * It will take some dynamical properties
+     */
     private CartItemFacts cartItemFacts;
-    private String agencyId;
 
-    private List<CartItemFee> fees;
-    private BigDecimal itemTotal;
-    private BigDecimal feeTotal;
-    private BigDecimal taxTotal;
+    /**
+     * It can indicate parent-child relationships
+     */
+    private List<CartItemDto> cartItemDtos;
 
-    @Builder
-    public CartItemDto(Long productId, int quantity, CartItemOption option, BigDecimal overridePrice, CartItemFacts facts) {
-        this.productId = productId;
-        this.quantity = quantity;
-        this.option = option;
-        this.priceOverride = overridePrice;
-        this.cartItemFacts = facts;
-    }
 }

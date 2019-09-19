@@ -1,0 +1,15 @@
+=== *Error example*
+Calling API 'createCarts' with an invalid request, the validation can not pass, returning *400 Bad Request* and the error messages.
+
+==== Request using curl:
+include::{snippets}/api-cart-createcarts-error/curl-request.adoc[]
+==== Request using HTTPie:
+include::{snippets}/api-cart-createcarts-error/httpie-request.adoc[]
+==== HTTP request:
+include::{snippets}/api-cart-createcarts-error/http-request.adoc[]
+==== Request body:
+include::{snippets}/api-cart-createcarts-error/request-body.adoc[]
+==== HTTP response:
+include::{snippets}/api-cart-createcarts-error/http-response.adoc[]
+==== Response body:
+include::{snippets}/api-cart-createcarts-error/response-body.adoc[]
