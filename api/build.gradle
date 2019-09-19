@@ -1,5 +1,6 @@
 dependencies {
     implementation 'javax.validation:validation-api'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.9'
     
     testImplementation 'org.hibernate.validator:hibernate-validator'
     testImplementation 'junit:junit'
