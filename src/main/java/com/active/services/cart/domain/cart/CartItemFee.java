@@ -1,7 +1,10 @@
-package com.active.services.cart.model;
+package com.active.services.cart.domain.cart;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.FeeTransactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CartItemFeeResult {
+public class CartItemFee {
+    private Long id;
     private String name;
     private String description;
     private CartItemFeeType feeType;
@@ -22,5 +26,5 @@ public class CartItemFeeResult {
     private Integer units;
     private BigDecimal subtotal;
 
-    private List<CartItemFeeResult> derivedFeeResults;
+    private List<CartItemFee> derivedFees;
 }

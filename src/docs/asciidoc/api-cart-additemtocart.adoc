@@ -1,0 +1,7 @@
+== */api/carts/{identifier}*
+Add a cart item to cart.
+
+include::api-cart-additemtocart-request.adoc[]
+include::api-cart-additemtocart-response.adoc[]
+//include::api-cart-success.adoc[]
+//include::api-cart-error.adoc[]

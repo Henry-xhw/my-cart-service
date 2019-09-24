@@ -1,0 +1,16 @@
+==== BookingDuration
+The bookingDuration is datetime range, it contains start and end.
+|===
+| Fields | Type | Comment | Validations
+
+| from
+| LocalDateTime
+| It means start datetime.
+|
+
+| to
+| LocalDateTime
+| It means end datetime.
+|
+
+|===

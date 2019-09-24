@@ -1,0 +1,43 @@
+==== CartResult
+A cart result will be returned after pricing, it contains identifier, a list of cart item result, and so on.
+|===
+| Fields | Type | Comment | Validations
+
+| identifier
+| UUID
+| The field will identify a cart dto.
+|
+
+
+| currency
+| String
+|
+|
+
+
+| cartItemResults
+| List<CartItemResult>
+| A list of cartItemResult
+|
+
+| priceDate
+| LocalDateTime
+| A specific pricing date for the cart
+|
+
+| subtotal
+| BigDecimal
+|
+|
+
+| feeTotal
+| BigDecimal
+|
+|
+
+| taxTotal
+| BigDecimal
+|
+|
+
+|===

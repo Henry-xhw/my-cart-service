@@ -1,0 +1,8 @@
+== */api/carts/{identifier}*
+Get a cart by identifier.
+
+
+include::api-cart-getcart-request.adoc[]
+include::api-cart-getcart-response.adoc[]
+//include::api-cart-success.adoc[]
+//include::api-cart-error.adoc[]

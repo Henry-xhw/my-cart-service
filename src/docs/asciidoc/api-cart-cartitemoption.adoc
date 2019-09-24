@@ -1,0 +1,12 @@
+==== CartItemOption
+The cartItemOption is a property of cartItemDto, it can be collected when pricing a cart item.
+|===
+| Fields | Type | Comment | Validations
+
+| bookingDurations
+| List<BookingDuration>
+| A list of bookingDuration
+|
+
+
+|===

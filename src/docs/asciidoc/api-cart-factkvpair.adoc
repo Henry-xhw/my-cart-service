@@ -1,0 +1,17 @@
+==== FactKVPair
+The factKVPair is a k/v pair, it can take the dynamical property when pricing a cart item.
+|===
+| Fields | Type | Comment | Validations
+
+| key
+| String
+|
+|
+
+| value
+| Object
+|
+|
+
+
+|===

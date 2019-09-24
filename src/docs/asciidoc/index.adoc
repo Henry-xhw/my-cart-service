@@ -22,4 +22,9 @@ include::http-statuses.adoc[]
 
 [APIs]
 = *APIs*
-include::api-cart-createcarts.adoc[]
+include::api-cart-createcart.adoc[]
+include::api-cart-getcart.adoc[]
+include::api-cart-additemtocart.adoc[]
+//include::api-cart-removeitemfromcart.adoc[]
+//include::api-cart-updatequantity.adoc[]
+//include::api-cart-applydiscounttocart.adoc[]

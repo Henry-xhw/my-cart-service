@@ -1,0 +1,43 @@
+==== CartItemResult
+A cart item result will be returned after pricing, it contains identifier, a list of cart item fee result, and so on.
+|===
+| Fields | Type | Comment | Validations
+
+| identifier
+| UUID
+| The field will identify a cart item dto.
+|
+
+
+| cartItemFeeResults
+| List<CartItemFeeResult>
+|
+|
+
+
+| cartItemResults
+| List<CartItemResult>
+| The field will indicate parent-child relationships
+|
+
+| paymentOptionAvailable
+| boolean
+| A flag indicates whether the payment option is available.
+|
+
+| itemTotal
+| BigDecimal
+|
+|
+
+| feeTotal
+| BigDecimal
+|
+|
+
+| taxTotal
+| BigDecimal
+|
+|
+
+|===

@@ -1,0 +1,12 @@
+==== CartItemFact
+The cartItemFact is a property of cart item, it can be collected when pricing a cart item.
+|===
+| Fields | Type | Comment | Validations
+
+| factKVPairs
+| List<FactKVPair>
+| A list of factKVPair.
+|
+
+
+|===
