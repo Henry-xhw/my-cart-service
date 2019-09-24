@@ -15,6 +15,7 @@ import lombok.Data;
 public class CartResultDto {
     private UUID identifier;
     private String currency;
+    private String referenceId;
     private List<CartItemResultDto> cartItemResults;
     private LocalDateTime priceDate;
     private BigDecimal subtotal;
