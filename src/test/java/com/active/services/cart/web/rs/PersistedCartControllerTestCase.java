@@ -1,9 +1,11 @@
 package com.active.services.cart.web.rs;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -63,7 +65,6 @@ public class PersistedCartControllerTestCase {
     }
 
     @Test
-    @Ignore
     public void createCart() throws Exception {
         CartDto cart = new CartDto();
         List<CartItemDto> items = new ArrayList<>();
@@ -80,15 +81,14 @@ public class PersistedCartControllerTestCase {
         itemResults.add(itemResult);
         cartResult.setCartItemResults(itemResults);
 
-        Mockito.doReturn(cartResult).when(cartService).createCart(cart);
+        Mockito.doReturn(cartResult).when(cartService).createCart(any());
         this.mockMvc.perform(post("/api/carts")
             .contentType(CONTENT_TYPE).content(JacksonUtils.writeValueAsString(cart)))
-            .andExpect(status().isOk()).andReturn();
+            .andExpect(status().isOk()).andExpect(jsonPath("$.referenceId").value("reference-id"));
 
     }
 
     @Test
-    @Ignore
     public void testCartItemFactsSerialize() {
         CartItemFacts facts = new CartItemFacts();
         List<FactKVPair> factKVPairs = new ArrayList<>();
@@ -133,7 +133,7 @@ public class PersistedCartControllerTestCase {
     }
 
     private CartItemResultDto buildCartItemResult(CartItemDto cartItemDto) {
-        CartItemResultDto cartItemResult = CartItemResultDto.builder().identifier(UUID.randomUUID()).paymentOptionAvailable(false).build();
+        CartItemResultDto cartItemResult = CartItemResultDto.builder().identifier(UUID.randomUUID()).referenceId(cartItemDto.getReferenceId()).paymentOptionAvailable(false).build();
 
         List<CartItemFeeResultDto> cartItemFeeResults = new ArrayList<>();
         CartItemFee cartItemFee = CartItemFee.builder().id(RandomUtils.nextLong()).name("product processing fee").description("product processing fee")
@@ -153,7 +153,7 @@ public class PersistedCartControllerTestCase {
     }
 
     private CartResultDto buildCartResult(CartDto cartDto) {
-        CartResultDto cartResult = CartResultDto.builder().identifier(UUID.randomUUID()).currency(cartDto.getCurrency())
+        CartResultDto cartResult = CartResultDto.builder().identifier(UUID.randomUUID()).referenceId(cartDto.getReferenceId()).currency(cartDto.getCurrency())
             .priceDate(cartDto.getPriceDate()).build();
         cartResult.setSubtotal(new BigDecimal("200.00"));
         cartResult.setFeeTotal(new BigDecimal("200.00"));
