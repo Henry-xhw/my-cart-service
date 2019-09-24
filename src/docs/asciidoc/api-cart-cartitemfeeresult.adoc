@@ -1,0 +1,53 @@
+==== CartItemFeeResult
+A cart item fee result will be returned after pricing, it contains fee's fee type, fee's unit price, and so on.
+|===
+| Fields | Type | Comment | Validations
+
+| name
+| String
+|
+|
+
+
+| description
+| String
+|
+|
+
+
+| feeType
+| CartItemFeeType
+|
+|
+
+| transactionType
+| FeeTransactionType
+|
+|
+
+| cartItemFeeOrigin
+| String
+|
+|
+
+| unitPrice
+| BigDecimal
+|
+|
+
+| units
+| Integer
+|
+|
+
+| subtotal
+| BigDecimal
+|
+|
+
+| derivedFeeResults
+| List<CartItemFeeResult>
+|
+|
+
+|===

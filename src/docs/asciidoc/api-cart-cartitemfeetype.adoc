@@ -1,0 +1,39 @@
+==== CartItemFeeType
+A enum contains all types for a cart item fee.
+|===
+| Fields | Type | Comment | Validations
+
+| PRICE
+| CartItemFeeType
+|
+|
+
+
+| PROCESSING_FLAT
+| CartItemFeeType
+|
+|
+
+
+| PROCESSING_PERCENTAGE
+| CartItemFeeType
+|
+|
+
+| TAX
+| CartItemFeeType
+|
+|
+
+| SURCHARGE
+| CartItemFeeType
+|
+|
+
+| DISCOUNT
+| CartItemFeeType
+|
+|
+
+
+|===

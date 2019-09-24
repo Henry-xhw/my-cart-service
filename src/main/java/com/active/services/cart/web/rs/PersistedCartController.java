@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.active.services.cart.application.CartService;
 import com.active.services.cart.model.CartDto;
 import com.active.services.cart.model.CartItemDto;
-import com.active.services.cart.model.CartResult;
+import com.active.services.cart.model.CartResultDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,32 +29,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor public class PersistedCartController {
     private final CartService cartService;
 
-    @GetMapping(value = "/carts/{identifier}") public CartResult getCart(@PathVariable UUID identifier) {
+    @GetMapping(value = "/carts/{identifier}") public CartResultDto getCart(@PathVariable UUID identifier) {
         return null;
     }
 
-    @PostMapping(value = "/carts") public CartResult createCart(@RequestBody @Valid CartDto cart) {
-        return null;
+    @PostMapping(value = "/carts") public CartResultDto createCart(@RequestBody @Valid CartDto cart) {
+        return cartService.createCart(cart);
     }
 
     @PutMapping(value = "/carts/{identifier}")
-    public CartResult addItemToCart(@PathVariable UUID identifier, @RequestBody @Valid CartItemDto item) {
+    public CartResultDto addItemToCart(@PathVariable UUID identifier, @RequestBody @Valid CartItemDto item) {
         return null;
     }
 
     @PutMapping(value = "/carts/{identifier}/discount")
-    public CartResult applyDiscountToCart(@PathVariable UUID identifier, @RequestBody List<String> coupons) {
+    public CartResultDto applyDiscountToCart(@PathVariable UUID identifier, @RequestBody List<String> coupons) {
         return null;
     }
 
     @PatchMapping(value = "/carts/{identifier}/{itemIdentifier}/{quantity}")
-    public CartResult updateQuantity(@PathVariable UUID identifier, @PathVariable UUID itemIdentifier,
+    public CartResultDto updateQuantity(@PathVariable UUID identifier, @PathVariable UUID itemIdentifier,
         @PathVariable Integer quantity) {
         return null;
     }
 
     @DeleteMapping(value = "/carts/{identifier}/{itemIdentifier}")
-    public CartResult removeItemFromCart(@PathVariable UUID identifier, @PathVariable UUID itemIdentifier) {
+    public CartResultDto removeItemFromCart(@PathVariable UUID identifier, @PathVariable UUID itemIdentifier) {
         return null;
     }
 

@@ -1,0 +1,9 @@
+=== *Response structure*
+
+Return a cart result, it contains identifier, a list of cart item result, and so on.
+
+include::api-cart-cartresult.adoc[]
+include::api-cart-cartitemresult.adoc[]
+include::api-cart-cartitemfeeresult.adoc[]
+include::api-cart-cartitemfeetype.adoc[]
+include::api-cart-feetransactiontype.adoc[]

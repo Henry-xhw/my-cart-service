@@ -1,0 +1,41 @@
+==== CartItemDto
+This object is a wrapper of cart item, includes the necessary data for pricing.
+|===
+| Fields | Type | Comment | Validations
+
+| referenceId
+| String
+| The field can take anything of caller.
+|
+
+| orgIdentifier
+| String
+| A organization identifier, it can be a agencyId, and so on. +
+| must not be blank. +
+
+| productId
+| Long
+|
+|
+
+| option
+| CartItemOption
+| Some options for a cart item, these options can be collected when pricing a cart item.
+|
+
+| priceOverride
+| BigDecimal
+| It can override the cart item's price
+|
+
+| cartItemFacts
+| CartItemFacts
+| It can take some dynamical properties
+|
+
+| cartItemDtos
+| List<CartItemDto>
+| It can indicate parent-child relationships
+|
+
+|===

@@ -1,0 +1,22 @@
+=== *Request structure*
+
+|===
+| Fields | Type | Comment | Validations
+
+| identifier
+| UUID
+| A identifier of cart
+|
+
+| item
+| CartItemDto
+|
+|
+
+|===
+
+include::api-cart-cartitemdto.adoc[]
+include::api-cart-cartitemoption.adoc[]
+include::api-cart-bookingduration.adoc[]
+include::api-cart-cartitemfact.adoc[]
+include::api-cart-factkvpair.adoc[]

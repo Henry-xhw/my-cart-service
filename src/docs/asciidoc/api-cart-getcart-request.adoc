@@ -1,0 +1,14 @@
+=== *Request structure*
+
+A identifier of cart.
+
+|===
+| Fields | Type | Comment | Validations
+
+| identifier
+| UUID
+| A identifier of cart.
+|
+
+
+|===

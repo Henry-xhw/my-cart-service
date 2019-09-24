@@ -1,0 +1,18 @@
+==== FeeTransactionType
+A enum contains all types for transaction.
+|===
+| Fields | Type | Comment | Validations
+
+| CREDIT
+| FeeTransactionType
+|
+|
+
+
+| DEBIT
+| FeeTransactionType
+|
+|
+
+
+|===
