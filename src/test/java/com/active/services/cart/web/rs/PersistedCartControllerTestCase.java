@@ -127,7 +127,7 @@ public class PersistedCartControllerTestCase {
         cartItemOption.setBookingDurations(bookingDurations);
 
         CartItemDto cartItemDto =
-            CartItemDto.builder().referenceId("reference-id").orgIdentifier("agency-id").productId(50L).quantity(2).option(cartItemOption).priceOverride(new BigDecimal("50.00"))
+            CartItemDto.builder().referenceId("reference-id").orgIdentifier("agency-id").productId(50L).quantity(2).bookingDurations(bookingDurations).priceOverride(new BigDecimal("50.00"))
                 .cartItemFacts(cartItemFacts).build();
         return cartItemDto;
     }
