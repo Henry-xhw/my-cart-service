@@ -2,9 +2,9 @@ package com.active.services.cart.application.impl;
 
 import com.active.services.cart.application.CartService;
 import com.active.services.cart.application.RuleEngine;
+import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartDto;
-import com.active.services.cart.model.CartResultDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepo;
 
     @Override
-    public CartResultDto createCart(CartDto cartDto) {
+    public Cart createCart(CartDto cartDto) {
         return null;
     }
 }

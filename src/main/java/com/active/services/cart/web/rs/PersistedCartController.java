@@ -38,7 +38,7 @@ public class PersistedCartController {
 
     @PostMapping(value = "/carts")
     public CartResultDto createCart(@RequestBody @Valid CartDto cart) {
-        return cartService.createCart(cart);
+        return null;
     }
 
     @PutMapping(value = "/carts/{identifier}")
