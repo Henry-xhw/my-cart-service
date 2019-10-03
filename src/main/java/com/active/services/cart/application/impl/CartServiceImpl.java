@@ -1,7 +1,6 @@
 package com.active.services.cart.application.impl;
 
 import com.active.services.cart.application.CartService;
-import com.active.services.cart.application.RuleEngine;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.infrastructure.repository.CartRepository;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
@@ -14,12 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
-    private final RuleEngine ruleEngine;
     private final CartRepository cartRepo;
     private final ProductRepository productRepo;
 
     @Override
     public Cart createCart(Cart cart) {
-        return null;
+        return cartRepo.save(cart);
     }
 }
