@@ -5,7 +5,6 @@ import com.active.services.cart.application.RuleEngine;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.infrastructure.repository.CartRepository;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
-import com.active.services.cart.model.CartDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepo;
 
     @Override
-    public Cart createCart(CartDto cartDto) {
+    public Cart createCart(Cart cart) {
         return null;
     }
 }
