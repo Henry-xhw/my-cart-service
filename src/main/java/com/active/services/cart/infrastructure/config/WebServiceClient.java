@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class WebServiceClient {
-    @Value("${endpoint.soap.product.service.managementService}")
+    @Value("${services.product}")
     private String productSvcUrl;
-    @Value("${endpoint.soap.order.service.managementService}")
+    @Value("${services.order}")
     private String orderSvcUrl;
 
     @Bean
