@@ -25,8 +25,13 @@ public class CheckoutController {
         return null;
     }
 
+    @GetMapping(value = "/payment-options/{cartId}")
+    public CartResultDto getCartPaymentOptions(@PathVariable UUID cartId) {
+        return null;
+    }
+
     @GetMapping(value = "/payment-options/{cartId}/item/{cartItemId}")
-    public CartResultDto getPaymentCartItemOptions(@PathVariable UUID cartId, @PathVariable UUID cartItemId) {
+    public CartResultDto getCartItemPaymentOptions(@PathVariable UUID cartId, @PathVariable UUID cartItemId) {
         return null;
     }
 }
