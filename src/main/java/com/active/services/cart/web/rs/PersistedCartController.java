@@ -25,39 +25,39 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = "application/vnd.active.cart-service.v1+json")
+@RequestMapping(path = "/api/carts", produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = "application/vnd.active.cart-service-cart.v1+json")
 @RequiredArgsConstructor
 public class PersistedCartController {
     private final CartService cartService;
 
-    @GetMapping(value = "/carts/{identifier}")
+    @GetMapping(value = "/{identifier}")
     public CartResultDto getCart(@PathVariable UUID identifier) {
         return null;
     }
 
-    @PostMapping(value = "/carts")
+    @PostMapping
     public CartResultDto createCart(@RequestBody @Valid CartDto cart) {
         return null;
     }
 
-    @PutMapping(value = "/carts/{identifier}")
+    @PutMapping(value = "/{identifier}")
     public CartResultDto addItemToCart(@PathVariable UUID identifier, @RequestBody @Valid CartItemDto item) {
         return null;
     }
 
-    @PutMapping(value = "/carts/{identifier}/discount")
+    @PutMapping(value = "/{identifier}/discount")
     public CartResultDto applyDiscountToCart(@PathVariable UUID identifier, @RequestBody List<String> coupons) {
         return null;
     }
 
-    @PatchMapping(value = "/carts/{identifier}/{itemIdentifier}/{quantity}")
+    @PatchMapping(value = "/{identifier}/{itemIdentifier}/{quantity}")
     public CartResultDto updateQuantity(@PathVariable UUID identifier, @PathVariable UUID itemIdentifier,
         @PathVariable Integer quantity) {
         return null;
     }
 
-    @DeleteMapping(value = "/carts/{identifier}/{itemIdentifier}")
+    @DeleteMapping(value = "/{identifier}/{itemIdentifier}")
     public CartResultDto removeItemFromCart(@PathVariable UUID identifier, @PathVariable UUID itemIdentifier) {
         return null;
     }
