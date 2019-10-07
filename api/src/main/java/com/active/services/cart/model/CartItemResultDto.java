@@ -14,9 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class CartItemResultDto {
-
     private UUID identifier;
     private String referenceId;
+    private String description;
     private List<CartItemFeeResultDto> cartItemFeeResults;
     private List<CartItemResultDto> cartItemResults;
     private boolean paymentOptionAvailable;
