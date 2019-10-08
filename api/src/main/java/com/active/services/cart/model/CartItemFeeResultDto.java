@@ -20,7 +20,6 @@ public class CartItemFeeResultDto {
     private String cartItemFeeOrigin;
     private BigDecimal unitPrice;
     private Integer units;
-    private BookingDuration duration;
     private BigDecimal subtotal;
 
     private List<CartItemFeeResultDto> derivedFeeResults;
