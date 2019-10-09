@@ -1,6 +1,9 @@
 package com.active.services.cart.domain.cart;
 
+import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.model.BookingDuration;
+import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.FeeTransactionType;
 
 import lombok.Getter;
 
@@ -21,4 +24,19 @@ public class CartItem {
     private BigDecimal priceOverride;
     private List<CartItemFee> cartItemFees;
     private List<CartItem> cartItems;
+
+    public BigDecimal getTotal() {
+        return null;
+    }
+
+    public CartItem applyDiscount(Discount disc) {
+        cartItemFees.add(CartItemFee.builder()
+                .name(disc.getName())
+                .description(disc.getDescription())
+                .feeType(CartItemFeeType.DISCOUNT)
+                .transactionType(FeeTransactionType.CREDIT)
+                .unitPrice(disc.getAppliedAmt())
+                .build());
+        return this;
+    }
 }

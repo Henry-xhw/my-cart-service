@@ -3,7 +3,6 @@ package com.active.services.cart.domain.discount.condition;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.CartItemSelector;
-import com.active.services.cart.domain.discount.DiscountCondition;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class PurchaseRelatedMembershipProductCondition implements DiscountCondition {
+public class PurchaseRelatedMembershipProductSpecification implements DiscountSpecification {
     private final Long membershipId;
     private final String person;
     private final Cart cart;

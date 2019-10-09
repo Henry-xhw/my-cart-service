@@ -2,7 +2,8 @@ package com.active.services.cart.domain.discount;
 
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
-import com.active.services.cart.domain.discount.condition.DiscountConditions;
+import com.active.services.cart.domain.discount.algorithm.DiscountAlgorithm;
+import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class MembershipDiscountEngine {
     private final CartItemSelector nonMembershipCartItemSelector;
     private final ProductRepository productRepo;
+    private final DiscountAlgorithm discountAlgorithm;
 
     public void apply(Cart cart) {
         List<CartItem> noMembershipItems = nonMembershipCartItemSelector.select(cart);
@@ -41,14 +43,14 @@ public class MembershipDiscountEngine {
 
             List<Discount> discounts = new ArrayList<>();
             for (MembershipDiscountsHistory m : membershipDiscounts.get(it.getProductId())) {
-                Discount discount = new Discount();
-                discount.setAmount(m.getAmount());
-                discount.setAmountType(m.getAmountType());
-                discount.setCondition(DiscountConditions.membershipDiscount(m.getMembershipId(),
+                Discount discount = new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType());
+                discount.setCondition(DiscountSpecifications.membershipDiscount(m.getMembershipId(),
                         it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m));
                 discounts.add(discount);
             }
             da.setDiscounts(discounts);
+
+            da.apply(it, discountAlgorithm, cart.getCurrency());
         }
     }
 }
