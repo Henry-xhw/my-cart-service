@@ -1,4 +1,4 @@
 package com.active.services.cart.application;
 
-public interface ContracPricingService {
+public interface ContractPricingService {
 }
