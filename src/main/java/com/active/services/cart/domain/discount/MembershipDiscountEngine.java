@@ -2,7 +2,9 @@ package com.active.services.cart.domain.discount;
 
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.discount.condition.DiscountConditions;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
+import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 
 import lombok.RequiredArgsConstructor;
@@ -42,8 +44,8 @@ public class MembershipDiscountEngine {
                 Discount discount = new Discount();
                 discount.setAmount(m.getAmount());
                 discount.setAmountType(m.getAmountType());
-                discount.setCondition(DiscountConditions.membershipDiscountConditions(m.getMembershipId(),
-                        it.getPersonIdentifier(), cart));
+                discount.setCondition(DiscountConditions.membershipDiscount(m.getMembershipId(),
+                        it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m));
                 discounts.add(discount);
             }
             da.setDiscounts(discounts);

@@ -1,7 +1,9 @@
-package com.active.services.cart.domain.discount;
+package com.active.services.cart.domain.discount.condition;
 
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.discount.CartItemSelector;
+import com.active.services.cart.domain.discount.DiscountCondition;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;

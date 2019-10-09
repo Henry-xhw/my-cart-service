@@ -1,4 +1,7 @@
-package com.active.services.cart.domain.discount;
+package com.active.services.cart.domain.discount.condition;
+
+import com.active.services.cart.domain.discount.DiscountCondition;
+import com.active.services.cart.domain.discount.MembershipMetadata;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
