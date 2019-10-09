@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @Data
 public class DiscountApplication {
-    private List<CartItem> candidates;
     private List<Discount> discounts;
 
     public void apply(CartItem it, DiscountAlgorithm algorithm, Currency currency) {

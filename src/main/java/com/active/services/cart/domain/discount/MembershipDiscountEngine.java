@@ -40,8 +40,6 @@ public class MembershipDiscountEngine {
             }
 
             DiscountApplication da = new DiscountApplication();
-            da.setCandidates(Collections.singletonList(it));
-
             List<Discount> discounts = new ArrayList<>();
             for (MembershipDiscountsHistory m : membershipDiscounts.get(it.getProductId())) {
                 Discount discount = new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType());
