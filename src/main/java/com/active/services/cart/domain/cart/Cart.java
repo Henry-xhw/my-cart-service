@@ -1,9 +1,12 @@
 package com.active.services.cart.domain.cart;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class Cart {
     private Long id;
     private UUID uuid;
