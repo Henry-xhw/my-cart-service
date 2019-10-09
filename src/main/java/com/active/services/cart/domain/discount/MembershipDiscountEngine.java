@@ -1,5 +1,6 @@
 package com.active.services.cart.domain.discount;
 
+import com.active.services.cart.application.CartItemSelector;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.algorithm.DiscountAlgorithm;
