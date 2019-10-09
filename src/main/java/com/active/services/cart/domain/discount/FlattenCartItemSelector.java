@@ -4,10 +4,12 @@ import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class FlattenCartItemSelector implements CartItemSelector {
     @Override
     public List<CartItem> select(Cart cart) {
