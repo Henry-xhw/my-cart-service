@@ -10,7 +10,9 @@ public class DiscountSpecifications {
                                                            DateTime evaluateDt, MembershipDiscountsHistory md) {
         return DiscountSequentialSpecification.allOf(
                 new NotExpiredSpecification(md.getStartDate(), md.getEndDate(), evaluateDt),
-                new MembershipInMetadataSpecification(membershipId, person, new MembershipMetadata()),
-                new PurchaseRelatedMembershipProductSpecification(membershipId, person, cart, null, null));
+                DiscountOrSpecifications.anyOf(
+                        new MembershipInMetadataSpecification(membershipId, person, new MembershipMetadata()),
+                        new PurchaseRelatedMembershipProductSpecification(membershipId, person, cart, null, null))
+                );
     }
 }
