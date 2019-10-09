@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class MembershipDiscountPurchaseRelatedMembershipProductCondition implements DiscountCondition {
+public class PurchaseRelatedMembershipProductCondition implements DiscountCondition {
     private final Long membershipId;
     private final String person;
     private final Cart cart;

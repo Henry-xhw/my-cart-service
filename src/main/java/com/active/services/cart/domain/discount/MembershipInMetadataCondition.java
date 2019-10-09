@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 
 @RequiredArgsConstructor
-public class MembershipDiscountCondition implements DiscountCondition {
+public class MembershipInMetadataCondition implements DiscountCondition {
     private final Long membershipId;
     private final String person;
     private final MembershipMetadata membershipMetadata;

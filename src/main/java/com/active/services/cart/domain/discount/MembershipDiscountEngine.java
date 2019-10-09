@@ -42,7 +42,7 @@ public class MembershipDiscountEngine {
                 Discount discount = new Discount();
                 discount.setAmount(m.getAmount());
                 discount.setAmountType(m.getAmountType());
-                discount.setCondition(MembershipDiscountConditions.create(m.getMembershipId(),
+                discount.setCondition(DiscountConditions.membershipDiscountConditions(m.getMembershipId(),
                         it.getPersonIdentifier(), cart));
                 discounts.add(discount);
             }
