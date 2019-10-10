@@ -51,6 +51,8 @@ dependencies {
 
     //needed by oms
     implementation group: 'com.active.platform', name: 'core-services-api-migration', version: '6.0.6', ext: 'jar', configuration: 'runtime'
+    implementation group: 'com.active.services', name: 'agency-management-service', classifier: 'api', version: '3.116.0.4', ext: 'jar', configuration: 'runtime'
+    implementation group: 'com.active.services', name: 'foundation-user-service', classifier: 'api', version: '4.58.0.2', ext: 'jar', configuration: 'runtime'
     implementation group: 'com.active.services', name: 'order-management-service', classifier: 'api', version: '3.128.1.8', ext: 'jar', configuration: 'runtime'
     implementation 'commons-lang:commons-lang:2.6'
 
