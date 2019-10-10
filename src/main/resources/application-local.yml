@@ -53,8 +53,8 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     url: jdbc:sqlserver://DBDEVAW01.dev.activenetwork.com:1433;databaseName=cart_service
-    username: fnd_dev_usr
-    password: fnd_dev_usr$2008
+    username: cart_service
+    password: sb9O1AlbwSjJYTgjPrfn
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       poolName: oltpPool-local
@@ -67,8 +67,8 @@ spring:
       leakDetectionThreshold: 0
     ods:
       url: jdbc:sqlserver://DBDEVAW01.dev.activenetwork.com:1433;databaseName=cart_service
-      username: fnd_dev_usr
-      password: fnd_dev_usr$2008
+      username: cart_service
+      password: sb9O1AlbwSjJYTgjPrfn
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
       hikari:
         poolName: odsPool-local
