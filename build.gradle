@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation 'com.github.ben-manes.caffeine:caffeine:2.7.0'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
@@ -50,6 +51,8 @@ dependencies {
 
     //needed by oms
     implementation group: 'com.active.platform', name: 'core-services-api-migration', version: '6.0.6', ext: 'jar', configuration: 'runtime'
+    implementation group: 'com.active.services', name: 'agency-management-service', classifier: 'api', version: '3.116.0.4', ext: 'jar', configuration: 'runtime'
+    implementation group: 'com.active.services', name: 'foundation-user-service', classifier: 'api', version: '4.58.0.2', ext: 'jar', configuration: 'runtime'
     implementation group: 'com.active.services', name: 'order-management-service', classifier: 'api', version: '3.128.1.8', ext: 'jar', configuration: 'runtime'
     implementation 'commons-lang:commons-lang:2.6'
 
