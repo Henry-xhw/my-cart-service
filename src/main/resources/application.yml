@@ -89,6 +89,6 @@ mybatis:
   typeAliasesPackage: com.active.services.cart.domain
   mapperLocations: classpath:mapper/*.xml
 
-endpoint.soap:
-  order.service.base: http://order-vip.pint.aw.dev.activenetwork.com
-  product.service.managementService: ${endpoint.soap.order.service.base}/order-management-service/product/v1/internal/soap
+services:
+  order: http://order-vip.pint.aw.dev.activenetwork.com/order-management-service/order-management/v1/internal/soap
+  product: http://order-vip.pint.aw.dev.activenetwork.com/order-management-service/product/v1/internal/soap

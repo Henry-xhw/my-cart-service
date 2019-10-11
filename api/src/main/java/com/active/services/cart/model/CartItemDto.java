@@ -31,8 +31,7 @@ public class CartItemDto {
 
     private Integer quantity;
 
-    private CartItemOption option;
-
+    private List<BookingDuration> bookingDurations;
     /**
      * It can override the cartItem's price
      */

@@ -1,8 +1,8 @@
 package com.active.services.cart.application;
 
+import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.model.CartDto;
-import com.active.services.cart.model.CartResultDto;
 
 public interface CartService {
-    CartResultDto createCart(CartDto cartDto);
+    Cart createCart(Cart cart);
 }
