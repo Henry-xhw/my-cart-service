@@ -1,5 +1,6 @@
 package com.active.services.cart.domain.cart;
 
+import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 
@@ -9,6 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -59,5 +61,19 @@ public class CartItemFee {
         for (CartItemFee f : fee.getDerivedFees()) {
             populateDerivedFees(flatten, f, filter);
         }
+    }
+
+    public void applyDiscount(Discount disc, Currency currency) {
+        if (derivedFees == null) {
+            derivedFees = new ArrayList<>();
+        }
+        derivedFees.add(CartItemFee.builder()
+                .name(disc.getName())
+                .description(disc.getDescription())
+                .feeType(CartItemFeeType.DISCOUNT)
+                .transactionType(FeeTransactionType.CREDIT)
+                .unitPrice(disc.apply(unitPrice, currency))
+                .units(units)
+                .build());
     }
 }

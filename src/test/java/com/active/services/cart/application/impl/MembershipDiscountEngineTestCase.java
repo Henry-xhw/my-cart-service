@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ public class MembershipDiscountEngineTestCase {
 
     private Cart cart() {
         Cart cart = new Cart();
+        cart.setCurrency(Currency.getInstance("USD"));
         cart.setPriceDate(LocalDateTime.now());
         cart.setCartItems(new ArrayList<>());
         return cart;

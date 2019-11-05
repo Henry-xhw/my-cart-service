@@ -35,14 +35,10 @@ public class CartItem {
     }
 
     public CartItem applyDiscount(Discount disc, Currency currency) {
-        cartItemFees.add(CartItemFee.builder()
-                .name(disc.getName())
-                .description(disc.getDescription())
-                .feeType(CartItemFeeType.DISCOUNT)
-                .transactionType(FeeTransactionType.CREDIT)
-                .unitPrice(disc.apply(getPrice(), currency))
-                .units(quantity)
-                .build());
+        cartItemFees.stream()
+                .filter(f -> f.getFeeType() == CartItemFeeType.PRICE)
+                .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT)
+                .forEach(f -> f.applyDiscount(disc, currency));
         return this;
     }
 }
