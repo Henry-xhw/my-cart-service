@@ -1,8 +1,10 @@
-package com.active.services.cart.domain.discount;
+package com.active.services.cart.application.impl;
 
 import com.active.services.cart.application.CartItemSelector;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.discount.Discount;
+import com.active.services.cart.domain.discount.DiscountApplication;
 import com.active.services.cart.domain.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
 import com.active.services.cart.infrastructure.repository.ProductRepository;

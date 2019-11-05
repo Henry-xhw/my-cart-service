@@ -6,10 +6,12 @@ import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 @RequiredArgsConstructor
 public class PurchaseRelatedMembershipProductSpecification implements DiscountSpecification {
     private final Long membershipId;

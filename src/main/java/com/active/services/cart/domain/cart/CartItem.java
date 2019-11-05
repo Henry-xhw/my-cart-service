@@ -5,13 +5,13 @@ import com.active.services.cart.model.BookingDuration;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 
-import lombok.Getter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
+@Data
 public class CartItem {
     private Long id;
     private UUID uuid;
