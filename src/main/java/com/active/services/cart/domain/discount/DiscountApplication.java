@@ -22,6 +22,6 @@ public class DiscountApplication {
         if (CollectionUtils.isEmpty(qualified)) {
             return;
         }
-        algorithm.apply(qualified, it.getPrice(), currency).forEach(it::applyDiscount);
+        algorithm.apply(qualified, it.getPrice(), currency).forEach(disc -> it.applyDiscount(disc, currency));
     }
 }

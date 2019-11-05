@@ -137,7 +137,7 @@ public class PersistedCartControllerTestCase {
 
         List<CartItemFeeResultDto> cartItemFeeResults = new ArrayList<>();
         CartItemFee cartItemFee = CartItemFee.builder().id(RandomUtils.nextLong()).name("product processing fee").description("product processing fee")
-            .feeType(CartItemFeeType.PRICE).transactionType(FeeTransactionType.DEBIT).cartItemFeeOrigin("ACL").unitPrice(new BigDecimal("100.00")).units(2).subtotal(new BigDecimal("200.00")).build();
+            .feeType(CartItemFeeType.PRICE).transactionType(FeeTransactionType.DEBIT).cartItemFeeOrigin("ACL").unitPrice(new BigDecimal("100.00")).units(2).build();
 
         CartItemFeeResultDto cartItemFeeResult = CartItemFeeResultDto.builder().name(cartItemFee.getName()).description(cartItemFee.getDescription())
             .feeType(cartItemFee.getFeeType()).transactionType(cartItemFee.getTransactionType()).cartItemFeeOrigin(cartItemFee.getCartItemFeeOrigin())

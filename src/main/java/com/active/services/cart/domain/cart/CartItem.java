@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,13 +34,14 @@ public class CartItem {
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
-    public CartItem applyDiscount(Discount disc) {
+    public CartItem applyDiscount(Discount disc, Currency currency) {
         cartItemFees.add(CartItemFee.builder()
                 .name(disc.getName())
                 .description(disc.getDescription())
                 .feeType(CartItemFeeType.DISCOUNT)
                 .transactionType(FeeTransactionType.CREDIT)
-                .unitPrice(disc.getAppliedAmt())
+                .unitPrice(disc.apply(getPrice(), currency))
+                .units(quantity)
                 .build());
         return this;
     }

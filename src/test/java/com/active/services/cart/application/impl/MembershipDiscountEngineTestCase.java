@@ -3,8 +3,11 @@ package com.active.services.cart.application.impl;
 import com.active.services.ProductType;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.cart.CartItemFee;
 import com.active.services.cart.infrastructure.repository.ProductMembership;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
+import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.AmountType;
 import com.active.services.product.Product;
@@ -59,6 +62,14 @@ public class MembershipDiscountEngineTestCase {
         item.setPersonIdentifier(UUID.randomUUID().toString());
         item.setProductId(nonMembership.getId());
         item.setQuantity(1);
+        item.setCartItemFees(new ArrayList<>());
+        item.getCartItemFees().add(CartItemFee.builder()
+                .name("price")
+                .unitPrice(BigDecimal.TEN)
+                .units(1)
+                .transactionType(FeeTransactionType.DEBIT)
+                .feeType(CartItemFeeType.PRICE)
+                .build());
         cart.getCartItems().add(item);
 
         engine.apply(cart);

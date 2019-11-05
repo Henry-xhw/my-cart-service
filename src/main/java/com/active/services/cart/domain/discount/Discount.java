@@ -6,6 +6,7 @@ import com.active.services.product.AmountType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 @Data
 public class Discount {
@@ -26,5 +27,9 @@ public class Discount {
 
     public boolean satisfy() {
         return condition.satisfy();
+    }
+
+    public BigDecimal apply(BigDecimal amountToDiscount, Currency currency) {
+        return DiscountUtil.getFlatAmount(amountToDiscount, amount, amountType, currency);
     }
 }
