@@ -8,6 +8,7 @@ import com.active.services.cart.model.FeeTransactionType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,11 +23,14 @@ public class CartItem {
     private Integer quantity;
     private List<BookingDuration> bookingDurations;
     private BigDecimal priceOverride;
-    private List<CartItemFee> cartItemFees;
+    private List<CartItemFee> cartItemFees = new ArrayList<>();
     private List<CartItem> cartItems;
 
-    public BigDecimal getTotal() {
-        return null;
+    public BigDecimal getPrice() {
+        return cartItemFees.stream()
+                .filter(f -> f.getFeeType() == CartItemFeeType.PRICE)
+                .map(f -> f.getTransactionType() == FeeTransactionType.DEBIT ? f.getSubtotal() : f.getSubtotal().negate())
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     public CartItem applyDiscount(Discount disc) {

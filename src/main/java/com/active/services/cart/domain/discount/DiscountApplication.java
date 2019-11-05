@@ -4,6 +4,7 @@ import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.algorithm.DiscountAlgorithm;
 
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Currency;
 import java.util.List;
@@ -18,6 +19,9 @@ public class DiscountApplication {
                 .filter(Discount::satisfy)
                 .collect(Collectors.toList());
 
-        algorithm.apply(qualified, it.getTotal(), currency).forEach(it::applyDiscount);
+        if (CollectionUtils.isEmpty(qualified)) {
+            return;
+        }
+        algorithm.apply(qualified, it.getPrice(), currency).forEach(it::applyDiscount);
     }
 }

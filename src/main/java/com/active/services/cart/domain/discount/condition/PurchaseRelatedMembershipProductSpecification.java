@@ -6,12 +6,11 @@ import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Component
 @RequiredArgsConstructor
 public class PurchaseRelatedMembershipProductSpecification implements DiscountSpecification {
     private final Long membershipId;
@@ -22,6 +21,7 @@ public class PurchaseRelatedMembershipProductSpecification implements DiscountSp
 
     public boolean satisfy() {
         List<Long> productIds = flattenCartItemSelector.select(cart).stream()
+                .filter(item -> Objects.nonNull(item.getPersonIdentifier()))
                 .filter(item -> item.getPersonIdentifier().equalsIgnoreCase(person))
                 .map(CartItem::getProductId)
                 .collect(Collectors.toList());

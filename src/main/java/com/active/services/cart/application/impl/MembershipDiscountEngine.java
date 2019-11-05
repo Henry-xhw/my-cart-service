@@ -26,6 +26,7 @@ public class MembershipDiscountEngine {
     private final CartItemSelector nonMembershipCartItemSelector;
     private final ProductRepository productRepo;
     private final DiscountAlgorithm discountAlgorithm;
+    private final DiscountSpecifications discountSpecifications;
 
     public void apply(Cart cart) {
         List<CartItem> noMembershipItems = nonMembershipCartItemSelector.select(cart);
@@ -46,7 +47,7 @@ public class MembershipDiscountEngine {
             List<Discount> discounts = new ArrayList<>();
             for (MembershipDiscountsHistory m : membershipDiscounts.get(it.getProductId())) {
                 Discount discount = new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType());
-                discount.setCondition(DiscountSpecifications.membershipDiscount(m.getMembershipId(),
+                discount.setCondition(discountSpecifications.membershipDiscount(m.getMembershipId(),
                         it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m));
                 discounts.add(discount);
             }

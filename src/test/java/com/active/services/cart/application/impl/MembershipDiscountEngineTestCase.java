@@ -3,6 +3,7 @@ package com.active.services.cart.application.impl;
 import com.active.services.ProductType;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.infrastructure.repository.ProductMembership;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.AmountType;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.mockito.Mockito.when;
@@ -47,15 +49,26 @@ public class MembershipDiscountEngineTestCase {
         membershipDiscount.get(nonMembership.getId()).add(membershipDiscountHistory);
         when(productRepo.findMembershipDiscounts(Collections.singletonList(nonMembership.getId()))).thenReturn(membershipDiscount);
 
-        Cart cart = new Cart();
-        cart.setPriceDate(LocalDateTime.now());
-        List<CartItem> items = new ArrayList<>();
+        ProductMembership pm = new ProductMembership();
+        pm.setProductId(nonMembership.getId());
+        pm.setMembershipId(membershipDiscountHistory.getMembershipId());
+        when(productRepo.findProductMemberships(Collections.singletonList(nonMembership.getId()))).thenReturn(Collections.singletonList(pm));
+
+        Cart cart = cart();
         CartItem item = new CartItem();
+        item.setPersonIdentifier(UUID.randomUUID().toString());
         item.setProductId(nonMembership.getId());
         item.setQuantity(1);
-        items.add(item);
-        cart.setCartItems(items);
+        cart.getCartItems().add(item);
+
         engine.apply(cart);
+    }
+
+    private Cart cart() {
+        Cart cart = new Cart();
+        cart.setPriceDate(LocalDateTime.now());
+        cart.setCartItems(new ArrayList<>());
+        return cart;
     }
 
     private Product nonMembershipProduct() {
