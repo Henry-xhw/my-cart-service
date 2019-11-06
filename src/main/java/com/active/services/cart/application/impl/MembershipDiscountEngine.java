@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,13 +43,11 @@ public class MembershipDiscountEngine {
             }
 
             DiscountApplication da = new DiscountApplication();
-            List<Discount> discounts = new ArrayList<>();
-            for (MembershipDiscountsHistory m : membershipDiscounts.get(it.getProductId())) {
-                Discount discount = new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType());
-                discount.setCondition(discountSpecifications.membershipDiscount(m.getMembershipId(),
-                        it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m));
-                discounts.add(discount);
-            }
+            List<Discount> discounts = membershipDiscounts.get(it.getProductId()).stream()
+                    .map(m -> new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType())
+                            .setCondition(discountSpecifications
+                                    .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m)))
+                    .collect(Collectors.toList());
             da.setDiscounts(discounts);
 
             da.apply(it, discountAlgorithm, cart.getCurrency());

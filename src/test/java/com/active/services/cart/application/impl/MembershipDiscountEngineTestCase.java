@@ -76,6 +76,33 @@ public class MembershipDiscountEngineTestCase {
         engine.apply(cart);
     }
 
+    @Test
+    public void applyMembershipDiscountToEmptyCart() {
+        engine.apply(new Cart());
+    }
+
+    @Test
+    public void applyMembershipDiscountToCartWithOnlyMembershipProduct() {
+        Product membershipProd = membershipProduct();
+        when(productRepo.getProduct(membershipProd.getId())).thenReturn(Optional.of(membershipProd));
+
+        Cart cart = cart();
+        CartItem item = new CartItem();
+        item.setPersonIdentifier(UUID.randomUUID().toString());
+        item.setProductId(membershipProd.getId());
+        item.setQuantity(1);
+        item.setCartItemFees(new ArrayList<>());
+        item.getCartItemFees().add(CartItemFee.builder()
+                .name("price")
+                .unitPrice(BigDecimal.TEN)
+                .units(1)
+                .transactionType(FeeTransactionType.DEBIT)
+                .feeType(CartItemFeeType.PRICE)
+                .build());
+        cart.getCartItems().add(item);
+        engine.apply(cart);
+    }
+
     private Cart cart() {
         Cart cart = new Cart();
         cart.setCurrency(Currency.getInstance("USD"));
@@ -88,6 +115,13 @@ public class MembershipDiscountEngineTestCase {
         Product product = new Product();
         product.setId(ThreadLocalRandom.current().nextLong());
         product.setProductType(ProductType.REGISTRATION);
+        return product;
+    }
+
+    private Product membershipProduct() {
+        Product product = new Product();
+        product.setId(ThreadLocalRandom.current().nextLong());
+        product.setProductType(ProductType.MEMBERSHIP);
         return product;
     }
 

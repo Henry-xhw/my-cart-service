@@ -8,12 +8,16 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
 public class FlattenCartItemSelector implements CartItemSelector {
     @Override
     public List<CartItem> select(Cart cart) {
+        if (cart == null || cart.getCartItems() == null) {
+            return Collections.emptyList();
+        }
         List<CartItem> res = new ArrayList<>();
         for (CartItem item : cart.getCartItems()) {
             populateChildItems(item, res);

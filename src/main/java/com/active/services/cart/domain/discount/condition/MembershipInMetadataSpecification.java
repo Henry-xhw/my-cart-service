@@ -12,7 +12,7 @@ public class MembershipInMetadataSpecification implements DiscountSpecification 
     private final MembershipMetadata membershipMetadata;
 
     public boolean satisfy() {
-        if (membershipMetadata == null || CollectionUtils.isEmpty(membershipMetadata.getDetails())) {
+        if (person == null || membershipMetadata == null || CollectionUtils.isEmpty(membershipMetadata.getDetails())) {
             return false;
         }
 

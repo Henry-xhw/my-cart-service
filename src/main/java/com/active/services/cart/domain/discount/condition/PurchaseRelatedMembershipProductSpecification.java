@@ -21,8 +21,8 @@ public class PurchaseRelatedMembershipProductSpecification implements DiscountSp
 
     public boolean satisfy() {
         List<Long> productIds = flattenCartItemSelector.select(cart).stream()
-                .filter(item -> Objects.nonNull(item.getPersonIdentifier()))
-                .filter(item -> item.getPersonIdentifier().equalsIgnoreCase(person))
+                .filter(item -> person == null && item.getPersonIdentifier() == null ||
+                        item.getPersonIdentifier().equalsIgnoreCase(person))
                 .map(CartItem::getProductId)
                 .collect(Collectors.toList());
         return productRepo.findProductMemberships(productIds).stream()
