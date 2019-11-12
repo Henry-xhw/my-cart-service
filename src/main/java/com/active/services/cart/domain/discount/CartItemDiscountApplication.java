@@ -7,17 +7,23 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
-public class DiscountApplication {
+public class CartItemDiscountApplication {
+    @NonNull private final CartItem item;
     @NonNull private final List<Discount> discounts;
     @NonNull private final DiscountAlgorithm algorithm;
+    @NonNull private final Currency currency;
 
-    public void apply(CartItem it, Currency currency) {
+    public void apply() {
+        if (item.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
         List<Discount> qualified = discounts.stream()
                 .filter(Discount::satisfy)
                 .collect(Collectors.toList());
@@ -25,6 +31,6 @@ public class DiscountApplication {
         if (CollectionUtils.isEmpty(qualified)) {
             return;
         }
-        algorithm.apply(qualified, it.getPrice(), currency).forEach(disc -> it.applyDiscount(disc, currency));
+        algorithm.apply(qualified, item.getPrice(), currency).forEach(disc -> item.applyDiscount(disc, currency));
     }
 }

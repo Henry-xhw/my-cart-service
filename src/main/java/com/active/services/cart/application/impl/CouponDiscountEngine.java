@@ -4,7 +4,7 @@ import com.active.services.DiscountModel;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.Discount;
-import com.active.services.cart.domain.discount.DiscountApplication;
+import com.active.services.cart.domain.discount.CartItemDiscountApplication;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +27,12 @@ public class CouponDiscountEngine {
 
     public void apply(Cart cart, String coupon) {
         for (CartItem it : cart.getCartItems()) {
-            Optional<Product> product = productRepo.getProduct(it.getProductId());
+            DiscountModel model = productRepo.getProduct(it.getProductId())
+                    .map(Product::getDiscountModel)
+                    .orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
+
             List<com.active.services.product.Discount> couponDiscs = productRepo.findDiscountByProductIdAndCode(it.getProductId(), coupon);
 
-            DiscountModel model = product.map(Product::getDiscountModel).orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
             List<Discount> discounts = new ArrayList<>(couponDiscs.size());
             for (com.active.services.product.Discount disc : couponDiscs) {
                 Discount discount = new Discount(disc.getName(), disc.getDescription(), disc.getAmount(), disc.getAmountType());
@@ -39,7 +40,7 @@ public class CouponDiscountEngine {
                 discounts.add(discount);
             }
 
-            new DiscountApplication(discounts, DiscountsAlgorithms.getAlgorithm(model)).apply(it, cart.getCurrency());
+            new CartItemDiscountApplication(it, discounts, DiscountsAlgorithms.getAlgorithm(model), cart.getCurrency()).apply();
         }
     }
 }
