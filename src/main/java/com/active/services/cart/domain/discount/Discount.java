@@ -16,8 +16,6 @@ public class Discount {
     private AmountType amountType;
     private DiscountSpecification condition;
 
-    private BigDecimal appliedAmt;
-
     public Discount(String name, String description, BigDecimal amount, AmountType amountType) {
         this.name = name;
         this.description = description;

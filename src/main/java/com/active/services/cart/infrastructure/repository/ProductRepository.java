@@ -2,6 +2,7 @@ package com.active.services.cart.infrastructure.repository;
 
 import com.active.services.cart.domain.rule.Rule;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
+import com.active.services.product.Discount;
 import com.active.services.product.Product;
 import com.active.services.product.api.v1.soap.ProductServiceSOAPEndPoint;
 
@@ -31,5 +32,13 @@ public class ProductRepository {
 
     public List<ProductMembership> findProductMemberships(List<Long> productIds) {
         return null;
+    }
+
+    public List<Discount> findDiscountByProductIdAndCode(Long productId, String coupon) {
+        return null;
+    }
+
+    public boolean isDiscountLimitReached(Discount discount, Integer quantity, Long ignoreId) {
+        return false;
     }
 }

@@ -13,14 +13,8 @@ public class DiscountUtil {
 
     public static BigDecimal getFlatAmount(final BigDecimal toDiscount, final BigDecimal discAmt,
                                            final AmountType amtType, Currency currency) {
-
         BigDecimal netDiscAmt = BigDecimal.ZERO;
-
-        if (toDiscount.compareTo(BigDecimal.ZERO) <= 0) {
-            return netDiscAmt;
-        }
-
-        if (discAmt.compareTo(BigDecimal.ZERO) <= 0) {
+        if (toDiscount.compareTo(BigDecimal.ZERO) <= 0 || discAmt.compareTo(BigDecimal.ZERO) <= 0) {
             return netDiscAmt;
         }
 
