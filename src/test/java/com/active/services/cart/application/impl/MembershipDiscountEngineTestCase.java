@@ -78,7 +78,7 @@ public class MembershipDiscountEngineTestCase {
 
     @Test
     public void applyMembershipDiscountToEmptyCart() {
-        engine.apply(new Cart());
+        engine.apply(cart());
     }
 
     @Test

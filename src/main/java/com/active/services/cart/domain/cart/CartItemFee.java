@@ -41,7 +41,7 @@ public class CartItemFee {
         populateDerivedFees(flatten, this, filter);
 
         return flatten.stream()
-                .map(f -> BigDecimal.valueOf(units).multiply(f.getTransactionType() == FeeTransactionType.CREDIT ?
+                .map(f -> BigDecimal.valueOf(units).multiply(f.getTransactionType() == FeeTransactionType.DEBIT ?
                         f.getUnitPrice() :
                         f.getUnitPrice().negate()))
                 .reduce(BigDecimal::add)
