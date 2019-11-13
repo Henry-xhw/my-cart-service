@@ -6,6 +6,7 @@ import com.active.services.cart.domain.cart.CartItemFee;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.product.AmountType;
 import com.active.services.product.Discount;
 import com.active.services.product.Product;
 
@@ -38,7 +39,7 @@ public class CouponDiscountEngineTestCase {
     @Autowired private CouponDiscountEngine engine;
 
     @Test
-    public void applyToEmptyCart() {
+    public void applyToEmptyCartNoError() {
         engine.apply(cart(), null);
     }
 
@@ -51,6 +52,8 @@ public class CouponDiscountEngineTestCase {
 
         when(productRepo.getProduct(product.getId())).thenReturn(Optional.of(product));
         when(productRepo.findDiscountByProductIdAndCode(product.getId(), discount.getCouponCode())).thenReturn(Collections.singletonList(discount));
+        when(productRepo.isDiscountLimitReached(discount, cart.getCartItems().get(0).getQuantity(),
+                cart.getCartItems().get(0).getId())).thenReturn(false);
 
         engine.apply(cart, discount.getCouponCode());
     }
@@ -80,6 +83,8 @@ public class CouponDiscountEngineTestCase {
 
     private Discount discount() {
         Discount discount = new Discount();
+        discount.setAmountType(AmountType.PERCENT);
+        discount.setAmount(BigDecimal.ONE);
         discount.setCouponCode(UUID.randomUUID().toString());
         return discount;
     }

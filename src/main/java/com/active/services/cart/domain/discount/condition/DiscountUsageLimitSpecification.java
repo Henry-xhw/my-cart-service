@@ -24,6 +24,6 @@ public class DiscountUsageLimitSpecification implements DiscountSpecification {
             // PER_ORDER_LINE and PER_ORDER_LINE_QTY need to ignore the current line
         }
 
-        return productRepo.isDiscountLimitReached(discount, quantity, ignoreId);
+        return !productRepo.isDiscountLimitReached(discount, quantity, ignoreId);
     }
 }

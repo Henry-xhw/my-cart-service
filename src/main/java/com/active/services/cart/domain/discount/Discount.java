@@ -4,6 +4,7 @@ import com.active.services.cart.domain.discount.condition.DiscountSpecification;
 import com.active.services.product.AmountType;
 
 import lombok.Data;
+import lombok.NonNull;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -16,7 +17,7 @@ public class Discount {
     private AmountType amountType;
     private DiscountSpecification condition;
 
-    public Discount(String name, String description, BigDecimal amount, AmountType amountType) {
+    public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;
         this.description = description;
         this.amount = amount;
