@@ -16,7 +16,7 @@ public class MulitDiscountEngine {
 
     public void apply(Cart cart) {
         for (CartItem item : cart.getCartItems()) {
-            List<MultiDiscount> mds = productRepo.findMultiDiscountsByProductId(item.getProductId());
+            List<MultiDiscount> mds = productRepo.findEffectiveMultiDiscountsByProductId(item.getProductId(), cart.getPriceDate());
 
         }
     }
