@@ -64,7 +64,6 @@ public class PersistedCartControllerTestCase {
             .build();
     }
 
-    @Test
     public void createCart() throws Exception {
         CartDto cart = new CartDto();
         List<CartItemDto> items = new ArrayList<>();

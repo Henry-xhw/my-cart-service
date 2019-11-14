@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
-public class CartItemDiscountApplication {
+public class CartItemDiscountsApplication {
     @NonNull private final CartItem item;
     @NonNull private final List<Discount> discounts;
     @NonNull private final DiscountAlgorithm algorithm;

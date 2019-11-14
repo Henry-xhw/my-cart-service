@@ -3,7 +3,7 @@ package com.active.services.cart.application.impl;
 import com.active.services.DiscountModel;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
-import com.active.services.cart.domain.discount.CartItemDiscountApplication;
+import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
 import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
@@ -25,6 +25,8 @@ import java.util.List;
  * enforce discount condition, see https://jirafnd.dev.activenetwork.com/browse/ENDR-20371 for more.
  *
  * Also bypass validations for recurring orders are not implemented for a similar reason.
+ *
+ * TODO: most expensive algorithm; discount usage count per order/line/line-quantity
  */
 @Service
 @RequiredArgsConstructor
@@ -47,7 +49,7 @@ public class CouponDiscountEngine {
                 discounts.add(discount);
             }
 
-            new CartItemDiscountApplication(it, discounts, DiscountsAlgorithms.getAlgorithm(model), cart.getCurrency()).apply();
+            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.getAlgorithm(model), cart.getCurrency()).apply();
         }
     }
 }

@@ -4,7 +4,7 @@ import com.active.services.cart.application.CartItemSelector;
 import com.active.services.cart.domain.cart.Cart;
 import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.Discount;
-import com.active.services.cart.domain.discount.CartItemDiscountApplication;
+import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
@@ -47,7 +47,7 @@ public class MembershipDiscountEngine {
                                     .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m)))
                     .collect(Collectors.toList());
 
-            new CartItemDiscountApplication(it, discounts, DiscountsAlgorithms.bestAlgorithm(), cart.getCurrency()).apply();
+            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.bestAlgorithm(), cart.getCurrency()).apply();
         }
     }
 }
