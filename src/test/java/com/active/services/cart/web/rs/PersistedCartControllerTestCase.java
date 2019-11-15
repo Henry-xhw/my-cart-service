@@ -15,7 +15,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,18 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.active.services.cart.application.CartService;
-import com.active.services.cart.domain.cart.CartItemFee;
-import com.active.services.cart.model.BookingDuration;
-import com.active.services.cart.model.CartDto;
-import com.active.services.cart.model.CartItemDto;
-import com.active.services.cart.model.CartItemFacts;
-import com.active.services.cart.model.CartItemFeeResultDto;
-import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.cart.model.CartItemOption;
-import com.active.services.cart.model.CartItemResultDto;
-import com.active.services.cart.model.CartResultDto;
-import com.active.services.cart.model.FactKVPair;
-import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.util.JacksonUtils;
 
 @RunWith(MockitoJUnitRunner.class)
