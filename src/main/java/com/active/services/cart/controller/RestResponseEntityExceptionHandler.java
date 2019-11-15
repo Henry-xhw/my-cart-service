@@ -1,4 +1,4 @@
-package com.active.services.cart.web.rs;
+package com.active.services.cart.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
