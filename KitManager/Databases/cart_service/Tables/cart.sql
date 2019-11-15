@@ -27,6 +27,19 @@ IF NOT EXISTS(
     SELECT TOP 1 1
     FROM
         sys.tables t WITH(NOLOCK)
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_identifier'
+    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart' AND t.type = 'U')
+BEGIN
+    CREATE NONCLUSTERED INDEX [ix_cart_identifier] ON [dbo].[cart] ([identifier])
+    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+    PRINT 'Added index ix_cart_identifier to dbo.cart.'
+END
+GO
+
+IF NOT EXISTS(
+    SELECT TOP 1 1
+    FROM
+        sys.tables t WITH(NOLOCK)
         JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_owner_id'
     WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart' AND t.type = 'U')
 BEGIN

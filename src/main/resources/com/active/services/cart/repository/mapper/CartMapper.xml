@@ -4,4 +4,93 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.active.services.cart.repository.mapper.CartMapper">
 
+    <insert id="createCart" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart]
+            (identifier,
+            owner_id,
+            keyer_id,
+            currency_code,
+            created_by,
+            created_dt,
+            modified_by,
+            modified_dt)
+        VALUES
+            (#{identifier},
+            #{ownerId},
+            #{keyerId},
+            #{currencyCode},
+            #{createdBy},
+            #{createdDt},
+            #{modifiedBy},
+            #{modifiedDt}
+            )
+    </insert>
+    
+    <insert id="createCartItem">
+        INSERT INTO  [dbo].[cart_item] (
+            [cart_id],
+            [identifier],
+            [product_id],
+            [product_name],
+            [product_description],
+            [booking_start_dt],
+            [booking_end_dt],
+            [trimmed_booking_start_dt],
+            [trimmed_booking_end_dt],
+            [quantity],
+            [unit_price],
+            [grouping_identifier],
+            [created_by],
+            [created_dt],
+            [modified_by],
+            [modified_dt] )
+        VALUES
+            (#{cart_id},
+             #{identifier},
+             #{item.productId},
+             #{item.productName},
+             #{item.productDescription},
+            <choose>
+                <when test="item.bookingRange != null">
+                    #{item.bookingRange.lower},
+                    #{item.bookingRange.upper},
+                </when>
+                <otherwise>
+                    null,
+                    null
+                </otherwise>
+            </choose>
+        <choose>
+            <when test="item.timedBookingRange != null">
+                #{item.timedBookingRange.lower},
+                #{item.timedBookingRange.upper},
+            </when>
+            <otherwise>
+                null,
+                null
+            </otherwise>
+        </choose>
+             #{item.quantity},
+             #{item.unitPrice},
+             #{item.groupingIdentifier},
+             #{item.createdBy},
+             #{item.createdDt},
+             #{item.modifiedBy},
+             #{item.modifiedDt},
+            )
+    </insert>
+
+    <select id="getCart">
+
+    </select>
+
+    <delete id="deleteCart">
+        DELETE FROM cart WHERE identifier = #{id}
+    </delete>
+
+    <delete id="deleteCartItem">
+        DELETE FROM cart_item WHERE identifier = #{id}
+    </delete>
+
+
 </mapper>

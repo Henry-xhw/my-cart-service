@@ -13,7 +13,7 @@ BEGIN
         [trimmed_booking_start_dt]  DATETIME            NULL,
         [trimmed_booking_end_dt]    DATETIME            NULL,
         [quantity]                  BIGINT              NOT NULL,
-        [unitPrice]                 DECIMAL(19, 2)      NULL,
+        [unit_rice]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
@@ -30,6 +30,18 @@ BEGIN
 	 PRINT 'Created primary key pk_cart_item on table dbo.cart_item'
 END
 GO
+
+IF NOT EXISTS(
+    SELECT TOP 1 1
+    FROM
+        sys.tables t WITH(NOLOCK)
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_identifier'
+    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item' AND t.type = 'U')
+BEGIN
+    CREATE NONCLUSTERED INDEX [ix_cart_item_identifier] ON [dbo].[cart_item] ([identifier])
+    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+    PRINT 'Added index ix_cart_item_identifier to dbo.cart.'
+END
 
 IF NOT EXISTS(
     SELECT TOP 1 1
