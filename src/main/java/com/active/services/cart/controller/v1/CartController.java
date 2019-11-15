@@ -42,7 +42,7 @@ public class CartController {
         cartService.delete(cartId);
     }
 
-    @GetMapping("{id")
+    @GetMapping("{id}")
     public CreateCartReq get(@PathVariable UUID cartId) {
         CreateCartReq rsp = new CreateCartReq();
 
