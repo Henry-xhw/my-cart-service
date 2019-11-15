@@ -3,7 +3,7 @@ package com.active.services.cart.domain.discount.condition;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class DiscountCodeSpecification implements DiscountSpecification {
+public class CouponCodeSpec implements DiscountSpecification {
     private final String desired;
     private final String input;
 

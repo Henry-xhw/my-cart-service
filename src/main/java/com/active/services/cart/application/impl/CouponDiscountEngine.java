@@ -6,7 +6,7 @@ import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
 import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
-import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
+import com.active.services.cart.domain.discount.condition.DiscountSpecs;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.domain.DateTime;
 import com.active.services.product.Product;
@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CouponDiscountEngine {
     @NonNull private final ProductRepository productRepo;
-    @NonNull private final DiscountSpecifications specs;
+    @NonNull private final DiscountSpecs specs;
 
     public void apply(Cart cart, String coupon) {
         for (CartItem it : cart.getCartItems()) {

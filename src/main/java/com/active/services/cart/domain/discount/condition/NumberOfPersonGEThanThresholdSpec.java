@@ -1,0 +1,21 @@
+package com.active.services.cart.domain.discount.condition;
+
+import com.active.services.cart.domain.cart.CartItem;
+
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+public class NumberOfPersonGEThanThresholdSpec implements DiscountSpecification {
+    private final List<CartItem> items;
+    private final int threshold;
+
+    @Override
+    public boolean satisfy() {
+        return items.stream()
+                .map(CartItem::getPersonIdentifier)
+                .distinct()
+                .count() >= threshold;
+    }
+}

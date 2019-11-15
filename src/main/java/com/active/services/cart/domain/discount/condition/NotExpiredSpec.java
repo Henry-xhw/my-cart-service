@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class NotExpiredSpecification implements DiscountSpecification {
+public class NotExpiredSpec implements DiscountSpecification {
     private final DateTime fromInclusive;
     private final DateTime toExclusive;
     @NonNull private final DateTime evaluateDt;

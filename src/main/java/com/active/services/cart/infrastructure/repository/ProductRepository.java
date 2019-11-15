@@ -70,7 +70,7 @@ public class ProductRepository {
         Map<MultiDiscountType, List<MultiDiscount>> type2Mds = emptyIfNull(prdSvc.findMultiDiscountsByProductId(ContextWrapper.get(), productId)).stream()
                 .filter(md -> md.getAvailability() == Availability.ONLINE)
                 .filter(md -> (md.getStartDate() == null || md.getStartDate().before(new DateTime(priceDate))) &&
-                        md.getEndDate() == null || md.getEndDate().after(new DateTime(priceDate)))
+                        (md.getEndDate() == null || md.getEndDate().after(new DateTime(priceDate))))
                 .collect(groupingBy(MultiDiscount::getDiscountType));
 
         List<MultiDiscount> mds = new ArrayList<>(2);

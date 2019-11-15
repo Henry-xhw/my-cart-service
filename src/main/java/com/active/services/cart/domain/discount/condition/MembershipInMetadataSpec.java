@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 
 @RequiredArgsConstructor
-public class MembershipInMetadataSpecification implements DiscountSpecification {
+public class MembershipInMetadataSpec implements DiscountSpecification {
     private final Long membershipId;
     private final String person;
     private final MembershipMetadata membershipMetadata;

@@ -6,7 +6,7 @@ import com.active.services.cart.domain.cart.CartItem;
 import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
-import com.active.services.cart.domain.discount.condition.DiscountSpecifications;
+import com.active.services.cart.domain.discount.condition.DiscountSpecs;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class MembershipDiscountEngine {
     private final CartItemSelector nonMembershipCartItemSelector;
     private final ProductRepository productRepo;
-    private final DiscountSpecifications discountSpecifications;
+    private final DiscountSpecs discountSpecs;
 
     public void apply(Cart cart) {
         List<CartItem> noMembershipItems = nonMembershipCartItemSelector.select(cart);
@@ -43,7 +43,7 @@ public class MembershipDiscountEngine {
 
             List<Discount> discounts = membershipDiscounts.get(it.getProductId()).stream()
                     .map(m -> new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType())
-                            .setCondition(discountSpecifications
+                            .setCondition(discountSpecs
                                     .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m)))
                     .collect(Collectors.toList());
 

@@ -16,7 +16,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 @RequiredArgsConstructor
-public class DiscountXmlRestrictionSpecification implements DiscountSpecification {
+public class XmlRestrictionSpec implements DiscountSpecification {
     private final String expression;
     private final String formDataXml;
 

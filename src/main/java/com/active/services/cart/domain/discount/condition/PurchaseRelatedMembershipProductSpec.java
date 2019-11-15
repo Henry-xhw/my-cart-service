@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class PurchaseRelatedMembershipProductSpecification implements DiscountSpecification {
+public class PurchaseRelatedMembershipProductSpec implements DiscountSpecification {
     private final Long membershipId;
     private final String person;
     private final Cart cart;

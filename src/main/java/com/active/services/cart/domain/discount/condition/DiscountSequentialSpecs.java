@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DiscountOrSpecifications implements DiscountSpecification {
+public class DiscountSequentialSpecs implements DiscountSpecification {
     private List<DiscountSpecification> conditions = new ArrayList<>(0);
 
-    public static DiscountOrSpecifications anyOf(DiscountSpecification...conditions) {
-        DiscountOrSpecifications ds = new DiscountOrSpecifications();
+    public static DiscountSequentialSpecs allOf(DiscountSpecification...conditions) {
+        DiscountSequentialSpecs ds = new DiscountSequentialSpecs();
         ds.conditions.addAll(Arrays.asList(conditions));
         return ds;
     }
 
     @Override
     public boolean satisfy() {
-        return conditions.stream().anyMatch(DiscountSpecification::satisfy);
+        return conditions.stream().allMatch(DiscountSpecification::satisfy);
     }
 }

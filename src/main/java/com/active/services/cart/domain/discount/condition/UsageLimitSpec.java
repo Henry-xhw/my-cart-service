@@ -7,7 +7,7 @@ import com.active.services.product.DiscountUsageCountType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class DiscountUsageLimitSpecification implements DiscountSpecification {
+public class UsageLimitSpec implements DiscountSpecification {
     private final ProductRepository productRepo;
     private final Long cartId;
     private final Long cartItemId;
