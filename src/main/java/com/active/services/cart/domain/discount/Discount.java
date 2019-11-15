@@ -30,6 +30,6 @@ public class Discount {
     }
 
     public BigDecimal apply(BigDecimal amountToDiscount, Currency currency) {
-        return DiscountUtil.getFlatAmount(amountToDiscount, amount, amountType, currency);
+        return DiscountAmountCalcUtil.calcFlatAmount(amountToDiscount, amount, amountType, currency);
     }
 }
