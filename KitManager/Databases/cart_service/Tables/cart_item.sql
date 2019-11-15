@@ -1,5 +1,5 @@
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart' AND type = 'U')
+WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_item' AND type = 'U')
 BEGIN
 	 CREATE TABLE [dbo].[cart_item] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
@@ -20,7 +20,7 @@ BEGIN
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL
     )
-	 PRINT 'CREATE TABLE dbo.payments'
+	 PRINT 'CREATE TABLE dbo.cart_item'
 END
 GO
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
