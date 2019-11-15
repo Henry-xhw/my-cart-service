@@ -112,8 +112,41 @@
         WHERE identifier = #{identifier}
     </update>
 
-    <select id="getCart" resultType="Cart">
-
+    <resultMap id="CartResultMap" type="Cart">
+        <id property="id" column="id"/>
+        <collection property="cartItems" notNullColumn="id" columnPrefix="cart_">
+            <id property="id" column="id"/>
+        </collection>
+    </resultMap>
+    <select id="getCart" resultMap="CartResultMap">
+        SELECT
+            id,
+            identifier,
+            owner_id,
+            keyer_id,
+            currency_code,
+            created_by,
+            created_dt,
+            modified_by,
+            modified_dt,
+            item.id AS item_id,
+            item.identifier AS item_identifier,
+            item.product_id AS item_productId,
+            item.product_name AS item_productName,
+            item.product_description AS item_productDescription,
+            item.booking_start_dt As [item_bookingRange.lower],
+            item.booking_end_dt AS [item_bookingRange.upper],
+            item.trimmed_booking_start_dt AS [item_timedBookingRange.lower],
+            item.trimmed_booking_end_dt AS [item_timedBookingRange.upper],
+            item.quantity AS item_quantity,
+            item.unit_price AS item_unitPrice,
+            item.grouping_identifier AS item_groupingIdentifier,
+            item.created_by AS item_createdBy,
+            item.created_dt AS item_createdDt,
+            item.modified_by AS item_modifiedBy,
+            item.modified_dt AS item_modifiedDt
+        FROM dbo.cart cart LEFT JOIN cart_item item ON cart.id = item.cart_id
+        WHERE cart.identifier = #{id}
     </select>
 
     <delete id="deleteCart">
