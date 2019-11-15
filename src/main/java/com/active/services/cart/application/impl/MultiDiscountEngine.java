@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class MultiDiscountEngine {
                         .map(d -> d.setCondition(spec))
                         .forEachOrdered(discounts::add);
             } else {
+                Collections.sort(md.getThresholdSettings());
                 for (MultiDiscountThresholdSetting s : md.getThresholdSettings()) {
                     DiscountSpecification spec = specs.multiDiscountThreshold(md.getDiscountType(), md2Items.get(md), s.getThreshold());
                     s.getTiers().stream()

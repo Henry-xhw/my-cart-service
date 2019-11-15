@@ -11,6 +11,7 @@ import com.active.services.product.Discount;
 import com.active.services.product.Product;
 import com.active.services.product.discount.multi.DiscountTier;
 import com.active.services.product.discount.multi.MultiDiscount;
+import com.active.services.product.discount.multi.MultiDiscountThresholdSetting;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +56,53 @@ public class MultiDiscountEngineTestCase {
         when(productRepo.findEffectiveMultiDiscountsByProductId(product.getId(), cart.getPriceDate())).thenReturn(Collections.singletonList(mdWithoutThresholdSetting()));
 
         engine.apply(cart);
+    }
+
+    @Test
+    public void applyMDThresholdSetting() {
+        Cart cart = cart();
+        Product product = fakeProduct();
+        cart.getCartItems().add(cartItem(product.getId()));
+
+        when(productRepo.findEffectiveMultiDiscountsByProductId(product.getId(), cart.getPriceDate())).thenReturn(Collections.singletonList(mdWithThresholdSettings()));
+
+        engine.apply(cart);
+    }
+
+    private MultiDiscount mdWithThresholdSettings() {
+        MultiDiscount md = new MultiDiscount();
+        md.setName("md");
+        md.setDescription("multi discount");
+        md.setThreshold(3);
+
+        md.setThresholdSettings(new ArrayList<>());
+        MultiDiscountThresholdSetting ms1 = new MultiDiscountThresholdSetting();
+        Set<DiscountTier> tiers1 = new HashSet<>();
+        DiscountTier t11 = discountTier(1, BigDecimal.TEN);
+        DiscountTier t12 = discountTier(2, BigDecimal.valueOf(20));
+        DiscountTier t13 = discountTier(3, BigDecimal.valueOf(30));
+        tiers1.add(t11);
+        tiers1.add(t12);
+        tiers1.add(t13);
+        ms1.setTiers(tiers1);
+        ms1.setThreshold(3);
+
+        MultiDiscountThresholdSetting ms2 = new MultiDiscountThresholdSetting();
+        Set<DiscountTier> tiers2 = new HashSet<>();
+        DiscountTier t21 = discountTier(1, BigDecimal.TEN);
+        DiscountTier t22 = discountTier(2, BigDecimal.valueOf(20));
+        DiscountTier t23 = discountTier(3, BigDecimal.valueOf(30));
+        DiscountTier t24 = discountTier(4, BigDecimal.valueOf(40));
+        tiers2.add(t21);
+        tiers2.add(t22);
+        tiers2.add(t23);
+        tiers2.add(t24);
+        ms2.setTiers(tiers2);
+        ms2.setThreshold(4);
+
+        md.getThresholdSettings().add(ms1);
+        md.getThresholdSettings().add(ms2);
+        return md;
     }
 
     private MultiDiscount mdWithoutThresholdSetting() {
