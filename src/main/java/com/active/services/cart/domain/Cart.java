@@ -14,7 +14,7 @@ public class Cart extends BaseDomainObject {
 
     private UUID keyerId;
 
-    private CurrencyCode currency;
+    private CurrencyCode currencyCode;
 
     private List<CartItem> items = new ArrayList<>();
 }

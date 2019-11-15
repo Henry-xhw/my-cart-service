@@ -7,6 +7,8 @@ import java.util.UUID;
 
 @Data
 public class BaseDomainObject {
+    private Long id;
+
     private UUID identifier;
 
     private Instant createdDt;

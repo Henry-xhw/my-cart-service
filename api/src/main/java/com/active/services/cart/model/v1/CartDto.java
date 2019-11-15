@@ -14,7 +14,7 @@ public class CartDto extends BaseDto {
 
     private UUID keyerId;
 
-    private CurrencyCode currency;
+    private CurrencyCode currencyCode;
 
     private List<CartItemDto> items = new ArrayList<>();
 }
