@@ -52,7 +52,7 @@ public class CartController {
         return rsp;
     }
 
-    @PostMapping
+    @PostMapping("search")
     public SearchCartRsp searchCart(SearchCartReq req) {
         SearchCartRsp rsp = new SearchCartRsp();
 
