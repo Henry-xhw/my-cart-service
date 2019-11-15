@@ -1,3 +1,11 @@
 spring:
   datasource:
     url: jdbc:sqlserver://localhost:1434;databaseName=cart_service
+
+logging:
+  level:
+    com:
+      active:
+        services:
+          cart:
+            repository: DEBUG
