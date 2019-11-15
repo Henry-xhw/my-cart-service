@@ -80,7 +80,7 @@
             )
     </insert>
 
-    <update id="createCartItem">
+    <update id="updateCartItem">
         UPDATE [dbo].[cart_item]
         SET [product_name] = #{productName},
             [product_description] = #{productDescription},
@@ -112,7 +112,7 @@
         WHERE identifier = #{identifier}
     </update>
 
-    <select id="getCart">
+    <select id="getCart" resultType="Cart">
 
     </select>
 
@@ -124,5 +124,7 @@
         DELETE FROM cart_item WHERE identifier = #{id}
     </delete>
 
-
+    <select id="search" resultType="java.util.UUID">
+        SELECT identifier FROM cart WHERE owner_id = #{id}
+    </select>
 </mapper>
