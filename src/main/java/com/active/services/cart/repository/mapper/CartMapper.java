@@ -2,8 +2,8 @@ package com.active.services.cart.repository.mapper;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.mapstruct.Mapper;
 
 import java.util.List;
 import java.util.UUID;
