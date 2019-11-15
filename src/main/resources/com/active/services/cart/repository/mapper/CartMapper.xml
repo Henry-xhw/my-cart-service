@@ -60,16 +60,16 @@
                     null
                 </otherwise>
             </choose>
-        <choose>
-            <when test="item.timedBookingRange != null">
-                #{item.timedBookingRange.lower},
-                #{item.timedBookingRange.upper},
-            </when>
-            <otherwise>
-                null,
-                null
-            </otherwise>
-        </choose>
+            <choose>
+                <when test="item.timedBookingRange != null">
+                    #{item.timedBookingRange.lower},
+                    #{item.timedBookingRange.upper},
+                </when>
+                <otherwise>
+                    null,
+                    null
+                </otherwise>
+            </choose>
              #{item.quantity},
              #{item.unitPrice},
              #{item.groupingIdentifier},
@@ -79,6 +79,38 @@
              #{item.modifiedDt},
             )
     </insert>
+
+    <update id="createCartItem">
+        UPDATE [dbo].[cart_item]
+        SET [product_name] = #{productName},
+            [product_description] = #{productDescription},
+            <choose>
+                <when test="item.bookingRange != null">
+                    [booking_start_dt] = #{item.bookingRange.lower},
+                    [booking_end_dt] = #{item.bookingRange.upper},
+                </when>
+                <otherwise>
+                    [booking_start_dt] = null,
+                    [booking_end_dt] = null
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="item.timedBookingRange != null">
+                    [trimmed_booking_start_dt] = #{item.timedBookingRange.lower},
+                    [trimmed_booking_end_dt] = #{item.timedBookingRange.upper},
+                </when>
+                <otherwise>
+                    [trimmed_booking_start_dt] = null,
+                    [trimmed_booking_end_dt] = null
+                </otherwise>
+            </choose>
+        [quantity] = #{quantity},
+        [unit_price] = #{unitPrice},
+        [grouping_identifier] = #{groupingIdentifier},
+        [modified_by] = #{modifiedBy},
+        [modified_dt] = #{modifiedDt}
+        WHERE identifier = #{identifier}
+    </update>
 
     <select id="getCart">
 
