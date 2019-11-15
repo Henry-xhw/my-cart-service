@@ -114,7 +114,7 @@
 
     <resultMap id="CartResultMap" type="Cart">
         <id property="id" column="id"/>
-        <collection property="cartItems" notNullColumn="id" columnPrefix="cart_">
+        <collection property="cartItems" javaType="CartItem" notNullColumn="id" columnPrefix="cart_">
             <id property="id" column="id"/>
         </collection>
     </resultMap>

@@ -19,7 +19,7 @@ spring:
       leakDetectionThreshold: 0
 
 mybatis:
-  type-aliases-package: com.active.services.cart.mybatis.types
+  type-aliases-package: com.active.services.cart.domain
 
 server:
   port: 8273

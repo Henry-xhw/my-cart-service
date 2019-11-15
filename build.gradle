@@ -34,35 +34,14 @@ allprojects {
 dependencies {
     implementation project(':api')
 
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine:2.7.0'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
-    implementation 'org.springframework.cloud:spring-cloud-starter-config'
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
-
-    implementation 'org.apache.cxf:cxf-rt-transports-http-hc:3.2.0'
-    implementation 'org.apache.cxf:cxf-rt-frontend-jaxws:3.2.0'
-    implementation 'com.sun.xml.bind:jaxb-core:2.2.11'
-    implementation 'com.sun.xml.bind:jaxb-impl:2.2.11'
-
-    //needed by oms
-    implementation group: 'com.active.platform', name: 'core-services-api-migration', version: '6.0.6', ext: 'jar', configuration: 'runtime'
-    implementation group: 'com.active.services', name: 'agency-management-service', classifier: 'api', version: '3.116.0.4', ext: 'jar', configuration: 'runtime'
-    implementation group: 'com.active.services', name: 'foundation-user-service', classifier: 'api', version: '4.58.0.2', ext: 'jar', configuration: 'runtime'
-    implementation group: 'com.active.services', name: 'order-management-service', classifier: 'api', version: '3.128.1.8', ext: 'jar', configuration: 'runtime'
-    implementation 'commons-lang:commons-lang:2.6'
 
     implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
-
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-        exclude group: 'junit', module: 'junit'
-    }
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
