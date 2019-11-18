@@ -9,8 +9,5 @@ import java.util.UUID;
 
 @Data
 public class CreateCartItemReq {
-
-    private UUID cartId;
-
     private List<CartItemDto> items = new ArrayList<>();
 }

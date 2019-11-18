@@ -36,7 +36,7 @@ public class CartItemController {
 
         List<CartItem> items = req.getItems().stream().map(item ->
                 CartMapper.INSTANCE.toDomain(item, isCreate)).collect(Collectors.toList());
-        items = cartService.upsertItems(req.getCartId(), items);
+        items = cartService.upsertItems(cartId, items);
         rsp.setItems(items.stream().map(item -> CartMapper.INSTANCE.toDto(item)).collect(Collectors.toList()));
 
         return rsp;
