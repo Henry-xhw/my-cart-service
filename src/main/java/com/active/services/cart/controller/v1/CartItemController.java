@@ -20,13 +20,13 @@ public class CartItemController {
     private CartService cartService;
 
     @PostMapping("/{cart-id}/items")
-    public CreateCartItemReq create(@RequestParam("cart-id") UUID cartId,
+    public CreateCartItemReq create(@PathVariable("cart-id") UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
         return upsert(cartId, req, true);
     }
 
     @PutMapping("/{cart-id}/items")
-    public CreateCartItemReq update(@RequestParam("cart-id") UUID cartId,
+    public CreateCartItemReq update(@PathVariable("cart-id") UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
         return upsert(cartId, req, false);
     }

@@ -3,6 +3,7 @@ package com.active.services.cart.service;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.CartRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Transactional
 public class CartService {
 
+    @Autowired
     private CartRepository cartRepository;
 
     public void create(Cart cart) {
