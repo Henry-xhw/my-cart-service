@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.CartMapper">
+
+    <insert id="createCart" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart]
+            (identifier,
+            owner_id,
+            keyer_id,
+            currency_code,
+            created_by,
+            created_dt,
+            modified_by,
+            modified_dt)
+        VALUES
+            (#{identifier},
+            #{ownerId},
+            #{keyerId},
+            #{currencyCode},
+            #{createdBy},
+            #{createdDt},
+            #{modifiedBy},
+            #{modifiedDt}
+            )
+    </insert>
+    
+    <insert id="createCartItem">
+        INSERT INTO  [dbo].[cart_item] (
+            [cart_id],
+            [identifier],
+            [product_id],
+            [product_name],
+            [product_description],
+            [booking_start_dt],
+            [booking_end_dt],
+            [trimmed_booking_start_dt],
+            [trimmed_booking_end_dt],
+            [quantity],
+            [unit_price],
+            [grouping_identifier],
+            [created_by],
+            [created_dt],
+            [modified_by],
+            [modified_dt] )
+        VALUES
+            (#{cart_id},
+             #{identifier},
+             #{item.productId},
+             #{item.productName},
+             #{item.productDescription},
+            <choose>
+                <when test="item.bookingRange != null">
+                    #{item.bookingRange.lower},
+                    #{item.bookingRange.upper},
+                </when>
+                <otherwise>
+                    null,
+                    null
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="item.trimmedBookingRange != null">
+                    #{item.trimmedBookingRange.lower},
+                    #{item.trimmedBookingRange.upper},
+                </when>
+                <otherwise>
+                    null,
+                    null
+                </otherwise>
+            </choose>
+             #{item.quantity},
+             #{item.unitPrice},
+             #{item.groupingIdentifier},
+             #{item.createdBy},
+             #{item.createdDt},
+             #{item.modifiedBy},
+             #{item.modifiedDt},
+            )
+    </insert>
+
+    <update id="updateCartItem">
+        UPDATE [dbo].[cart_item]
+        SET [product_name] = #{productName},
+            [product_description] = #{productDescription},
+            <choose>
+                <when test="item.bookingRange != null">
+                    [booking_start_dt] = #{item.bookingRange.lower},
+                    [booking_end_dt] = #{item.bookingRange.upper},
+                </when>
+                <otherwise>
+                    [booking_start_dt] = null,
+                    [booking_end_dt] = null
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="item.trimmedBookingRange != null">
+                    [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lower},
+                    [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upper},
+                </when>
+                <otherwise>
+                    [trimmed_booking_start_dt] = null,
+                    [trimmed_booking_end_dt] = null
+                </otherwise>
+            </choose>
+        [quantity] = #{quantity},
+        [unit_price] = #{unitPrice},
+        [grouping_identifier] = #{groupingIdentifier},
+        [modified_by] = #{modifiedBy},
+        [modified_dt] = #{modifiedDt}
+        WHERE identifier = #{identifier}
+    </update>
+
+    <resultMap id="CartResultMap" type="Cart">
+        <id property="id" column="id"/>
+        <collection property="cartItems" javaType="CartItem" notNullColumn="id" columnPrefix="cart_">
+            <id property="id" column="id"/>
+        </collection>
+    </resultMap>
+    <select id="getCart" resultMap="CartResultMap">
+        SELECT
+            id,
+            identifier,
+            owner_id,
+            keyer_id,
+            currency_code,
+            created_by,
+            created_dt,
+            modified_by,
+            modified_dt,
+            item.id AS item_id,
+            item.identifier AS item_identifier,
+            item.product_id AS item_productId,
+            item.product_name AS item_productName,
+            item.product_description AS item_productDescription,
+            item.booking_start_dt As [item_bookingRange.lower],
+            item.booking_end_dt AS [item_bookingRange.upper],
+            item.trimmed_booking_start_dt AS [item_trimmedBookingRange.lower],
+            item.trimmed_booking_end_dt AS [item_trimmedBookingRange.upper],
+            item.quantity AS item_quantity,
+            item.unit_price AS item_unitPrice,
+            item.grouping_identifier AS item_groupingIdentifier,
+            item.created_by AS item_createdBy,
+            item.created_dt AS item_createdDt,
+            item.modified_by AS item_modifiedBy,
+            item.modified_dt AS item_modifiedDt
+        FROM dbo.cart cart LEFT JOIN cart_item item ON cart.id = item.cart_id
+        WHERE cart.identifier = #{id}
+    </select>
+
+    <delete id="deleteCart">
+        DELETE FROM cart WHERE identifier = #{id}
+    </delete>
+
+    <delete id="deleteCartItem">
+        DELETE FROM cart_item WHERE identifier = #{id}
+    </delete>
+
+    <select id="search" resultType="java.util.UUID">
+        SELECT identifier FROM cart WHERE owner_id = #{id}
+    </select>
+</mapper>

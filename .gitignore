@@ -23,6 +23,7 @@ api/build/
 *.iml
 *.ipr
 /out/
+/docker/scripts/
 
 ### NetBeans ###
 /nbproject/private/

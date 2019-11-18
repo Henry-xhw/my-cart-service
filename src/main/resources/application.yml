@@ -1,94 +1,35 @@
-startup:
-  app_dynamics:
-    enable: false
-  jdk:
-    version: jdk8_192-1.8_192
-  jvm:
-    memory:
-      heap: 1024m
-      new: 337m
-      meta: 384m
-    jmx.port: 9200
-    gc: +UseConcMarkSweepGC
-  log_dir: /opt/active/logs
-  log_level: DEBUG
-info:
-  app:
-    env: ${spring.profiles.active}
-    instance: ${spring.application.index}
-management:
-  endpoints.web:
-    base-path: /management
-    exposure.include: '*'
-  server.port: 9090
-server:
-  compression.enabled: true
-  connection-timeout: 30000ms
-  port: 8080
-  servlet.context-path: /
-
 spring:
-  boot:
-    admin:
-      client:
-        instance:
-          metadata:
-            user:
-              name: ${spring.security.user.name}
-              password: ${spring.security.user.password}
-      url: http://int-springbootadmin-01w.aw.dev.activenetwork.com:8080/spring-boot-admin
-      api-path: /api/applications
-  cloud:
-    config:
-      allowOverride: true
-      overrideNone: false
-      overrideSystemProperties: false
-  security:
-    user:
-      name: active
-      password: 7e155860-1ffe-4853-80d8-ba139876563e
-      roles: 'ACTUATOR'
   main:
     banner-mode: console
     allow-bean-definition-overriding: true
   datasource:
     url: jdbc:sqlserver://DBDEVAW01.dev.activenetwork.com:1433;databaseName=cart_service
-    username: cart_service
-    password: sb9O1AlbwSjJYTgjPrfn
+    username: fnd_dev_usr
+    password: fnd_dev_usr$2008
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       poolName: oltpPool
       connectionTimeout: 30000
+      transactionIsolation: TRANSACTION_READ_COMMITTED
       autoCommit: true
       maxLifetime: 1800000
       idleTimeout: 600000
       minIdle: 5
       maximumPoolSize: 100
       leakDetectionThreshold: 0
-    ods:
-      url: jdbc:sqlserver://DBDEVAW01.dev.activenetwork.com:1433;databaseName=cart_service
-      username: cart_service
-      password: sb9O1AlbwSjJYTgjPrfn
-      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      hikari:
-        poolName: odsPool
-        autoCommit: true
-        maxLifetime: 600000
-        idleTimeout: 180000
-        minIdle: 5
-        maximumPoolSize: 100
-  cache:
-    caffeine:
-      spec: expireAfterWrite=100s
-logging:
-  level:
-    com.active.services.cart: DEBUG
-    org.kie.api.internal: WARN
-    org.drools: WARN
-mybatis:
-  typeAliasesPackage: com.active.services.cart.domain
-  mapperLocations: classpath:mapper/*.xml
 
-services:
-  order: http://order-vip.pint.aw.dev.activenetwork.com/order-management-service/order-management/v1/internal/soap
-  product: http://order-vip.pint.aw.dev.activenetwork.com/order-management-service/product/v1/internal/soap
+mybatis:
+  type-aliases-package: com.active.services.cart.domain
+
+server:
+  port: 8273
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: false
