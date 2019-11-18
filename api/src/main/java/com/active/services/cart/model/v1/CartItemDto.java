@@ -17,7 +17,7 @@ public class CartItemDto extends BaseDto {
 
     private Range<Instant> bookingRange;
 
-    private Range<Instant> timedBookingRange;
+    private Range<Instant> trimmedBookingRange;
 
     private int quantity;
 

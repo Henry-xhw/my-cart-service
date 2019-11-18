@@ -17,7 +17,7 @@ public class CartItem extends BaseDomainObject {
 
     private Range<Instant> bookingRange;
 
-    private Range<Instant> timedBookingRange;
+    private Range<Instant> trimmedBookingRange;
 
     private int quantity;
 
