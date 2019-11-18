@@ -16,8 +16,8 @@ import static com.active.services.cart.controller.v1.Constants.*;
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartItemController {
 
-    public static final String CART_ID_PARAM = "cart-id";
-    public static final String CART_ID_PATH = "/{" + CART_ID_PARAM + "}/items";
+    private static final String CART_ID_PARAM = "cart-id";
+    private static final String CART_ID_PATH = "/{" + CART_ID_PARAM + "}/items";
 
     @Autowired
     private CartService cartService;
@@ -40,13 +40,13 @@ public class CartItemController {
         List<CartItem> items = req.getItems().stream().map(item ->
                 CartMapper.INSTANCE.toDomain(item, isCreate)).collect(Collectors.toList());
         items = cartService.upsertItems(cartId, items);
-        rsp.setItems(items.stream().map(item -> CartMapper.INSTANCE.toDto(item)).collect(Collectors.toList()));
+        rsp.setItems(items.stream().map(CartMapper.INSTANCE::toDto).collect(Collectors.toList()));
 
         return rsp;
     }
 
-    @DeleteMapping(ID_PARAM_PATH)
-    public void delete(@PathVariable(ID_PARAM) UUID cartItemId) {
+    @DeleteMapping(CART_ID_PATH)
+    public void delete(@PathVariable(CART_ID_PARAM) UUID cartItemId) {
         cartService.deleteCartItem(cartItemId);
     }
 }
