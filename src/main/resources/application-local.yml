@@ -1,11 +1,46 @@
 spring:
+  main:
+    banner-mode: console
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:sqlserver://localhost:1434;databaseName=cart_service
+    username: sa
+    password: 123!P01@W
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      poolName: oltpPool
+      connectionTimeout: 30000
+      transactionIsolation: TRANSACTION_READ_COMMITTED
+      autoCommit: true
+      maxLifetime: 1800000
+      idleTimeout: 600000
+      minIdle: 5
+      maximumPoolSize: 100
+      leakDetectionThreshold: 0
 
+mybatis:
+  type-aliases-package: com.active.services.cart.domain
 logging:
   level:
+    org.apache.cxf.services.ProductService:
+      REQ_IN: WARN
+      RESP_OUT: WARN
     com:
       active:
         services:
           cart:
-            repository: DEBUG
+            repository:
+              mapper: debug
+
+server:
+  port: 8273
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: false
