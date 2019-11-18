@@ -3,7 +3,6 @@ package com.active.services.cart.controller.v1;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CreateCartReq;
-import com.active.services.cart.model.v1.req.SearchCartReq;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import java.util.UUID;
 import static com.active.services.cart.controller.v1.CartController.V1_MEDIA;
 
 @RestController
-@RequestMapping(value = "/cart", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartController {
 
     public static final String V1_MEDIA = "application/vnd.active.cart-service.v1+json";
@@ -24,8 +23,8 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @PutMapping
-    public CreateCartReq createCart(CreateCartReq req) {
+    @PostMapping
+    public CreateCartReq create(CreateCartReq req) {
         CreateCartReq rsp = new CreateCartReq();
 
         CartDto cartDto = req.getCart();
@@ -37,12 +36,12 @@ public class CartController {
         return rsp;
     }
 
-    @DeleteMapping("{id}")
-    public void deleteCart(@PathVariable UUID cartId) {
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID cartId) {
         cartService.delete(cartId);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public CreateCartReq get(@PathVariable UUID cartId) {
         CreateCartReq rsp = new CreateCartReq();
 
@@ -52,11 +51,11 @@ public class CartController {
         return rsp;
     }
 
-    @PostMapping("search")
-    public SearchCartRsp searchCart(SearchCartReq req) {
+    @GetMapping
+    public SearchCartRsp search(@RequestParam("owner-id") UUID ownerId) {
         SearchCartRsp rsp = new SearchCartRsp();
 
-        List<UUID> cartIds = cartService.search(req.getOwnerId());
+        List<UUID> cartIds = cartService.search(ownerId);
         rsp.setCartIds(cartIds);
 
         return rsp;

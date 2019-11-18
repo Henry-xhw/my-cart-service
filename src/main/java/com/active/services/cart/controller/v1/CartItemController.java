@@ -13,31 +13,36 @@ import java.util.stream.Collectors;
 import static com.active.services.cart.controller.v1.CartController.V1_MEDIA;
 
 @RestController
-@RequestMapping(value = "/cart-item", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartItemController {
 
     @Autowired
     private CartService cartService;
 
-    /**
-     * Create item if no uuid/else update it.
-     *
-     * @param req
-     * @return
-     */
+    @PostMapping
+    public CreateCartItemReq create(@RequestParam("cart-id") UUID cartId,
+                                    @RequestBody CreateCartItemReq req) {
+        return upsert(cartId, req, true);
+    }
+
     @PutMapping
-    public CreateCartItemReq create(CreateCartItemReq req) {
+    public CreateCartItemReq update(@RequestParam("cart-id") UUID cartId,
+                                    @RequestBody CreateCartItemReq req) {
+        return upsert(cartId, req, false);
+    }
+
+    private CreateCartItemReq upsert(UUID cartId, CreateCartItemReq req, boolean isCreate) {
         CreateCartItemReq rsp = new CreateCartItemReq();
 
         List<CartItem> items = req.getItems().stream().map(item ->
-                CartMapper.INSTANCE.toDomain(item, false)).collect(Collectors.toList());
+                CartMapper.INSTANCE.toDomain(item, isCreate)).collect(Collectors.toList());
         items = cartService.upsertItems(req.getCartId(), items);
         rsp.setItems(items.stream().map(item -> CartMapper.INSTANCE.toDto(item)).collect(Collectors.toList()));
 
         return rsp;
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID cartItemId) {
         cartService.deleteCartItem(cartItemId);
     }
