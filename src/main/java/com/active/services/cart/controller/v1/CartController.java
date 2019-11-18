@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.active.services.cart.controller.v1.CartController.V1_MEDIA;
+import static com.active.services.cart.controller.v1.Constants.*;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartController {
-
-    public static final String V1_MEDIA = "application/vnd.active.cart-service.v1+json";
 
     @Autowired
     private CartService cartService;
@@ -36,13 +34,13 @@ public class CartController {
         return rsp;
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") UUID cartId) {
+    @DeleteMapping(PARAM_ID_PATH)
+    public void delete(@PathVariable(PARAM_ID) UUID cartId) {
         cartService.delete(cartId);
     }
 
-    @GetMapping("/{id}")
-    public CreateCartReq get(@PathVariable("id") UUID cartId) {
+    @GetMapping(PARAM_ID_PATH)
+    public CreateCartReq get(@PathVariable(PARAM_ID) UUID cartId) {
         CreateCartReq rsp = new CreateCartReq();
 
         Cart cart = cartService.get(cartId);

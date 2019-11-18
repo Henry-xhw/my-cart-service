@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.active.services.cart.controller.v1.CartController.V1_MEDIA;
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
