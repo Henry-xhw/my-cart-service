@@ -34,13 +34,13 @@ public class CartController {
         return rsp;
     }
 
-    @DeleteMapping(PARAM_ID_PATH)
-    public void delete(@PathVariable(PARAM_ID) UUID cartId) {
+    @DeleteMapping(ID_PARAM_PATH)
+    public void delete(@PathVariable(ID_PARAM) UUID cartId) {
         cartService.delete(cartId);
     }
 
-    @GetMapping(PARAM_ID_PATH)
-    public CreateCartReq get(@PathVariable(PARAM_ID) UUID cartId) {
+    @GetMapping(ID_PARAM_PATH)
+    public CreateCartReq get(@PathVariable(ID_PARAM) UUID cartId) {
         CreateCartReq rsp = new CreateCartReq();
 
         Cart cart = cartService.get(cartId);

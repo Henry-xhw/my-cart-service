@@ -10,23 +10,26 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.controller.v1.Constants.*;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartItemController {
 
+    public static final String CART_ID_PARAM = "cart-id";
+    public static final String CART_ID_PATH = "/{" + CART_ID_PARAM + "}/items";
+
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/{cart-id}/items")
-    public CreateCartItemReq create(@PathVariable("cart-id") UUID cartId,
+    @PostMapping(CART_ID_PATH)
+    public CreateCartItemReq create(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
         return upsert(cartId, req, true);
     }
 
-    @PutMapping("/{cart-id}/items")
-    public CreateCartItemReq update(@PathVariable("cart-id") UUID cartId,
+    @PutMapping(CART_ID_PATH)
+    public CreateCartItemReq update(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
         return upsert(cartId, req, false);
     }
@@ -42,8 +45,8 @@ public class CartItemController {
         return rsp;
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") UUID cartItemId) {
+    @DeleteMapping(ID_PARAM_PATH)
+    public void delete(@PathVariable(ID_PARAM) UUID cartItemId) {
         cartService.deleteCartItem(cartItemId);
     }
 }
