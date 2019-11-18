@@ -13,19 +13,19 @@ import java.util.stream.Collectors;
 import static com.active.services.cart.controller.v1.CartController.V1_MEDIA;
 
 @RestController
-@RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartItemController {
 
     @Autowired
     private CartService cartService;
 
-    @PostMapping
+    @PostMapping("/{cart-id}/items")
     public CreateCartItemReq create(@RequestParam("cart-id") UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
         return upsert(cartId, req, true);
     }
 
-    @PutMapping
+    @PutMapping("/{cart-id}/items")
     public CreateCartItemReq update(@RequestParam("cart-id") UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
         return upsert(cartId, req, false);
@@ -43,7 +43,7 @@ public class CartItemController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID cartItemId) {
+    public void delete(@PathVariable("id") UUID cartItemId) {
         cartService.deleteCartItem(cartItemId);
     }
 }
