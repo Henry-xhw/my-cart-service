@@ -42,7 +42,7 @@ public class CartItemController {
         return rsp;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/items/{id}")
     public void delete(@PathVariable("id") UUID cartItemId) {
         cartService.deleteCartItem(cartItemId);
     }
