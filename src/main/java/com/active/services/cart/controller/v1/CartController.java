@@ -6,6 +6,7 @@ import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping
-    public CreateCartReq create(CreateCartReq req) {
+    public CreateCartReq create(@RequestBody @Validated CreateCartReq req) {
         CreateCartReq rsp = new CreateCartReq();
 
         CartDto cartDto = req.getCart();

@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1434;databaseName=cart_service
+    url: jdbc:sqlserver://localhost.dev.activenetwork.com:1434;databaseName=cart_service
+    username: fnd_dev_usr
+    password: fnd_dev_usr$2008
 
 logging:
   level:
