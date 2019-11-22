@@ -20,6 +20,10 @@ spring:
 
 mybatis:
   type-aliases-package: com.active.services.cart.domain
+  configuration:
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+  type-handlers-package: com.active.services.common.mybatis.types
 
 server:
   port: 8273
