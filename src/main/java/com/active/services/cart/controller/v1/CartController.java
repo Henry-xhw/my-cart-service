@@ -22,7 +22,7 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping
-    public CreateCartReq create(@RequestBody CreateCartReq req) {
+    public CreateCartReq create(@RequestBody @Validated CreateCartReq req) {
         CreateCartReq rsp = new CreateCartReq();
 
         CartDto cartDto = req.getCart();

@@ -5,5 +5,9 @@ spring:
   cloud:
     config:
       enabled: false
+  boot:
+    admin:
+      client:
+        enabled: false
   profiles:
     active: local
