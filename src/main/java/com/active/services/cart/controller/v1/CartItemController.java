@@ -5,7 +5,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
 import com.active.services.cart.service.CartService;
-import com.active.services.common.exception.CartItemException;
+import com.active.services.cart.common.exception.CartItemException;
 import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -22,5 +22,5 @@ public interface CartMapper {
 
     void deleteCartItem(UUID cartItemId);
 
-    List<UUID> search(UUID ownerId);
+    List<UUID> search(@Param("ownerId") UUID ownerId);
 }

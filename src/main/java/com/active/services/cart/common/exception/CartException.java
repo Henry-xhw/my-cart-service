@@ -1,4 +1,4 @@
-package com.active.services.common.exception;
+package com.active.services.cart.common.exception;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -6,8 +6,10 @@ import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,8 +51,8 @@ public class CartController {
         return rsp;
     }
 
-    @GetMapping
-    public SearchCartRsp search(@RequestParam("owner-id") UUID ownerId) {
+    @GetMapping(value = "/ownerId/{ownerId}")
+    public SearchCartRsp search(@PathVariable("ownerId") @NotNull(message = "ownerId can not be null") UUID ownerId) {
         SearchCartRsp rsp = new SearchCartRsp();
 
         List<UUID> cartIds = cartService.search(ownerId);

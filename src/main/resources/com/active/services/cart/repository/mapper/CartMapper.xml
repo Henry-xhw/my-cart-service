@@ -158,6 +158,6 @@
     </delete>
 
     <select id="search" resultType="java.util.UUID">
-        SELECT identifier FROM cart WHERE owner_id = #{id}
+        SELECT identifier FROM cart WHERE owner_id = #{ownerId}
     </select>
 </mapper>
