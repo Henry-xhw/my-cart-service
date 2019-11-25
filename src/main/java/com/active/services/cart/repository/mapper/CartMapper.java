@@ -14,7 +14,7 @@ public interface CartMapper {
 
     void deleteCart(UUID cartId);
 
-    Cart getCart(UUID cartId);
+    Cart getCart(@Param("cartId") UUID cartId);
 
     void updateCartItem(CartItem item);
 

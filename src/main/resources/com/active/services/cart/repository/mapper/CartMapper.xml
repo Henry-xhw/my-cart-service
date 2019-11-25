@@ -120,15 +120,15 @@
     </resultMap>
     <select id="getCart" resultMap="CartResultMap">
         SELECT
-            id,
-            identifier,
+            cart.id,
+            cart.identifier,
             owner_id,
             keyer_id,
             currency_code,
-            created_by,
-            created_dt,
-            modified_by,
-            modified_dt,
+            cart.created_by,
+            cart.created_dt,
+            cart.modified_by,
+            cart.modified_dt,
             item.id AS item_id,
             item.identifier AS item_identifier,
             item.product_id AS item_productId,
@@ -146,7 +146,7 @@
             item.modified_by AS item_modifiedBy,
             item.modified_dt AS item_modifiedDt
         FROM dbo.cart cart LEFT JOIN cart_item item ON cart.id = item.cart_id
-        WHERE cart.identifier = #{id}
+        WHERE cart.identifier = #{cartId}
     </select>
 
     <delete id="deleteCart">
