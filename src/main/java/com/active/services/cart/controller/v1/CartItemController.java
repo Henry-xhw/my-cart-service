@@ -1,11 +1,11 @@
 package com.active.services.cart.controller.v1;
 
+import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
 import com.active.services.cart.service.CartService;
-import com.active.services.cart.common.exception.CartItemException;
 import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -55,17 +55,17 @@ public class CartItemController {
         Cart cart = cartService.get(cartId);
         if (null == cart) {
             // cart not exist, need error msg
-            throw new CartItemException(HttpStatus.NOT_FOUND_404, "cart not exist", cartId);
+            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
         }
 
         if (cart.getItems().size() == 0) {
             // empty cart, need error msg
-            throw new CartItemException(HttpStatus.NOT_FOUND_404, "cart item not exist", cartId);
+            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
         }
 
         if (!isCartItemExist(cart.getItems(), cartItemId)) {
             // cart item not exist, need error msg
-            throw new CartItemException(HttpStatus.NOT_FOUND_404, "cart item not exist", cartId);
+            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
         }
 
         cartService.deleteCartItem(cartItemId);
