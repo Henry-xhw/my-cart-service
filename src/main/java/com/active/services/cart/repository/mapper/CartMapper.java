@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface CartMapper {
     void createCart(Cart cart);
 
-    void deleteCart(UUID cartId);
+    void deleteCart(Long cartId);
 
     Cart getCart(@Param("cartId") UUID cartId);
 
@@ -21,6 +21,8 @@ public interface CartMapper {
     void createCartItem(@Param("cartId") UUID cartId, @Param("item") CartItem item);
 
     void deleteCartItem(UUID cartItemId);
+
+    void deleteCartItemByCart(Long cartId);
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 }

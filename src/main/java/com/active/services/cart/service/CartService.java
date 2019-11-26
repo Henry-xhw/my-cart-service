@@ -21,7 +21,7 @@ public class CartService {
         cartRepository.createCart(cart);
     }
 
-    public void delete(UUID cartId) {
+    public void delete(Long cartId) {
         cartRepository.deleteCart(cartId);
     }
 

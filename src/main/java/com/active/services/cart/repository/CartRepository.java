@@ -19,8 +19,9 @@ public class CartRepository {
         cartMapper.createCart(cart);
     }
 
-    public void deleteCart(UUID cartId) {
+    public void deleteCart(Long cartId) {
         cartMapper.deleteCart(cartId);
+        cartMapper.deleteCartItemByCart(cartId);
     }
 
     public Cart getCart(UUID cartId) {

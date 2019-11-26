@@ -150,11 +150,15 @@
     </select>
 
     <delete id="deleteCart">
-        DELETE FROM cart WHERE identifier = #{id}
+        DELETE FROM cart WHERE id = #{cartId}
     </delete>
 
     <delete id="deleteCartItem">
         DELETE FROM cart_item WHERE identifier = #{id}
+    </delete>
+
+    <delete id="deleteCartItemByCart">
+        DELETE FROM cart_item WHERE cart_id = #{cartId}
     </delete>
 
     <select id="search" resultType="java.util.UUID">
