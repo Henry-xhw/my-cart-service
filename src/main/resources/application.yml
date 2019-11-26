@@ -23,7 +23,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
-  type-handlers-package: com.active.services.common.mybatis.types
+  type-handlers-package: com.active.services.cart.common.mybatis.types
 
 server:
   port: 8273
