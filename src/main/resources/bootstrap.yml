@@ -9,5 +9,3 @@ spring:
     admin:
       client:
         enabled: false
-  profiles:
-    active: local
