@@ -9,11 +9,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
+
 @Repository
+@RequiredArgsConstructor
 public class CartRepository {
 
-    @Autowired
-    private CartMapper cartMapper;
+    private final CartMapper cartMapper;
 
     public void createCart(Cart cart) {
         cartMapper.createCart(cart);
