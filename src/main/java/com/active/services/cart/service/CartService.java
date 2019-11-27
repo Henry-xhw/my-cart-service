@@ -29,9 +29,13 @@ public class CartService {
         return cartRepository.getCart(cartId);
     }
 
-    public List<CartItem> upsertItems(UUID cartId, List<CartItem> items) {
-        cartRepository.upsertItems(cartId, items);
+    public List<CartItem> createCartItems(Long cartId, List<CartItem> items) {
+        cartRepository.createCartItems(cartId, items);
+        return items;
+    }
 
+    public List<CartItem> updateCartItems(List<CartItem> items) {
+        cartRepository.updateCartItems(items);
         return items;
     }
 
