@@ -25,7 +25,7 @@
             #{modifiedDt}
             )
     </insert>
-    
+
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
         INSERT INTO [dbo].[cart_item] (
             [cart_id],
@@ -83,8 +83,13 @@
 
     <update id="updateCartItem">
         UPDATE [dbo].[cart_item]
-        SET [product_name] = #{productName},
-            [product_description] = #{productDescription},
+        SET
+            <if test="item.productName!=null AND item.productName!=''">
+                [product_name] = #{item.productName},
+            </if>
+            <if test="item.productDescription!=null AND item.productDescription!=''">
+                [product_description] = #{item.productDescription},
+            </if>
             <choose>
                 <when test="item.bookingRange != null">
                     [booking_start_dt] = #{item.bookingRange.lower},
@@ -105,12 +110,12 @@
                     [trimmed_booking_end_dt] = null
                 </otherwise>
             </choose>
-        [quantity] = #{quantity},
-        [unit_price] = #{unitPrice},
-        [grouping_identifier] = #{groupingIdentifier},
-        [modified_by] = #{modifiedBy},
-        [modified_dt] = #{modifiedDt}
-        WHERE identifier = #{identifier}
+        [quantity] = #{item.quantity},
+        [unit_price] = #{item.unitPrice},
+        [grouping_identifier] = #{item.groupingIdentifier},
+        [modified_by] = #{item.modifiedBy},
+        [modified_dt] = #{item.modifiedDt}
+        WHERE identifier = #{item.identifier}
     </update>
 
     <resultMap id="CartResultMap" type="Cart">

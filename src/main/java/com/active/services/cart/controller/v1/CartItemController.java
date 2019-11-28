@@ -6,6 +6,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
+import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
 import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +60,14 @@ public class CartItemController {
     }
 
     @PutMapping()
-    public CreateCartItemReq update(@PathVariable(CART_ID_PARAM) UUID cartId,
+    public UpdateCartItemRsp update(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
-        CreateCartItemReq rsp = new CreateCartItemReq();
+        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
 
         List<CartItem> items = req.getItems().stream().map(item ->
           CartMapper.INSTANCE.toDomain(item, false)).collect(Collectors.toList());
-        items = cartService.updateCartItems(items);
-        rsp.setItems(items.stream().map(CartMapper.INSTANCE::toDto).collect(Collectors.toList()));
+        cartService.updateCartItems(items);
+        rsp.setCartId(cartId);
 
         return rsp;
     }
