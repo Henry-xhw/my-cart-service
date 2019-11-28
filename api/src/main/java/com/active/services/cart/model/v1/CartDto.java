@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.active.services.cart.model.CurrencyCode;
@@ -22,5 +23,6 @@ public class CartDto extends BaseDto {
     @NotNull
     private CurrencyCode currencyCode;
 
+    @Valid
     private List<CartItemDto> items = new ArrayList<>();
 }

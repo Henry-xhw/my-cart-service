@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -84,11 +85,21 @@ public class RestDocument {
 
     public static ParameterDescriptor autoPathParameterDoc(String parameterName, Class clazz, String fieldName)
       throws NoSuchFieldException {
-        Field field = clazz.getDeclaredField(fieldName);
-        return parameterWithName(parameterName)
-          .attributes(new Attributes.Attribute("type", field.getType().getSimpleName()),
-            new Attributes.Attribute("constraint", getPathParameterConstraint(field)))
-          .description(getComment(clazz, fieldName));
+        Field field = null;
+        Class currentClass = clazz;
+        while (currentClass != null) {
+            try {
+                field = currentClass.getDeclaredField(fieldName);
+            } catch (Exception e) {}
+            if (Objects.nonNull(field)) {
+                return parameterWithName(parameterName)
+                        .attributes(new Attributes.Attribute("type", field.getType().getSimpleName()),
+                                new Attributes.Attribute("constraint", getPathParameterConstraint(field)))
+                        .description(getComment(currentClass, fieldName));
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+        throw new NoSuchFieldException(fieldName);
     }
 
     public static SimpleSnippet autoSimpleDoc(String snippetName, String templateName) {
