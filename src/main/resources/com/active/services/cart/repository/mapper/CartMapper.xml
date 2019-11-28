@@ -166,7 +166,7 @@
     </delete>
 
     <delete id="deleteCartItem">
-        DELETE FROM cart_item WHERE identifier = #{id}
+        DELETE FROM cart_item WHERE identifier = #{cartItemId}
     </delete>
 
     <delete id="deleteCartItemByCartId">
