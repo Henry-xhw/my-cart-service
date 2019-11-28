@@ -4,6 +4,7 @@ import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 import org.eclipse.jetty.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,8 +50,8 @@ public class CartController {
     }
 
     @GetMapping(ID_PARAM_PATH)
-    public CreateCartReq get(@PathVariable(ID_PARAM) UUID cartId) {
-        CreateCartReq rsp = new CreateCartReq();
+    public FindCartByIdRsp get(@PathVariable(ID_PARAM) UUID cartId) {
+        FindCartByIdRsp rsp = new FindCartByIdRsp();
 
         Cart cart = cartService.get(cartId);
         rsp.setCart(CartMapper.INSTANCE.toDto(cart));
@@ -60,7 +60,7 @@ public class CartController {
     }
 
     @GetMapping(value = "/ownerId/{ownerId}")
-    public SearchCartRsp search(@PathVariable("ownerId") @NotNull(message = "ownerId can not be null") UUID ownerId) {
+    public SearchCartRsp search(@PathVariable("ownerId") UUID ownerId) {
         SearchCartRsp rsp = new SearchCartRsp();
 
         List<UUID> cartIds = cartService.search(ownerId);
