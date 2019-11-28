@@ -52,15 +52,7 @@ public class CartItemController {
     @DeleteMapping(CART_ITEM_ID_PATH)
     public DeleteCartItemRsp delete(@PathVariable("cart-id") UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        Cart cart = cartService.get(cartId).orElse(null);
-        if (null == cart) {
-            // cart not exist, need error msg
-            throw new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-                    OperationResultCode.CART_NOT_EXIST.getDescription()
-                            + " cart id: " + cartId.toString());
-        }
-
-        if (!isCartItemExist(cart.getItems(), cartItemId)) {
+        if (!isCartItemExist(cartService.get(cartId).getItems(), cartItemId)) {
             // cart item not exist, need error msg
             throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
                     OperationResultCode.CART_ITEM_NOT_EXIST.getDescription()

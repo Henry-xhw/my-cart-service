@@ -1,6 +1,8 @@
 package com.active.services.cart.controller;
 
 
+import com.active.services.cart.common.OperationResultCode;
+import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.controller.v1.CartItemController;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -66,7 +68,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartItemFailWhenCartNotExist() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(null);
+        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
         mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
