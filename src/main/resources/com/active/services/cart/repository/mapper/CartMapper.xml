@@ -97,7 +97,7 @@
             </when>
             <otherwise>
                 [booking_start_dt] = null,
-                [booking_end_dt] = null
+                [booking_end_dt] = null,
             </otherwise>
         </choose>
         <choose>
@@ -107,7 +107,7 @@
             </when>
             <otherwise>
                 [trimmed_booking_start_dt] = null,
-                [trimmed_booking_end_dt] = null
+                [trimmed_booking_end_dt] = null,
             </otherwise>
         </choose>
         <if test="item.quantity!=null">
