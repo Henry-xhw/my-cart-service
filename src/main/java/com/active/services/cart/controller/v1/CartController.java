@@ -1,5 +1,6 @@
 package com.active.services.cart.controller.v1;
 
+import com.active.services.cart.common.OperationResultCode;
 import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
@@ -7,7 +8,6 @@ import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
-import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,8 @@ public class CartController {
     public void delete(@PathVariable(ID_PARAM) UUID cartIdentifier) {
         Long cartId = Optional.ofNullable(cartService.get(cartIdentifier))
           .map(Cart::getId)
-          .orElseThrow(() -> new CartException(HttpStatus.NOT_FOUND_404, String.format(CART_NOT_EXIST, cartIdentifier)));
+          .orElseThrow(() -> new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+            OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartIdentifier.toString()));
         cartService.delete(cartId);
     }
 
