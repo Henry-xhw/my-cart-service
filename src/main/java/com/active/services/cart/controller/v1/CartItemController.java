@@ -1,20 +1,26 @@
 package com.active.services.cart.controller.v1;
 
-import com.active.services.cart.common.exception.CartException;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.v1.req.CreateCartItemReq;
-import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
-import com.active.services.cart.service.CartService;
-import org.eclipse.jetty.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.active.services.cart.controller.v1.Constants.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.active.services.cart.common.OperationResultCode;
+import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.v1.req.CreateCartItemReq;
+import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
+import com.active.services.cart.service.CartService;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
@@ -52,20 +58,12 @@ public class CartItemController {
     @DeleteMapping(CART_ITEM_ID_PATH)
     public DeleteCartItemRsp delete(@PathVariable("cart-id") UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        Cart cart = cartService.get(cartId);
-        if (null == cart) {
-            // cart not exist, need error msg
-            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
-        }
-
-        if (cart.getItems().size() == 0) {
-            // empty cart, need error msg
-            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
-        }
-
-        if (!isCartItemExist(cart.getItems(), cartItemId)) {
+        if (!isCartItemExist(cartService.get(cartId).getItems(), cartItemId)) {
             // cart item not exist, need error msg
-            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
+            throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
+                    OperationResultCode.CART_ITEM_NOT_EXIST.getDescription()
+                            + " cart id: " + cartId
+                            + " cart item id: " + cartItemId);
         }
 
         cartService.deleteCartItem(cartItemId);
@@ -75,6 +73,7 @@ public class CartItemController {
     }
 
     private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
-        return items.stream().filter(it -> it.getIdentifier() == cartItemId).count() != 0;
+        return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
     }
+
 }

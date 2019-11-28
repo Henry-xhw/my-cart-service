@@ -4,6 +4,7 @@ import com.active.services.cart.model.CurrencyCode;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class CartDataFactory {
@@ -11,6 +12,7 @@ public class CartDataFactory {
     public static Cart cart() {
         Cart cart = new Cart();
 
+        cart.setId(new Random().nextLong());
         cart.setCurrencyCode(CurrencyCode.USD);
         cart.setKeyerId(UUID.randomUUID());
         cart.setOwnerId(UUID.randomUUID());
