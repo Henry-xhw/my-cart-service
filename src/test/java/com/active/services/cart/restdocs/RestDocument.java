@@ -93,9 +93,9 @@ public class RestDocument {
             } catch (Exception e) {}
             if (Objects.nonNull(field)) {
                 return parameterWithName(parameterName)
-                        .attributes(new Attributes.Attribute("type", field.getType().getSimpleName()),
-                                new Attributes.Attribute("constraint", getPathParameterConstraint(field)))
-                        .description(getComment(currentClass, fieldName));
+                  .attributes(new Attributes.Attribute("type", field.getType().getSimpleName()),
+                    new Attributes.Attribute("constraint", getPathParameterConstraint(field)))
+                  .description(getComment(currentClass, fieldName));
             }
             currentClass = currentClass.getSuperclass();
         }
