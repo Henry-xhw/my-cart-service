@@ -1,0 +1,116 @@
+ext {
+    snippetsDir = "$buildDir/generated-snippets"
+    javadocJsonDir = file("$buildDir/generated-javadoc-json")
+    javadocJsonDirs = file("$buildDir/generated-javadoc-json,$buildDir/../api/build/generated-javadoc-json")
+    springRestDocsVersion = '2.0.0.RELEASE'
+    springAutoRestDocsVersion = '2.0.4'
+    springRestDocsMockMvcVersion = '2.0.3.RELEASE'
+}
+
+task copyDocTemplateFile(type: Copy, dependsOn: test) {
+    file("$buildDir/docs").deleteDir()
+    from "${project.projectDir}/src/docs"
+    into "$buildDir/docs"
+}
+
+task composeSnippets(dependsOn: [copyDocTemplateFile, test]) {
+    doLast {
+        def snippetsDir = new File("${snippetsDir}")
+        def indexDoc = new File("$buildDir/docs/index.adoc")
+        if (indexDoc.exists()) {
+            snippetsDir.listFiles().sort().each {
+                if (it.isDirectory()) {
+                    def resourceDir = new File("$buildDir/docs/resources")
+                    if (!resourceDir.exists()) {
+                        resourceDir.mkdirs()
+                    }
+                    def resourceFile = new File("$buildDir/docs/resources/${it.getName()}.adoc")
+                    indexDoc.append("include::resources/${resourceFile.getName()}[]\n")
+                    writeDocs(resourceFile, it, "=", "")
+                }
+            }
+        }
+    }
+}
+
+def writeDocs(File resourceFile, File snippetDir, String titlePrefix, String parentDir) {
+    if (!snippetDir.isDirectory()) {
+        return
+    }
+    def excludeSnippets = ["curl-request.adoc", "httpie-request.adoc", "request-body.adoc", "response-body.adoc",
+                           "resource.json"]
+    if(snippetDir.getName() != "Success"){
+        resourceFile.append("[[${parentDir.replace("/", "-")}${snippetDir.getName()}]]\n")
+        resourceFile.append("${titlePrefix}= ${snippetDir.getName().replace("-", " ")}\n")
+    }
+    def docString = "operation::${parentDir}${snippetDir.getName().replace(".adoc", "")}[snippets='"
+    def containsSnippet = false
+    snippetDir.listFiles().sort().each {
+        if (!it.isDirectory() && !excludeSnippets.contains(it.getName())) {
+            docString = docString.concat(",")
+            docString = docString.concat(it.getName().replace(".adoc", ""))
+            containsSnippet = true
+        }
+    }
+    if (containsSnippet) {
+        docString = docString.replaceFirst(",", "")
+        docString = docString.concat("']\n")
+        resourceFile.append(docString)
+    }
+    snippetDir.listFiles().sort({ a, b ->
+        if (a.getName() == "Success") {
+            return -1
+        } else if (b.getName() == "Success") {
+            return 1
+        } else {
+            return a.getName() <=> b.getName()
+        }
+    }).each {
+        if (it.isDirectory()) {
+            if (snippetDir.getName().endsWith("Success") || snippetDir.getName().endsWith("Error")) {
+                writeDocs(resourceFile, it, "${titlePrefix}", "${parentDir}${snippetDir.getName()}/")
+            } else {
+                writeDocs(resourceFile, it, "${titlePrefix}=", "${parentDir}${snippetDir.getName()}/")
+            }
+        }
+    }
+
+}
+
+configurations {
+    jsondoclet
+}
+
+task jsonDoclet(type: Javadoc, dependsOn: compileJava) {
+    afterEvaluate {
+        source = sourceSets.main.allJava
+        classpath = sourceSets.main.compileClasspath
+
+        destinationDir = javadocJsonDir
+        options.encoding = 'UTF-8'
+        options.docletpath = configurations.jsondoclet.files.asType(List)
+        options.doclet = 'capital.scalable.restdocs.jsondoclet.ExtractDocumentationAsJsonDoclet'
+        options.memberLevel = JavadocMemberLevel.PACKAGE
+    }
+}
+
+test {
+    systemProperty 'org.springframework.restdocs.outputDir', snippetsDir
+    systemProperty 'org.springframework.restdocs.javadocJsonDir', javadocJsonDirs
+
+    dependsOn jsonDoclet
+}
+
+asciidoctor {
+    sourceDir = file("${buildDir}/docs")
+    inputs.dir snippetsDir
+    dependsOn composeSnippets,test
+    attributes 'imagesdir': './images'
+}
+
+dependencies {
+    asciidoctor "org.springframework.restdocs:spring-restdocs-asciidoctor:${springRestDocsVersion}"
+    jsondoclet "capital.scalable:spring-auto-restdocs-json-doclet:${springAutoRestDocsVersion}"
+    testImplementation "capital.scalable:spring-auto-restdocs-core:${springAutoRestDocsVersion}"
+    testCompile "org.springframework.restdocs:spring-restdocs-mockmvc:${springRestDocsMockMvcVersion}"
+}

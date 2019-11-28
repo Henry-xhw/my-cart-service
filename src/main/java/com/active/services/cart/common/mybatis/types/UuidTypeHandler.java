@@ -1,4 +1,4 @@
-package com.active.services.common.mybatis.types;
+package com.active.services.cart.common.mybatis.types;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
