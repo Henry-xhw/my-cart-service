@@ -84,35 +84,41 @@
     <update id="updateCartItem">
         UPDATE [dbo].[cart_item]
         SET
-            <if test="item.productName!=null AND item.productName!=''">
-                [product_name] = #{item.productName},
-            </if>
-            <if test="item.productDescription!=null AND item.productDescription!=''">
-                [product_description] = #{item.productDescription},
-            </if>
-            <choose>
-                <when test="item.bookingRange != null">
-                    [booking_start_dt] = #{item.bookingRange.lower},
-                    [booking_end_dt] = #{item.bookingRange.upper},
-                </when>
-                <otherwise>
-                    [booking_start_dt] = null,
-                    [booking_end_dt] = null
-                </otherwise>
-            </choose>
-            <choose>
-                <when test="item.trimmedBookingRange != null">
-                    [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lower},
-                    [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upper},
-                </when>
-                <otherwise>
-                    [trimmed_booking_start_dt] = null,
-                    [trimmed_booking_end_dt] = null
-                </otherwise>
-            </choose>
-        [quantity] = #{item.quantity},
-        [unit_price] = #{item.unitPrice},
-        [grouping_identifier] = #{item.groupingIdentifier},
+        <if test="item.productName!=null and item.productName!=''">
+            [product_name] = #{item.productName},
+        </if>
+        <if test="item.productDescription!=null and item.productDescription!=''">
+            [product_description] = #{item.productDescription},
+        </if>
+        <choose>
+            <when test="item.bookingRange != null">
+                [booking_start_dt] = #{item.bookingRange.lower},
+                [booking_end_dt] = #{item.bookingRange.upper},
+            </when>
+            <otherwise>
+                [booking_start_dt] = null,
+                [booking_end_dt] = null
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="item.trimmedBookingRange != null">
+                [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lower},
+                [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upper},
+            </when>
+            <otherwise>
+                [trimmed_booking_start_dt] = null,
+                [trimmed_booking_end_dt] = null
+            </otherwise>
+        </choose>
+        <if test="item.quantity!=null">
+            [quantity] = #{item.quantity},
+        </if>
+        <if test="item.unitPrice!=null">
+            [unit_price] = #{item.unitPrice},
+        </if>
+        <if test="item.groupingIdentifier!=null and item.groupingIdentifier!=''">
+            [grouping_identifier] = #{item.groupingIdentifier},
+        </if>
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
