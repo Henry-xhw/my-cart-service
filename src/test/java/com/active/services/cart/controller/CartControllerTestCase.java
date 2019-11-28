@@ -1,5 +1,7 @@
 package com.active.services.cart.controller;
 
+import com.active.services.cart.common.OperationResultCode;
+import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.controller.v1.CartController;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
@@ -35,13 +37,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = CartController.class, secure = false)
 public class CartControllerTestCase extends BaseControllerTestCase {
 
+    private UUID cartId = UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D");
+
     @MockBean
     private CartService cartService;
 
     @Test
     public void deleteCartSuccess() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(Optional.of(CartDataFactory.cart()));
-        mockMvc.perform(delete("/carts/{id}", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
+        when(cartService.get(any(UUID.class))).thenReturn(CartDataFactory.cart());
+        mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
           .andExpect(status().isOk())
@@ -51,8 +55,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(Optional.empty());
-        mockMvc.perform(delete("/carts/{id}", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
+        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+            OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
+        mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
           .andExpect(status().isOk())
@@ -65,7 +70,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         rsp.setCart(MockCart.mockCartDto());
         UUID identifier = UUID.randomUUID();
         Cart cart = MockCart.mockCartDomain();
-        when(cartService.get(identifier)).thenReturn(Optional.of(cart));
+        when(cartService.get(identifier)).thenReturn(cart);
         String result = mockMvc.perform(get("/carts/{id}", identifier)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader()))
