@@ -11,7 +11,7 @@ public class BaseControllerTestCase {
 
     protected static final String ACTOR_ID = "Actor-Id";
 
-    protected static final String ACTOR_EMAIL = "product.service.ut@activenetwork.com";
+    protected static final String ACTOR_EMAIL = "cart.service.ut@activenetwork.com";
 
     @Autowired
     protected MockMvc mockMvc;
