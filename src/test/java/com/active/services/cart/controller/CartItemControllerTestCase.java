@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,14 +43,14 @@ public class CartItemControllerTestCase {
 
     @Test
     public void delete_Common() throws Exception {
-        Mockito.when(cartService.get(cartId)).thenReturn(cart);
+        Mockito.when(cartService.get(cartId)).thenReturn(Optional.of(cart));
         DeleteCartItemRsp rsp = itemController.delete(cartId, cartItemId1);
         assert (rsp.getCartId().equals(cartId));
     }
 
     @Test
     public void delete_cartNotExist() throws Exception {
-        Mockito.when(cartService.get(cartId)).thenReturn(null);
+        Mockito.when(cartService.get(cartId)).thenReturn(Optional.empty());
         try {
             itemController.delete(cartId, cartItemId1);
         } catch (CartException exception) {
@@ -59,7 +60,7 @@ public class CartItemControllerTestCase {
 
     @Test
     public void delete_cartItemNotExist() throws Exception {
-        Mockito.when(cartService.get(cartId)).thenReturn(cart);
+        Mockito.when(cartService.get(cartId)).thenReturn(Optional.of(cart));
         try {
             itemController.delete(cartId, UUID.fromString("550e8400-e29b-41d4-a716-446655440003"));
         } catch (CartException exception) {
@@ -70,7 +71,7 @@ public class CartItemControllerTestCase {
     @Test
     public void delete_cartItemNotExist_emptyCart() throws Exception {
         cart.getItems().clear();
-        Mockito.when(cartService.get(cartId)).thenReturn(cart);
+        Mockito.when(cartService.get(cartId)).thenReturn(Optional.of(cart));
         try {
             itemController.delete(cartId, cartItemId1);
         } catch (CartException exception) {

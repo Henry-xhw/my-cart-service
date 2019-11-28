@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Mapper
@@ -14,7 +15,7 @@ public interface CartMapper {
 
     void deleteCart(Long cartId);
 
-    Cart getCart(@Param("cartId") UUID cartId);
+    Optional<Cart> getCart(@Param("cartId") UUID cartId);
 
     void updateCartItem(CartItem item);
 
@@ -22,7 +23,7 @@ public interface CartMapper {
 
     void deleteCartItem(UUID cartItemId);
 
-    void deleteCartItemByCart(Long cartId);
+    void deleteCartItemByCartId(Long cartId);
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 }

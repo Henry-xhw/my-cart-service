@@ -169,7 +169,7 @@
         DELETE FROM cart_item WHERE identifier = #{id}
     </delete>
 
-    <delete id="deleteCartItemByCart">
+    <delete id="deleteCartItemByCartId">
         DELETE FROM cart_item WHERE cart_id = #{cartId}
     </delete>
 

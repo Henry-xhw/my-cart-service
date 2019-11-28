@@ -3,10 +3,10 @@ package com.active.services.cart.repository;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
@@ -23,10 +23,10 @@ public class CartRepository {
 
     public void deleteCart(Long cartId) {
         cartMapper.deleteCart(cartId);
-        cartMapper.deleteCartItemByCart(cartId);
+        cartMapper.deleteCartItemByCartId(cartId);
     }
 
-    public Cart getCart(UUID cartId) {
+    public Optional<Cart> getCart(UUID cartId) {
         return cartMapper.getCart(cartId);
     }
 

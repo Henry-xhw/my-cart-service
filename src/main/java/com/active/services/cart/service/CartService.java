@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,7 +26,7 @@ public class CartService {
         cartRepository.deleteCart(cartId);
     }
 
-    public Cart get(UUID cartId) {
+    public Optional<Cart> get(UUID cartId) {
         return cartRepository.getCart(cartId);
     }
 

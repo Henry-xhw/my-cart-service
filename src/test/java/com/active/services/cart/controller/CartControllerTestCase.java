@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
@@ -38,8 +39,8 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     private CartService cartService;
 
     @Test
-    public void TestCreateCartSuccess() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(CartDataFactory.cart());
+    public void deleteCartSuccess() throws Exception {
+        when(cartService.get(any(UUID.class))).thenReturn(Optional.of(CartDataFactory.cart()));
         mockMvc.perform(delete("/carts/{id}", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
@@ -49,8 +50,8 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     }
 
     @Test
-    public void TestCreateCartFailWithCartNotExist() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(null);
+    public void deleteCartWhenCartNotExistThrowException() throws Exception {
+        when(cartService.get(any(UUID.class))).thenReturn(Optional.empty());
         mockMvc.perform(delete("/carts/{id}", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
@@ -59,12 +60,12 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     }
 
     @Test
-    public void testFindCartsByIdWithValidReq() throws Exception {
+    public void findCartsByIdSuccess() throws Exception {
         FindCartByIdRsp rsp = new FindCartByIdRsp();
         rsp.setCart(MockCart.mockCartDto());
         UUID identifier = UUID.randomUUID();
         Cart cart = MockCart.mockCartDomain();
-        when(cartService.get(identifier)).thenReturn(cart);
+        when(cartService.get(identifier)).thenReturn(Optional.of(cart));
         String result = mockMvc.perform(get("/carts/{id}", identifier)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader()))

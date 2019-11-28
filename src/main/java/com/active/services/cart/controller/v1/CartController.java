@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.active.services.cart.controller.v1.Constants.*;
@@ -22,8 +21,6 @@ import static com.active.services.cart.controller.v1.Constants.*;
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 public class CartController {
-
-    private static final String CART_NOT_EXIST = "cart `%s` not exist";
 
     @Autowired
     private CartService cartService;
@@ -43,7 +40,7 @@ public class CartController {
 
     @DeleteMapping(ID_PARAM_PATH)
     public void delete(@PathVariable(ID_PARAM) UUID cartIdentifier) {
-        Long cartId = Optional.ofNullable(cartService.get(cartIdentifier))
+        Long cartId = cartService.get(cartIdentifier)
           .map(Cart::getId)
           .orElseThrow(() -> new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
             OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartIdentifier.toString()));
@@ -54,7 +51,9 @@ public class CartController {
     public FindCartByIdRsp get(@PathVariable(ID_PARAM) UUID cartId) {
         FindCartByIdRsp rsp = new FindCartByIdRsp();
 
-        Cart cart = cartService.get(cartId);
+        Cart cart = cartService.get(cartId)
+          .orElseThrow(() -> new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+            OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId.toString()));
         rsp.setCart(CartMapper.INSTANCE.toDto(cart));
 
         return rsp;
