@@ -1,12 +1,12 @@
 package com.active.services.cart.controller.v1;
 
+import com.active.services.cart.common.OperationResultCode;
 import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
 import com.active.services.cart.service.CartService;
-import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,17 +55,17 @@ public class CartItemController {
         Cart cart = cartService.get(cartId);
         if (null == cart) {
             // cart not exist, need error msg
-            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
-        }
-
-        if (cart.getItems().size() == 0) {
-            // empty cart, need error msg
-            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
+            throw new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+                    OperationResultCode.CART_NOT_EXIST.getDescription()
+                            + " cart id: " + cartId.toString());
         }
 
         if (!isCartItemExist(cart.getItems(), cartItemId)) {
             // cart item not exist, need error msg
-            throw new CartException(HttpStatus.NOT_FOUND_404, String.format("cart item not exist: %s", cartId.toString()));
+            throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
+                    OperationResultCode.CART_ITEM_NOT_EXIST.getDescription()
+                            + " cart id: " + cartId.toString()
+                            + " cart item id: " + cartItemId.toString());
         }
 
         cartService.deleteCartItem(cartItemId);
@@ -75,6 +75,6 @@ public class CartItemController {
     }
 
     private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
-        return items.stream().filter(it -> it.getIdentifier() == cartItemId).count() != 0;
+        return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
     }
 }
