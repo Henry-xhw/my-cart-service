@@ -64,25 +64,16 @@ active {
 }
 
 // for API document
-ext {
-    snippetsDir = file('build/generated-snippets')
-}
+apply from: 'gradle/restdocs.gradle'
 
 postman {
     title = 'Cart Service'
     baseUrl = '{{cart-service}}'
 }
 
-asciidoctor {
-    inputs.dir snippetsDir
-    dependsOn test
-    attributes 'imagesdir': './images'
-}
-
 test {
     outputs.dir snippetsDir
 }
-
 
 import org.gradle.internal.os.OperatingSystem
 
