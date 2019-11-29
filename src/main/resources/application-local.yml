@@ -3,9 +3,9 @@ spring:
     url: jdbc:sqlserver://localhost.dev.activenetwork.com:1434;databaseName=cart_service
     username: fnd_dev_usr
     password: fnd_dev_usr$2008
-    output:
-      ansi:
-        enabled: ALWAYS
+  output:
+    ansi:
+      enabled: ALWAYS
 
 logging:
   level:
