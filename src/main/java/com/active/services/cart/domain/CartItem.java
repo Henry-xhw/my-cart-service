@@ -19,7 +19,7 @@ public class CartItem extends BaseDomainObject {
 
     private Range<Instant> trimmedBookingRange;
 
-    private int quantity;
+    private Integer quantity;
 
     private BigDecimal unitPrice;
 

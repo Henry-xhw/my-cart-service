@@ -3,6 +3,7 @@ package com.active.services.cart.repository;
 import com.active.services.cart.CartServiceApp;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.domain.CartItem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
 
 import static junit.framework.TestCase.assertNotNull;
 
@@ -28,5 +31,14 @@ public class CartRepositoryIntegrationTest {
         cartRepository.createCart(cart);
         cartRepository.deleteCart(cart.getId());
         assertNotNull(cart.getId());
+    }
+
+    @Test
+    public void cartItemCRUD() {
+        Cart cart = CartDataFactory.cart();
+        cartRepository.createCart(cart);
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartRepository.createCartItems(cart.getId(), Collections.singletonList(cartItem));
+        assertNotNull(cartItem.getId());
     }
 }

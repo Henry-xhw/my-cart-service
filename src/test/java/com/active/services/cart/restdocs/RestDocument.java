@@ -79,7 +79,6 @@ public class RestDocument {
     }
 
     public static ResponseFieldsSnippet autoResponseFieldsDoc(Object object) {
-        List<FieldDescriptor> fieldDescriptors = generateAllFieldDescriptors(object);
         return responseFields(generateAllFieldDescriptors(object));
     }
 

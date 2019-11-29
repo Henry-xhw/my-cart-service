@@ -30,14 +30,12 @@ public class CartRepository {
         return cartMapper.getCart(cartId);
     }
 
-    public void upsertItems(UUID cartId, List<CartItem> items) {
-        items.forEach(item -> {
-            if (item.getIdentifier() == null) {
-                cartMapper.updateCartItem(item);
-            } else {
-                cartMapper.createCartItem(cartId, item);
-            }
-        });
+    public void createCartItems(Long cartId, List<CartItem> items) {
+        items.forEach(item -> cartMapper.createCartItem(cartId, item));
+    }
+
+    public void updateCartItems(List<CartItem> items) {
+        items.forEach(item -> cartMapper.updateCartItem(item));
     }
 
     public void deleteCartItem(UUID cartItemId) {
