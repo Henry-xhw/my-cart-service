@@ -29,7 +29,7 @@ public class CartRepositoryIntegrationTest {
     public void cartCRUD() {
         Cart cart = CartDataFactory.cart();
         cartRepository.createCart(cart);
-
+        cartRepository.deleteCart(cart.getId());
         assertNotNull(cart.getId());
     }
 

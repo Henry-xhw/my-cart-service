@@ -20,6 +20,11 @@ public class CartServiceTestCase {
     private CartService cartService;
 
     @Test
+    public void deleteSuccess() {
+        cartService.delete(1L);
+    }
+
+    @Test
     public void createCartItemsSuccess() {
         cartService.createCartItems(1L, Collections.singletonList(CartDataFactory.cartItem()));
     }
