@@ -1,21 +1,5 @@
 package com.active.services.cart.controller;
 
-import com.active.services.cart.common.OperationResultCode;
-import com.active.services.cart.common.exception.CartException;
-import com.active.services.cart.controller.v1.CartController;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
-import com.active.services.cart.mock.MockCart;
-import com.active.services.cart.model.v1.CartDto;
-import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
-import com.active.services.cart.service.CartService;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 import static com.active.services.cart.restdocs.RestDocument.autoApiDescriptionDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
@@ -25,15 +9,36 @@ import static com.active.services.cart.restdocs.RestDocument.newErrorDocument;
 import static com.active.services.cart.restdocs.RestDocument.newSuccessDocument;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.active.services.cart.model.v1.req.CreateCartReq;
 
 import java.util.UUID;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.active.services.cart.common.OperationResultCode;
+import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.controller.v1.CartController;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.mock.MockCart;
+import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
+import com.active.services.cart.service.CartService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CartController.class, secure = false)
@@ -52,7 +57,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartDto cartDto = MockCart.mockCartDto();
         cartDto.getItems().clear();
         rsp.setCart(cartDto);
-        doNothing().when(cartService).create(any(Cart.class));
+        doNothing().when(cartService).create(any());
         String result = mockMvc.perform(
           post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
             .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
@@ -61,6 +66,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
           .andExpect(MockMvcResultMatchers.jsonPath("$.cart.currencyCode").value("USD")).andReturn().getResponse()
           .getContentAsString();
         CartDto resultDto = objectMapper.readValue(result, CreateCartReq.class).getCart();
+        verify(cartService, times(1)).create(any());
         Assert.assertNotNull(resultDto);
         Assert.assertFalse(cartDto.getIdentifier().toString().equals(resultDto.getIdentifier().toString()));
     }
@@ -75,11 +81,12 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartDto cartDtoRsp = MockCart.mockCartDto();
         cartDtoRsp.getItems().clear();
         rsp.setCart(cartDtoRsp);
-        doNothing().when(cartService).create(any(Cart.class));
+        doNothing().when(cartService).create(any());
         mockMvc.perform(
-          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
-            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
-          newErrorDocument("Cart", "Create-Cart", "Owner_Id_IS_Null"));
+            post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+            newErrorDocument("Cart", "Create-Cart", "Owner_Id_IS_Null"));
+        verify(cartService, never()).create(any());
     }
 
     @Test
@@ -92,11 +99,12 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartDto cartDtoRsp = MockCart.mockCartDto();
         cartDtoRsp.getItems().clear();
         rsp.setCart(cartDtoRsp);
-        doNothing().when(cartService).create(any(Cart.class));
+        doNothing().when(cartService).create(any());
         mockMvc.perform(
-          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
-            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
-          newErrorDocument("Cart", "Create-Cart", "Keyer_Id_IS_Null"));
+            post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+            newErrorDocument("Cart", "Create-Cart", "Keyer_Id_IS_Null"));
+        verify(cartService, never()).create(any());
     }
 
     @Test
@@ -109,11 +117,12 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartDto cartDtoRsp = MockCart.mockCartDto();
         cartDtoRsp.getItems().clear();
         rsp.setCart(cartDtoRsp);
-        doNothing().when(cartService).create(any(Cart.class));
+        doNothing().when(cartService).create(any());
         mockMvc.perform(
-          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
-            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
-          newErrorDocument("Cart", "Create-Cart", "Currency_Code_IS_Null"));
+            post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+            newErrorDocument("Cart", "Create-Cart", "Currency_Code_IS_Null"));
+        verify(cartService, never()).create(any());
     }
 
     @Test
