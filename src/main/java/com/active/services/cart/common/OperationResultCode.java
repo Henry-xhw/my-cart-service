@@ -7,9 +7,9 @@ public enum OperationResultCode {
     CART_ITEM_NOT_EXIST(4002, "cart item not exist.");
 
     @Getter
-    private int code;
+    private final int code;
     @Getter
-    private String description;
+    private final String description;
 
     OperationResultCode(int code, String description) {
         this.code = code;
