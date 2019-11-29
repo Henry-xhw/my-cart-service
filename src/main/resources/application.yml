@@ -17,9 +17,6 @@ spring:
       minIdle: 5
       maximumPoolSize: 100
       leakDetectionThreshold: 0
-  output:
-    ansi:
-      enabled: ALWAYS
 mybatis:
   type-aliases-package: com.active.services.cart.domain
   configuration:
