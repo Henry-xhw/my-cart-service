@@ -11,6 +11,7 @@ import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
+import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
@@ -32,6 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -153,5 +157,53 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 .contentType(V1_MEDIA))
                 .andExpect(status().isOk())
                 .andDo(newErrorDocument("Cart-Item", "Delete-Cart-Item", "Cart-Item-Not-Exist"));
+    }
+
+    @Test
+    public void updateCartItemSuccess() throws Exception {
+        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
+        UUID identifier = UUID.randomUUID();
+        rsp.setCartId(identifier);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        List<CartItem> items = new ArrayList<>();
+        items.add(cartItem);
+        cart.setItems(items);
+        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        when(cartService.get(identifier)).thenReturn(cart);
+        when(cartService.updateCartItems(items)).thenReturn(items);
+        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+                .contentType(V1_MEDIA)
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andDo(newSuccessDocument("Cart-Item", "Update-Cart-Item",
+                        pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
+                        autoRequestFieldsDoc(req),
+                        autoResponseFieldsDoc(rsp)));
+    }
+
+    @Test
+    public void updateCartItemWhenCartItemNotExistThrowException() throws Exception {
+        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
+        UUID identifier = UUID.randomUUID();
+        rsp.setCartId(identifier);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        List<CartItem> items = new ArrayList<>();
+        items.add(cartItem);
+        cart.setItems(items);
+        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        when(cartService.get(identifier)).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + identifier));
+        when(cartService.updateCartItems(items)).thenReturn(items);
+        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+                .contentType(V1_MEDIA)
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Cart-Item-Not-Exist"));
     }
 }

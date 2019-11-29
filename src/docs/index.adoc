@@ -1,4 +1,4 @@
-= Product-Service API Doc
+= Cart-Service API Doc
 https://gitlab.dev.activenetwork.com/PlatformServices/cart-service
 :doctype: book
 :icons: font
@@ -10,9 +10,9 @@ https://gitlab.dev.activenetwork.com/PlatformServices/cart-service
 [introduction]
 = Introduction
 
-The Example API of Product Service.
+The Example API of Cart Service.
 
-This document shows the example APIs of Product Service. Import these endpoints with link:./api-spec/postman-collection.json[image:postman-logo.png[Postman, title="Postman", width=100]].
+This document shows the example APIs of Cart Service. Import these endpoints with link:./api-spec/postman-collection.json[image:postman-logo.png[Postman, title="Postman", width=100]].
 
 [[overview-http-verbs]]
 == HTTP verbs

@@ -2,10 +2,13 @@ package com.active.services.cart.controller.v1;
 
 import com.active.services.cart.common.OperationResultCode;
 import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
+import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,20 +40,12 @@ public class CartItemController {
     @PostMapping()
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
+
         Long cartId = cartService.get(cartIdentifier).getId();
 
         List<CartItem> items = req.getItems()
           .stream()
-          .peek(item -> {
-              if (Objects.nonNull(item.getBookingRange()) && !item.getBookingRange().valid()) {
-                  throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
-                    OperationResultCode.INVALID_PARAMETER.getDescription() + " booking range");
-              }
-              if (Objects.nonNull(item.getTrimmedBookingRange()) && !item.getTrimmedBookingRange().valid()) {
-                  throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
-                    OperationResultCode.INVALID_PARAMETER.getDescription() + " trimmed booking range");
-              }
-          })
+          .peek(this::checkTimeRange)
           .map(item -> CartMapper.INSTANCE.toDomain(item, true))
           .collect(Collectors.toList());
 
@@ -61,14 +56,25 @@ public class CartItemController {
     }
 
     @PutMapping()
-    public CreateCartItemReq update(@PathVariable(CART_ID_PARAM) UUID cartId,
+    public UpdateCartItemRsp update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody CreateCartItemReq req) {
-        CreateCartItemReq rsp = new CreateCartItemReq();
-
+        Cart cart = cartService.get(cartIdentifier);
+        req.getItems().stream().forEach(cartItem -> {
+            if (cartItem.getIdentifier() == null) {
+                throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                        String.format("cartItem's identifier can not be null"));
+            }
+            checkTimeRange(cartItem);
+            if(!isCartItemExist(cart.getItems(), cartItem.getIdentifier())) {
+                throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
+                        String.format("cart item not exist: %s", cartItem.getIdentifier().toString()));
+            }
+        });
         List<CartItem> items = req.getItems().stream().map(item ->
-          CartMapper.INSTANCE.toDomain(item, false)).collect(Collectors.toList());
-        items = cartService.updateCartItems(items);
-        rsp.setItems(items.stream().map(CartMapper.INSTANCE::toDto).collect(Collectors.toList()));
+                CartMapper.INSTANCE.toDomain(item, false)).collect(Collectors.toList());
+        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
+        cartService.updateCartItems(items);
+        rsp.setCartId(cartIdentifier);
 
         return rsp;
     }
@@ -92,5 +98,16 @@ public class CartItemController {
 
     private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
         return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
+    }
+
+    private void checkTimeRange(CartItemDto item) {
+        if (Objects.nonNull(item.getBookingRange()) && !item.getBookingRange().valid()) {
+            throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                    OperationResultCode.INVALID_PARAMETER.getDescription() + " booking range");
+        }
+        if (Objects.nonNull(item.getTrimmedBookingRange()) && !item.getTrimmedBookingRange().valid()) {
+            throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                    OperationResultCode.INVALID_PARAMETER.getDescription() + " trimmed booking range");
+        }
     }
 }

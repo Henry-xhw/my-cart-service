@@ -17,7 +17,7 @@ public interface CartMapper {
 
     Optional<Cart> getCart(@Param("cartId") UUID cartId);
 
-    void updateCartItem(CartItem item);
+    void updateCartItem(@Param("item") CartItem item);
 
     void createCartItem(@Param("cartId") Long cartId, @Param("item") CartItem item);
 
