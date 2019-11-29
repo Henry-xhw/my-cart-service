@@ -87,7 +87,7 @@
         <if test="item.productName!=null and item.productName!=''">
             [product_name] = #{item.productName},
         </if>
-        <if test="item.productDescription!=null and item.productDescription!=''">
+        <if test="item.productDescription!=null">
             [product_description] = #{item.productDescription},
         </if>
         <choose>

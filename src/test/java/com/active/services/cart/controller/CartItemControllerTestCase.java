@@ -183,4 +183,27 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                         autoRequestFieldsDoc(req),
                         autoResponseFieldsDoc(rsp)));
     }
+
+    @Test
+    public void updateCartItemWhenCartItemNotExistThrowException() throws Exception {
+        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
+        UUID identifier = UUID.randomUUID();
+        rsp.setCartId(identifier);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        List<CartItem> items = new ArrayList<>();
+        items.add(cartItem);
+        cart.setItems(items);
+        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        when(cartService.get(identifier)).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + identifier));
+        when(cartService.updateCartItems(items)).thenReturn(items);
+        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+                .contentType(V1_MEDIA)
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Cart-Item-Not-Exist"));
+    }
 }
