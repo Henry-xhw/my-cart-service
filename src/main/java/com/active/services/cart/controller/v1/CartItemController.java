@@ -1,12 +1,14 @@
 package com.active.services.cart.controller.v1;
 
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import com.active.services.cart.common.OperationResultCode;
+import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.v1.req.CreateCartItemReq;
+import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
+import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
+import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.active.services.cart.common.OperationResultCode;
-import com.active.services.cart.common.exception.CartException;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.v1.req.CreateCartItemReq;
-import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
-import com.active.services.cart.service.CartService;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
@@ -33,23 +35,39 @@ public class CartItemController {
     private CartService cartService;
 
     @PostMapping()
-    public CreateCartItemReq create(@PathVariable(CART_ID_PARAM) UUID cartId,
-                                    @RequestBody CreateCartItemReq req) {
-        return upsert(cartId, req, true);
+    public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
+                                    @RequestBody @Validated CreateCartItemReq req) {
+        Long cartId = cartService.get(cartIdentifier).getId();
+
+        List<CartItem> items = req.getItems()
+          .stream()
+          .peek(item -> {
+              if (Objects.nonNull(item.getBookingRange()) && !item.getBookingRange().valid()) {
+                  throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                    OperationResultCode.INVALID_PARAMETER.getDescription() + " booking range");
+              }
+              if (Objects.nonNull(item.getTrimmedBookingRange()) && !item.getTrimmedBookingRange().valid()) {
+                  throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                    OperationResultCode.INVALID_PARAMETER.getDescription() + " trimmed booking range");
+              }
+          })
+          .map(item -> CartMapper.INSTANCE.toDomain(item, true))
+          .collect(Collectors.toList());
+
+        cartService.createCartItems(cartId, items);
+        CreateCartItemRsp rsp = new CreateCartItemRsp();
+        rsp.setCartId(cartIdentifier);
+        return rsp;
     }
 
     @PutMapping()
     public CreateCartItemReq update(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @RequestBody CreateCartItemReq req) {
-        return upsert(cartId, req, false);
-    }
-
-    private CreateCartItemReq upsert(UUID cartId, CreateCartItemReq req, boolean isCreate) {
         CreateCartItemReq rsp = new CreateCartItemReq();
 
         List<CartItem> items = req.getItems().stream().map(item ->
-                CartMapper.INSTANCE.toDomain(item, isCreate)).collect(Collectors.toList());
-        items = cartService.upsertItems(cartId, items);
+          CartMapper.INSTANCE.toDomain(item, false)).collect(Collectors.toList());
+        items = cartService.updateCartItems(items);
         rsp.setItems(items.stream().map(CartMapper.INSTANCE::toDto).collect(Collectors.toList()));
 
         return rsp;
@@ -75,5 +93,4 @@ public class CartItemController {
     private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
         return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
     }
-
 }

@@ -26,8 +26,8 @@
             )
     </insert>
     
-    <insert id="createCartItem" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO  [dbo].[cart_item] (
+    <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
+        INSERT INTO [dbo].[cart_item] (
             [cart_id],
             [identifier],
             [product_id],
@@ -43,10 +43,11 @@
             [created_by],
             [created_dt],
             [modified_by],
-            [modified_dt] )
-        VALUES
-            (#{cart_id},
-             #{identifier},
+            [modified_dt]
+        )
+        VALUES (
+             #{cartId},
+             #{item.identifier},
              #{item.productId},
              #{item.productName},
              #{item.productDescription},
@@ -57,7 +58,7 @@
                 </when>
                 <otherwise>
                     null,
-                    null
+                    null,
                 </otherwise>
             </choose>
             <choose>
@@ -67,7 +68,7 @@
                 </when>
                 <otherwise>
                     null,
-                    null
+                    null,
                 </otherwise>
             </choose>
              #{item.quantity},
@@ -76,8 +77,8 @@
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
-             #{item.modifiedDt},
-            )
+             #{item.modifiedDt}
+        )
     </insert>
 
     <update id="updateCartItem">
