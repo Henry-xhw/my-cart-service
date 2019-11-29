@@ -16,30 +16,105 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.UUID;
-
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.restdocs.RestDocument.autoApiDescriptionDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
+import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.newErrorDocument;
 import static com.active.services.cart.restdocs.RestDocument.newSuccessDocument;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.active.services.cart.model.v1.req.CreateCartReq;
+
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CartController.class, secure = false)
 public class CartControllerTestCase extends BaseControllerTestCase {
-
+    
     private UUID cartId = UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D");
 
     @MockBean
     private CartService cartService;
+
+    @Test
+    public void createCartSuccess() throws Exception {
+        CreateCartReq req = new CreateCartReq();
+        req.setCart(MockCart.mockCartDto());
+        CreateCartReq rsp = new CreateCartReq();
+        CartDto cartDto = MockCart.mockCartDto();
+        cartDto.getItems().clear();
+        rsp.setCart(cartDto);
+        doNothing().when(cartService).create(any(Cart.class));
+        String result = mockMvc.perform(
+          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+          newSuccessDocument("Cart", "Create-Cart", autoApiDescriptionDoc(CartController.class, "create"),
+            autoRequestFieldsDoc(req), autoResponseFieldsDoc(rsp)))
+          .andExpect(MockMvcResultMatchers.jsonPath("$.cart.currencyCode").value("USD")).andReturn().getResponse()
+          .getContentAsString();
+        CartDto resultDto = objectMapper.readValue(result, CreateCartReq.class).getCart();
+        Assert.assertNotNull(resultDto);
+        Assert.assertFalse(cartDto.getIdentifier().toString().equals(resultDto.getIdentifier().toString()));
+    }
+
+    @Test
+    public void createCartWhenOwnerIdIsNullThrowException() throws Exception {
+        CreateCartReq req = new CreateCartReq();
+        CartDto cartDto = MockCart.mockCartDto();
+        cartDto.setOwnerId(null);
+        req.setCart(cartDto);
+        CreateCartReq rsp = new CreateCartReq();
+        CartDto cartDtoRsp = MockCart.mockCartDto();
+        cartDtoRsp.getItems().clear();
+        rsp.setCart(cartDtoRsp);
+        doNothing().when(cartService).create(any(Cart.class));
+        mockMvc.perform(
+          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+          newErrorDocument("Cart", "Create-Cart", "Owner_Id_IS_Null"));
+    }
+
+    @Test
+    public void createCartWhenKeyerIdIsNullThrowException() throws Exception {
+        CreateCartReq req = new CreateCartReq();
+        CartDto cartDto = MockCart.mockCartDto();
+        cartDto.setKeyerId(null);
+        req.setCart(cartDto);
+        CreateCartReq rsp = new CreateCartReq();
+        CartDto cartDtoRsp = MockCart.mockCartDto();
+        cartDtoRsp.getItems().clear();
+        rsp.setCart(cartDtoRsp);
+        doNothing().when(cartService).create(any(Cart.class));
+        mockMvc.perform(
+          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+          newErrorDocument("Cart", "Create-Cart", "Keyer_Id_IS_Null"));
+    }
+
+    @Test
+    public void createCartWhenCurrencyCodeIsNullThrowException() throws Exception {
+        CreateCartReq req = new CreateCartReq();
+        CartDto cartDto = MockCart.mockCartDto();
+        cartDto.setCurrencyCode(null);
+        req.setCart(cartDto);
+        CreateCartReq rsp = new CreateCartReq();
+        CartDto cartDtoRsp = MockCart.mockCartDto();
+        cartDtoRsp.getItems().clear();
+        rsp.setCart(cartDtoRsp);
+        doNothing().when(cartService).create(any(Cart.class));
+        mockMvc.perform(
+          post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
+            .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+          newErrorDocument("Cart", "Create-Cart", "Currency_Code_IS_Null"));
+    }
 
     @Test
     public void deleteCartSuccess() throws Exception {
