@@ -124,4 +124,36 @@ public class CartControllerTestCase extends BaseControllerTestCase {
                 .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
             newErrorDocument("Cart", "Create-Cart", "Owner_Id_IS_Null"));
     }
+
+    @Test public void createCartWhenKeyerIdIsNullThrowException() throws Exception {
+        CreateCartReq req = new CreateCartReq();
+        CartDto cartDto = MockCart.mockCartDto();
+        cartDto.setKeyerId(null);
+        req.setCart(cartDto);
+        CreateCartReq rsp = new CreateCartReq();
+        CartDto cartDtoRsp = MockCart.mockCartDto();
+        cartDtoRsp.getItems().clear();
+        rsp.setCart(cartDtoRsp);
+        doNothing().when(cartService).create(any(Cart.class));
+        mockMvc.perform(
+            post("/carts").contentType(CONTENT_TYPE).accept(CONTENT_TYPE).headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+            newErrorDocument("Cart", "Create-Cart", "Keyer_Id_IS_Null"));
+    }
+
+    @Test public void createCartWhenCurrencyCodeIsNullThrowException() throws Exception {
+        CreateCartReq req = new CreateCartReq();
+        CartDto cartDto = MockCart.mockCartDto();
+        cartDto.setCurrencyCode(null);
+        req.setCart(cartDto);
+        CreateCartReq rsp = new CreateCartReq();
+        CartDto cartDtoRsp = MockCart.mockCartDto();
+        cartDtoRsp.getItems().clear();
+        rsp.setCart(cartDtoRsp);
+        doNothing().when(cartService).create(any(Cart.class));
+        mockMvc.perform(
+            post("/carts").contentType(CONTENT_TYPE).accept(CONTENT_TYPE).headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
+            newErrorDocument("Cart", "Create-Cart", "Currency_Code_IS_Null"));
+    }
 }
