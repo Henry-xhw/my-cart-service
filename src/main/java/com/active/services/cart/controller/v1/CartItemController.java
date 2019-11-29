@@ -7,7 +7,6 @@ import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
 import com.active.services.cart.service.CartService;
-import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,8 +31,6 @@ public class CartItemController {
     private static final String CART_ITEM_ID_PARAM = "cart-item-id";
     private static final String CART_ITEM_ID_PATH = "/{" + CART_ITEM_ID_PARAM + "}";
 
-    private static final String CART_NOT_EXIST = "cart `%s` not exist";
-
     @Autowired
     private CartService cartService;
 
@@ -46,10 +43,12 @@ public class CartItemController {
           .stream()
           .peek(item -> {
               if (Objects.nonNull(item.getBookingRange()) && !item.getBookingRange().valid()) {
-                  throw new CartException(HttpStatus.BAD_REQUEST_400, String.format("booking range invalid"));
+                  throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                    OperationResultCode.INVALID_PARAMETER.getDescription() + " booking range");
               }
               if (Objects.nonNull(item.getTrimmedBookingRange()) && !item.getTrimmedBookingRange().valid()) {
-                  throw new CartException(HttpStatus.BAD_REQUEST_400, String.format("trimmed booking range invalid"));
+                  throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                    OperationResultCode.INVALID_PARAMETER.getDescription() + " trimmed booking range");
               }
           })
           .map(item -> CartMapper.INSTANCE.toDomain(item, true))

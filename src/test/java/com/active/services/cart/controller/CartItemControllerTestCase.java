@@ -64,7 +64,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
         CreateCartItemRsp rsp = new CreateCartItemRsp();
         rsp.setCartId(UUID.randomUUID());
-        mockMvc.perform(post("/carts/{cart-id}/items", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
+        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
           .content(objectMapper.writeValueAsString(req)))
@@ -77,10 +77,11 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void createCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(null);
+        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
+          OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
         CreateCartItemReq req = new CreateCartItemReq();
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
-        mockMvc.perform(post("/carts/{cart-id}/items", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
+        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
           .content(objectMapper.writeValueAsString(req)))
@@ -95,7 +96,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.getBookingRange().setLower(cartItem.getBookingRange().getUpper().plusMillis(1000L));
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        mockMvc.perform(post("/carts/{cart-id}/items", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
+        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
           .content(objectMapper.writeValueAsString(req)))
@@ -110,7 +111,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.getTrimmedBookingRange().setLower(cartItem.getTrimmedBookingRange().getUpper().plusMillis(1000L));
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        mockMvc.perform(post("/carts/{cart-id}/items", UUID.fromString("BA5ED9E7-A2F2-F24B-CDA4-6399D76F0D4D"))
+        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
           .content(objectMapper.writeValueAsString(req)))
