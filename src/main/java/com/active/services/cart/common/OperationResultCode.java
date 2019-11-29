@@ -5,12 +5,12 @@ import lombok.Getter;
 public enum OperationResultCode {
     CART_NOT_EXIST(4001, "cart not exist."),
     CART_ITEM_NOT_EXIST(4002, "cart item not exist."),
-    INVALID_PARAMETER(5001,"invalid parameters");
+    INVALID_PARAMETER(5001,"invalid parameters.");
 
     @Getter
-    private int code;
+    private final int code;
     @Getter
-    private String description;
+    private final String description;
 
     OperationResultCode(int code, String description) {
         this.code = code;
