@@ -318,4 +318,27 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Trimmed-Booking-Range-Is-Invalid"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").value("invalid parameters. trimmed booking range"));
     }
+
+    @Test
+    public void updateCartItemWhenBookingRangeIsInvalidThrowException1() throws Exception {
+        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
+        UUID identifier = UUID.randomUUID();
+        rsp.setCartId(identifier);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setBookingRange(null);
+        cartItem.setTrimmedBookingRange(null);
+        List<CartItem> items = new ArrayList<>();
+        items.add(cartItem);
+        cart.setItems(items);
+        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        when(cartService.get(identifier)).thenReturn(cart);
+        when(cartService.updateCartItems(items)).thenReturn(items);
+        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+          .contentType(V1_MEDIA)
+          .headers(actorIdHeader())
+          .content(objectMapper.writeValueAsString(req)))
+          .andExpect(status().isOk());
+    }
 }
