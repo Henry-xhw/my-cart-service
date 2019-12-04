@@ -82,7 +82,7 @@ BEGIN
         [trimmed_booking_start_dt]  DATETIME            NULL,
         [trimmed_booking_end_dt]    DATETIME            NULL,
         [quantity]                  BIGINT              NOT NULL,
-        [unit_price]                 DECIMAL(19, 2)      NULL,
+        [unit_price]                DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
