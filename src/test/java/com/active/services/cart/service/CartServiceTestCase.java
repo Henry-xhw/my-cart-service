@@ -70,6 +70,15 @@ public class CartServiceTestCase {
         Mockito.verify(cartRepository).search(ownerId);
     }
 
+    @Test(expected = CartException.class)
+    public void searchUUIDsByOwnerIdWhenCartNotExist() {
+        UUID ownerId = UUID.randomUUID();
+        List<UUID> cartIds = new ArrayList<>();
+        when(cartRepository.search(ownerId)).thenReturn(cartIds);
+        cartService.search(ownerId);
+        Mockito.verify(cartRepository).search(ownerId);
+    }
+
     @Test
     public void deleteCartItemSuccess() {
         UUID cartItemId = UUID.randomUUID();
