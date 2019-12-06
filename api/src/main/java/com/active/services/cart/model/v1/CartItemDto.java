@@ -33,6 +33,7 @@ public class CartItemDto extends BaseDto {
     private Range<Instant> trimmedBookingRange;
 
     @NotNull
+    @Min(value = 1)
     private Integer quantity;
 
     @Min(value = 0)

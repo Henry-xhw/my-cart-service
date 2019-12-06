@@ -11,6 +11,7 @@ import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
 import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -63,6 +65,23 @@ public class CartItemController {
             if (cartItem.getIdentifier() == null) {
                 throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
                         String.format("cartItem's identifier can not be null"));
+            }
+            if (StringUtils.isEmpty(cartItem.getProductName())) {
+                throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                        String.format("cartItem's product name can not be null"));
+            }
+            if (cartItem.getQuantity() == null) {
+                throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                        String.format("cartItem's quantity can not be null"));
+            } else {
+                if (cartItem.getQuantity() < 1) {
+                    throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                            String.format("cartItem's quantity can not less than 1"));
+                }
+            }
+            if (cartItem.getUnitPrice() != null && cartItem.getUnitPrice().compareTo(BigDecimal.ZERO) == -1) {
+                throw new CartException(OperationResultCode.INVALID_PARAMETER.getCode(),
+                        String.format("cartItem's unit price can not less than 0"));
             }
             checkTimeRange(cartItem);
             if(!isCartItemExist(cart.getItems(), cartItem.getIdentifier())) {
