@@ -1,14 +1,23 @@
 package com.active.services.cart.model.v1.req;
 
-import com.active.services.cart.model.v1.CartDto;
-import lombok.Data;
+import java.util.UUID;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.active.services.cart.model.CurrencyCode;
+import com.active.services.cart.model.v1.BaseDto;
+
+import lombok.Data;
+
 @Data
-public class CreateCartReq {
+public class CreateCartReq extends BaseDto {
+
     @NotNull
-    @Valid
-    private CartDto cart;
+    private UUID ownerId;
+
+    @NotNull
+    private UUID keyerId;
+
+    @NotNull
+    private CurrencyCode currencyCode;
 }
