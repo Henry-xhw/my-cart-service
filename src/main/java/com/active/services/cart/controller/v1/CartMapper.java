@@ -5,6 +5,8 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
+import com.active.services.cart.model.v1.req.CreateCartReq;
+
 import org.mapstruct.Context;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -24,4 +26,9 @@ public interface CartMapper {
 
     @InheritInverseConfiguration
     CartItemDto toDto(CartItem dto);
+
+    Cart toDomainFromCreateCartReq(CreateCartReq req, @Context boolean isCreate);
+
+    @InheritInverseConfiguration
+    CreateCartReq toCreateCartReq(Cart dto);
 }
