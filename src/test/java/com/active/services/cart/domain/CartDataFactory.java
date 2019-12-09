@@ -2,6 +2,7 @@ package com.active.services.cart.domain;
 
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.Range;
+import com.active.services.cart.model.v1.UpdateCartItemDto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -48,5 +49,19 @@ public class CartDataFactory {
         cartItem.setGroupingIdentifier("grouping identifier");
 
         return cartItem;
+    }
+
+    public static UpdateCartItemDto updateCartItemDto(CartItem cartItem) {
+        UpdateCartItemDto updateCartItemDto = new UpdateCartItemDto();
+        updateCartItemDto.setBookingRange(cartItem.getBookingRange());
+        updateCartItemDto.setGroupingIdentifier(cartItem.getGroupingIdentifier());
+        updateCartItemDto.setIdentifier(cartItem.getIdentifier());
+        updateCartItemDto.setProductDescription(cartItem.getProductDescription());
+        updateCartItemDto.setProductId(cartItem.getProductId());
+        updateCartItemDto.setQuantity(cartItem.getQuantity());
+        updateCartItemDto.setUnitPrice(cartItem.getUnitPrice());
+        updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
+        updateCartItemDto.setProductName(cartItem.getProductName());
+        return updateCartItemDto;
     }
 }
