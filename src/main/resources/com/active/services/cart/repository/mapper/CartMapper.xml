@@ -87,9 +87,14 @@
         <if test="item.productName!=null and item.productName!=''">
             [product_name] = #{item.productName},
         </if>
-        <if test="item.productDescription!=null">
-            [product_description] = #{item.productDescription},
-        </if>
+        <choose>
+            <when test="item.productDescription!=null">
+                [product_description] = #{item.productDescription},
+            </when>
+            <otherwise>
+                [product_description] = null,
+            </otherwise>
+        </choose>
         <choose>
             <when test="item.bookingRange != null">
                 [booking_start_dt] = #{item.bookingRange.lower},
@@ -113,12 +118,22 @@
         <if test="item.quantity!=null">
             [quantity] = #{item.quantity},
         </if>
-        <if test="item.unitPrice!=null">
-            [unit_price] = #{item.unitPrice},
-        </if>
-        <if test="item.groupingIdentifier!=null and item.groupingIdentifier!=''">
-            [grouping_identifier] = #{item.groupingIdentifier},
-        </if>
+        <choose>
+            <when test="item.unitPrice!=null">
+                [unit_price] = #{item.unitPrice},
+            </when>
+            <otherwise>
+                [unit_price] = null,
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="item.groupingIdentifier!=null">
+                [grouping_identifier] = #{item.groupingIdentifier},
+            </when>
+            <otherwise>
+                [grouping_identifier] = null,
+            </otherwise>
+        </choose>
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}

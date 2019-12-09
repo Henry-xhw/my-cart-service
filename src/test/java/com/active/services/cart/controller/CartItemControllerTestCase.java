@@ -9,7 +9,9 @@ import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
+import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
+import com.active.services.cart.model.v1.req.UpdateCartItemReq;
 import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
 import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
@@ -164,16 +166,17 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void updateCartItemSuccess() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemReq req = new UpdateCartItemReq();
         UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
         rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
+        UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
         List<CartItem> items = new ArrayList<>();
         items.add(cartItem);
         cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenReturn(cart);
         when(cartService.updateCartItems(items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
@@ -189,16 +192,17 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void updateCartItemWhenCartItemNotExistThrowException() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemReq req = new UpdateCartItemReq();
         UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
         rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
+        UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
         List<CartItem> items = new ArrayList<>();
         items.add(cartItem);
         cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
                 OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + identifier));
         when(cartService.updateCartItems(items)).thenReturn(items);
@@ -212,17 +216,18 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void updateCartItemWhenIdentifierIsNullThrowException() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemReq req = new UpdateCartItemReq();
         UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
         rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.setIdentifier(null);
+        UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
+        updateCartItemDto.setIdentifier(null);
         List<CartItem> items = new ArrayList<>();
         items.add(cartItem);
         cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
+        req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenReturn(cart);
         when(cartService.updateCartItems(items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
@@ -231,17 +236,18 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Identifier-Is-Null"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").value("cartItem's identifier can not be null"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").hasJsonPath());
     }
 
     @Test
     public void updateCartItemWhenCartItemIsNotBelongCartThrowException() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
+        UpdateCartItemReq req = new UpdateCartItemReq();
         UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
         rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem1 = CartDataFactory.cartItem();
+        UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem1);
         CartItem cartItem2 = new CartItem();
         cartItem2.setIdentifier(UUID.randomUUID());
         cartItem2.setIdentifier(UUID.randomUUID());
@@ -256,7 +262,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         List<CartItem> items = new ArrayList<>();
         items.add(cartItem2);
         cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem1)));
+        req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenReturn(cart);
         when(cartService.updateCartItems(items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
