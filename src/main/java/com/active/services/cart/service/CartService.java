@@ -1,16 +1,19 @@
 package com.active.services.cart.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.active.services.cart.common.OperationResultCode;
 import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.CartRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
+import com.active.services.cart.service.quote.CartPriceEngine;
+import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.util.DataAccess;
 
 @Service
 @Transactional
@@ -18,6 +21,12 @@ public class CartService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private CartPriceEngine cartPriceEngine;
+
+    @Autowired
+    private DataAccess dataAccess;
 
     public void create(Cart cart) {
         cartRepository.createCart(cart);
@@ -53,5 +62,18 @@ public class CartService {
                     OperationResultCode.CART_NOT_EXIST.getDescription());
         }
         return uuidList;
+    }
+
+    public Cart quote(UUID cartId) {
+        Cart cart = get(cartId);
+
+        cartPriceEngine.quote(new CartQuoteContext(cart));
+
+        // Manual control the tx
+        dataAccess.doInTx(() -> {
+            cartRepository.saveQuoteResult(cart);
+        });
+
+        return cart;
     }
 }
