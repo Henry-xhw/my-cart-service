@@ -1,19 +1,12 @@
 package com.active.services.cart.model;
 
+import com.active.services.cart.model.validation.ValidRange;
 import lombok.Data;
 
-import java.util.Objects;
-
 @Data
+@ValidRange
 public class Range<T extends Comparable<T>> {
     private T lower;
 
     private T upper;
-
-    public boolean valid() {
-        if (Objects.nonNull(lower) && Objects.nonNull(upper) && lower.compareTo(upper) > 0) {
-            return false;
-        }
-        return true;
-    }
 }
