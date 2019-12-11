@@ -24,7 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -96,36 +95,6 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
           .content(objectMapper.writeValueAsString(req)))
           .andExpect(status().isOk())
           .andDo(newErrorDocument("Cart-Item", "Create-Cart-Item", "Cart-Item-Not-Exist"));
-    }
-
-    @Test
-    public void createCartItemWhenInvalidBookingRangeThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(CartDataFactory.cart());
-        CreateCartItemReq req = new CreateCartItemReq();
-        CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.getBookingRange().setLower(cartItem.getBookingRange().getUpper().plusMillis(1000L));
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
-          .contentType(V1_MEDIA)
-          .headers(actorIdHeader())
-          .content(objectMapper.writeValueAsString(req)))
-          .andExpect(status().isOk())
-          .andDo(newErrorDocument("Cart-Item", "Create-Cart-Item", "Invalid-Booking-Range"));
-    }
-
-    @Test
-    public void createCartItemWhenInvalidTrimmedBookingRangeThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(CartDataFactory.cart());
-        CreateCartItemReq req = new CreateCartItemReq();
-        CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.getTrimmedBookingRange().setLower(cartItem.getTrimmedBookingRange().getUpper().plusMillis(1000L));
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
-          .contentType(V1_MEDIA)
-          .headers(actorIdHeader())
-          .content(objectMapper.writeValueAsString(req)))
-          .andExpect(status().isOk())
-          .andDo(newErrorDocument("Cart-Item", "Create-Cart-Item", "Invalid-Trimmed-Booking-Range"));
     }
 
     @Test
@@ -272,78 +241,5 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 .andExpect(status().isOk())
                 .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Cart-Item-Is-Not-Belong-Cart"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").value("cart item not exist: " + cartItem1.getIdentifier().toString()));
-    }
-
-    @Test
-    public void updateCartItemWhenBookingRangeIsInvalidThrowException() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
-        UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
-        Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.getBookingRange().setLower(Instant.parse("2019-11-11T00:00:00Z"));
-        cartItem.getBookingRange().setUpper(Instant.parse("2019-11-10T00:00:00Z"));
-        List<CartItem> items = new ArrayList<>();
-        items.add(cartItem);
-        cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
-                .contentType(V1_MEDIA)
-                .headers(actorIdHeader())
-                .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Booking-Range-Is-Invalid"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").value("invalid parameters. booking range"));
-    }
-
-    @Test
-    public void updateCartItemWhenTrimmedBookingRangeIsInvalidThrowException() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
-        UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
-        Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.getTrimmedBookingRange().setLower(Instant.parse("2019-11-11T00:00:00Z"));
-        cartItem.getTrimmedBookingRange().setUpper(Instant.parse("2019-11-10T00:00:00Z"));
-        List<CartItem> items = new ArrayList<>();
-        items.add(cartItem);
-        cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
-                .contentType(V1_MEDIA)
-                .headers(actorIdHeader())
-                .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Trimmed-Booking-Range-Is-Invalid"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").value("invalid parameters. trimmed booking range"));
-    }
-
-    @Test
-    public void updateCartItemWhenBookingRangeIsInvalidThrowException1() throws Exception {
-        CreateCartItemReq req = new CreateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
-        UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
-        Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.setBookingRange(null);
-        cartItem.setTrimmedBookingRange(null);
-        List<CartItem> items = new ArrayList<>();
-        items.add(cartItem);
-        cart.setItems(items);
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(cartItem)));
-        when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
-          .contentType(V1_MEDIA)
-          .headers(actorIdHeader())
-          .content(objectMapper.writeValueAsString(req)))
-          .andExpect(status().isOk());
     }
 }

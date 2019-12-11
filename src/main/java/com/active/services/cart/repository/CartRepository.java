@@ -23,7 +23,6 @@ public class CartRepository {
 
     public void deleteCart(Long cartId) {
         cartMapper.deleteCart(cartId);
-        cartMapper.deleteCartItemByCartId(cartId);
     }
 
     public Optional<Cart> getCart(UUID cartId) {
