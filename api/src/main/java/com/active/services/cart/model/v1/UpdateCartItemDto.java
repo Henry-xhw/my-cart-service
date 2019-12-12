@@ -19,6 +19,8 @@ public class UpdateCartItemDto {
     @NotNull(message = "artItem's identifier can not be null")
     private UUID identifier;
 
+    private Long parentId;
+
     private Long productId;
 
     @NotBlank(message = "cartItem's product name can not be blank")
