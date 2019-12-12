@@ -28,6 +28,8 @@ public class CartItem extends BaseDomainObject {
 
     private String groupingIdentifier;
 
+    private Long pid;
+
     public CartItem(UpdateCartItemDto updateCartItemDto) {
         this.productId = updateCartItemDto.getProductId();
         this.productName = updateCartItemDto.getProductName();

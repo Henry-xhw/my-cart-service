@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
+import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.util.TreeBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,7 +49,10 @@ public class CartController {
     @GetMapping(ID_PARAM_PATH)
     public FindCartByIdRsp get(@PathVariable(ID_PARAM) UUID cartId) {
         FindCartByIdRsp rsp = new FindCartByIdRsp();
-        rsp.setCart(CartMapper.INSTANCE.toDto(cartService.get(cartId)));
+        CartDto cartDto = CartMapper.INSTANCE.toDto(cartService.get(cartId));
+        TreeBuilder treeBuilder = new TreeBuilder(cartDto.getItems());
+        cartDto.setItems(treeBuilder.buildTree());
+        rsp.setCart(cartDto);
         return rsp;
     }
 
