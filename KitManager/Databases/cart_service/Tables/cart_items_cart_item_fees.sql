@@ -3,6 +3,7 @@ WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_items_car
 BEGIN
 	 CREATE TABLE [dbo].[cart_items_cart_item_fees] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
+        [identifier]                UNIQUEIDENTIFIER    NOT NULL,
         [cart_item_id]              BIGINT              NOT NULL,
         [cart_item_fee_id]          BIGINT              NOT NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
@@ -25,10 +26,22 @@ IF NOT EXISTS(
     SELECT TOP 1 1
     FROM
         sys.tables t WITH(NOLOCK)
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_cart_item_fees_identifier'
+    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.type = 'U')
+BEGIN
+    CREATE NONCLUSTERED INDEX [ix_cart_items_cart_item_fees_identifier] ON [dbo].[cart_item_fees] ([identifier])
+    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+    PRINT 'Added index ix_cart_items_cart_item_fees_identifier to dbo.cart_items_cart_item_fees.'
+END
+
+IF NOT EXISTS(
+    SELECT TOP 1 1
+    FROM
+        sys.tables t WITH(NOLOCK)
         JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_id'
     WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items_cart_item_fees' AND t.type = 'U')
 BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_identifier] ON [dbo].[cart_items_cart_item_fees] ([cart_item_id])
+    CREATE NONCLUSTERED INDEX [ix_cart_item_id] ON [dbo].[cart_items_cart_item_fees] ([cart_item_id])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
     PRINT 'Added index ix_cart_item_id to dbo.cart_items_cart_item_fees.'
 END

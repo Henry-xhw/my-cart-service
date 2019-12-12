@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CartItem extends BaseDomainObject {
-    private Long parentId;
-
     private Long productId;
 
     private String productName;
@@ -35,7 +33,6 @@ public class CartItem extends BaseDomainObject {
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
-        this.parentId = updateCartItemDto.getParentId();
         this.productId = updateCartItemDto.getProductId();
         this.productName = updateCartItemDto.getProductName();
         this.productDescription = updateCartItemDto.getProductDescription();

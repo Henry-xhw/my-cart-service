@@ -11,6 +11,8 @@ import lombok.Data;
 
 @Data
 public class CartItemFee extends BaseDomainObject {
+    private Long parentId;
+
     private String name;
 
     private String description;
