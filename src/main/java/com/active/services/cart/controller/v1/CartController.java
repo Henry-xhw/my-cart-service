@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.active.services.cart.domain.Cart;
+import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.CheckoutRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
@@ -58,6 +60,12 @@ public class CartController {
         List<UUID> cartIds = cartService.search(ownerId);
         rsp.setCartIds(cartIds);
 
+        return rsp;
+    }
+
+    @PostMapping("/checkout")
+    public CheckoutRsp checkout(@NotNull @RequestBody @Validated CheckoutReq req) {
+        CheckoutRsp rsp = new CheckoutRsp();
         return rsp;
     }
 }
