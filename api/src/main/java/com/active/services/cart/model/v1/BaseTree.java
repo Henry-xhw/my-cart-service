@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class BaseTree extends BaseDto {
+public class BaseTree<T> extends BaseDto {
     @JsonIgnore
     private Long id;
     @JsonIgnore
     private Long pid;
-    private List<BaseTree> children = new ArrayList<>();
+    @Valid
+    private List<T> children = new ArrayList<>();
 }

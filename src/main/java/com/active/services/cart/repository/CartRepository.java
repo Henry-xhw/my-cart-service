@@ -44,4 +44,9 @@ public class CartRepository {
     public List<UUID> search(UUID ownerId) {
         return cartMapper.search(ownerId);
     }
+
+    public long createCartItem(Long cartId, CartItem cartItem) {
+        cartMapper.createCartItem(cartId, cartItem);
+        return cartItem.getId();
+    }
 }

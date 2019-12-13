@@ -61,7 +61,7 @@ public class TreeBuilder {
     public List<BaseTree> getChildBaseTrees(BaseTree baseTree) {
         List<BaseTree> childBaseTrees = new ArrayList<BaseTree>();
         for (BaseTree n : baseTreeList) {
-            if (baseTree.getId() == n.getPid()) {
+            if (baseTree.getId().equals(n.getPid())) {
                 childBaseTrees.add(n);
             }
         }
@@ -80,7 +80,7 @@ public class TreeBuilder {
     public boolean rootBaseTree(BaseTree baseTree) {
         boolean isRootBaseTree = true;
         for (BaseTree n : baseTreeList) {
-            if (baseTree.getPid() == n.getId()) {
+            if (baseTree.getPid().equals(n.getId())) {
                 isRootBaseTree = false;
                 break;
             }

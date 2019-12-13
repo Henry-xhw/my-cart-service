@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
-public class CartItemDto extends BaseTree {
+public class CartItemDto extends BaseTree<CartItemDto> {
 
     @NotNull
     private Long productId;

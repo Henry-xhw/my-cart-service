@@ -29,6 +29,7 @@
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
         INSERT INTO [dbo].[cart_item] (
             [cart_id],
+            [pid],
             [identifier],
             [product_id],
             [product_name],
@@ -47,6 +48,7 @@
         )
         VALUES (
              #{cartId},
+             #{item.pid},
              #{item.identifier},
              #{item.productId},
              #{item.productName},
@@ -203,5 +205,8 @@
 
     <select id="search" resultType="java.util.UUID">
         SELECT identifier FROM cart WHERE owner_id = #{ownerId}
+    </select>
+    <select id="getCartItemByIdentifier" resultType="com.active.services.cart.domain.CartItem">
+
     </select>
 </mapper>

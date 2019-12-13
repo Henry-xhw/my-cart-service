@@ -37,6 +37,10 @@ public class CartService {
         return items;
     }
 
+    public long createCartItem(Long cartId, CartItem cartItem) {
+        return cartRepository.createCartItem(cartId, cartItem);
+    }
+
     public List<CartItem> updateCartItems(List<CartItem> items) {
         cartRepository.updateCartItems(items);
         return items;
