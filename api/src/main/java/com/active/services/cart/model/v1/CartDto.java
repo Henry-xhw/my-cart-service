@@ -24,5 +24,5 @@ public class CartDto extends BaseDto {
     private CurrencyCode currencyCode;
 
     @Valid
-    private List<? extends BaseTree> items = new ArrayList<>();
+    private List<CartItemDto> items = new ArrayList<>();
 }

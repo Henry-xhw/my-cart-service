@@ -10,7 +10,7 @@ import java.time.Instant;
 
 @Data
 @NoArgsConstructor
-public class CartItem extends BaseDomainObject {
+public class CartItem extends BaseTree<CartItem> {
 
     private Long productId;
 
@@ -27,8 +27,6 @@ public class CartItem extends BaseDomainObject {
     private BigDecimal unitPrice;
 
     private String groupingIdentifier;
-
-    private Long pid;
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
         this.productId = updateCartItemDto.getProductId();

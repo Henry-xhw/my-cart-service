@@ -1,5 +1,6 @@
 package com.active.services.cart.repository;
 
+import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
@@ -37,7 +38,7 @@ public class CartRepository {
         items.forEach(item -> cartMapper.updateCartItem(item));
     }
 
-    public void deleteCartItem(UUID cartItemId) {
+    public void deleteCartItem(Long cartItemId) {
         cartMapper.deleteCartItem(cartItemId);
     }
 
@@ -45,8 +46,12 @@ public class CartRepository {
         return cartMapper.search(ownerId);
     }
 
-    public long createCartItem(Long cartId, CartItem cartItem) {
+    public long createCartItem(Long cartId, BaseTree<CartItem> cartItem) {
         cartMapper.createCartItem(cartId, cartItem);
         return cartItem.getId();
+    }
+
+    public Optional<Long> getCartItem(UUID cartItemId) {
+        return cartMapper.getCartItemByIdentifier(cartItemId);
     }
 }

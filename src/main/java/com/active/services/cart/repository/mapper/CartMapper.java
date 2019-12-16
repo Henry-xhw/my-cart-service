@@ -1,5 +1,6 @@
 package com.active.services.cart.repository.mapper;
 
+import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,13 +20,13 @@ public interface CartMapper {
 
     void updateCartItem(@Param("item") CartItem item);
 
-    void createCartItem(@Param("cartId") Long cartId, @Param("item") CartItem item);
+    void createCartItem(@Param("cartId") Long cartId, @Param("item") BaseTree<CartItem> item);
 
-    void deleteCartItem(UUID cartItemId);
+    void deleteCartItem(Long cartItemId);
 
     void deleteCartItemByCartId(Long cartId);
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 
-    Optional<CartItem> getCartItemByIdentifier(@Param("cartItemId") UUID cartItemId);
+    Optional<Long> getCartItemByIdentifier(@Param("cartItemId") UUID cartItemId);
 }

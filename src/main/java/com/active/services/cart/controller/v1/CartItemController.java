@@ -4,7 +4,6 @@ import com.active.services.cart.common.OperationResultCode;
 import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.req.UpdateCartItemReq;
 import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
@@ -33,6 +32,7 @@ public class CartItemController {
     private static final String CART_ID_PARAM = "cart-id";
     private static final String CART_ITEM_ID_PARAM = "cart-item-id";
     private static final String CART_ITEM_ID_PATH = "/{" + CART_ITEM_ID_PARAM + "}";
+    private static final Long ORIGIN_PARENT_ID = -1L;
 
     @Autowired
     private CartService cartService;
@@ -40,8 +40,12 @@ public class CartItemController {
     @PostMapping()
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
-        Long cartId = cartService.get(cartIdentifier).getId();
-        insertCartItems(cartId, req.getItems(), -1L);
+        Cart cart = cartService.get(cartIdentifier);
+        List<CartItem> items = req.getItems()
+                .stream()
+                .map(item -> CartMapper.INSTANCE.toDomain(item, true))
+                .collect(Collectors.toList());
+        cartService.insertCartItems(cart, items, ORIGIN_PARENT_ID);
         CreateCartItemRsp rsp = new CreateCartItemRsp();
         rsp.setCartId(cartIdentifier);
         return rsp;
@@ -68,15 +72,8 @@ public class CartItemController {
     @DeleteMapping(CART_ITEM_ID_PATH)
     public DeleteCartItemRsp delete(@PathVariable("cart-id") UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        if (!isCartItemExist(cartService.get(cartId).getItems(), cartItemId)) {
-            // cart item not exist, need error msg
-            throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
-                    OperationResultCode.CART_ITEM_NOT_EXIST.getDescription()
-                            + " cart id: " + cartId
-                            + " cart item id: " + cartItemId);
-        }
-
-        cartService.deleteCartItem(cartItemId);
+        Cart cart = cartService.get(cartId);
+        cartService.deleteCartItem(cart, cartItemId);
         DeleteCartItemRsp rsp = new DeleteCartItemRsp();
         rsp.setCartId(cartId);
         return rsp;
@@ -84,21 +81,5 @@ public class CartItemController {
 
     private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
         return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
-    }
-
-    private void insertCartItems(Long cartId, List<CartItemDto> cartItemDtoList, Long pid) {
-        for (int i = 0; i < cartItemDtoList.size(); i++) {
-            //Long parentId;
-            CartItemDto cartItemDto = cartItemDtoList.get(i);
-           /* if(cartItemDto.getIdentifier()!=null) {
-                parentId =
-            }*/
-            CartItem cartItem = CartMapper.INSTANCE.toDomain(cartItemDto, true).setPid(pid);
-            Long parentId = cartService.createCartItem(cartId, cartItem);
-            List<CartItemDto> childRen = cartItemDto.getChildren();
-            if (childRen.size() > 0) {
-                insertCartItems(cartId, childRen, parentId);
-            }
-        }
     }
 }

@@ -13,9 +13,11 @@ import javax.validation.Valid;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-public class CartItemDto extends BaseTree<CartItemDto> {
+public class CartItemDto extends BaseDto {
 
     @NotNull
     private Long productId;
@@ -42,4 +44,7 @@ public class CartItemDto extends BaseTree<CartItemDto> {
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    @Valid
+    private List<CartItemDto> subItems = new ArrayList<>();
 }

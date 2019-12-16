@@ -196,7 +196,10 @@
     </delete>
 
     <delete id="deleteCartItem">
-        DELETE FROM cart_item WHERE identifier = #{cartItemId}
+        DELETE
+        FROM cart_item
+        WHERE id = #{cartItemId}
+           or pid = #{cartItemId}
     </delete>
 
     <delete id="deleteCartItemByCartId">
@@ -206,7 +209,9 @@
     <select id="search" resultType="java.util.UUID">
         SELECT identifier FROM cart WHERE owner_id = #{ownerId}
     </select>
-    <select id="getCartItemByIdentifier" resultType="com.active.services.cart.domain.CartItem">
-
+    <select id="getCartItemByIdentifier" resultType="Long">
+        SELECT id
+        FROM cart_item
+        WHERE identifier = #{cartItemId}
     </select>
 </mapper>

@@ -1,15 +1,15 @@
 package com.active.services.cart.util;
 
-import com.active.services.cart.model.v1.BaseTree;
+import com.active.services.cart.domain.BaseTree;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeBuilder {
+public class TreeBuilder<T extends BaseTree> {
 
-    private List<? extends BaseTree> baseTreeList = new ArrayList<BaseTree>();
+    private List<T> baseTreeList = new ArrayList<>();
 
-    public TreeBuilder(List<? extends BaseTree> baseTreeList) {
+    public TreeBuilder(List baseTreeList) {
         super();
         this.baseTreeList = baseTreeList;
     }
@@ -21,10 +21,10 @@ public class TreeBuilder {
      * @return
      */
 
-    public List<BaseTree> buildTree() {
-        List<BaseTree> treeBaseTrees = new ArrayList<BaseTree>();
-        List<BaseTree> rootBaseTrees = getRootBaseTrees();
-        for (BaseTree rootBaseTree : rootBaseTrees) {
+    public List<T> buildTree() {
+        List<T> treeBaseTrees = new ArrayList<>();
+        List<T> rootBaseTrees = getRootBaseTrees();
+        for (T rootBaseTree : rootBaseTrees) {
             buildChildBaseTrees(rootBaseTree);
             treeBaseTrees.add(rootBaseTree);
         }
@@ -44,7 +44,7 @@ public class TreeBuilder {
             for (BaseTree child : children) {
                 buildChildBaseTrees(child);
             }
-            baseTree.setChildren(children);
+            baseTree.setSubItems(children);
         }
 
     }
@@ -59,7 +59,7 @@ public class TreeBuilder {
      */
 
     public List<BaseTree> getChildBaseTrees(BaseTree baseTree) {
-        List<BaseTree> childBaseTrees = new ArrayList<BaseTree>();
+        List<BaseTree> childBaseTrees = new ArrayList<>();
         for (BaseTree n : baseTreeList) {
             if (baseTree.getId().equals(n.getPid())) {
                 childBaseTrees.add(n);
@@ -95,9 +95,9 @@ public class TreeBuilder {
      * @return
      */
 
-    public List<BaseTree> getRootBaseTrees() {
-        List<BaseTree> rootBaseTrees = new ArrayList<BaseTree>();
-        for (BaseTree n : baseTreeList) {
+    public List<T> getRootBaseTrees() {
+        List<T> rootBaseTrees = new ArrayList<>();
+        for (T n : baseTreeList) {
             if (rootBaseTree(n)) {
                 rootBaseTrees.add(n);
             }

@@ -1,16 +1,11 @@
 package com.active.services.cart.controller.v1;
 
-import static com.active.services.cart.controller.v1.Constants.ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.ID_PARAM_PATH;
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-
-import java.util.List;
-import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
-
+import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
-import com.active.services.cart.util.TreeBuilder;
+import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
+import com.active.services.cart.model.v1.rsp.SearchCartRsp;
+import com.active.services.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.model.v1.req.CreateCartReq;
-import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
-import com.active.services.cart.model.v1.rsp.SearchCartRsp;
-import com.active.services.cart.service.CartService;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.UUID;
+
+import static com.active.services.cart.controller.v1.Constants.ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.ID_PARAM_PATH;
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
@@ -37,6 +34,7 @@ public class CartController {
     @PostMapping
     public CreateCartReq create(@RequestBody @NotNull @Validated CreateCartReq req) {
         Cart cart = CartMapper.INSTANCE.toDomainFromCreateCartReq(req, true);
+        cart.setIdentifier(UUID.randomUUID());
         cartService.create(cart);
         return CartMapper.INSTANCE.toCreateCartReq(cart);
     }
@@ -50,8 +48,6 @@ public class CartController {
     public FindCartByIdRsp get(@PathVariable(ID_PARAM) UUID cartId) {
         FindCartByIdRsp rsp = new FindCartByIdRsp();
         CartDto cartDto = CartMapper.INSTANCE.toDto(cartService.get(cartId));
-        TreeBuilder treeBuilder = new TreeBuilder(cartDto.getItems());
-        cartDto.setItems(treeBuilder.buildTree());
         rsp.setCart(cartDto);
         return rsp;
     }
