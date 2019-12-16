@@ -6,12 +6,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.repository.CartRepository;
 
 @Service
@@ -32,7 +32,7 @@ public class CartService {
 
     @Transactional
     public Cart get(UUID cartId) {
-        return cartRepository.getCart(cartId).orElseThrow(() -> new CartException(HttpStatus.NOT_FOUND,
+        return cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
                 " cart id does not exist: " + cartId));
     }
 
@@ -54,7 +54,7 @@ public class CartService {
 
         for (UUID itemId : itemIds) {
             if (!cart.getCartItem(itemId).isPresent()) {
-                throw new CartException(HttpStatus.NOT_FOUND, "cart item does not exist: " + itemId);
+                throw new CartException(ErrorCode.CART_NOT_FOUND, "cart item does not exist: " + itemId);
             }
         }
     }

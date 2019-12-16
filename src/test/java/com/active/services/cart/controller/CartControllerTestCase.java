@@ -31,7 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.controller.v1.CartController;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;

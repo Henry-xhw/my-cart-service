@@ -1,6 +1,6 @@
 package com.active.services.cart.service;
 
-import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.repository.CartRepository;
