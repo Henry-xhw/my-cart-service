@@ -46,5 +46,13 @@ public class CartItemDto extends BaseDto {
     private String groupingIdentifier;
 
     @Valid
-    private List<CartItemFeeDto> cartItemFees = new ArrayList<>();
+    private List<CartItemFeeDto> fees = new ArrayList<>();
+
+    @Min(value = 0)
+    @Digits(integer = 17, fraction = 2)
+    private BigDecimal grossPrice;
+
+    @Min(value = 0)
+    @Digits(integer = 17, fraction = 2)
+    private BigDecimal netPrice;
 }
