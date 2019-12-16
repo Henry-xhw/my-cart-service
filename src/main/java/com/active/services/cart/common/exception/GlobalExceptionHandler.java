@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<Object> CartExceptionHandler2(MethodArgumentNotValidException exception) {
+    public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception) {
         Map<String, String> errorMap = exception.getBindingResult().getFieldErrors().stream()
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (first, second) -> first));
 
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({CartException.class})
-    public ResponseEntity<Object> CartExceptionHandler(HttpServletRequest req, CartException e) {
+    public ResponseEntity<Object> cartExceptionHandler(HttpServletRequest req, CartException e) {
         return ResponseEntity.status(e.getHttpStatus()).body(e.getPayload());
     }
 }
