@@ -1,5 +1,7 @@
 package com.active.services.cart.service.quote;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ public class CartItemUnitPricePricer implements CartItemPricer {
     public void quote(CartQuoteContext context, CartItem cartItem) {
         CartItemFee unitPriceFee = new CartItemFee();
 
+        unitPriceFee.setIdentifier(UUID.randomUUID());
         unitPriceFee.setDescription(cartItem.getProductDescription());
         unitPriceFee.setName(cartItem.getProductName());
         unitPriceFee.setTransactionType(CartItemFeeTransactionType.DEBIT);

@@ -13,6 +13,8 @@ import javax.validation.Valid;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class CartItemDto extends BaseDto {
@@ -42,4 +44,7 @@ public class CartItemDto extends BaseDto {
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    @Valid
+    private List<CartItemFeeDto> cartItemFees = new ArrayList<>();
 }

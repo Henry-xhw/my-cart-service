@@ -33,8 +33,6 @@ public interface CartMapper {
 
     void createCartItemCartItemFee(CartItemCartItemFee cartItemCartItemFee);
 
-    Optional<CartItemCartItemFee> getCartItemCartItemFeeByCartItemId(@Param("cartItemId") Long cartItemId);
-
     void deleteCartItemFeeById(@Param("id") Long id);
 
     void deleteCartItemCartItemFeeBycartItemId(@Param("cartItemId") Long cartItemId);

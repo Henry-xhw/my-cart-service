@@ -62,7 +62,7 @@ public class CartController {
     }
 
     @PostMapping(value = "/quote")
-    public QuoteRsp quote(QuoteReq req) {
+    public QuoteRsp quote(@RequestBody @NotNull @Validated QuoteReq req) {
         QuoteRsp rsp = new QuoteRsp();
         Cart cart = cartService.quote(req.getCartId());
         rsp.setCartDto(CartMapper.INSTANCE.toDto(cart));

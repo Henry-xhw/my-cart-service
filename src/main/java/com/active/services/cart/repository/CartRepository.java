@@ -63,6 +63,7 @@ public class CartRepository {
         cartItemCartItemFee.setIdentifier(UUID.randomUUID());
         cartItemCartItemFee.setCartItemFeeId(cartItemFeeId);
         cartItemCartItemFee.setCartItemId(item.getId());
+        cartItemCartItemFee.setIdentifier(UUID.randomUUID());
         cartMapper.createCartItemCartItemFee(cartItemCartItemFee);
     }
 
