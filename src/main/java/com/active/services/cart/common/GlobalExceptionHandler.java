@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
-public class RestControllerAspect {
+public class GlobalExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public BaseRsp methodArgumentNotValidException(MethodArgumentNotValidException exception) {
         List<ErrorItem> errors = exception.getBindingResult().getFieldErrors().stream()
