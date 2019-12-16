@@ -1,5 +1,7 @@
 package com.active.services.cart.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,12 +9,16 @@ import lombok.Setter;
 @Setter
 public class CartException extends RuntimeException {
 
-    private int errorCode;
+    private HttpStatus httpStatus;
 
-    private String message;
+    private Object payload;
 
-    public CartException(int errorCode, String message) {
-        this.message = message;
-        this.errorCode = errorCode;
+    public CartException(HttpStatus httpStatus) {
+        this(httpStatus, null);
+    }
+
+    public CartException(HttpStatus httpStatus, Object payload) {
+        this.httpStatus = httpStatus;
+        this.payload = payload;
     }
 }

@@ -1,15 +1,11 @@
 package com.active.services.cart.controller.v1;
 
-import com.active.services.cart.common.OperationResultCode;
-import com.active.services.cart.common.exception.CartException;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.v1.req.CreateCartItemReq;
-import com.active.services.cart.model.v1.req.UpdateCartItemReq;
-import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
-import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
-import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
-import com.active.services.cart.service.CartService;
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,12 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.v1.req.CreateCartItemReq;
+import com.active.services.cart.model.v1.req.UpdateCartItemReq;
+import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
+import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
+import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
+import com.active.services.cart.service.CartService;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
@@ -56,16 +53,9 @@ public class CartItemController {
     @PutMapping()
     public UpdateCartItemRsp update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated UpdateCartItemReq req) {
-        Cart cart = cartService.get(cartIdentifier);
-        req.getItems().stream().forEach(cartItem -> {
-            if(!isCartItemExist(cart.getItems(), cartItem.getIdentifier())) {
-                throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
-                        String.format("cart item not exist: %s", cartItem.getIdentifier().toString()));
-            }
-        });
         List<CartItem> items = req.getItems().stream().map(CartItem::new).collect(Collectors.toList());
         UpdateCartItemRsp rsp = new UpdateCartItemRsp();
-        cartService.updateCartItems(items);
+        cartService.updateCartItems(cartIdentifier, items);
         rsp.setCartId(cartIdentifier);
 
         return rsp;
@@ -74,15 +64,7 @@ public class CartItemController {
     @DeleteMapping(CART_ITEM_ID_PATH)
     public DeleteCartItemRsp delete(@PathVariable("cart-id") UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        if (!isCartItemExist(cartService.get(cartId).getItems(), cartItemId)) {
-            // cart item not exist, need error msg
-            throw new CartException(OperationResultCode.CART_ITEM_NOT_EXIST.getCode(),
-                    OperationResultCode.CART_ITEM_NOT_EXIST.getDescription()
-                            + " cart id: " + cartId
-                            + " cart item id: " + cartItemId);
-        }
-
-        cartService.deleteCartItem(cartItemId);
+        cartService.deleteCartItem(cartId, cartItemId);
         DeleteCartItemRsp rsp = new DeleteCartItemRsp();
         rsp.setCartId(cartId);
         return rsp;

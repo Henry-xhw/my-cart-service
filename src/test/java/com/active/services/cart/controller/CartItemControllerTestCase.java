@@ -1,6 +1,5 @@
 package com.active.services.cart.controller;
 
-import com.active.services.cart.common.OperationResultCode;
 import com.active.services.cart.common.exception.CartException;
 import com.active.services.cart.controller.v1.CartItemController;
 import com.active.services.cart.controller.v1.CartMapper;

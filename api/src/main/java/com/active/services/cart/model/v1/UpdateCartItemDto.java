@@ -1,22 +1,23 @@
 package com.active.services.cart.model.v1;
 
-import com.active.services.cart.model.Range;
-import lombok.Data;
-
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.UUID;
+
+import com.active.services.cart.model.Range;
+
+import lombok.Data;
 
 @Data
 public class UpdateCartItemDto {
 
-    @NotNull(message = "artItem's identifier can not be null")
+    @NotNull(message = "cartItem's identifier can not be null")
     private UUID identifier;
 
     private Long productId;
