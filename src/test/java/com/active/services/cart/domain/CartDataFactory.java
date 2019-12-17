@@ -1,5 +1,7 @@
 package com.active.services.cart.domain;
 
+import com.active.services.cart.model.CartItemFeeTransactionType;
+import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
@@ -63,5 +65,20 @@ public class CartDataFactory {
         updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
         updateCartItemDto.setProductName(cartItem.getProductName());
         return updateCartItemDto;
+    }
+
+    public static CartItemFee cartItemFee() {
+        CartItemFee cartItemFee = new CartItemFee();
+        cartItemFee.setId(1L);
+        cartItemFee.setIdentifier(UUID.randomUUID());
+        cartItemFee.setDescription("Description");
+        cartItemFee.setName("name");
+        cartItemFee.setFeeOriginId("fee Origin id");
+        cartItemFee.setFeeOriginPayload("Fee Origin Payload");
+        cartItemFee.setTransactionType(CartItemFeeTransactionType.CREDIT);
+        cartItemFee.setType(CartItemFeeType.DISCOUNT);
+        cartItemFee.setUnitPrice(new BigDecimal(1));
+        cartItemFee.setUnits(1);
+        return cartItemFee;
     }
 }

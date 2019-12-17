@@ -4,6 +4,7 @@ import com.active.services.cart.CartServiceApp;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -63,5 +65,16 @@ public class CartRepositoryIntegrationTest {
                 });
             });
         });
+    }
+
+    @Test
+    public void cartItemFeeCRUD() {
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        CartItemFee cartItemFee = CartDataFactory.cartItemFee();
+        cartItem.setFees(Arrays.asList(cartItemFee));
+        cart.setItems(Arrays.asList(cartItem));
+        cartRepository.saveQuoteResult(cart);
     }
 }
