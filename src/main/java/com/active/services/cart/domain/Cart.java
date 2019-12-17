@@ -19,5 +19,5 @@ public class Cart extends BaseDomainObject {
 
     private List<CartItem> items = new ArrayList<>();
 
-    private List<CartItemFee> fees = new ArrayList<>();
+    private List<CartFee> fees = new ArrayList<>();
 }
