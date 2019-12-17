@@ -6,8 +6,10 @@ import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 import java.util.List;
 import java.util.UUID;
+
 import javax.validation.constraints.NotNull;
 
+import com.active.services.cart.model.v1.req.QuoteReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,11 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
+import com.active.services.cart.model.v1.rsp.QuoteRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 
@@ -61,6 +65,15 @@ public class CartController {
 
         List<UUID> cartIds = cartService.search(ownerId);
         rsp.setCartIds(cartIds);
+
+        return rsp;
+    }
+
+    @PostMapping(value = "/quote")
+    public QuoteRsp quote(@RequestBody @NotNull @Validated QuoteReq req) {
+        QuoteRsp rsp = new QuoteRsp();
+        Cart cart = cartService.quote(req.getCartId());
+        rsp.setCartDto(CartMapper.INSTANCE.toDto(cart));
 
         return rsp;
     }

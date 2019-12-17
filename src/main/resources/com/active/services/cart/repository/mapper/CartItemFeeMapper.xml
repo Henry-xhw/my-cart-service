@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.CartItemFeeMapper">
+    <delete id="deleteCartItemFeeById">
+        DELETE FROM cart_item_fees WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteCartItemCartItemFeeByCartItemId">
+        DELETE FROM cart_items_cart_item_fees WHERE cart_item_id = #{cartItemId}
+    </delete>
+
+    <insert id="createCartItemFee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart_item_fees]
+        (identifier,
+        parent_id,
+        name,
+        description,
+        type,
+        transaction_type,
+        units,
+        unit_price,
+        fee_origin_id,
+        fee_origin_payload,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt)
+        VALUES
+        (#{identifier},
+        #{parentId},
+        #{name},
+        #{description},
+        #{type},
+        #{transactionType},
+        #{units},
+        #{unitPrice},
+        #{feeOriginId},
+        #{feeOriginPayload},
+        #{createdBy},
+        #{createdDt},
+        #{modifiedBy},
+        #{modifiedDt}
+        )
+    </insert>
+
+    <insert id="createCartItemCartItemFee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart_items_cart_item_fees]
+        (identifier,
+        cart_item_id,
+        cart_item_fee_id,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt
+        )
+        VALUES
+        (#{identifier},
+        #{cartItemId},
+        #{cartItemFeeId},
+        #{createdBy},
+        #{createdDt},
+        #{modifiedBy},
+        #{modifiedDt}
+        )
+    </insert>
+
+    <select id="getCartItemFeeIdByCartItemId" resultType="java.lang.Long">
+        select
+        id
+        from dbo.cart_items_cart_item_fees
+        where cart_item_id = #{cartItemId}
+    </select>
+</mapper>

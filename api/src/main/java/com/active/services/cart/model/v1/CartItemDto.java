@@ -11,6 +11,11 @@ import javax.validation.constraints.Size;
 
 import com.active.services.cart.model.Range;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -41,4 +46,18 @@ public class CartItemDto extends BaseDto {
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    @Min(value = 0)
+    @Digits(integer = 17, fraction = 2)
+    private BigDecimal grossPrice;
+
+    /**
+     * Net Price = Gross Price - Price Hikes Amount - Discounts Amount
+     */
+    @Min(value = 0)
+    @Digits(integer = 17, fraction = 2)
+    private BigDecimal netPrice;
+
+    @Valid
+    private List<CartItemFeeDto> fees = new ArrayList<>();
 }

@@ -1,17 +1,18 @@
 package com.active.services.cart.domain;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-
 @Data
 @NoArgsConstructor
 public class CartItem extends BaseDomainObject {
-
     private Long productId;
 
     private String productName;
@@ -27,6 +28,12 @@ public class CartItem extends BaseDomainObject {
     private BigDecimal unitPrice;
 
     private String groupingIdentifier;
+
+    private BigDecimal grossPrice;
+
+    private BigDecimal netPrice;
+
+    private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
         this.productId = updateCartItemDto.getProductId();

@@ -20,6 +20,9 @@ public class Cart extends BaseDomainObject {
 
     private List<CartItem> items = new ArrayList<>();
 
+    private List<CartFee> fees = new ArrayList<>();
+
+
     public Optional<CartItem> getCartItem(UUID cartItemId) {
         return getCartItem(items, cartItemId);
     }
