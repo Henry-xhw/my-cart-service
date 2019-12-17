@@ -30,6 +30,4 @@ public class CartItemFee extends BaseDomainObject {
     private String feeOriginPayload;
 
     private List<CartItemFee> derivedFees = new ArrayList<>();
-
-    private List<CartItem> items = new ArrayList<>();
 }
