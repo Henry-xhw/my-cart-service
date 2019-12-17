@@ -11,14 +11,14 @@ public class CartException extends RuntimeException {
 
     private ErrorCode errorCode;
 
-    private Object payload;
+    private String errorMessage;
 
     public CartException(ErrorCode errorCode) {
         this(errorCode, null);
     }
 
-    public CartException(ErrorCode errorCode, Object payload) {
+    public CartException(ErrorCode errorCode, String errorMessage) {
         this.errorCode = errorCode;
-        this.payload = payload;
+        this.errorMessage = errorMessage;
     }
 }

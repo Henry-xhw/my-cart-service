@@ -5,6 +5,7 @@ package com.active.services.cart.model;
  *
  */
 public enum ErrorCode {
+    INTERNAL_ERROR,
     VALIDATION_ERROR,
     CART_NOT_FOUND,
 

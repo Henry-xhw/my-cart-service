@@ -10,5 +10,5 @@ public class BaseRsp {
 
     private ErrorCode errorCode;
 
-    private Object errorPayload;
+    private String errorMessage;
 }
