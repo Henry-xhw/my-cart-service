@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    private static final String ERROR_MSG_TMPL = "%s : %s";
+    private static final String ERROR_MSG_TMPL = "%s: %s";
 
     @Autowired
     private ObjectMapper objectMapper;
