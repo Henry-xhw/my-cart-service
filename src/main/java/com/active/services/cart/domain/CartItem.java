@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +28,10 @@ public class CartItem extends BaseDomainObject {
     private BigDecimal unitPrice;
 
     private String groupingIdentifier;
+
+    private BigDecimal grossPrice;
+
+    private BigDecimal netPrice;
 
     private List<CartItemFee> fees = new ArrayList<>();
 

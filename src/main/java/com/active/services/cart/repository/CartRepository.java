@@ -58,17 +58,17 @@ public class CartRepository {
     }
 
     private void saveQuoteResult(CartItem item, CartItemFee cartItemFee) {
-        Long cartItemFeeId = cartMapper.createCartItemFee(cartItemFee);
+        cartMapper.createCartItemFee(cartItemFee);
         CartItemCartItemFee cartItemCartItemFee = new CartItemCartItemFee();
         cartItemCartItemFee.setIdentifier(UUID.randomUUID());
-        cartItemCartItemFee.setCartItemFeeId(cartItemFeeId);
+        cartItemCartItemFee.setCartItemFeeId(cartItemFee.getId());
         cartItemCartItemFee.setCartItemId(item.getId());
         cartItemCartItemFee.setIdentifier(UUID.randomUUID());
         cartMapper.createCartItemCartItemFee(cartItemCartItemFee);
     }
 
     private void deleteLastQuoteResult(CartItem item) {
-        cartMapper.deleteCartItemFeeById(item.getId());
+        cartMapper.deleteCartItemFeeById(cartMapper.getCartItemFeeIdByCartItemId(item.getId()));
         cartMapper.deleteCartItemCartItemFeeBycartItemId(item.getId());
     }
 }

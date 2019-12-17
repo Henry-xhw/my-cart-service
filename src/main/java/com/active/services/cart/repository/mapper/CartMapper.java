@@ -29,9 +29,11 @@ public interface CartMapper {
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 
-    Long createCartItemFee(CartItemFee cartItemFee);
+    void createCartItemFee(CartItemFee cartItemFee);
 
     void createCartItemCartItemFee(CartItemCartItemFee cartItemCartItemFee);
+
+    Long getCartItemFeeIdByCartItemId(@Param("cartItemId") Long cartItemId);
 
     void deleteCartItemFeeById(@Param("id") Long id);
 
