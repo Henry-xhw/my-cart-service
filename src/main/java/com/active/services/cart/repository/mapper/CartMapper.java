@@ -28,14 +28,4 @@ public interface CartMapper {
     void deleteCartItemByCartId(Long cartId);
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
-
-    void createCartItemFee(CartItemFee cartItemFee);
-
-    void createCartItemCartItemFee(CartItemCartItemFee cartItemCartItemFee);
-
-    Long getCartItemFeeIdByCartItemId(@Param("cartItemId") Long cartItemId);
-
-    void deleteCartItemFeeById(@Param("id") Long id);
-
-    void deleteCartItemCartItemFeeBycartItemId(@Param("cartItemId") Long cartItemId);
 }

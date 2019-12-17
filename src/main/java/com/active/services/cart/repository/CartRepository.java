@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.active.services.cart.domain.CartItemCartItemFee;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.repository.mapper.CartItemFeeMapper;
 import org.springframework.stereotype.Repository;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 public class CartRepository {
 
     private final CartMapper cartMapper;
+
+    private final CartItemFeeMapper cartItemFeeMapper;
 
     public void createCart(Cart cart) {
         cartMapper.createCart(cart);
@@ -58,17 +61,17 @@ public class CartRepository {
     }
 
     private void saveQuoteResult(CartItem item, CartItemFee cartItemFee) {
-        cartMapper.createCartItemFee(cartItemFee);
+        cartItemFeeMapper.createCartItemFee(cartItemFee);
         CartItemCartItemFee cartItemCartItemFee = new CartItemCartItemFee();
         cartItemCartItemFee.setIdentifier(UUID.randomUUID());
         cartItemCartItemFee.setCartItemFeeId(cartItemFee.getId());
         cartItemCartItemFee.setCartItemId(item.getId());
         cartItemCartItemFee.setIdentifier(UUID.randomUUID());
-        cartMapper.createCartItemCartItemFee(cartItemCartItemFee);
+        cartItemFeeMapper.createCartItemCartItemFee(cartItemCartItemFee);
     }
 
     private void deleteLastQuoteResult(CartItem item) {
-        cartMapper.deleteCartItemFeeById(cartMapper.getCartItemFeeIdByCartItemId(item.getId()));
-        cartMapper.deleteCartItemCartItemFeeBycartItemId(item.getId());
+        cartItemFeeMapper.deleteCartItemFeeById(cartItemFeeMapper.getCartItemFeeIdByCartItemId(item.getId()));
+        cartItemFeeMapper.deleteCartItemCartItemFeeByCartItemId(item.getId());
     }
 }
