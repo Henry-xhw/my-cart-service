@@ -16,7 +16,7 @@ BEGIN
         [lock]                      BIT                 DEFAULT ((0)) NOT NULL,
         [cart_status]               NVARCHAR (255)      NOT NULL
     )
-	 PRINT 'CREATE TABLE dbo.payments'
+	 PRINT 'CREATE TABLE dbo.cart'
 END
 GO
 
