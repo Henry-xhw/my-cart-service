@@ -29,6 +29,8 @@
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
         INSERT INTO [dbo].[cart_item] (
             [cart_id],
+            [agency_id],
+            [fee_volume_index],
             [identifier],
             [product_id],
             [product_name],
@@ -47,6 +49,8 @@
         )
         VALUES (
              #{cartId},
+             #{item.agencyId},
+             #{item.feeVolumeIndex},
              #{item.identifier},
              #{item.productId},
              #{item.productName},
@@ -134,6 +138,9 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
+        <if test="item.feeVolumeIndex!=null">
+            [fee_volume_index] = #{item.feeVolumeIndex},
+        </if>
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -179,6 +186,8 @@
                item.quantity                 AS item_quantity,
                item.unit_price               AS item_unit_price,
                item.grouping_identifier      AS item_grouping_identifier,
+               item.agency_id                AS item_agency_id,
+               item.fee_volume_index         AS item_fee_volume_index,
                item.created_by               AS item_createdBy,
                item.created_dt               AS item_createdDt,
                item.modified_by              AS item_modifiedBy,

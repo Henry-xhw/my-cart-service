@@ -58,6 +58,10 @@ public class CartItemDto extends BaseDto {
     @Digits(integer = 17, fraction = 2)
     private BigDecimal netPrice;
 
+    private Integer feeVolumeIndex;
+
+    private Long agencyId;
+
     @Valid
     private List<CartItemFeeDto> fees = new ArrayList<>();
 }

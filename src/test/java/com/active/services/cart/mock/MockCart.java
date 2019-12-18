@@ -64,6 +64,8 @@ public class MockCart {
         cartItem.setUnitPrice(BigDecimal.valueOf(1));
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
+        cartItem.setAgencyId(123L);
+        cartItem.setFeeVolumeIndex(0);
         List<CartItemDto> list = new ArrayList<>();
         list.add(cartItem);
         cartDto.setItems(list);

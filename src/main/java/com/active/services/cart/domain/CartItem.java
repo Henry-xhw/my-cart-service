@@ -33,6 +33,10 @@ public class CartItem extends BaseDomainObject {
 
     private BigDecimal netPrice;
 
+    private Integer feeVolumeIndex;
+
+    private Long agencyId;
+
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -44,6 +48,8 @@ public class CartItem extends BaseDomainObject {
         this.quantity = updateCartItemDto.getQuantity();
         this.unitPrice = updateCartItemDto.getUnitPrice();
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
+        this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
+        this.agencyId = updateCartItemDto.getAgencyId();
         this.setIdentifier(updateCartItemDto.getIdentifier());
     }
 }

@@ -4,6 +4,8 @@ BEGIN
 	 CREATE TABLE [dbo].[cart_item] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [cart_id]                   BIGINT              NOT NULL,
+        [agency_id]                 BIGINT              NULL,
+        [fee_volume_index]          BIGINT              NULL,
         [identifier]                UNIQUEIDENTIFIER    NOT NULL,
         [product_id]                BIGINT              NOT NULL,
         [product_name]              NVARCHAR(255)       NULL,
@@ -53,5 +55,27 @@ BEGIN
     CREATE NONCLUSTERED INDEX [ix_cart_item_cart_id] ON [dbo].[cart_item] ([cart_id])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
     PRINT 'Added index ix_cart_item_cart_id to dbo.cart_item.'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'fee_volume_index'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart_item ADD fee_volume_index BIGINT NULL
+
+	PRINT 'Added column fee_volume_index to dbo.cart_item'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'agency_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart_item ADD agency_id BIGINT NULL
+
+	PRINT 'Added column agency_id to dbo.cart_item'
 END
 GO

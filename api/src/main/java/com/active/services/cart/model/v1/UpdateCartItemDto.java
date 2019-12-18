@@ -46,4 +46,8 @@ public class UpdateCartItemDto {
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    private Integer feeVolumeIndex;
+
+    private Long agencyId;
 }

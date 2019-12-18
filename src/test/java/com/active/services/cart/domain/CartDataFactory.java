@@ -49,6 +49,8 @@ public class CartDataFactory {
         cartItem.setQuantity(1);
         cartItem.setUnitPrice(BigDecimal.ONE);
         cartItem.setGroupingIdentifier("grouping identifier");
+        cartItem.setAgencyId(123L);
+        cartItem.setFeeVolumeIndex(0);
 
         return cartItem;
     }
