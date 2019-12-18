@@ -25,9 +25,5 @@ public class CartItemFee extends BaseDomainObject {
 
     private BigDecimal unitPrice;
 
-    private String feeOriginId;
-
-    private String feeOriginPayload;
-
     private List<CartItemFee> derivedFees = new ArrayList<>();
 }

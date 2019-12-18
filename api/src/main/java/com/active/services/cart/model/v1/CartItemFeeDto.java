@@ -30,8 +30,4 @@ public class CartItemFeeDto extends BaseDto {
     @Min(value = 0)
     @Digits(integer = 17, fraction = 2)
     private BigDecimal unitPrice;
-
-    private String feeOriginId;
-
-    private String feeOriginPayload;
 }

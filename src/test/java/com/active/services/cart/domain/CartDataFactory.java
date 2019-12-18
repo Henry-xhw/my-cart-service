@@ -73,8 +73,6 @@ public class CartDataFactory {
         cartItemFee.setIdentifier(UUID.randomUUID());
         cartItemFee.setDescription("Description");
         cartItemFee.setName("name");
-        cartItemFee.setFeeOriginId("fee Origin id");
-        cartItemFee.setFeeOriginPayload("Fee Origin Payload");
         cartItemFee.setTransactionType(CartItemFeeTransactionType.CREDIT);
         cartItemFee.setType(CartItemFeeType.DISCOUNT);
         cartItemFee.setUnitPrice(new BigDecimal(1));
