@@ -6,6 +6,7 @@ import com.active.services.cart.controller.v1.CartMapper;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
@@ -84,8 +85,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void createCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-          OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
+        when(cartService.get(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
         CreateCartItemReq req = new CreateCartItemReq();
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
@@ -111,8 +111,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
+        when(cartService.get(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
         mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
@@ -146,7 +145,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
@@ -171,9 +170,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         items.add(cartItem);
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
-        when(cartService.get(identifier)).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + identifier));
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.get(identifier)).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
@@ -197,7 +195,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
@@ -232,7 +230,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
