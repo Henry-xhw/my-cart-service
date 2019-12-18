@@ -10,11 +10,64 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL
+        [modified_dt]               DATETIME            NOT NULL,
+        [version]                   INT                 DEFAULT ((0)) NOT NULL,
+        [price_version]             INT                 DEFAULT ((0)) NOT NULL,
+        [lock]                      BIT                 DEFAULT ((0)) NOT NULL,
+        [cart_status]               NVARCHAR (255)      NOT NULL
     )
 	 PRINT 'CREATE TABLE dbo.payments'
 END
 GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_status'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart ADD cart_status NVARCHAR(255) NOT NULL
+
+	PRINT 'Added column cart_status to dbo.cart'
+END
+
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'version'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart ADD version INT DEFAULT ((0)) NOT NULL
+
+	PRINT 'Added column version to dbo.cart'
+END
+
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'price_version'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart ADD price_version INT DEFAULT ((0)) NOT NULL
+
+	PRINT 'Added column price_version to dbo.cart'
+END
+
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'lock'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart ADD lock BIT DEFAULT ((0)) NOT NULL
+
+	PRINT 'Added column lock to dbo.cart'
+END
+
+GO
+
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart' AND t.type = 'U')
 BEGIN

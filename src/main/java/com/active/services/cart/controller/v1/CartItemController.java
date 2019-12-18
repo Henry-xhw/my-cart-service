@@ -44,7 +44,7 @@ public class CartItemController {
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
                 .collect(Collectors.toList());
 
-        cartService.createCartItems(cartId, items);
+        cartService.createCartItems(cartId, cartIdentifier, items);
         CreateCartItemRsp rsp = new CreateCartItemRsp();
         rsp.setCartId(cartIdentifier);
         return rsp;

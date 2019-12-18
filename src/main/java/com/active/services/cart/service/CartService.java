@@ -1,10 +1,12 @@
 package com.active.services.cart.service;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.active.services.cart.util.AuditorAwareUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +32,18 @@ public class CartService {
         cartRepository.deleteCart(cartId);
     }
 
+    private static final int UPDATA_SUCCESS = 1;
+
     @Transactional
     public Cart get(UUID cartId) {
-        return cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
-                " cart id does not exist: " + cartId));
+        return cartRepository.getCart(cartId)
+            .orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND, " cart id does not exist: " + cartId));
     }
 
     @Transactional
-    public List<CartItem> createCartItems(Long cartId, List<CartItem> items) {
+    public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
+        incrementVersion(cartIdentifier);
         return items;
     }
 
@@ -46,6 +51,7 @@ public class CartService {
     public List<CartItem> updateCartItems(UUID cartIdentifier, List<CartItem> items) {
         checkCartItem(cartIdentifier, items.stream().map(CartItem::getIdentifier).collect(Collectors.toList()));
         cartRepository.updateCartItems(items);
+        incrementVersion(cartIdentifier);
         return items;
     }
 
@@ -64,11 +70,52 @@ public class CartService {
         checkCartItem(cartId, Arrays.asList(cartItemId));
 
         cartRepository.deleteCartItem(cartItemId);
+        incrementVersion(cartId);
     }
 
     @Transactional
     public List<UUID> search(UUID ownerId) {
         List<UUID> uuidList = cartRepository.search(ownerId);
         return uuidList;
+    }
+
+    @Transactional
+    public void finalizedCart(UUID cartId) {
+        if (cartRepository.finalizedCart(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
+            Instant.now()) != UPDATA_SUCCESS) {
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "finalized cart fail: " + cartId);
+        }
+    }
+
+    @Transactional
+    public void incrementVersion(UUID cartId) {
+        if (cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
+            Instant.now()) != UPDATA_SUCCESS) {
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail: " + cartId);
+        }
+    }
+
+    @Transactional
+    public void incrementPriceVersion(UUID cartId) {
+        if (cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
+            Instant.now()) != UPDATA_SUCCESS) {
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment price version fail: " + cartId);
+        }
+    }
+
+    @Transactional
+    public void getLock(UUID cartId) {
+        if (cartRepository.getLock(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
+            Instant.now()) != UPDATA_SUCCESS) {
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "get lock fail: " + cartId);
+        }
+    }
+
+    @Transactional
+    public void releaseLock(UUID cartId) {
+        if (cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
+            Instant.now()) != UPDATA_SUCCESS) {
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "release lock fail: " + cartId);
+        }
     }
 }

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.active.services.cart.model.CurrencyCode;
 
+import com.active.services.cart.service.CartStatus;
 import lombok.Data;
 
 @Data
@@ -17,6 +18,14 @@ public class Cart extends BaseDomainObject {
     private UUID keyerId;
 
     private CurrencyCode currencyCode;
+
+    private int version;
+
+    private int priceVersion;
+
+    private int lock;
+
+    private CartStatus cartStatus;
 
     private List<CartItem> items = new ArrayList<>();
 
