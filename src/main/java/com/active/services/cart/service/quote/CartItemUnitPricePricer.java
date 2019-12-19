@@ -18,18 +18,9 @@ import org.springframework.util.ObjectUtils;
 public class CartItemUnitPricePricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
-        CartItemFee unitPriceFee = new CartItemFee();
-
-        unitPriceFee.setIdentifier(UUID.randomUUID());
-        unitPriceFee.setDescription(cartItem.getProductDescription());
-        unitPriceFee.setName(cartItem.getProductName());
-        unitPriceFee.setTransactionType(CartItemFeeTransactionType.DEBIT);
-        unitPriceFee.setType(CartItemFeeType.PRICE);
-        unitPriceFee.setUnitPrice(cartItem.getUnitPrice());
-        unitPriceFee.setUnits(cartItem.getQuantity());
-        cartItem.getFees().add(unitPriceFee);
-
+        CartItemFee unitPriceFee = CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE);
         setGrossAndNetPriceValue(cartItem);
+        cartItem.getFees().add(unitPriceFee);
     }
 
     private void setGrossAndNetPriceValue(CartItem cartItem) {
