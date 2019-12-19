@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
 @NoArgsConstructor
@@ -38,5 +44,25 @@ public class CartItem extends BaseTree<CartItem> {
         this.unitPrice = updateCartItemDto.getUnitPrice();
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.setIdentifier(updateCartItemDto.getIdentifier());
+    }
+
+    public List<CartItem> getFlattenSubItems() {
+        Queue<CartItem> q = new LinkedList<>();
+        q.offer(this);
+
+        List<CartItem> flatten = new LinkedList<>();
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                CartItem it = q.poll();
+                if (it != null) {
+                    flatten.add(it);
+                    emptyIfNull(it.getSubItems()).stream()
+                            .filter(Objects::nonNull)
+                            .forEach(q::offer);
+                }
+            }
+        }
+        return flatten;
     }
 }

@@ -34,7 +34,7 @@ public class CartRepository {
     }
 
     public void updateCartItems(List<CartItem> items) {
-        items.forEach(item -> cartMapper.updateCartItem(item));
+        items.forEach(cartMapper::updateCartItem);
     }
 
     public void deleteCartItem(Long cartItemId) {

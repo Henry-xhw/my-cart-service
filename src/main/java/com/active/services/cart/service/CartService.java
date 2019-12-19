@@ -8,23 +8,20 @@ import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.TreeBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CartService {
-
-    @Autowired
-    private CartRepository cartRepository;
+    private final CartRepository cartRepository;
 
     private static final int UPDATE_SUCCESS = 1;
 
@@ -41,7 +38,7 @@ public class CartService {
     public Cart getCartByCartUuid(UUID cartId) {
         Cart cart = cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
                 " cart id does not exist: " + cartId));
-        TreeBuilder<CartItem> treeBuilder = new TreeBuilder(cart.getItems());
+        TreeBuilder<CartItem> treeBuilder = new TreeBuilder<>(cart.getItems());
         cart.setItems(treeBuilder.buildTree());
         return cart;
     }
@@ -62,7 +59,7 @@ public class CartService {
     public List<CartItem> updateCartItems(UUID cartIdentifier, List<CartItem> items) {
         Cart cart = getCartByCartUuid(cartIdentifier);
         items.forEach(cartItem -> {
-            if (!checkCartItemIsBelongToCart(cart, cartItem.getIdentifier())) {
+            if (!cart.findCartItem(cartItem.getIdentifier()).isPresent()) {
                 throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
                         + cartItem.getIdentifier() + " is not belong cart id:" + cart.getIdentifier());
             }
@@ -74,35 +71,22 @@ public class CartService {
 
     @Transactional
     public void deleteCartItem(Cart cart, UUID cartItemUuid) {
-        if (!checkCartItemIsBelongToCart(cart, cartItemUuid)) {
+        Optional<CartItem> cartItem = cart.findCartItem(cartItemUuid);
+        if (!cartItem.isPresent()) {
             throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
                     + cartItemUuid + " is not belong cart id:" + cart.getIdentifier());
         }
-        TreeBuilder<CartItem> treeBuilder = new TreeBuilder(cart.getItems());
-        cart.setItems(treeBuilder.buildTree());
-        //if the cartItemUuid has sub items, add them
-        List<UUID> deleteCartItemListIds = new ArrayList<>(getSubCartItemId(cart, cartItemUuid));
-        //add itself
-        deleteCartItemListIds.add(cartItemUuid);
+        List<UUID> idsToDelete = cartItem.get().getFlattenSubItems()
+                        .stream()
+                        .map(CartItem::getIdentifier).collect(Collectors.toList());
+        idsToDelete.add(cartItemUuid);
 
-        cartRepository.batchDeleteCartItems(deleteCartItemListIds);
+        cartRepository.batchDeleteCartItems(idsToDelete);
         incrementVersion(cart.getIdentifier());
     }
 
-    private Set<UUID> getSubCartItemId(Cart cart, UUID cartItemUuid) {
-        Set<UUID> uuidSet = new HashSet<>();
-        for (CartItem cartItem: cart.getItems()) {
-            if (cartItem.getIdentifier().equals(cartItemUuid)) {
-                uuidSet = getAllCartItemIds(cartItem.getSubItems());
-                break;
-            }
-        }
-        return uuidSet;
-    }
-
     public List<UUID> search(UUID ownerId) {
-        List<UUID> uuidList = cartRepository.search(ownerId);
-        return uuidList;
+        return cartRepository.search(ownerId);
     }
 
     public Long getCartItemIdByCartItemUuid(UUID cartItemId) {
@@ -110,31 +94,12 @@ public class CartService {
                 .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: " + cartItemId));
     }
 
-    private boolean checkCartItemIsBelongToCart(Cart cart, UUID cartItemUuid) {
-        Set cartItemIds = getAllCartItemIds(cart.getItems());
-        return cartItemIds.contains(cartItemUuid);
-    }
-
-    private Set<UUID> getAllCartItemIds(List<CartItem> cartItems) {
-        Queue<CartItem> q = new LinkedList<>(cartItems);
-        Set<UUID> cartItemIds = new HashSet<>();
-        while (!q.isEmpty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                CartItem it = q.poll();
-                cartItemIds.add(it.getIdentifier());
-                it.getSubItems().forEach(q::offer);
-            }
-        }
-        return cartItemIds;
-    }
-
     public void insertCartItems(Cart cart, List<CartItem> cartItemList, Long requestParentId) {
         Long cartId = cart.getId();
         for (CartItem cartItem : cartItemList) {
             Long parentId = requestParentId;
             if (cartItem.getIdentifier() != null) {
-                if (!checkCartItemIsBelongToCart(cart, cartItem.getIdentifier())) {
+                if (!cart.findCartItem(cartItem.getIdentifier()).isPresent()) {
                     // cart item not exist, need error msg
                     throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
                             + cartItem.getIdentifier() + " is not belong cart id:" + cart.getIdentifier());
