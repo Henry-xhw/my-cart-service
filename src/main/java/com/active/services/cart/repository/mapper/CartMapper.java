@@ -31,4 +31,14 @@ public interface CartMapper {
     Optional<Long> getCartItemIdByCartItemUuid(@Param("cartItemId") UUID cartItemId);
 
     void batchDeleteCartItems(List<UUID> uuidList);
+
+    int finalizeCart(@Param("identifier") UUID cartId,@Param("modifiedBy") String modifiedBy);
+
+    int incrementVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
+
+    int incrementPriceVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
+
+    int acquireLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
+
+    int releaseLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 }

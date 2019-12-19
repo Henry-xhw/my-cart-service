@@ -4,13 +4,12 @@ import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
@@ -57,5 +56,25 @@ public class CartRepository {
 
     public void batchDeleteCartItems(List<UUID> uuidList) {
         cartMapper.batchDeleteCartItems(uuidList);
+    }
+
+    public int finalizeCart(UUID cartId, String modifiedBy){
+        return cartMapper.finalizeCart(cartId, modifiedBy);
+    }
+
+    public int incrementVersion(UUID cartId, String modifiedBy){
+        return cartMapper.incrementVersion(cartId, modifiedBy);
+    }
+
+    public int incrementPriceVersion(UUID cartId, String modifiedBy){
+        return cartMapper.incrementPriceVersion(cartId, modifiedBy);
+    }
+
+    public int acquireLock(UUID cartId, String modifiedBy){
+        return cartMapper.acquireLock(cartId, modifiedBy);
+    }
+
+    public int releaseLock(UUID cartId, String modifiedBy){
+        return cartMapper.releaseLock(cartId, modifiedBy);
     }
 }

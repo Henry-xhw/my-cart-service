@@ -6,6 +6,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.TreeBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class CartService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    private static final int UPDATE_SUCCESS = 1;
 
     @Transactional
     public void create(Cart cart) {
@@ -44,8 +47,9 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItem> createCartItems(Long cartId, List<CartItem> items) {
+    public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
+        incrementVersion(cartIdentifier);
         return items;
     }
 
@@ -64,6 +68,7 @@ public class CartService {
             }
         });
         cartRepository.updateCartItems(items);
+        incrementVersion(cartIdentifier);
         return items;
     }
 
@@ -145,4 +150,30 @@ public class CartService {
             }
         }
     }
+
+    @Transactional
+    public boolean finalizeCart(UUID cartId) {
+         return cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+    }
+
+    @Transactional
+    public boolean incrementVersion(UUID cartId) {
+        return cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+    }
+
+    @Transactional
+    public boolean incrementPriceVersion(UUID cartId) {
+        return cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+    }
+
+    @Transactional
+    public boolean acquireLock(UUID cartId) {
+        return cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+    }
+
+    @Transactional
+    public boolean releaseLock(UUID cartId) {
+        return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+    }
 }
+

@@ -34,7 +34,7 @@ public class CartItemController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping()
+    @PostMapping
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
         Cart cart = cartService.getCartByCartUuid(cartIdentifier);
@@ -43,12 +43,13 @@ public class CartItemController {
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
                 .collect(Collectors.toList());
         cartService.insertCartItems(cart, items, null);
+
         CreateCartItemRsp rsp = new CreateCartItemRsp();
         rsp.setCartId(cartIdentifier);
         return rsp;
     }
 
-    @PutMapping()
+    @PutMapping
     public UpdateCartItemRsp update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated UpdateCartItemReq req) {
         List<CartItem> items = req.getItems().stream().map(CartItem::new).collect(Collectors.toList());
