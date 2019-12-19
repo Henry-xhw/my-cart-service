@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class BaseTree<T extends BaseTree> extends BaseDomainObject {
 
-    private Long pid;
+    private Long parentId;
 
     private List<T> subItems = new ArrayList<>();
 }

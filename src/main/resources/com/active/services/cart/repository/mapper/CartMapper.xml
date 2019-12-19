@@ -29,7 +29,7 @@
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
         INSERT INTO [dbo].[cart_item] (
             [cart_id],
-            [pid],
+            [parent_id],
             [identifier],
             [product_id],
             [product_name],
@@ -48,7 +48,7 @@
         )
         VALUES (
              #{cartId},
-             #{item.pid},
+             #{item.parentId},
              #{item.identifier},
              #{item.productId},
              #{item.productName},
@@ -170,7 +170,7 @@
                cart.modified_by              as modified_by,
                cart.modified_dt              as modified_dt,
                item.id                       AS item_id,
-               item.pid                      AS item_pid,
+               item.parent_id                AS item_parent_id,
                item.identifier               AS item_identifier,
                item.product_id               AS item_product_id,
                item.product_name             AS item_product_name,
@@ -199,17 +199,21 @@
         DELETE
         FROM cart_item
         WHERE id = #{cartItemId}
-           or pid = #{cartItemId}
     </delete>
 
     <delete id="deleteCartItemByCartId">
         DELETE FROM cart_item WHERE cart_id = #{cartId}
     </delete>
-
+    <delete id="batchDeleteCartItems" parameterType="java.util.List">
+        DELETE FROM cart_item WHERE identifier in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
     <select id="search" resultType="java.util.UUID">
         SELECT identifier FROM cart WHERE owner_id = #{ownerId}
     </select>
-    <select id="getCartItemByIdentifier" resultType="Long">
+    <select id="getCartItemIdByCartItemUuid" resultType="Long">
         SELECT id
         FROM cart_item
         WHERE identifier = #{cartItemId}

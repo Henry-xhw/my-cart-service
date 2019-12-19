@@ -28,5 +28,7 @@ public interface CartMapper {
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 
-    Optional<Long> getCartItemByIdentifier(@Param("cartItemId") UUID cartItemId);
+    Optional<Long> getCartItemIdByCartItemUuid(@Param("cartItemId") UUID cartItemId);
+
+    void batchDeleteCartItems(List<UUID> uuidList);
 }

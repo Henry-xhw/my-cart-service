@@ -30,7 +30,6 @@ public class CartItemController {
     private static final String CART_ID_PARAM = "cart-id";
     private static final String CART_ITEM_ID_PARAM = "cart-item-id";
     private static final String CART_ITEM_ID_PATH = "/{" + CART_ITEM_ID_PARAM + "}";
-    private static final Long ORIGIN_PARENT_ID = -1L;
 
     @Autowired
     private CartService cartService;
@@ -38,12 +37,12 @@ public class CartItemController {
     @PostMapping()
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
-        Cart cart = cartService.get(cartIdentifier);
+        Cart cart = cartService.getCartByCartUuid(cartIdentifier);
         List<CartItem> items = req.getItems()
                 .stream()
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
                 .collect(Collectors.toList());
-        cartService.insertCartItems(cart, items, ORIGIN_PARENT_ID);
+        cartService.insertCartItems(cart, items, null);
         CreateCartItemRsp rsp = new CreateCartItemRsp();
         rsp.setCartId(cartIdentifier);
         return rsp;
@@ -63,14 +62,10 @@ public class CartItemController {
     @DeleteMapping(CART_ITEM_ID_PATH)
     public DeleteCartItemRsp delete(@PathVariable("cart-id") UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        Cart cart = cartService.get(cartId);
+        Cart cart = cartService.getCartByCartUuid(cartId);
         cartService.deleteCartItem(cart, cartItemId);
         DeleteCartItemRsp rsp = new DeleteCartItemRsp();
         rsp.setCartId(cartId);
         return rsp;
-    }
-
-    private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
-        return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
     }
 }

@@ -23,15 +23,15 @@ BEGIN
 	 PRINT 'CREATE TABLE dbo.cart_item'
 END
 GO
-/* OMS-10202 add column pid */
+/* OMS-10202 add column parent_id */
 IF NOT EXISTS(SELECT 1
               FROM INFORMATION_SCHEMA.COLUMNS
               WHERE TABLE_NAME = 'cart_item'
-                AND COLUMN_NAME = 'pid')
+                AND COLUMN_NAME = 'parent_id')
     BEGIN
         ALTER TABLE dbo.cart_item
-            ADD pid BIGINT NOT NULL DEFAULT -1;
-        PRINT 'Added new column pid into table cart_item.';
+            ADD parent_id BIGINT NULL;
+        PRINT 'Added new column parent_id into table cart_item.';
     END
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_item' AND t.type = 'U')

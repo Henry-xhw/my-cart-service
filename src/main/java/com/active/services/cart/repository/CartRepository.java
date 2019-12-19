@@ -51,7 +51,11 @@ public class CartRepository {
         return cartItem.getId();
     }
 
-    public Optional<Long> getCartItem(UUID cartItemId) {
-        return cartMapper.getCartItemByIdentifier(cartItemId);
+    public Optional<Long> getCartItemIdByCartItemUuid(UUID cartItemId) {
+        return cartMapper.getCartItemIdByCartItemUuid(cartItemId);
+    }
+
+    public void batchDeleteCartItems(List<UUID> uuidList) {
+        cartMapper.batchDeleteCartItems(uuidList);
     }
 }
