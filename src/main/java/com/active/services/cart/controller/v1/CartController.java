@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
-import com.active.services.cart.model.v1.req.QuoteReq;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,10 +31,10 @@ import com.active.services.cart.service.CartService;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequiredArgsConstructor
 public class CartController {
 
-    @Autowired
-    private CartService cartService;
+    private final CartService cartService;
 
     @PostMapping
     public CreateCartRsp create(@RequestBody @NotNull @Validated CreateCartReq req) {
@@ -69,12 +69,11 @@ public class CartController {
         return rsp;
     }
 
-    @PostMapping(value = "/quote")
-    public QuoteRsp quote(@RequestBody @NotNull @Validated QuoteReq req) {
+    @PostMapping(value = "/{cart-id}/quote")
+    public QuoteRsp quote(@PathVariable("cart-id")UUID cartId) {
         QuoteRsp rsp = new QuoteRsp();
-        Cart cart = cartService.quote(req.getCartId());
+        Cart cart = cartService.quote(cartId);
         rsp.setCartDto(CartMapper.INSTANCE.toDto(cart));
-
         return rsp;
     }
 }

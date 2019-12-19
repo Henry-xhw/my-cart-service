@@ -1,6 +1,7 @@
 package com.active.services.cart.repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,26 +51,16 @@ public class CartRepository {
         return cartMapper.search(ownerId);
     }
 
-    public void saveQuoteResult(Cart cart) {
-        Optional.ofNullable(cart.getItems()).ifPresent(cartItems ->
-            cartItems.forEach(item -> Optional.ofNullable(item.getFees()).
-                ifPresent(cartItemFees -> cartItemFees.forEach(cartItemFee -> {
-                    deleteLastQuoteResult(item);
-                    saveQuoteResult(item, cartItemFee);
-                }))));
+
+    public void createCartItemFee(CartItemFee cartItemFee) {
+        cartItemFeeMapper.createCartItemFee(cartItemFee);
     }
 
-    private void saveQuoteResult(CartItem item, CartItemFee cartItemFee) {
-        cartItemFeeMapper.createCartItemFee(cartItemFee);
-        CartItemCartItemFee cartItemCartItemFee = new CartItemCartItemFee();
-        cartItemCartItemFee.setIdentifier(UUID.randomUUID());
-        cartItemCartItemFee.setCartItemFeeId(cartItemFee.getId());
-        cartItemCartItemFee.setCartItemId(item.getId());
-        cartItemCartItemFee.setIdentifier(UUID.randomUUID());
+    public void createCartItemCartItemFee(CartItemCartItemFee cartItemCartItemFee) {
         cartItemFeeMapper.createCartItemCartItemFee(cartItemCartItemFee);
     }
 
-    private void deleteLastQuoteResult(CartItem item) {
+    public void deleteLastQuoteResult(CartItem item) {
         cartItemFeeMapper.deleteCartItemFeeById(cartItemFeeMapper.getCartItemFeeIdByCartItemId(item.getId()));
         cartItemFeeMapper.deleteCartItemCartItemFeeByCartItemId(item.getId());
     }

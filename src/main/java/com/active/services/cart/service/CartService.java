@@ -2,33 +2,33 @@ package com.active.services.cart.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.active.services.cart.common.CartException;
-import com.active.services.cart.model.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemCartItemFee;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.util.DataAccess;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CartService {
 
-    @Autowired
-    private CartRepository cartRepository;
+    private final CartRepository cartRepository;
 
-    @Autowired
-    private CartPriceEngine cartPriceEngine;
+    private final CartPriceEngine cartPriceEngine;
 
-    @Autowired
-    private DataAccess dataAccess;
+    private final DataAccess dataAccess;
 
     public void create(Cart cart) {
         cartRepository.createCart(cart);
@@ -58,7 +58,7 @@ public class CartService {
         Cart cart = get(cartId);
 
         for (UUID itemId : itemIds) {
-            if (!cart.getCartItem(itemId).isPresent()) {
+            if (!cart.findCartItem(itemId).isPresent()) {
                 throw new CartException(ErrorCode.CART_NOT_FOUND, "cart item does not exist: " + itemId);
             }
         }
@@ -78,14 +78,31 @@ public class CartService {
 
     public Cart quote(UUID cartId) {
         Cart cart = get(cartId);
-
         cartPriceEngine.quote(new CartQuoteContext(cart));
 
         // Manual control the tx
         dataAccess.doInTx(() -> {
-            cartRepository.saveQuoteResult(cart);
+            saveQuoteResult(cart);
         });
-
         return cart;
+    }
+
+    private void saveQuoteResult(Cart cart) {
+        cart.getItems().stream().filter(Objects::nonNull).forEach(item -> {
+            cartRepository.deleteLastQuoteResult(item);
+            item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
+                cartRepository.createCartItemFee(cartItemFee);
+                CartItemCartItemFee cartItemCartItemFee = buildCartItemCartItemFee(item.getId(), cartItemFee.getId());
+                cartRepository.createCartItemCartItemFee(cartItemCartItemFee);
+            });
+        });
+    }
+
+    private CartItemCartItemFee buildCartItemCartItemFee(Long cartItemId, Long cartItemFeeId) {
+        CartItemCartItemFee cartItemCartItemFee = new CartItemCartItemFee();
+        cartItemCartItemFee.setCartItemFeeId(cartItemFeeId);
+        cartItemCartItemFee.setCartItemId(cartItemId);
+        cartItemCartItemFee.setIdentifier(UUID.randomUUID());
+        return cartItemCartItemFee;
     }
 }

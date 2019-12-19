@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,13 +26,13 @@ import com.active.services.cart.service.CartService;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequiredArgsConstructor
 public class CartItemController {
     private static final String CART_ID_PARAM = "cart-id";
     private static final String CART_ITEM_ID_PARAM = "cart-item-id";
     private static final String CART_ITEM_ID_PATH = "/{" + CART_ITEM_ID_PARAM + "}";
 
-    @Autowired
-    private CartService cartService;
+    private final CartService cartService;
 
     @PostMapping()
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
