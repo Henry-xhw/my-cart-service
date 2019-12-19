@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CartService {
 
@@ -30,24 +29,29 @@ public class CartService {
 
     private final DataAccess dataAccess;
 
+    @Transactional
     public void create(Cart cart) {
         cartRepository.createCart(cart);
     }
 
+    @Transactional
     public void delete(Long cartId) {
         cartRepository.deleteCart(cartId);
     }
 
+    @Transactional
     public Cart get(UUID cartId) {
         return cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
             " cart id does not exist: " + cartId));
     }
 
+    @Transactional
     public List<CartItem> createCartItems(Long cartId, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
         return items;
     }
 
+    @Transactional
     public List<CartItem> updateCartItems(UUID cartIdentifier, List<CartItem> items) {
         checkCartItem(cartIdentifier, items.stream().map(CartItem::getIdentifier).collect(Collectors.toList()));
         cartRepository.updateCartItems(items);
@@ -64,17 +68,18 @@ public class CartService {
         }
     }
 
+    @Transactional
     public void deleteCartItem(UUID cartId, UUID cartItemId) {
         checkCartItem(cartId, Arrays.asList(cartItemId));
 
         cartRepository.deleteCartItem(cartItemId);
     }
 
+    @Transactional
     public List<UUID> search(UUID ownerId) {
         List<UUID> uuidList = cartRepository.search(ownerId);
         return uuidList;
     }
-
 
     public Cart quote(UUID cartId) {
         Cart cart = get(cartId);

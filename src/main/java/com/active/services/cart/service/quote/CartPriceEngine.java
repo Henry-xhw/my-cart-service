@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 public class CartPriceEngine {
 
     public void quote(CartQuoteContext context) {
-        getCartPricer().quote(context);
+        getCartUnitPricePricer().quote(context);
     }
 
     @Lookup
-    public CartUnitPricePricer getCartPricer() {
+    public CartUnitPricePricer getCartUnitPricePricer() {
         return null;
     }
 }
