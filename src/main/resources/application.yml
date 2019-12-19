@@ -24,6 +24,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
+    default-executor-type: simple
   type-handlers-package: com.active.services.cart.common.mybatis.types
 
 server:
