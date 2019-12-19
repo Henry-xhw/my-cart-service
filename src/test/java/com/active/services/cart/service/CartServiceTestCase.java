@@ -40,7 +40,7 @@ public class CartServiceTestCase {
 
     @Test
     public void updateCartItemSuccess() {
-        cartService.updateCartItems(Collections.singletonList(CartDataFactory.cartItem()));
+        cartService.updateCartItems(UUID.randomUUID(), Collections.singletonList(CartDataFactory.cartItem()));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class CartServiceTestCase {
     @Test
     public void deleteCartItemSuccess() {
         UUID cartItemId = UUID.randomUUID();
-        cartService.deleteCartItem(cartItemId);
+        cartService.deleteCartItem(UUID.randomUUID(), cartItemId);
         Mockito.verify(cartRepository).deleteCartItem(cartItemId);
     }
 
