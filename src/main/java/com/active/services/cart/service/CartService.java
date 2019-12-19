@@ -86,6 +86,7 @@ public class CartService {
         deleteCartItemListIds.add(cartItemUuid);
 
         cartRepository.batchDeleteCartItems(deleteCartItemListIds);
+        incrementVersion(cart.getIdentifier());
     }
 
     private Set<UUID> getSubCartItemId(Cart cart, UUID cartItemUuid) {
