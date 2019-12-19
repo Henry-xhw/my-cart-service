@@ -194,7 +194,7 @@
                item.created_dt               AS item_createdDt,
                item.modified_by              AS item_modifiedBy,
                item.modified_dt              AS item_modifiedDt
-        FROM dbo.cart cart
+        FROM dbo.carts cart
                  LEFT JOIN dbo.cart_item item ON cart.id = item.cart_id
         WHERE cart.identifier = #{cartId}
         cart.identifier               as identifier,
