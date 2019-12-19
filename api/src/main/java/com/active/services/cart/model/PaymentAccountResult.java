@@ -9,5 +9,6 @@ public class PaymentAccountResult {
     private PaymentType paymentType;
     private String lastDigitsAccountNumber;
     private BigDecimal amount;
+    private EcheckPaymentTenderType tenderType;
 
 }

@@ -63,8 +63,8 @@ public class CartController {
         return rsp;
     }
 
-    @PostMapping("/checkout")
-    public CheckoutRsp checkout(@NotNull @RequestBody @Validated CheckoutReq req) {
+    @PostMapping("/checkout/{cartId}")
+    public CheckoutRsp checkout(@PathVariable UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
         CheckoutRsp rsp = new CheckoutRsp();
         return rsp;
     }
