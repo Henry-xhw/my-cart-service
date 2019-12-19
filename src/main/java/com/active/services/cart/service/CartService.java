@@ -54,7 +54,9 @@ public class CartService {
     @Transactional
     public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
-        incrementVersion(cartIdentifier);
+        if (!incrementVersion(cartIdentifier)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
         return items;
     }
 
@@ -62,7 +64,9 @@ public class CartService {
     public List<CartItem> updateCartItems(UUID cartIdentifier, List<CartItem> items) {
         checkCartItem(cartIdentifier, items.stream().map(CartItem::getIdentifier).collect(Collectors.toList()));
         cartRepository.updateCartItems(items);
-        incrementVersion(cartIdentifier);
+        if (!incrementVersion(cartIdentifier)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
         return items;
     }
 
@@ -80,7 +84,9 @@ public class CartService {
         checkCartItem(cartId, Arrays.asList(cartItemId));
 
         cartRepository.deleteCartItem(cartItemId);
-        incrementVersion(cartId);
+        if (!incrementVersion(cartId)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
     }
 
     @Transactional

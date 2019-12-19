@@ -1,5 +1,5 @@
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_item_fee' AND type = 'U')
+WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_item_fees' AND type = 'U')
 BEGIN
 	 CREATE TABLE [dbo].[cart_item_fees] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,

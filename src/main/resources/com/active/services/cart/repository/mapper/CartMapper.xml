@@ -24,9 +24,9 @@
         #{keyerId},
         #{currencyCode},
         #{createdBy},
-        getdate(),
+        getutcdate(),
         #{modifiedBy},
-        getdate(),
+        getutcdate(),
         #{version},
         #{priceVersion},
         #{isLock},
@@ -226,7 +226,7 @@
         UPDATE [dbo].[carts]
         SET
         cart_status = '${@com.active.services.cart.service.CartStatus@FINALIZED}',
-        [modified_dt] = getdate(),
+        [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
@@ -235,7 +235,7 @@
         UPDATE [dbo].[carts]
         SET
         [is_lock] = 1,
-        [modified_dt] = getdate(),
+        [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and is_lock != 1 and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
@@ -244,7 +244,7 @@
         UPDATE [dbo].[carts]
         SET
         [is_lock] = 0,
-        [modified_dt] = getdate(),
+        [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
@@ -253,7 +253,7 @@
         UPDATE [dbo].[carts]
         SET
         version = version+1,
-        [modified_dt] = getdate(),
+        [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
@@ -262,7 +262,7 @@
         UPDATE [dbo].[carts]
         SET
         price_version = version,
-        [modified_dt] = getdate(),
+        [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
