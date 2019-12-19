@@ -1,6 +1,6 @@
 package com.active.services.cart.service;
 
-import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.repository.CartRepository;
@@ -40,7 +40,7 @@ public class CartServiceTestCase {
 
     @Test
     public void updateCartItemSuccess() {
-        cartService.updateCartItems(Collections.singletonList(CartDataFactory.cartItem()));
+        cartService.updateCartItems(UUID.randomUUID(), Collections.singletonList(CartDataFactory.cartItem()));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class CartServiceTestCase {
     @Test
     public void deleteCartItemSuccess() {
         UUID cartItemId = UUID.randomUUID();
-        cartService.deleteCartItem(cartItemId);
+        cartService.deleteCartItem(UUID.randomUUID(), cartItemId);
         Mockito.verify(cartRepository).deleteCartItem(cartItemId);
     }
 

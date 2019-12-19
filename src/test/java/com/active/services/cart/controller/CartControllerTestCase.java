@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.active.services.cart.model.ErrorCode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.active.services.cart.common.OperationResultCode;
-import com.active.services.cart.common.exception.CartException;
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.controller.v1.CartController;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
@@ -136,8 +136,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-            OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
+        when(cartService.get(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
         mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))

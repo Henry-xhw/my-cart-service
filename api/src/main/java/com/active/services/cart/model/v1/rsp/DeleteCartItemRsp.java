@@ -1,10 +1,10 @@
 package com.active.services.cart.model.v1.rsp;
 
-import lombok.Data;
-
 import java.util.UUID;
 
+import lombok.Data;
+
 @Data
-public class DeleteCartItemRsp {
+public class DeleteCartItemRsp extends BaseRsp {
     private UUID cartId;
 }

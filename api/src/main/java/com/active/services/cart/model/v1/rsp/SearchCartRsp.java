@@ -1,11 +1,11 @@
 package com.active.services.cart.model.v1.rsp;
 
-import lombok.Data;
-
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Data;
+
 @Data
-public class SearchCartRsp {
+public class SearchCartRsp extends BaseRsp {
     private List<UUID> cartIds;
 }

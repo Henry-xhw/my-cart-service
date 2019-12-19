@@ -6,7 +6,6 @@ import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 import java.util.List;
 import java.util.UUID;
-
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.CheckoutRsp;
+import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
@@ -35,10 +35,14 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping
-    public CreateCartReq create(@RequestBody @NotNull @Validated CreateCartReq req) {
+    public CreateCartRsp create(@RequestBody @NotNull @Validated CreateCartReq req) {
         Cart cart = CartMapper.INSTANCE.toDomainFromCreateCartReq(req, true);
         cartService.create(cart);
-        return CartMapper.INSTANCE.toCreateCartReq(cart);
+        CreateCartRsp rsp = new CreateCartRsp();
+        CartDto cartDto = CartMapper.INSTANCE.toDto(cart);
+        rsp.setCart(cartDto);
+
+        return rsp;
     }
 
     @DeleteMapping(ID_PARAM_PATH)
