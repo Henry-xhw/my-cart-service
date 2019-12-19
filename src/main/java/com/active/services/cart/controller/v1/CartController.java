@@ -73,7 +73,7 @@ public class CartController {
     public QuoteRsp quote(@PathVariable("cart-id")UUID cartId) {
         QuoteRsp rsp = new QuoteRsp();
         Cart cart = cartService.quote(cartId);
-        rsp.setCartDto(CartMapper.INSTANCE.toDto(cart));
+        rsp.setCartDto(QuoteCartMapper.INSTANCE.toDto(cart));
         return rsp;
     }
 }
