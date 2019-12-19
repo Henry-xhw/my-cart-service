@@ -2,11 +2,9 @@ package com.active.services.cart.service.quote;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.UUID;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
-import com.active.services.cart.model.CartItemFeeTransactionType;
 import com.active.services.cart.model.CartItemFeeType;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
