@@ -32,6 +32,9 @@ public class CartRepositoryIntegrationTest {
     @Autowired
     private CartRepository cartRepository;
 
+    @Autowired
+    private CartItemFeeRepository cartItemFeeRepository;
+
     @Test
     public void cartCRUD() {
         Cart cart = CartDataFactory.cart();
@@ -75,6 +78,5 @@ public class CartRepositoryIntegrationTest {
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
         cart.setItems(Arrays.asList(cartItem));
-        cartRepository.saveQuoteResult(cart);
     }
 }

@@ -2,12 +2,12 @@ package com.active.services.cart.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import com.active.services.cart.model.CurrencyCode;
-
+import com.active.services.cart.service.CartStatus;
 import lombok.Data;
 import org.springframework.util.ObjectUtils;
 
@@ -20,6 +20,14 @@ public class Cart extends BaseDomainObject {
 
     private CurrencyCode currencyCode;
 
+    private int version;
+
+    private int priceVersion;
+
+    private boolean isLock;
+
+    private CartStatus cartStatus;
+
     private List<CartItem> items = new ArrayList<>();
 
     private List<CartItemShareFee> fees = new ArrayList<>();
@@ -29,9 +37,8 @@ public class Cart extends BaseDomainObject {
         return findCartItem(items, cartItemId);
     }
 
-    private static Optional<CartItem> findCartItem(List<CartItem> items, UUID cartItemId) {
-        return Optional.ofNullable(items).map(cartItems -> cartItems.stream()
-            .filter(cartItem -> ObjectUtils.nullSafeEquals(cartItemId, cartItem.getIdentifier())).findFirst())
-            .orElseGet(Optional::empty);
+    private Optional<CartItem> findCartItem(List<CartItem> items, UUID cartItemId) {
+        return items.stream().filter(Objects::nonNull)
+            .filter(cartItem -> ObjectUtils.nullSafeEquals(cartItemId, cartItem.getIdentifier())).findFirst();
     }
 }

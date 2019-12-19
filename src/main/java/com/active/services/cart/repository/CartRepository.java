@@ -1,27 +1,20 @@
 package com.active.services.cart.repository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.active.services.cart.domain.CartItemCartItemFee;
-import com.active.services.cart.domain.CartItemFee;
-import com.active.services.cart.repository.mapper.CartItemFeeMapper;
-import org.springframework.stereotype.Repository;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
 public class CartRepository {
 
     private final CartMapper cartMapper;
-
-    private final CartItemFeeMapper cartItemFeeMapper;
 
     public void createCart(Cart cart) {
         cartMapper.createCart(cart);
@@ -51,17 +44,23 @@ public class CartRepository {
         return cartMapper.search(ownerId);
     }
 
-
-    public void createCartItemFee(CartItemFee cartItemFee) {
-        cartItemFeeMapper.createCartItemFee(cartItemFee);
+    public int finalizeCart(UUID cartId, String modifiedBy){
+        return cartMapper.finalizeCart(cartId, modifiedBy);
     }
 
-    public void createCartItemCartItemFee(CartItemCartItemFee cartItemCartItemFee) {
-        cartItemFeeMapper.createCartItemCartItemFee(cartItemCartItemFee);
+    public int incrementVersion(UUID cartId, String modifiedBy){
+        return cartMapper.incrementVersion(cartId, modifiedBy);
     }
 
-    public void deleteLastQuoteResult(CartItem item) {
-        cartItemFeeMapper.deleteCartItemFeeById(cartItemFeeMapper.getCartItemFeeIdByCartItemId(item.getId()));
-        cartItemFeeMapper.deleteCartItemCartItemFeeByCartItemId(item.getId());
+    public int incrementPriceVersion(UUID cartId, String modifiedBy){
+        return cartMapper.incrementPriceVersion(cartId, modifiedBy);
+    }
+
+    public int acquireLock(UUID cartId, String modifiedBy){
+        return cartMapper.acquireLock(cartId, modifiedBy);
+    }
+
+    public int releaseLock(UUID cartId, String modifiedBy){
+        return cartMapper.releaseLock(cartId, modifiedBy);
     }
 }
