@@ -22,7 +22,7 @@ BEGIN
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL
     )
-	 PRINT 'CREATE TABLE dbo.cart_item'
+	 PRINT 'CREATE TABLE dbo.cart_items'
 END
 GO
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)

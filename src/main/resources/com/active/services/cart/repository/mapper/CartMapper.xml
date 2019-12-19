@@ -35,7 +35,7 @@
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
-        INSERT INTO [dbo].[cart_item] (
+        INSERT INTO [dbo].[cart_items] (
             [cart_id],
             [agency_id],
             [fee_volume_index],
@@ -94,7 +94,7 @@
     </insert>
 
     <update id="updateCartItem">
-        UPDATE [dbo].[cart_item]
+        UPDATE [dbo].[cart_items]
         SET
         <if test="item.productName!=null and item.productName!=''">
             [product_name] = #{item.productName},
@@ -202,7 +202,7 @@
         item.modified_by              AS item_modifiedBy,
         item.modified_dt              AS item_modifiedDt
         FROM dbo.carts cart
-        LEFT JOIN dbo.cart_item item ON cart.id = item.cart_id
+        LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
         WHERE cart.identifier = #{cartId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </select>
 
@@ -211,11 +211,11 @@
     </delete>
 
     <delete id="deleteCartItem">
-        DELETE FROM cart_item WHERE identifier = #{cartItemId}
+        DELETE FROM cart_items WHERE identifier = #{cartItemId}
     </delete>
 
     <delete id="deleteCartItemByCartId">
-        DELETE FROM cart_item WHERE cart_id = #{cartId}
+        DELETE FROM cart_items WHERE cart_id = #{cartId}
     </delete>
 
     <select id="search" resultType="java.util.UUID">

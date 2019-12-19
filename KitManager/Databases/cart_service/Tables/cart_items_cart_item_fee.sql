@@ -15,7 +15,7 @@ BEGIN
 END
 GO
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_items_cart_item_fees' AND t.type = 'U')
+JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_item_cart_item_fees' AND t.type = 'U')
 BEGIN
 	 ALTER TABLE dbo.cart_item_cart_item_fees ADD CONSTRAINT [pk_cart_item_cart_item_fee]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
 	 PRINT 'Created primary key pk_cart_items_cart_item_fee on table dbo.cart_item_cart_item_fees'
