@@ -46,23 +46,23 @@ public class CartRepository {
         return cartMapper.search(ownerId);
     }
 
-    public int finalizedCart(UUID cartId, String modifiedBy, Instant modifiedDt){
-        return cartMapper.finalizedCart(cartId, modifiedBy, modifiedDt);
+    public int finalizeCart(UUID cartId, String modifiedBy){
+        return cartMapper.finalizeCart(cartId, modifiedBy);
     }
 
-    public int incrementVersion(UUID cartId, String modifiedBy, Instant modifiedDt){
-        return cartMapper.incrementVersion(cartId, modifiedBy, modifiedDt);
+    public int incrementVersion(UUID cartId, String modifiedBy){
+        return cartMapper.incrementVersion(cartId, modifiedBy);
     }
 
-    public int incrementPriceVersion(UUID cartId, String modifiedBy, Instant modifiedDt){
-        return cartMapper.incrementPriceVersion(cartId, modifiedBy, modifiedDt);
+    public int incrementPriceVersion(UUID cartId, String modifiedBy){
+        return cartMapper.incrementPriceVersion(cartId, modifiedBy);
     }
 
-    public int getLock(UUID cartId, String modifiedBy, Instant modifiedDt){
-        return cartMapper.getLock(cartId, modifiedBy, modifiedDt);
+    public int acquireLock(UUID cartId, String modifiedBy){
+        return cartMapper.acquireLock(cartId, modifiedBy);
     }
 
-    public int releaseLock(UUID cartId, String modifiedBy, Instant modifiedDt){
-        return cartMapper.releaseLock(cartId, modifiedBy, modifiedDt);
+    public int releaseLock(UUID cartId, String modifiedBy){
+        return cartMapper.releaseLock(cartId, modifiedBy);
     }
 }

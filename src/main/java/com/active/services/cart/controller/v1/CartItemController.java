@@ -33,7 +33,7 @@ public class CartItemController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping()
+    @PostMapping
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
 
@@ -50,7 +50,7 @@ public class CartItemController {
         return rsp;
     }
 
-    @PutMapping()
+    @PutMapping
     public UpdateCartItemRsp update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated UpdateCartItemReq req) {
         List<CartItem> items = req.getItems().stream().map(CartItem::new).collect(Collectors.toList());
@@ -71,6 +71,6 @@ public class CartItemController {
     }
 
     private boolean isCartItemExist(List<CartItem> items, UUID cartItemId) {
-        return items.stream().anyMatch(it -> it.getIdentifier().toString().equals(cartItemId.toString()));
+        return items.stream().anyMatch(it -> it.getIdentifier().equals(cartItemId));
     }
 }

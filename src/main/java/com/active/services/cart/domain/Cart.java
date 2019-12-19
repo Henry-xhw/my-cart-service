@@ -23,7 +23,7 @@ public class Cart extends BaseDomainObject {
 
     private int priceVersion;
 
-    private int lock;
+    private boolean isLock;
 
     private CartStatus cartStatus;
 

@@ -1,6 +1,5 @@
 package com.active.services.cart.service;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +21,8 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
+    private static final int UPDATE_SUCCESS = 1;
+
     @Transactional
     public void create(Cart cart) {
         cartRepository.createCart(cart);
@@ -31,9 +32,7 @@ public class CartService {
     public void delete(Long cartId) {
         cartRepository.deleteCart(cartId);
     }
-
-    private static final int UPDATA_SUCCESS = 1;
-
+    
     @Transactional
     public Cart get(UUID cartId) {
         return cartRepository.getCart(cartId)
@@ -80,42 +79,27 @@ public class CartService {
     }
 
     @Transactional
-    public void finalizedCart(UUID cartId) {
-        if (cartRepository.finalizedCart(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
-            Instant.now()) != UPDATA_SUCCESS) {
-            throw new CartException(ErrorCode.INTERNAL_ERROR, "finalized cart fail: " + cartId);
-        }
+    public boolean finalizeCart(UUID cartId) {
+         return cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
 
     @Transactional
-    public void incrementVersion(UUID cartId) {
-        if (cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
-            Instant.now()) != UPDATA_SUCCESS) {
-            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail: " + cartId);
-        }
+    public boolean incrementVersion(UUID cartId) {
+        return cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
 
     @Transactional
-    public void incrementPriceVersion(UUID cartId) {
-        if (cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
-            Instant.now()) != UPDATA_SUCCESS) {
-            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment price version fail: " + cartId);
-        }
+    public boolean incrementPriceVersion(UUID cartId) {
+        return cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
 
     @Transactional
-    public void getLock(UUID cartId) {
-        if (cartRepository.getLock(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
-            Instant.now()) != UPDATA_SUCCESS) {
-            throw new CartException(ErrorCode.INTERNAL_ERROR, "get lock fail: " + cartId);
-        }
+    public boolean acquireLock(UUID cartId) {
+        return cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
 
     @Transactional
-    public void releaseLock(UUID cartId) {
-        if (cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor().orElse("system"),
-            Instant.now()) != UPDATA_SUCCESS) {
-            throw new CartException(ErrorCode.INTERNAL_ERROR, "release lock fail: " + cartId);
-        }
+    public boolean releaseLock(UUID cartId) {
+        return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
 }

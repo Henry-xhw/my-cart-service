@@ -34,11 +34,11 @@ public class AuditingInterceptor implements Interceptor {
         if (parameter instanceof BaseDomainObject) {
             BaseDomainObject baseDomain = (BaseDomainObject) parameter;
             if (SqlCommandType.INSERT.equals(sqlCommandType)) {
-                baseDomain.setCreatedBy(AuditorAwareUtil.getAuditor().orElse("system"));
+                baseDomain.setCreatedBy(AuditorAwareUtil.getAuditor());
                 baseDomain.setCreatedDt(Instant.now());
             }
             if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                baseDomain.setModifiedBy(AuditorAwareUtil.getAuditor().orElse("system"));
+                baseDomain.setModifiedBy(AuditorAwareUtil.getAuditor());
                 baseDomain.setModifiedDt(Instant.now());
             }
         }

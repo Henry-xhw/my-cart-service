@@ -28,24 +28,14 @@ public interface CartMapper {
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 
-    int finalizedCart(@Param("identifier") UUID cartId,
-                        @Param("modifiedBy") String modifiedBy,
-                        @Param("modifiedDt") Instant modifiedDt);
+    int finalizeCart(@Param("identifier") UUID cartId,@Param("modifiedBy") String modifiedBy);
 
-    int incrementVersion(@Param("identifier") UUID cartId,
-        @Param("modifiedBy") String modifiedBy,
-        @Param("modifiedDt") Instant modifiedDt);
+    int incrementVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
-    int incrementPriceVersion(@Param("identifier") UUID cartId,
-        @Param("modifiedBy") String modifiedBy,
-        @Param("modifiedDt") Instant modifiedDt);
+    int incrementPriceVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
-    int getLock(@Param("identifier") UUID cartId,
-        @Param("modifiedBy") String modifiedBy,
-        @Param("modifiedDt") Instant modifiedDt);
+    int acquireLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
-    int releaseLock(@Param("identifier") UUID cartId,
-        @Param("modifiedBy") String modifiedBy,
-        @Param("modifiedDt") Instant modifiedDt);
+    int releaseLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
 }
