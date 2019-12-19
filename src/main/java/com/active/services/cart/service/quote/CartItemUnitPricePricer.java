@@ -16,8 +16,8 @@ import org.springframework.util.ObjectUtils;
 public class CartItemUnitPricePricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
-        setGrossAndNetPriceValue(cartItem);
         cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE));
+        setGrossAndNetPriceValue(cartItem);
     }
 
     private void setGrossAndNetPriceValue(CartItem cartItem) {
