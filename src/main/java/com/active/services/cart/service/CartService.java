@@ -79,7 +79,6 @@ public class CartService {
         List<UUID> idsToDelete = cartItem.get().getFlattenSubItems()
                         .stream()
                         .map(CartItem::getIdentifier).collect(Collectors.toList());
-        idsToDelete.add(cartItemUuid);
 
         cartRepository.batchDeleteCartItems(idsToDelete);
         incrementVersion(cart.getIdentifier());
