@@ -48,6 +48,4 @@ public class UpdateCartItemDto {
     private String groupingIdentifier;
 
     private Integer feeVolumeIndex;
-
-    private Long agencyId;
 }
