@@ -9,7 +9,6 @@ import java.util.UUID;
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.service.CartStatus;
 import lombok.Data;
-import org.springframework.util.ObjectUtils;
 
 @Data
 public class Cart extends BaseDomainObject {
@@ -39,6 +38,6 @@ public class Cart extends BaseDomainObject {
 
     private Optional<CartItem> findCartItem(List<CartItem> items, UUID cartItemId) {
         return items.stream().filter(Objects::nonNull)
-            .filter(cartItem -> ObjectUtils.nullSafeEquals(cartItemId, cartItem.getIdentifier())).findFirst();
+            .filter(cartItem -> Objects.equals(cartItemId, cartItem.getIdentifier())).findFirst();
     }
 }

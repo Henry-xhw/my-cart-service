@@ -136,17 +136,11 @@ public class CartService {
             cartItemFeeRepository.deleteLastQuoteResult(item);
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 cartItemFeeRepository.createCartItemFee(cartItemFee);
-                CartItemCartItemFee cartItemCartItemFee = buildCartItemCartItemFee(item.getId(), cartItemFee.getId());
-                cartItemFeeRepository.createCartItemCartItemFee(cartItemCartItemFee);
+                cartItemFeeRepository.createCartItemCartItemFee(
+                    CartItemCartItemFee.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
             });
         });
     }
 
-    private CartItemCartItemFee buildCartItemCartItemFee(Long cartItemId, Long cartItemFeeId) {
-        CartItemCartItemFee cartItemCartItemFee = new CartItemCartItemFee();
-        cartItemCartItemFee.setCartItemFeeId(cartItemFeeId);
-        cartItemCartItemFee.setCartItemId(cartItemId);
-        cartItemCartItemFee.setIdentifier(UUID.randomUUID());
-        return cartItemCartItemFee;
-    }
+
 }
