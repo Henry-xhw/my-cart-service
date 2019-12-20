@@ -37,6 +37,7 @@
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
         INSERT INTO [dbo].[cart_item] (
             [cart_id],
+            [parent_id],
             [identifier],
             [product_id],
             [product_name],
@@ -55,6 +56,7 @@
         )
         VALUES (
              #{cartId},
+             #{item.parentId},
              #{item.identifier},
              #{item.productId},
              #{item.productName},
@@ -167,37 +169,34 @@
     </resultMap>
     <select id="getCart" resultMap="CartResultMap">
         SELECT cart.id                       as id,
-        cart.identifier               as identifier,
-        cart.owner_id                 as owner_id,
-        cart.keyer_id                 as keyer_id,
-        cart.currency_code            as currency_code,
-        cart.created_by               as created_by,
-        cart.created_dt               as created_dt,
-        cart.modified_by              as modified_by,
-        cart.modified_dt              as modified_dt,
-        cart.version                  as version,
-        cart.price_version            as price_version,
-        cart.is_lock                  as isLock,
-        cart.cart_status              as cart_status,
-        item.id                       AS item_id,
-        item.identifier               AS item_identifier,
-        item.product_id               AS item_product_id,
-        item.product_name             AS item_product_name,
-        item.product_description      AS item_product_description,
-        item.booking_start_dt         As item_booking_start_dt,
-        item.booking_end_dt           AS item_booking_end_dt,
-        item.trimmed_booking_start_dt AS item_trimmed_booking_start_dt,
-        item.trimmed_booking_end_dt   AS item_trimmed_booking_end_dt,
-        item.quantity                 AS item_quantity,
-        item.unit_price               AS item_unit_price,
-        item.grouping_identifier      AS item_grouping_identifier,
-        item.created_by               AS item_createdBy,
-        item.created_dt               AS item_createdDt,
-        item.modified_by              AS item_modifiedBy,
-        item.modified_dt              AS item_modifiedDt
+               cart.identifier               as identifier,
+               cart.owner_id                 as owner_id,
+               cart.keyer_id                 as keyer_id,
+               cart.currency_code            as currency_code,
+               cart.created_by               as created_by,
+               cart.created_dt               as created_dt,
+               cart.modified_by              as modified_by,
+               cart.modified_dt              as modified_dt,
+               item.id                       AS item_id,
+               item.parent_id                AS item_parent_id,
+               item.identifier               AS item_identifier,
+               item.product_id               AS item_product_id,
+               item.product_name             AS item_product_name,
+               item.product_description      AS item_product_description,
+               item.booking_start_dt         As item_booking_start_dt,
+               item.booking_end_dt           AS item_booking_end_dt,
+               item.trimmed_booking_start_dt AS item_trimmed_booking_start_dt,
+               item.trimmed_booking_end_dt   AS item_trimmed_booking_end_dt,
+               item.quantity                 AS item_quantity,
+               item.unit_price               AS item_unit_price,
+               item.grouping_identifier      AS item_grouping_identifier,
+               item.created_by               AS item_createdBy,
+               item.created_dt               AS item_createdDt,
+               item.modified_by              AS item_modifiedBy,
+               item.modified_dt              AS item_modifiedDt
         FROM dbo.carts cart
-        LEFT JOIN dbo.cart_item item ON cart.id = item.cart_id
-        WHERE cart.identifier = #{cartId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+                 LEFT JOIN dbo.cart_item item ON cart.id = item.cart_id
+        WHERE cart.identifier = #{cartId} and cart.cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </select>
 
     <delete id="deleteCart">
@@ -205,15 +204,27 @@
     </delete>
 
     <delete id="deleteCartItem">
-        DELETE FROM cart_item WHERE identifier = #{cartItemId}
+        DELETE
+        FROM cart_item
+        WHERE id = #{cartItemId}
     </delete>
 
     <delete id="deleteCartItemByCartId">
         DELETE FROM cart_item WHERE cart_id = #{cartId}
     </delete>
-
+    <delete id="batchDeleteCartItems" parameterType="java.util.List">
+        DELETE FROM cart_item WHERE identifier in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
     <select id="search" resultType="java.util.UUID">
         SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+    </select>
+    <select id="getCartItemIdByCartItemUuid" resultType="Long">
+        SELECT id
+        FROM cart_item
+        WHERE identifier = #{cartItemId}
     </select>
 
     <update id="finalizeCart">
@@ -260,6 +271,4 @@
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
-
-
 </mapper>

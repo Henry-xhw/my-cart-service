@@ -1,17 +1,20 @@
 package com.active.services.cart.model.v1;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import javax.validation.Valid;
+import com.active.services.cart.model.Range;
+import lombok.Data;
+
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.active.services.cart.model.Range;
+import javax.validation.Valid;
 
-import lombok.Data;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class CartItemDto extends BaseDto {
@@ -41,4 +44,7 @@ public class CartItemDto extends BaseDto {
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    @Valid
+    private List<CartItemDto> subItems = new ArrayList<>();
 }

@@ -5,12 +5,11 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 import com.active.services.cart.model.CurrencyCode;
-import com.active.services.cart.model.v1.BaseDto;
 
 import lombok.Data;
 
 @Data
-public class CreateCartReq extends BaseDto {
+public class CreateCartReq {
 
     @NotNull
     private UUID ownerId;
