@@ -29,7 +29,7 @@ public class Cart extends BaseDomainObject {
 
     private List<CartItem> items = new ArrayList<>();
 
-    private List<CartItemShareFee> fees = new ArrayList<>();
+    private List<MultiCartItemFee> fees = new ArrayList<>();
 
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {

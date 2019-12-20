@@ -35,7 +35,7 @@ public class CartServiceTestCase {
 
     @Test
     public void createCartItemsSuccess() {
-        cartService.createCartItems(1L, Collections.singletonList(CartDataFactory.cartItem()));
+        cartService.createCartItems(1L,UUID.randomUUID(), Collections.singletonList(CartDataFactory.cartItem()));
     }
 
     @Test
