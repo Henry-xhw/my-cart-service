@@ -257,7 +257,7 @@
     <update id="incrementVersion">
         UPDATE [dbo].[carts]
         SET
-        version = version+1,
+        version = version + 1,
         [modified_dt] = getdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
