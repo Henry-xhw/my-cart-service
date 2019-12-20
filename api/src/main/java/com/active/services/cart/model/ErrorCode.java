@@ -8,5 +8,5 @@ public enum ErrorCode {
     INTERNAL_ERROR,
     VALIDATION_ERROR,
     CART_NOT_FOUND,
-
+    CART_ITEM_NOT_FOUND
 }

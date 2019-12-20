@@ -14,7 +14,9 @@ import javax.validation.constraints.NotNull;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.CheckoutRsp;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
@@ -40,6 +42,7 @@ public class CartController {
     @PostMapping
     public CreateCartRsp create(@RequestBody @NotNull @Validated CreateCartReq req) {
         Cart cart = CartMapper.INSTANCE.toDomainFromCreateCartReq(req, true);
+        cart.setIdentifier(UUID.randomUUID());
         cartService.create(cart);
         CreateCartRsp rsp = new CreateCartRsp();
         CartDto cartDto = CartMapper.INSTANCE.toDto(cart);
@@ -50,13 +53,14 @@ public class CartController {
 
     @DeleteMapping(ID_PARAM_PATH)
     public void delete(@PathVariable(ID_PARAM) UUID cartIdentifier) {
-        cartService.delete(cartService.get(cartIdentifier).getId());
+        cartService.delete(cartService.getCartByCartUuid(cartIdentifier).getId());
     }
 
     @GetMapping(ID_PARAM_PATH)
     public FindCartByIdRsp get(@PathVariable(ID_PARAM) UUID cartId) {
         FindCartByIdRsp rsp = new FindCartByIdRsp();
-        rsp.setCart(CartMapper.INSTANCE.toDto(cartService.get(cartId)));
+        CartDto cartDto = CartMapper.INSTANCE.toDto(cartService.getCartByCartUuid(cartId));
+        rsp.setCart(cartDto);
         return rsp;
     }
 
@@ -75,6 +79,12 @@ public class CartController {
         QuoteRsp rsp = new QuoteRsp();
         Cart cart = cartService.quote(cartId);
         rsp.setCartDto(QuoteCartMapper.INSTANCE.toDto(cart));
+        return rsp;
+    }
+
+    @PostMapping("/{cartId}/checkout")
+    public CheckoutRsp checkout(@PathVariable UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
+        CheckoutRsp rsp = new CheckoutRsp();
         return rsp;
     }
 }

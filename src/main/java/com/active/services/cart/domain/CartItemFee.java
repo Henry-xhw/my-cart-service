@@ -1,19 +1,14 @@
 package com.active.services.cart.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import com.active.services.cart.model.CartItemFeeTransactionType;
 import com.active.services.cart.model.CartItemFeeType;
-
 import lombok.Data;
 
 @Data
-public class CartItemFee extends BaseDomainObject {
-    private Long parentId;
-
+public class CartItemFee extends BaseTree<CartItemFee> {
     private String name;
 
     private String description;
@@ -25,8 +20,6 @@ public class CartItemFee extends BaseDomainObject {
     private Integer units;
 
     private BigDecimal unitPrice;
-
-    private List<CartItemFee> derivedFees = new ArrayList<>();
 
     public static CartItemFee buildCartItemFee(CartItem cartItem, CartItemFeeType cartItemFeeType) {
         CartItemFee unitPriceFee = new CartItemFee();

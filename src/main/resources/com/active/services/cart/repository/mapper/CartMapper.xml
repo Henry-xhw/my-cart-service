@@ -39,6 +39,7 @@
             [cart_id],
             [agency_id],
             [fee_volume_index],
+            [parent_id],
             [identifier],
             [product_id],
             [product_name],
@@ -59,6 +60,7 @@
              #{cartId},
              #{item.agencyId},
              #{item.feeVolumeIndex},
+             #{item.parentId},
              #{item.identifier},
              #{item.productId},
              #{item.productName},
@@ -169,6 +171,7 @@
             </association>
         </collection>
     </resultMap>
+
     <select id="getCart" resultMap="CartResultMap">
         SELECT cart.id                       as id,
         cart.identifier               as identifier,
@@ -184,6 +187,7 @@
         cart.is_lock                  as isLock,
         cart.cart_status              as cart_status,
         item.id                       AS item_id,
+        item.parent_id                AS item_parent_id,
         item.identifier               AS item_identifier,
         item.product_id               AS item_product_id,
         item.product_name             AS item_product_name,
@@ -218,8 +222,21 @@
         DELETE FROM cart_items WHERE cart_id = #{cartId}
     </delete>
 
+    <delete id="batchDeleteCartItems" parameterType="java.util.List">
+        DELETE FROM cart_items WHERE identifier in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
     <select id="search" resultType="java.util.UUID">
         SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+    </select>
+
+    <select id="getCartItemIdByCartItemUuid" resultType="Long">
+        SELECT id
+        FROM cart_items
+        WHERE identifier = #{cartItemId}
     </select>
 
     <update id="finalizeCart">
@@ -266,6 +283,5 @@
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
     </update>
-
 
 </mapper>

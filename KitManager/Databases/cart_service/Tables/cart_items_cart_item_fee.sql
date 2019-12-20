@@ -54,7 +54,7 @@ IF NOT EXISTS(
         JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_fee_id'
     WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_cart_item_fees' AND t.type = 'U')
 BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_owner_id] ON [dbo].[cart_item_cart_item_fees] ([cart_item_fee_id])
+    CREATE NONCLUSTERED INDEX [ix_cart_item_fee_id] ON [dbo].[cart_item_cart_item_fees] ([cart_item_fee_id])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
     PRINT 'Added index ix_cart_item_fee_id to dbo.cart_item_cart_item_fees.'
 END

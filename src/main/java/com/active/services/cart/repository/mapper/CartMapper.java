@@ -1,13 +1,15 @@
 package com.active.services.cart.repository.mapper;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Mapper
 public interface CartMapper {
@@ -19,13 +21,17 @@ public interface CartMapper {
 
     void updateCartItem(@Param("item") CartItem item);
 
-    void createCartItem(@Param("cartId") Long cartId, @Param("item") CartItem item);
+    void createCartItem(@Param("cartId") Long cartId, @Param("item") BaseTree<CartItem> item);
 
-    void deleteCartItem(UUID cartItemId);
+    void deleteCartItem(Long cartItemId);
 
     void deleteCartItemByCartId(Long cartId);
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
+
+    Optional<Long> getCartItemIdByCartItemUuid(@Param("cartItemId") UUID cartItemId);
+
+    void batchDeleteCartItems(List<UUID> uuidList);
 
     int finalizeCart(@Param("identifier") UUID cartId,@Param("modifiedBy") String modifiedBy);
 

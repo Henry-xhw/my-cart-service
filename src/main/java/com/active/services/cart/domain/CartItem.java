@@ -1,18 +1,24 @@
 package com.active.services.cart.domain;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 @Data
 @NoArgsConstructor
-public class CartItem extends BaseDomainObject {
+public class CartItem extends BaseTree<CartItem> {
+
     private Long productId;
 
     private String productName;
@@ -51,5 +57,25 @@ public class CartItem extends BaseDomainObject {
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.agencyId = updateCartItemDto.getAgencyId();
         this.setIdentifier(updateCartItemDto.getIdentifier());
+    }
+
+    public List<CartItem> getFlattenSubItems() {
+        Queue<CartItem> q = new LinkedList<>();
+        q.offer(this);
+
+        List<CartItem> flatten = new LinkedList<>();
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                CartItem it = q.poll();
+                if (it != null) {
+                    flatten.add(it);
+                    emptyIfNull(it.getSubItems()).stream()
+                            .filter(Objects::nonNull)
+                            .forEach(q::offer);
+                }
+            }
+        }
+        return flatten;
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
@@ -33,15 +34,28 @@ public class CartRepository {
     }
 
     public void updateCartItems(List<CartItem> items) {
-        items.forEach(item -> cartMapper.updateCartItem(item));
+        items.forEach(cartMapper::updateCartItem);
     }
 
-    public void deleteCartItem(UUID cartItemId) {
+    public void deleteCartItem(Long cartItemId) {
         cartMapper.deleteCartItem(cartItemId);
     }
 
     public List<UUID> search(UUID ownerId) {
         return cartMapper.search(ownerId);
+    }
+
+    public long createCartItem(Long cartId, BaseTree<CartItem> cartItem) {
+        cartMapper.createCartItem(cartId, cartItem);
+        return cartItem.getId();
+    }
+
+    public Optional<Long> getCartItemIdByCartItemUuid(UUID cartItemId) {
+        return cartMapper.getCartItemIdByCartItemUuid(cartItemId);
+    }
+
+    public void batchDeleteCartItems(List<UUID> uuidList) {
+        cartMapper.batchDeleteCartItems(uuidList);
     }
 
     public int finalizeCart(UUID cartId, String modifiedBy){
