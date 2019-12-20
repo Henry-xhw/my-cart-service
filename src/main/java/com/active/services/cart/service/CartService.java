@@ -81,7 +81,7 @@ public class CartService {
         TreeBuilder<CartItem> treeBuilder = new TreeBuilder(cart.getItems());
         cart.setItems(treeBuilder.buildTree());
         //if the cartItemUuid has sub items, add them
-        List<UUID> deleteCartItemListIds = new ArrayList<>(getSubCartItemId(cart, cartItemUuid));
+        List<UUID> deleteCartItemListIds = new ArrayList<>(getSubCartItemId(cart.getItems(), cartItemUuid));
         //add itself
         deleteCartItemListIds.add(cartItemUuid);
 
@@ -89,12 +89,16 @@ public class CartService {
         incrementVersion(cart.getIdentifier());
     }
 
-    private Set<UUID> getSubCartItemId(Cart cart, UUID cartItemUuid) {
+    private Set<UUID> getSubCartItemId(List<CartItem> cartItems, UUID cartItemUuid) {
         Set<UUID> uuidSet = new HashSet<>();
-        for (CartItem cartItem: cart.getItems()) {
+        for (CartItem cartItem: cartItems) {
             if (cartItem.getIdentifier().equals(cartItemUuid)) {
                 uuidSet = getAllCartItemIds(cartItem.getSubItems());
                 break;
+            } else {
+                if (cartItem.getSubItems().size() > 0) {
+                    getSubCartItemId(cartItem.getSubItems(), cartItemUuid);
+                }
             }
         }
         return uuidSet;
