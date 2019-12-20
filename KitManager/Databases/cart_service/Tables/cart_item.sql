@@ -4,7 +4,6 @@ BEGIN
 	 CREATE TABLE [dbo].[cart_items] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [cart_id]                   BIGINT              NOT NULL,
-        [agency_id]                 BIGINT              NULL,
         [fee_volume_index]          BIGINT              NULL,
         [identifier]                UNIQUEIDENTIFIER    NOT NULL,
         [product_id]                BIGINT              NOT NULL,
@@ -76,16 +75,5 @@ BEGIN
 	ALTER TABLE dbo.cart_items ADD fee_volume_index BIGINT NULL
 
 	PRINT 'Added column fee_volume_index to dbo.cart_items'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'agency_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.cart_items ADD agency_id BIGINT NULL
-
-	PRINT 'Added column agency_id to dbo.cart_items'
 END
 GO

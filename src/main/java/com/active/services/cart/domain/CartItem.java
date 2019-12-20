@@ -41,8 +41,6 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer feeVolumeIndex;
 
-    private Long agencyId;
-
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -55,7 +53,6 @@ public class CartItem extends BaseTree<CartItem> {
         this.unitPrice = updateCartItemDto.getUnitPrice();
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
-        this.agencyId = updateCartItemDto.getAgencyId();
         this.setIdentifier(updateCartItemDto.getIdentifier());
     }
 

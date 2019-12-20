@@ -56,8 +56,6 @@ public class QuoteCartItemDto extends BaseDto {
 
     private Integer feeVolumeIndex;
 
-    private Long agencyId;
-
     @Valid
     private List<QuoteCartItemFeeDto> fees = new ArrayList<>();
 }
