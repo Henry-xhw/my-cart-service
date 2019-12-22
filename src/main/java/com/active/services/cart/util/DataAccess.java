@@ -26,7 +26,7 @@ public class DataAccess {
             txManager.rollback(status);
             throw new RuntimeException(ex);
         }
-    };
+    }
 
     public void read(Runnable task) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -43,5 +43,5 @@ public class DataAccess {
             txManager.rollback(status);
             throw new RuntimeException(ex);
         }
-    };
+    }
 }

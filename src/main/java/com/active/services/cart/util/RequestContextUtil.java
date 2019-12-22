@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class RequestContextUtil {
 
-    public static HttpServletRequest getRequest(){
+    public static HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 }

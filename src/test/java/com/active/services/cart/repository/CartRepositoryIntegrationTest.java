@@ -57,7 +57,7 @@ public class CartRepositoryIntegrationTest {
                 Assert.assertThat(cart2.getItems().size(), Matchers.equalTo(1));
                 Assert.assertThat(cart2.getItems().get(0).getQuantity(), Matchers.equalTo(300));
                 Assert.assertThat(cart2.getItems().get(0).getProductName(), Matchers.equalTo("test update cartItem"));
-                cartRepository.deleteCartItem(cartItem.getIdentifier());
+                cartRepository.deleteCartItem(cartItem.getId());
                 cartRepository.getCart(cart.getIdentifier()).ifPresent(cart3 -> {
                     Assert.assertThat(cart3.getItems().size(), Matchers.equalTo(0));
                 });
