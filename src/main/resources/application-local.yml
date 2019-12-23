@@ -16,4 +16,4 @@ logging:
             repository: DEBUG
 
 url:
-  orderManagementBase: http://localhost:dev.activenetwork.com:8200
+  orderManagementBase: http://127.0.0.1:8200

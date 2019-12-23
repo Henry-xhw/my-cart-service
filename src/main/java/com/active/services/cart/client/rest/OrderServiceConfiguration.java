@@ -18,10 +18,10 @@ public class OrderServiceConfiguration {
     @Value("${url.orderManagementServiceRest}")
     private String orderServiceUrl;
 
-    @Value("${tax.okHttp.connectTimeout}")
+    @Value("${order.okHttp.connectTimeout}")
     private int connectTimeOut = 10;
 
-    @Value("${tax.okHttp.readWriteTimeout}")
+    @Value("${order.okHttp.readWriteTimeout}")
     private int readWriteTimeOut = 10;
 
     @Bean
