@@ -5,7 +5,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.active.services.cart.model.CartItemFeeTransactionType;
+import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.CartItemFeeType;
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class QuoteCartItemFeeDto extends BaseDto {
     private CartItemFeeType type;
 
     @NotNull
-    private CartItemFeeTransactionType transactionType;
+    private FeeTransactionType transactionType;
 
     @NotNull
     @Min(value = 1)

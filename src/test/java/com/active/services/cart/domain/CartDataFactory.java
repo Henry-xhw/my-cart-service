@@ -1,6 +1,6 @@
 package com.active.services.cart.domain;
 
-import com.active.services.cart.model.CartItemFeeTransactionType;
+import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.Range;
@@ -75,7 +75,7 @@ public class CartDataFactory {
         cartItemFee.setIdentifier(UUID.randomUUID());
         cartItemFee.setDescription("Description");
         cartItemFee.setName("name");
-        cartItemFee.setTransactionType(CartItemFeeTransactionType.CREDIT);
+        cartItemFee.setTransactionType(FeeTransactionType.CREDIT);
         cartItemFee.setType(CartItemFeeType.DISCOUNT);
         cartItemFee.setUnitPrice(new BigDecimal(1));
         cartItemFee.setUnits(1);

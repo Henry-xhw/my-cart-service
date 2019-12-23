@@ -1,7 +1,6 @@
 package com.active.services.cart.repository;
 
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.CartItemCartItemFee;
+import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.repository.mapper.CartItemFeeMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,11 @@ public class CartItemFeeRepository {
         cartItemFeeMapper.createCartItemFee(cartItemFee);
     }
 
-    public void createCartItemCartItemFee(CartItemCartItemFee cartItemCartItemFee) {
-        cartItemFeeMapper.createCartItemCartItemFee(cartItemCartItemFee);
+    public void createCartItemCartItemFee(CartItemFeeRelationship cartItemFeeRelationship) {
+        cartItemFeeMapper.createCartItemCartItemFee(cartItemFeeRelationship);
     }
 
-    public void deleteLastQuoteResult(CartItem item) {
-        Long cartItemFeeIdByCartItemId = cartItemFeeMapper.getCartItemFeeIdByCartItemId(item.getId());
-        cartItemFeeMapper.deleteCartItemCartItemFeeByCartItemId(item.getId());
-        cartItemFeeMapper.deleteCartItemFeeById(cartItemFeeIdByCartItemId);
+    public void deleteLastQuoteResult(Long id) {
+        cartItemFeeMapper.deleteCartItemFeeById(id);
     }
 }

@@ -37,7 +37,7 @@ public class CartItemController {
     @PostMapping
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
-        Cart cart = cartService.getCartByCartUuid(cartIdentifier);
+        Cart cart = cartService.getCartByUuid(cartIdentifier);
         List<CartItem> items = req.getItems()
                 .stream()
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
@@ -63,7 +63,7 @@ public class CartItemController {
     @DeleteMapping(CART_ITEM_ID_PATH)
     public DeleteCartItemRsp delete(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        Cart cart = cartService.getCartByCartUuid(cartId);
+        Cart cart = cartService.getCartByUuid(cartId);
         cartService.deleteCartItem(cart, cartItemId);
         DeleteCartItemRsp rsp = new DeleteCartItemRsp();
         rsp.setCartId(cartId);

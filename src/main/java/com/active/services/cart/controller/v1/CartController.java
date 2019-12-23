@@ -53,13 +53,13 @@ public class CartController {
 
     @DeleteMapping(ID_PARAM_PATH)
     public void delete(@PathVariable(ID_PARAM) UUID cartIdentifier) {
-        cartService.delete(cartService.getCartByCartUuid(cartIdentifier).getId());
+        cartService.delete(cartService.getCartByUuid(cartIdentifier).getId());
     }
 
     @GetMapping(ID_PARAM_PATH)
     public FindCartByIdRsp get(@PathVariable(ID_PARAM) UUID cartId) {
         FindCartByIdRsp rsp = new FindCartByIdRsp();
-        CartDto cartDto = CartMapper.INSTANCE.toDto(cartService.getCartByCartUuid(cartId));
+        CartDto cartDto = CartMapper.INSTANCE.toDto(cartService.getCartByUuid(cartId));
         rsp.setCart(cartDto);
         return rsp;
     }

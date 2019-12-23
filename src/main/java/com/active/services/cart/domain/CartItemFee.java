@@ -3,7 +3,7 @@ package com.active.services.cart.domain;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import com.active.services.cart.model.CartItemFeeTransactionType;
+import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.CartItemFeeType;
 import lombok.Data;
 
@@ -15,7 +15,7 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private CartItemFeeType type;
 
-    private CartItemFeeTransactionType transactionType;
+    private FeeTransactionType transactionType;
 
     private Integer units;
 
@@ -26,7 +26,7 @@ public class CartItemFee extends BaseTree<CartItemFee> {
         unitPriceFee.setIdentifier(UUID.randomUUID());
         unitPriceFee.setDescription(cartItem.getProductDescription());
         unitPriceFee.setName(cartItem.getProductName());
-        unitPriceFee.setTransactionType(CartItemFeeTransactionType.DEBIT);
+        unitPriceFee.setTransactionType(FeeTransactionType.DEBIT);
         unitPriceFee.setType(cartItemFeeType);
         unitPriceFee.setUnitPrice(cartItem.getUnitPrice());
         unitPriceFee.setUnits(cartItem.getQuantity());

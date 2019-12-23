@@ -76,7 +76,7 @@ GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_cart_item_fees','column','cart_item_fee_id'))
 BEGIN
-   EXEC sys.sp_addextendedproperty
+   EXEC sys.sp_add_table_column_comment
  @name = N'MS_Description',
  @value = N'cart item fee id',
  @level0type = 'SCHEMA',

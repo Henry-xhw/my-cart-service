@@ -4,6 +4,7 @@ import com.active.services.cart.CartServiceApp;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFee;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -72,11 +73,13 @@ public class CartRepositoryIntegrationTest {
 
     @Test
     public void cartItemFeeCRUD() {
-        Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.setId(1L);
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
-        cart.setItems(Arrays.asList(cartItem));
+        cartItemFeeRepository.createCartItemFee(cartItemFee);
+        cartItemFeeRepository.createCartItemCartItemFee(
+            CartItemFeeRelationship.buildCartItemCartItemFee(cartItem.getId(), cartItemFee.getId()));
+        cartItemFeeRepository.deleteLastQuoteResult(cartItem.getId());
+        assertNotNull(cartItem.getId());
     }
 }
