@@ -6,6 +6,7 @@ import com.active.services.cart.domain.CartItem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,4 +42,5 @@ public interface CartMapper {
     int acquireLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
     int releaseLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
+
 }

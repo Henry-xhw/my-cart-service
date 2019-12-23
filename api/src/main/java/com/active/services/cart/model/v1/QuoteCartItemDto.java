@@ -15,7 +15,7 @@ import com.active.services.cart.model.Range;
 import lombok.Data;
 
 @Data
-public class CartItemDto extends BaseDto {
+public class QuoteCartItemDto extends BaseDto {
 
     @NotNull
     private Long productId;
@@ -57,8 +57,5 @@ public class CartItemDto extends BaseDto {
     private Integer feeVolumeIndex;
 
     @Valid
-    private List<CartItemFeeDto> fees = new ArrayList<>();
-
-    @Valid
-    private List<CartItemDto> subItems = new ArrayList<>();
+    private List<QuoteCartItemFeeDto> fees = new ArrayList<>();
 }

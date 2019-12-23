@@ -129,7 +129,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartSuccess() throws Exception {
-        when(cartService.getCartByCartUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
+        when(cartService.getCartByUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
         mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
@@ -140,7 +140,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartWhenCartNotExistThrowException() throws Exception {
-        when(cartService.getCartByCartUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
         mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
@@ -154,7 +154,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         rsp.setCart(MockCart.mockCartDto());
         UUID identifier = UUID.randomUUID();
         Cart cart = MockCart.mockCartDomain();
-        when(cartService.getCartByCartUuid(identifier)).thenReturn(cart);
+        when(cartService.getCartByUuid(identifier)).thenReturn(cart);
         String result = mockMvc.perform(get("/carts/{id}", identifier)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader()))
@@ -179,12 +179,12 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         cartIds.add(cart2.getIdentifier());
         rsp.setCartIds(cartIds);
         when(cartService.search(ownerId)).thenReturn(cartIds);
-        mockMvc.perform(get("/carts/ownerId/{ownerId}", ownerId)
+        mockMvc.perform(get("/carts/owners/{owner-id}", ownerId)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader()))
                 .andExpect(status().isOk())
                 .andDo(newSuccessDocument("Cart", "Find-Cart-By-OwnerId",
-                        pathParameters(autoPathParameterDoc("ownerId", CartDto.class, "ownerId")),
+                        pathParameters(autoPathParameterDoc("owner-id", CartDto.class, "ownerId")),
                         autoResponseFieldsDoc(rsp)));
     }
 }

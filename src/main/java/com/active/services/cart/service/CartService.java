@@ -1,27 +1,39 @@
 package com.active.services.cart.service;
 
-import com.active.services.cart.common.CartException;
-import com.active.services.cart.domain.BaseTree;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.ErrorCode;
-import com.active.services.cart.repository.CartRepository;
-import com.active.services.cart.util.AuditorAwareUtil;
-import com.active.services.cart.util.TreeBuilder;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.active.services.cart.common.CartException;
+import com.active.services.cart.domain.BaseTree;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFeeRelationship;
+import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.repository.CartItemFeeRepository;
+import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.service.quote.CartPriceEngine;
+import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.util.AuditorAwareUtil;
+import com.active.services.cart.util.DataAccess;
+import com.active.services.cart.util.TreeBuilder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
+
     private final CartRepository cartRepository;
+
+    private final CartItemFeeRepository cartItemFeeRepository;
+
+    private final CartPriceEngine cartPriceEngine;
+
+    private final DataAccess dataAccess;
 
     private static final int UPDATE_SUCCESS = 1;
 
@@ -35,7 +47,7 @@ public class CartService {
         cartRepository.deleteCart(cartId);
     }
 
-    public Cart getCartByCartUuid(UUID cartId) {
+    public Cart getCartByUuid(UUID cartId) {
         Cart cart = cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
                 " cart id does not exist: " + cartId));
         TreeBuilder<CartItem> treeBuilder = new TreeBuilder<>(cart.getItems());
@@ -46,18 +58,24 @@ public class CartService {
     @Transactional
     public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
-        incrementVersion(cartIdentifier);
+        if (!incrementVersion(cartIdentifier)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
         return items;
     }
 
     @Transactional
-    public long createCartItem(Long cartId, BaseTree<CartItem> cartItem) {
-        return cartRepository.createCartItem(cartId, cartItem);
+    public long createCartItem(Long cartId, UUID cartIdentifier, BaseTree<CartItem> cartItem) {
+        long result = cartRepository.createCartItem(cartId, cartItem);
+        if (!incrementVersion(cartIdentifier)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
+        return result;
     }
 
     @Transactional
     public List<CartItem> updateCartItems(UUID cartIdentifier, List<CartItem> items) {
-        Cart cart = getCartByCartUuid(cartIdentifier);
+        Cart cart = getCartByUuid(cartIdentifier);
         items.forEach(cartItem -> {
             if (!cart.findCartItem(cartItem.getIdentifier()).isPresent()) {
                 throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
@@ -65,7 +83,9 @@ public class CartService {
             }
         });
         cartRepository.updateCartItems(items);
-        incrementVersion(cartIdentifier);
+        if (!incrementVersion(cartIdentifier)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
         return items;
     }
 
@@ -81,7 +101,9 @@ public class CartService {
                         .map(CartItem::getIdentifier).collect(Collectors.toList());
 
         cartRepository.batchDeleteCartItems(idsToDelete);
-        incrementVersion(cart.getIdentifier());
+        if (!incrementVersion(cart.getIdentifier())){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
     }
 
     public List<UUID> search(UUID ownerId) {
@@ -107,7 +129,7 @@ public class CartService {
             } else {
                 cartItem.setIdentifier(UUID.randomUUID());
                 cartItem.setParentId(parentId);
-                parentId = createCartItem(cartId, cartItem);
+                parentId = createCartItem(cartId, cart.getIdentifier(), cartItem);
             }
             List<CartItem> subItems = cartItem.getSubItems();
             if (subItems.size() > 0) {
@@ -140,5 +162,27 @@ public class CartService {
     public boolean releaseLock(UUID cartId) {
         return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
-}
 
+    public Cart quote(UUID cartId) {
+        Cart cart = getCartByUuid(cartId);
+        cartPriceEngine.quote(new CartQuoteContext(cart));
+
+        // Manual control the tx
+        dataAccess.doInTx(() -> {
+            saveQuoteResult(cart);
+        });
+        return cart;
+    }
+
+    private void saveQuoteResult(Cart cart) {
+        cart.getItems().stream().filter(Objects::nonNull).forEach(item -> {
+            cartItemFeeRepository.deleteLastQuoteResult(item.getId());
+            item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
+                cartItemFeeRepository.createCartItemFee(cartItemFee);
+                cartItemFeeRepository.createCartItemCartItemFee(
+                    CartItemFeeRelationship.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
+            });
+        });
+    }
+
+}

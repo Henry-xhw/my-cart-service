@@ -1,9 +1,5 @@
 package com.active.services.cart.domain;
 
-import com.active.services.cart.model.CurrencyCode;
-import com.active.services.cart.service.CartStatus;
-
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,6 +8,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
+
+import com.active.services.cart.model.CurrencyCode;
+
+import com.active.services.cart.service.CartStatus;
+import lombok.Data;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -28,31 +29,16 @@ public class Cart extends BaseDomainObject {
 
     private int priceVersion;
 
-    private boolean lock;
+    private boolean isLock;
 
     private CartStatus cartStatus;
 
     private List<CartItem> items = new ArrayList<>();
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {
-        return Optional.ofNullable(findInItems(items, cartItemId));
-    }
-
-    private CartItem findInItems(List<CartItem> items, UUID cartItemId) {
-        CartItem found = items.stream()
-                .filter(it -> Objects.equals(it.getIdentifier(), cartItemId))
-                .findAny()
-                .orElse(null);
-        if (found != null) {
-            return found;
-        }
-        for (CartItem it : items) {
-            found = findInItems(it.getSubItems(), cartItemId);
-            if (found != null) {
-                return found;
-            }
-        }
-        return null;
+        return getFlattenCartItems().stream()
+            .filter(it -> Objects.equals(it.getIdentifier(), cartItemId))
+            .findAny();
     }
 
     public List<CartItem> getFlattenCartItems() {

@@ -68,7 +68,7 @@ public class CartServiceTestCase {
         UUID identifier = UUID.randomUUID();
         Cart cart = CartDataFactory.cart();
         when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
-        cartService.getCartByCartUuid(identifier);
+        cartService.getCartByUuid(identifier);
         Mockito.verify(cartRepository).getCart(identifier);
     }
 
@@ -76,7 +76,7 @@ public class CartServiceTestCase {
     public void findCartsWhenIdentifierIsNotExistThrowException() {
         UUID identifier = UUID.randomUUID();
         when(cartRepository.getCart(identifier)).thenReturn(Optional.ofNullable(null));
-        cartService.getCartByCartUuid(identifier);
+        cartService.getCartByUuid(identifier);
         Mockito.verify(cartRepository).getCart(identifier);
     }
 

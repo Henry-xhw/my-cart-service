@@ -1,5 +1,7 @@
 package com.active.services.cart.domain;
 
+import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
@@ -49,6 +51,7 @@ public class CartDataFactory {
         cartItem.setQuantity(1);
         cartItem.setUnitPrice(BigDecimal.ONE);
         cartItem.setGroupingIdentifier("grouping identifier");
+        cartItem.setFeeVolumeIndex(0);
 
         return cartItem;
     }
@@ -65,5 +68,18 @@ public class CartDataFactory {
         updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
         updateCartItemDto.setProductName(cartItem.getProductName());
         return updateCartItemDto;
+    }
+
+    public static CartItemFee cartItemFee() {
+        CartItemFee cartItemFee = new CartItemFee();
+        cartItemFee.setId(1L);
+        cartItemFee.setIdentifier(UUID.randomUUID());
+        cartItemFee.setDescription("Description");
+        cartItemFee.setName("name");
+        cartItemFee.setTransactionType(FeeTransactionType.CREDIT);
+        cartItemFee.setType(CartItemFeeType.DISCOUNT);
+        cartItemFee.setUnitPrice(new BigDecimal(1));
+        cartItemFee.setUnits(1);
+        return cartItemFee;
     }
 }
