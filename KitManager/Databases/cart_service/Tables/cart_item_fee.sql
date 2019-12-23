@@ -55,7 +55,7 @@ GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','parent_id'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'parent id',
  @level0type = 'SCHEMA',
@@ -69,7 +69,7 @@ GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','name'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'cart item fees name',
  @level0type = 'SCHEMA',
@@ -82,7 +82,7 @@ END
 GO
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','description'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'description',
  @level0type = 'SCHEMA',
@@ -96,7 +96,7 @@ GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','type'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'type value PRICE, PRICE_ADJUSTMENT, PROCESSING_FLAT, PROCESSING_PERCENT, DISCOUNT, SURCHARGE',
  @level0type = 'SCHEMA',
@@ -109,7 +109,7 @@ END
 GO
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','transaction_type'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'transaction type value DEBIT, CREDIT',
  @level0type = 'SCHEMA',
@@ -123,7 +123,7 @@ GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','units'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'units',
  @level0type = 'SCHEMA',
@@ -136,7 +136,7 @@ END
 GO
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','unit_price'))
 BEGIN
-   EXEC sys.sp_add_table_column_comment
+   EXEC sys.sp_addextendedproperty
  @name = N'MS_Description',
  @value = N'unit price',
  @level0type = 'SCHEMA',

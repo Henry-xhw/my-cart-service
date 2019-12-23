@@ -29,7 +29,7 @@
         getutcdate(),
         #{version},
         #{priceVersion},
-        #{isLock},
+        #{lock},
         #{cartStatus}
         )
     </insert>
@@ -212,7 +212,7 @@
     </delete>
 
     <delete id="deleteCartItem">
-        DELETE FROM cart_items WHERE identifier = #{cartItemId}
+        DELETE FROM cart_items WHERE id = #{cartItemId}
     </delete>
 
     <delete id="deleteCartItemByCartId">

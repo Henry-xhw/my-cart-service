@@ -58,7 +58,9 @@ public class CartService {
     @Transactional
     public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
-
+        if (!incrementVersion(cartIdentifier)){
+            throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
+        }
         return items;
     }
 

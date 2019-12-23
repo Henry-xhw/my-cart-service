@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import static junit.framework.TestCase.assertNotNull;
 @SpringBootTest(classes = CartServiceApp.class)
 @Transactional
 @Rollback
+@ActiveProfiles("local")
 public class CartRepositoryIntegrationTest {
 
     private static final String identifier = "34D725FD-85CC-4724-BA6E-1B3CC41CDE31";
@@ -63,7 +65,7 @@ public class CartRepositoryIntegrationTest {
                 Assert.assertThat(cart2.getItems().size(), Matchers.equalTo(1));
                 Assert.assertThat(cart2.getItems().get(0).getQuantity(), Matchers.equalTo(300));
                 Assert.assertThat(cart2.getItems().get(0).getProductName(), Matchers.equalTo("test update cartItem"));
-                cartRepository.deleteCartItem(cartItem.getIdentifier());
+                cartRepository.deleteCartItem(cartItem.getId());
                 cartRepository.getCart(cart.getIdentifier()).ifPresent(cart3 -> {
                     Assert.assertThat(cart3.getItems().size(), Matchers.equalTo(0));
                 });
@@ -74,6 +76,7 @@ public class CartRepositoryIntegrationTest {
     @Test
     public void cartItemFeeCRUD() {
         CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
         cartItemFeeRepository.createCartItemFee(cartItemFee);

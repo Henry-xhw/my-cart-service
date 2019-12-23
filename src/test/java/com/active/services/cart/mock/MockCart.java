@@ -37,6 +37,7 @@ public class MockCart {
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setId(1L);
+        cartItem.setFeeVolumeIndex(1);
         List<CartItem> list = new ArrayList<>();
         list.add(cartItem);
         cart.setItems(list);
@@ -64,8 +65,7 @@ public class MockCart {
         cartItem.setUnitPrice(BigDecimal.valueOf(1));
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
-        cartItem.setAgencyId(123L);
-        cartItem.setFeeVolumeIndex(0);
+        cartItem.setFeeVolumeIndex(1);
         List<CartItemDto> list = new ArrayList<>();
         list.add(cartItem);
         cartDto.setItems(list);

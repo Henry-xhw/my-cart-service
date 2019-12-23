@@ -5,6 +5,7 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
+import com.active.services.cart.service.CartStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,6 +24,7 @@ public class CartDataFactory {
         cart.setOwnerId(UUID.randomUUID());
         cart.setIdentifier(UUID.randomUUID());
         cart.setItems(cartItems());
+        cart.setCartStatus(CartStatus.CREATED);
 
         return cart;
     }
@@ -49,7 +51,6 @@ public class CartDataFactory {
         cartItem.setQuantity(1);
         cartItem.setUnitPrice(BigDecimal.ONE);
         cartItem.setGroupingIdentifier("grouping identifier");
-        cartItem.setAgencyId(123L);
         cartItem.setFeeVolumeIndex(0);
 
         return cartItem;
