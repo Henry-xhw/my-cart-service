@@ -17,7 +17,7 @@ public class OrderServiceConfigurationTestCase {
     public void orderService() {
         OrderServiceConfiguration conf = new OrderServiceConfiguration();
         ReflectionTestUtils.setField(conf, "orderServiceUrl",
-            "http://localhost.dev.activenetwork.com:8200/order-management-service/api/place-order");
+            "http://127.0.0.1:8200/order-management-service/api/place-order");
         orderService = conf.orderService();
         PlaceOrderReq req = new PlaceOrderReq();
         req.setOrderDTO(new OrderDTO());
