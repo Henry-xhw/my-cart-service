@@ -180,7 +180,7 @@ public class CartServiceTestCase {
 
     private PlaceOrderRsp buildRsp(Long orderId) {
         PlaceOrderRsp rsp = new PlaceOrderRsp();
-        OrderResponseDTO dto = new OrderResponseDTO();
+        OrderResponseDTO dto = OrderResponseDTO.builder().orderId(orderId).build();
         dto.setOrderId(orderId);
         List<OrderResponseDTO> list = new ArrayList<>();
         list.add(dto);
