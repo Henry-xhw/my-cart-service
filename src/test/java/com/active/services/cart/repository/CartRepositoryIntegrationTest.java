@@ -75,10 +75,13 @@ public class CartRepositoryIntegrationTest {
 
     @Test
     public void cartItemFeeCRUD() {
+        Cart cart = CartDataFactory.cart();
+        cartRepository.createCart(cart);
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
+        cartRepository.createCartItem(cart.getId(), cartItem);
         cartItemFeeRepository.createCartItemFee(cartItemFee);
         cartItemFeeRepository.createCartItemCartItemFee(
             CartItemFeeRelationship.buildCartItemCartItemFee(cartItem.getId(), cartItemFee.getId()));
