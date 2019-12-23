@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.CartItemFeeMapper">
+    <delete id="deleteCartItemFeeById">
+        DELETE cart_item_fees
+        FROM cart_item_fees a LEFT JOIN cart_item_cart_item_fees b ON a.id=b.cart_item_fee_id
+        WHERE b.cart_item_id = #{id}
+    </delete>
+
+    <insert id="createCartItemFee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart_item_fees]
+        (identifier,
+        parent_id,
+        name,
+        description,
+        type,
+        transaction_type,
+        units,
+        unit_price,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt)
+        VALUES
+        (#{identifier},
+        #{parentId},
+        #{name},
+        #{description},
+        #{type},
+        #{transactionType},
+        #{units},
+        #{unitPrice},
+        #{createdBy},
+        #{createdDt},
+        #{modifiedBy},
+        #{modifiedDt}
+        )
+    </insert>
+
+    <insert id="createCartItemCartItemFee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart_item_cart_item_fees]
+        (identifier,
+        cart_item_id,
+        cart_item_fee_id,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt
+        )
+        VALUES
+        (#{identifier},
+        #{cartItemId},
+        #{cartItemFeeId},
+        #{createdBy},
+        #{createdDt},
+        #{modifiedBy},
+        #{modifiedDt}
+        )
+    </insert>
+</mapper>

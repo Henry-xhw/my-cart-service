@@ -23,7 +23,6 @@ public class CartException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-
     public CartException(ErrorCode errorCode, String message, Object... args) {
         this(errorCode, MessageFormat.format(message, args));
     }

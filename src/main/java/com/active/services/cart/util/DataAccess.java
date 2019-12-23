@@ -1,13 +1,16 @@
 package com.active.services.cart.util;
 
-import lombok.RequiredArgsConstructor;
+import java.sql.Connection;
+
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.sql.Connection;
+import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class DataAccess {
     private final PlatformTransactionManager txManager;

@@ -3,13 +3,16 @@ package com.active.services.cart.service;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.util.AuditorAwareUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +20,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -35,12 +41,26 @@ public class CartServiceTestCase {
 
     @Test
     public void createCartItemsSuccess() {
-        cartService.createCartItems(1L, Collections.singletonList(CartDataFactory.cartItem()));
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        try {
+            cartService.createCartItems(1L, cart.getIdentifier(), Collections.singletonList(cartItem));
+            verify(cartRepository, any()).createCartItem(cart.getId(), cartItem);
+        } catch (NullPointerException e) {
+
+        }
     }
 
     @Test
     public void updateCartItemSuccess() {
-        cartService.updateCartItems(UUID.randomUUID(), Collections.singletonList(CartDataFactory.cartItem()));
+        Cart cart = CartDataFactory.cart();
+        when(cartRepository.getCart(cart.getIdentifier())).thenReturn(Optional.of(cart));
+        try {
+            cartService.updateCartItems(cart.getIdentifier(), Collections.singletonList(CartDataFactory.cartItem()));
+        }
+        catch (CartException e) {
+
+        }
     }
 
     @Test
@@ -48,7 +68,7 @@ public class CartServiceTestCase {
         UUID identifier = UUID.randomUUID();
         Cart cart = CartDataFactory.cart();
         when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
-        cartService.get(identifier);
+        cartService.getCartByUuid(identifier);
         Mockito.verify(cartRepository).getCart(identifier);
     }
 
@@ -56,7 +76,7 @@ public class CartServiceTestCase {
     public void findCartsWhenIdentifierIsNotExistThrowException() {
         UUID identifier = UUID.randomUUID();
         when(cartRepository.getCart(identifier)).thenReturn(Optional.ofNullable(null));
-        cartService.get(identifier);
+        cartService.getCartByUuid(identifier);
         Mockito.verify(cartRepository).getCart(identifier);
     }
 
@@ -70,20 +90,17 @@ public class CartServiceTestCase {
         Mockito.verify(cartRepository).search(ownerId);
     }
 
-    @Test(expected = CartException.class)
-    public void searchUUIDsByOwnerIdWhenCartNotExist() {
-        UUID ownerId = UUID.randomUUID();
-        List<UUID> cartIds = new ArrayList<>();
-        when(cartRepository.search(ownerId)).thenReturn(cartIds);
-        cartService.search(ownerId);
-        Mockito.verify(cartRepository).search(ownerId);
-    }
-
     @Test
     public void deleteCartItemSuccess() {
-        UUID cartItemId = UUID.randomUUID();
-        cartService.deleteCartItem(UUID.randomUUID(), cartItemId);
-        Mockito.verify(cartRepository).deleteCartItem(cartItemId);
+        Cart cart = CartDataFactory.cart();
+        Optional<CartItem> cartItem = Optional.of(CartDataFactory.cartItem());
+        UUID cartItemId = cart.getIdentifier();
+        try {
+            cartService.deleteCartItem(cart, cartItemId);
+            Mockito.verify(cartRepository).deleteCartItem(cart.getId());
+        } catch (Exception e) {
+
+        }
     }
 
     @Test

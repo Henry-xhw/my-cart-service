@@ -1,5 +1,8 @@
 package com.active.services.cart.controller.v1;
 
+import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PATH;
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 import java.util.List;
@@ -7,7 +10,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.active.services.cart.domain.Cart;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.v1.req.CreateCartItemReq;
+import com.active.services.cart.model.v1.req.UpdateCartItemReq;
+import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
+import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
+import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
+import com.active.services.cart.service.CartService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,28 +26,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.v1.req.CreateCartItemReq;
-import com.active.services.cart.model.v1.req.UpdateCartItemReq;
-import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
-import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
-import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
-import com.active.services.cart.service.CartService;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequiredArgsConstructor
 public class CartItemController {
-    private static final String CART_ID_PARAM = "cart-id";
-    private static final String CART_ITEM_ID_PARAM = "cart-item-id";
-    private static final String CART_ITEM_ID_PATH = "/{" + CART_ITEM_ID_PARAM + "}";
 
-    @Autowired
-    private CartService cartService;
+    private final CartService cartService;
 
     @PostMapping
     public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
-        Cart cart = cartService.getCartByCartUuid(cartIdentifier);
+        Cart cart = cartService.getCartByUuid(cartIdentifier);
         List<CartItem> items = req.getItems()
                 .stream()
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
@@ -61,9 +61,9 @@ public class CartItemController {
     }
 
     @DeleteMapping(CART_ITEM_ID_PATH)
-    public DeleteCartItemRsp delete(@PathVariable("cart-id") UUID cartId,
+    public DeleteCartItemRsp delete(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
-        Cart cart = cartService.getCartByCartUuid(cartId);
+        Cart cart = cartService.getCartByUuid(cartId);
         cartService.deleteCartItem(cart, cartItemId);
         DeleteCartItemRsp rsp = new DeleteCartItemRsp();
         rsp.setCartId(cartId);

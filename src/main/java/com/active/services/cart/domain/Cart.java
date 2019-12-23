@@ -1,5 +1,6 @@
 package com.active.services.cart.domain;
 
+
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.service.CartStatus;
 
@@ -36,8 +37,8 @@ public class Cart extends BaseDomainObject {
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {
         return getFlattenCartItems().stream()
-                .filter(it -> it.getIdentifier().equals(cartItemId))
-                .findAny();
+            .filter(it -> Objects.equals(it.getIdentifier(), cartItemId))
+            .findAny();
     }
 
     public List<CartItem> getFlattenCartItems() {
