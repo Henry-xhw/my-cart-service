@@ -14,3 +14,6 @@ logging:
         services:
           cart:
             repository: DEBUG
+
+url:
+  orderManagementBase: http://localhost:dev.activenetwork.com:8200

@@ -1,27 +1,43 @@
 package com.active.services.cart.service;
 
+import com.active.services.cart.client.rest.OrderService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.infrastructure.mapper.PlaceCartMapper;
+import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.PaymentAccount;
+import com.active.services.cart.model.v1.CheckoutResult;
+import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.TreeBuilder;
 
+import com.active.services.order.management.api.v3.types.OrderDTO;
+import com.active.services.order.management.api.v3.types.OrderResponseDTO;
+import com.active.services.order.management.api.v3.types.PlaceOrderReq;
+import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartService {
     private final CartRepository cartRepository;
+    private final OrderService orderService;
 
     private static final int UPDATE_SUCCESS = 1;
 
@@ -139,6 +155,62 @@ public class CartService {
     @Transactional
     public boolean releaseLock(UUID cartId) {
         return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+    }
+
+    @Transactional
+    public List<CheckoutResult> checkout(UUID cartId, CheckoutReq req) {
+        Cart cart = getCartByCartUuid(cartId);
+        if (CollectionUtils.isEmpty(cart.getFlattenCartItems())) {
+            throw  new CartException(ErrorCode.CART_ITEM_NOT_FOUND,
+                " There is no cart item for cartId: " + cartId);
+        }
+        //lock cart
+        if (!acquireLock(cartId)) {
+            String msg = String.format("Cart %s had been locked by other call", cartId);
+            LOG.warn(msg);
+            throw new CartException(ErrorCode.CART_LOCKED, msg);
+        }
+        PlaceOrderRsp rsp = null;
+        try {
+            commitPayment(cart.getCartTotal(), req.getPaymentAccount(), req.getBillingContact());
+            commitInventory(cart.getItems().stream().map(CartItem::getIdentifier).collect(Collectors.toList()));
+            rsp = placeOrder(cart, req.getOrderUrl(), req.isSendReceipt(),
+                Optional.of(req.getPaymentAccount()).map(PaymentAccount::getAmsAccountId).orElse(null));
+        } catch (CartException e){
+            if (ErrorCode.PLACE_ORDER_ERROR == e.getErrorCode()){
+                //retry or rollback;
+                throw e;
+            }
+            throw e;
+        } finally {
+            releaseLock(cartId);
+        }
+        finalizeCart(cartId);
+        return rsp.getOrderResponses().stream().map(OrderResponseDTO::getOrderId)
+            .map(orderId -> new CheckoutResult(orderId)).collect(Collectors.toList());
+    }
+
+    private PlaceOrderRsp placeOrder(Cart cart, String orderUrl, boolean sendReceipt, String payAccountId) {
+        PlaceOrderReq req = new PlaceOrderReq();
+        OrderDTO orderDTO =  PlaceCartMapper.MAPPER.toOrderDTO(cart);
+        orderDTO.setOrderUrl(orderUrl);
+        orderDTO.setSendOrderReceipt(sendReceipt);
+        orderDTO.setPayAccountId(payAccountId);
+        req.setOrderDTO(orderDTO);
+        PlaceOrderRsp rsp = orderService.placeOrder(req);
+        if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())){
+            throw new CartException(ErrorCode.PLACE_ORDER_ERROR, "there is no order response from order service");
+        }
+        return rsp;
+    }
+
+    private void commitPayment(BigDecimal cartTotal, PaymentAccount paymentAccount, BillingContact billingContact) {
+        if (BigDecimal.ZERO.compareTo(cartTotal) >= 0) {
+            return;
+        }
+    }
+
+    private void commitInventory(List<UUID> inventoryReservationIds) {
     }
 }
 

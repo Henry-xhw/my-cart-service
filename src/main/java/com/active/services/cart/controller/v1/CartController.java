@@ -1,7 +1,10 @@
 package com.active.services.cart.controller.v1;
 
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
@@ -12,6 +15,8 @@ import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -70,7 +75,7 @@ public class CartController {
 
     @PostMapping("/{cartId}/checkout")
     public CheckoutRsp checkout(@PathVariable UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
-        CheckoutRsp rsp = new CheckoutRsp();
-        return rsp;
+        List<CheckoutResult> results = cartService.checkout(cartId, req);
+        return new CheckoutRsp(results);
     }
 }

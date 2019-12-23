@@ -4,7 +4,9 @@ import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.service.CartStatus;
 
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,5 +73,11 @@ public class Cart extends BaseDomainObject {
             }
         }
         return flatten;
+    }
+
+    public BigDecimal getCartTotal() {
+        return CollectionUtils.emptyIfNull(getFlattenCartItems()).stream()
+            .map(CartItem::getCartItemTotal)
+            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }

@@ -39,3 +39,7 @@ management:
   endpoint:
     shutdown:
       enabled: false
+
+
+url:
+  orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
