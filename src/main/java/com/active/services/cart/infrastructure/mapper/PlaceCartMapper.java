@@ -18,11 +18,9 @@ public interface PlaceCartMapper {
         @Mapping(target = "orderStatus", expression = "java(com.active.services.order.OrderStatus.PENDING)"),
         @Mapping(target = "orderOwnerEnterprisePersonId", source = "ownerId"),
         @Mapping(target = "enterprisePersonId", source = "keyerId"),
-        @Mapping(target = "orderLines", source = "items")
-        /*
-            private DateTime businessDate;
-
-        */})
+        @Mapping(target = "orderLines", source = "items"),
+        @Mapping(target = "businessDate", expression="java(new com.active.services.domain.DateTime(new java.util.Date()))")
+    })
     OrderDTO toOrderDTO(Cart cart);
 
     @Mappings({@Mapping(target = "productId", source = "productId"),
