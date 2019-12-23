@@ -117,7 +117,7 @@ public class RestDocument {
 
     private static List<FieldDescriptor> generateAllFieldDescriptors(String path, Object object) {
         final String pathPrefix = StringUtils.isEmpty(path) ? path : (path + ".");
-        List<FieldDescriptor> fieldDescriptors = generateAllFieldDescriptors(pathPrefix, object.getClass());
+        List<FieldDescriptor> fieldDescriptors = generateAllFieldDescriptors(pathPrefix, object.getClass(), object);
         fieldDescriptors.addAll(Stream.of(object.getClass().getDeclaredFields())
           .filter(field -> field.isAnnotationPresent(Valid.class))
           .map(field -> {
@@ -135,11 +135,11 @@ public class RestDocument {
         return fieldDescriptors;
     }
 
-    private static List<FieldDescriptor> generateAllFieldDescriptors(String path, Class clazz) {
+    private static List<FieldDescriptor> generateAllFieldDescriptors(String path, Class clazz, Object object) {
         List<List<FieldDescriptor>> fieldDescriptorGroups = new ArrayList<>();
         Class currentClass = clazz;
         while (currentClass != null) {
-            fieldDescriptorGroups.add(generateFieldDescriptors(path, currentClass));
+            fieldDescriptorGroups.add(generateFieldDescriptors(path, currentClass, object));
             currentClass = currentClass.getSuperclass();
         }
         Collections.reverse(fieldDescriptorGroups);
@@ -148,9 +148,9 @@ public class RestDocument {
           .collect(Collectors.toList());
     }
 
-    private static List<FieldDescriptor> generateFieldDescriptors(String path, Class clazz) {
+    private static List<FieldDescriptor> generateFieldDescriptors(String path, Class clazz, Object object) {
         return Stream.of(clazz.getDeclaredFields())
-          .filter(field -> !"$jacocoData".equals(field.getName()))
+          .filter(field -> !"$jacocoData".equals(field.getName())).filter(field ->  ReflectionTestUtils.getField(object, clazz, field.getName())!=null)
           .map(field -> fieldWithPath(path + field.getName())
             .type(getType(field))
             .description(getComment(clazz, field.getName()))

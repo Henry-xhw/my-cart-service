@@ -29,7 +29,7 @@
         getdate(),
         #{version},
         #{priceVersion},
-        #{isLock},
+        #{lock},
         #{cartStatus}
         )
     </insert>
