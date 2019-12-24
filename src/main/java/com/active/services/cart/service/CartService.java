@@ -210,17 +210,18 @@ public class CartService {
         Cart cart = getCartWithFullPriceByUuid(cartId);
 
         if (CollectionUtils.isEmpty(cart.getFlattenCartItems())) {
-            throw  new CartException(ErrorCode.CART_ITEM_NOT_FOUND,
-                "There is no cart item for cartId: {0} ", cartId);
+            throw new CartException(ErrorCode.CART_ITEM_NOT_FOUND,
+                    "There is no cart item for cartId: {0} ", cartId);
         }
         if (cart.getVersion() != cart.getPriceVersion()) {
             throw new CartException(ErrorCode.CART_PRICING_OUT_OF_DATE,
-                    "Cart pricing had out of date. Please call quote before checkout", cartId);
+                    "Cart : {0} pricing had out of date. Price version : {1}, cart version : {2} Please call quote " +
+                            "before checkout.",
+                    cartId, cart.getPriceVersion(), cart.getVersion());
         }
         if (!acquireLock(cartId)) {
-            String msg = String.format("Cart %s had been locked by other call", cartId);
-            LOG.warn(msg);
-            throw new CartException(ErrorCode.CART_LOCKED, msg);
+            LOG.warn("Cart {} had been locked by other call", cartId);
+            throw new CartException(ErrorCode.CART_LOCKED, "Cart : {0} had been locked by other call.", cartId);
         }
 
         PlaceOrderRsp rsp;
