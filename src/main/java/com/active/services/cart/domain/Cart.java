@@ -1,6 +1,11 @@
 package com.active.services.cart.domain;
 
 
+import com.active.services.cart.model.CurrencyCode;
+import com.active.services.cart.service.CartStatus;
+
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,11 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
-
-import com.active.services.cart.model.CurrencyCode;
-
-import com.active.services.cart.service.CartStatus;
-import lombok.Data;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -29,7 +29,7 @@ public class Cart extends BaseDomainObject {
 
     private int priceVersion;
 
-    private boolean isLock;
+    private boolean lock;
 
     private CartStatus cartStatus;
 

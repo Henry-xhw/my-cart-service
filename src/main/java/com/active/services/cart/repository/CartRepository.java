@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class CartRepository {
-
     private final CartMapper cartMapper;
 
     public void createCart(Cart cart) {

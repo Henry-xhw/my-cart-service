@@ -182,7 +182,7 @@
         cart.modified_dt              as modified_dt,
         cart.version                  as version,
         cart.price_version            as price_version,
-        cart.is_lock                  as isLock,
+        cart.is_lock                  as lock,
         cart.cart_status              as cart_status,
         item.id                       AS item_id,
         item.parent_id                AS item_parent_id,
@@ -266,7 +266,7 @@
     <update id="incrementVersion">
         UPDATE [dbo].[carts]
         SET
-        version = version+1,
+        version = version + 1,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
