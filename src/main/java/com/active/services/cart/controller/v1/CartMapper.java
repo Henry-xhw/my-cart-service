@@ -9,9 +9,10 @@ import com.active.services.cart.model.v1.req.CreateCartReq;
 import org.mapstruct.Context;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper {
 
     CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
