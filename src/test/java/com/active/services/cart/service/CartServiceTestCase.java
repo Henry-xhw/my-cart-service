@@ -60,7 +60,7 @@ public class CartServiceTestCase {
         CartItem cartItem = CartDataFactory.cartItem();
         try {
             cartService.createCartItems(1L, cart.getIdentifier(), Collections.singletonList(cartItem));
-            verify(cartRepository, any()).createCartItem(cart.getId(), cartItem);
+            Mockito.verify(cartRepository).createCartItems(cart.getId(), Arrays.asList(cartItem));
         } catch (NullPointerException e) {
 
         }
