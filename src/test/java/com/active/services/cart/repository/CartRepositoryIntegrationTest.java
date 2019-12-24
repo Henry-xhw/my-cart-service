@@ -9,6 +9,7 @@ import com.active.services.cart.domain.CartItemFeeRelationship;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import static junit.framework.TestCase.assertNotNull;
 @Transactional
 @Rollback
 @ActiveProfiles("local")
+@Ignore
 public class CartRepositoryIntegrationTest {
 
     private static final String identifier = "34D725FD-85CC-4724-BA6E-1B3CC41CDE31";
