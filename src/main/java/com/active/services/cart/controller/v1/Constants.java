@@ -1,6 +1,7 @@
 package com.active.services.cart.controller.v1;
 
 public class Constants {
+
     public static final String V1_MEDIA = "application/vnd.active.cart-service.v1+json";
 
     public static final String ID_PARAM = "id";
@@ -22,4 +23,7 @@ public class Constants {
     public static final String QUOTE_PATH = "/{" + CART_ID_PARAM + "}" + "/quote";
 
     public static final String CHECKOUT_PATH = "/{" + CART_ID_PARAM + "}" + "/checkout";
+
+    private Constants() {
+    }
 }

@@ -2,7 +2,9 @@ package com.active.services.cart.domain;
 
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -16,6 +18,7 @@ import java.util.Queue;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class CartItem extends BaseTree<CartItem> {
 
