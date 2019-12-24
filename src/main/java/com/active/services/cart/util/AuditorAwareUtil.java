@@ -12,6 +12,8 @@ public class AuditorAwareUtil {
     }
 
     public static String getAuditor() {
-        return Optional.ofNullable(RequestContextUtil.getRequest().getHeader(ACTOR_ID)).orElse(SYSTEM);
+        return Optional.ofNullable(RequestContextUtil.getRequest())
+                .map(req -> Optional.ofNullable(req.getHeader(ACTOR_ID)).orElse(SYSTEM))
+                .orElse(SYSTEM);
     }
 }

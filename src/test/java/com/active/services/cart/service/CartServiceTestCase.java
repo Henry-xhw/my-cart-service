@@ -4,7 +4,11 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.service.quote.CartPriceEngine;
+import com.active.services.cart.util.DataAccess;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +16,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +36,15 @@ public class CartServiceTestCase {
 
     @Mock
     private CartRepository cartRepository;
+
+    @Mock
+    private CartItemFeeRepository cartItemFeeRepository;
+
+    @Mock
+    private CartPriceEngine cartPriceEngine;
+
+    @Mock
+    private DataAccess dataAccess;
 
     @InjectMocks
     private CartService cartService;
@@ -106,5 +123,24 @@ public class CartServiceTestCase {
         Cart cart = CartDataFactory.cart();
         cartService.create(cart);
         Mockito.verify(cartRepository).createCart(cart);
+    }
+
+    @Test
+    public void quoteSuccess() {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine, dataAccess);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        CartItemFee cartItemFee = CartDataFactory.cartItemFee();
+        cartItem.setFees(Arrays.asList(cartItemFee));
+        cart.setItems(Arrays.asList(cartItem));
+        UUID identifier = cart.getIdentifier();
+        when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
+        Cart quote = cartService.quote(identifier);
+        Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
+        Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
+        Mockito.verify(cartItemFeeRepository).createCartItemCartItemFee(any());
     }
 }
