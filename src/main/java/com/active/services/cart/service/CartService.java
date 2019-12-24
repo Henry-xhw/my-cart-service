@@ -4,7 +4,9 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
+import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
@@ -47,9 +49,31 @@ public class CartService {
     public Cart getCartByUuid(UUID cartId) {
         Cart cart = cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
                 " cart id does not exist: {0}", cartId));
+        buildCartItemTree(cart);
+        return cart;
+    }
+
+    public Cart loadCartByUuid(UUID cartId) {
+        Cart cart = getCartByUuid(cartId);
+        buildCartItemFeeTree(cart);
+        return cart;
+    }
+
+    private void buildCartItemTree(Cart cart) {
         TreeBuilder<CartItem> treeBuilder = new TreeBuilder<>(cart.getItems());
         cart.setItems(treeBuilder.buildTree());
-        return cart;
+    }
+
+    private void buildCartItemFeeTree(Cart cart) {
+        List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
+        cart.getItems().forEach(cartItem -> {
+            List<CartItemFeesInCart> collect =
+                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId())
+                            .collect(Collectors.toList());
+
+            TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
+            cartItem.setFees(baseTreeTreeBuilder.buildTree());
+        });
     }
 
     @Transactional
@@ -97,6 +121,7 @@ public class CartService {
                 .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: {0}", cartItemId));
     }
 
+    @Transactional
     public void insertCartItems(Cart cart, List<CartItem> cartItemList, Long requestParentId) {
         Long cartId = cart.getId();
         for (CartItem it : cartItemList) {
@@ -116,6 +141,7 @@ public class CartService {
                 insertCartItems(cart, subItems, parentId);
             }
         }
+        incrementVersion(cart.getIdentifier());
     }
 
     @Transactional
@@ -150,7 +176,9 @@ public class CartService {
         // Manual control the tx
         dataAccess.doInTx(() -> {
             saveQuoteResult(cart);
+            incrementPriceVersion(cartId);
         });
+
         return cart;
     }
 

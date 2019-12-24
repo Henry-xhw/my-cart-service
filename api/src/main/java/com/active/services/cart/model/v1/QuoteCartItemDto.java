@@ -62,4 +62,7 @@ public class QuoteCartItemDto extends BaseDto {
 
     @Valid
     private List<QuoteCartItemFeeDto> fees = new ArrayList<>();
+
+    @Valid
+    private List<QuoteCartItemDto> subItems = new ArrayList<>();
 }

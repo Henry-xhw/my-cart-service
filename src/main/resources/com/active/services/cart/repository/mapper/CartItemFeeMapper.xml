@@ -59,4 +59,27 @@
         #{modifiedDt}
         )
     </insert>
+
+    <select id="getCartItemFeesByCartId" resultType='com.active.services.cart.domain.CartItemFeesInCart'>
+        SELECT
+        fee.identifier       AS identifier,
+        fee.id               AS id,
+        fee.parent_id        AS parent_id,
+        fee.name             AS name,
+        fee.description      AS description,
+        fee.type             AS type,
+        fee.transaction_type AS transaction_type,
+        fee.units            AS units,
+        fee.unit_price       AS unit_price,
+        i.id                 AS cart_item_id
+        FROM dbo.carts c LEFT JOIN
+        dbo.cart_items i ON c.id=i.cart_id
+        LEFT JOIN
+        dbo.cart_item_cart_item_fees map ON map.cart_item_id=i.id
+        LEFT JOIN dbo.cart_item_fees fee ON map.cart_item_fee_id = fee.id
+        WHERE c.id = #{id}
+    </select>
+
+
+
 </mapper>
