@@ -182,56 +182,69 @@ public class CartService {
     @Transactional
     public List<CheckoutResult> checkout(UUID cartId, CheckoutReq req) {
         Cart cart = getCartByUuid(cartId);
+
         if (CollectionUtils.isEmpty(cart.getFlattenCartItems())) {
             throw  new CartException(ErrorCode.CART_ITEM_NOT_FOUND,
-                " There is no cart item for cartId: " + cartId);
+                "There is no cart item for cartId: {0} ", cartId);
         }
-        //lock cart
+        if (cart.getVersion() != cart.getPriceVersion()) {
+            throw new CartException(ErrorCode.CART_PRICING_OUT_OF_DATE,
+                    "Cart pricing had out of date. Please call quote before checkout", cartId);
+        }
         if (!acquireLock(cartId)) {
             String msg = String.format("Cart %s had been locked by other call", cartId);
             LOG.warn(msg);
             throw new CartException(ErrorCode.CART_LOCKED, msg);
         }
-        PlaceOrderRsp rsp = null;
+
+        PlaceOrderRsp rsp;
         try {
-            commitPayment(cart.getCartTotal(), req.getPaymentAccount(), req.getBillingContact());
             commitInventory(cart.getItems().stream().map(CartItem::getIdentifier).collect(Collectors.toList()));
+            commitPayment();
             rsp = placeOrder(cart, req.getOrderUrl(), req.isSendReceipt(),
                     Optional.of(req.getPaymentAccount()).map(PaymentAccount::getAmsAccountId).orElse(null));
         } catch (CartException e) {
-            if (ErrorCode.PLACE_ORDER_ERROR == e.getErrorCode()) {
-                //retry or rollback;
-                throw e;
+            if (ErrorCode.PAYMENT_AUTH_ERROR == e.getErrorCode()) {
+                // reverse inventory.
             }
+            LOG.info(e.getErrorMessage());
             throw e;
         } finally {
             releaseLock(cartId);
         }
         finalizeCart(cartId);
         return rsp.getOrderResponses().stream().map(OrderResponseDTO::getOrderId)
-                .map(orderId -> new CheckoutResult(orderId)).collect(Collectors.toList());
+            .map(orderId -> new CheckoutResult(orderId)).collect(Collectors.toList());
     }
 
     private PlaceOrderRsp placeOrder(Cart cart, String orderUrl, boolean sendReceipt, String payAccountId) {
-        PlaceOrderReq req = new PlaceOrderReq();
-        OrderDTO orderDTO =  PlaceCartMapper.MAPPER.toOrderDTO(cart);
+        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toOrderDTO(cart);
         orderDTO.setOrderUrl(orderUrl);
         orderDTO.setSendOrderReceipt(sendReceipt);
         orderDTO.setPayAccountId(payAccountId);
+        PlaceOrderReq req = new PlaceOrderReq();
         req.setOrderDTO(orderDTO);
-        PlaceOrderRsp rsp = orderService.placeOrder(req);
-        if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())){
-            throw new CartException(ErrorCode.PLACE_ORDER_ERROR, "there is no order response from order service");
+        PlaceOrderRsp rsp = null;
+        try {
+            rsp = orderService.placeOrder(req);
+        } catch (Exception e) {
+            handleException(e);
+        }
+        if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())) {
+            throw new CartException(ErrorCode.PLACE_ORDER_ERROR, "There is no order response from order service for " +
+                    "cart: {0}",
+                    cart.getIdentifier());
         }
         return rsp;
     }
 
-    private void commitPayment(BigDecimal cartTotal, PaymentAccount paymentAccount, BillingContact billingContact) {
-        if (BigDecimal.ZERO.compareTo(cartTotal) >= 0) {
-            return;
-        }
+    private void handleException(Exception e) {
+        // do we need to update cart status?
     }
 
     private void commitInventory(List<UUID> inventoryReservationIds) {
+    }
+
+    private void commitPayment() {
     }
 }

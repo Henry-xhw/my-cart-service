@@ -92,6 +92,7 @@ public class OrderServiceConfigurationTestCase {
         orderDTO.setEnterprisePersonId(UUID.randomUUID());
         orderDTO.setOrderOwnerEnterprisePersonId(UUID.randomUUID());
         orderDTO.setOrderUrl("ss.sl");
+        orderDTO.setBusinessDate(new DateTime(new Date()));
         return orderDTO;
     }
 }

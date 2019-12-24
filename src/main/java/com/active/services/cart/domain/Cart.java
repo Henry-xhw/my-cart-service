@@ -61,10 +61,4 @@ public class Cart extends BaseDomainObject {
         }
         return flatten;
     }
-
-    public BigDecimal getCartTotal() {
-        return CollectionUtils.emptyIfNull(getFlattenCartItems()).stream()
-            .map(CartItem::getCartItemTotal)
-            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-    }
 }

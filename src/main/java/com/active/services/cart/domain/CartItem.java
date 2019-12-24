@@ -78,8 +78,4 @@ public class CartItem extends BaseTree<CartItem> {
         }
         return flatten;
     }
-
-    public BigDecimal getCartItemTotal() {
-        return BigDecimal.ZERO;
-    }
 }
