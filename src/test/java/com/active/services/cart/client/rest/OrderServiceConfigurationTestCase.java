@@ -67,7 +67,6 @@ public class OrderServiceConfigurationTestCase {
         return request;
     }
 
-    @NotNull
     private OrderLineFeeDTO getOrderLineFeeDTO() {
         OrderLineFeeDTO orderLineFeeDTO = new OrderLineFeeDTO();
         orderLineFeeDTO.setAmount(new BigDecimal("10"));
@@ -77,7 +76,7 @@ public class OrderServiceConfigurationTestCase {
         return orderLineFeeDTO;
     }
 
-    @NotNull private OrderLineDTO getOrderLineDTO() {
+    private OrderLineDTO getOrderLineDTO() {
         OrderLineDTO orderLineDTO = new OrderLineDTO();
         orderLineDTO.setProductId(RandomUtils.nextLong());
         orderLineDTO.setOrderLineType(OrderLineType.SALE);
@@ -86,14 +85,13 @@ public class OrderServiceConfigurationTestCase {
         return orderLineDTO;
     }
 
-    @NotNull private OrderDTO getOrderDTO() {
+    private OrderDTO getOrderDTO() {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setCurrencyCode("USD");
         orderDTO.setOrderStatus(OrderStatus.PENDING);
         orderDTO.setEnterprisePersonId(UUID.randomUUID());
         orderDTO.setOrderOwnerEnterprisePersonId(UUID.randomUUID());
         orderDTO.setOrderUrl("ss.sl");
-        orderDTO.setBusinessDate(new DateTime(new Date()));
         return orderDTO;
     }
 }
