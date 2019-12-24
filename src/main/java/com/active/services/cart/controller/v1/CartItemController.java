@@ -1,14 +1,5 @@
 package com.active.services.cart.controller.v1;
 
-import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PATH;
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
@@ -17,6 +8,7 @@ import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
 import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
 import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +18,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PATH;
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)

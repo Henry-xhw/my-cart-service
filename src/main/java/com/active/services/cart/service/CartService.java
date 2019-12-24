@@ -1,11 +1,5 @@
 package com.active.services.cart.service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
@@ -19,13 +13,22 @@ import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.cart.util.TreeBuilder;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
+
+    private static final int UPDATE_SUCCESS = 1;
 
     private final CartRepository cartRepository;
 
@@ -34,8 +37,6 @@ public class CartService {
     private final CartPriceEngine cartPriceEngine;
 
     private final DataAccess dataAccess;
-
-    private static final int UPDATE_SUCCESS = 1;
 
     @Transactional
     public void create(Cart cart) {
@@ -58,7 +59,7 @@ public class CartService {
     @Transactional
     public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
-        if (!incrementVersion(cartIdentifier)){
+        if (!incrementVersion(cartIdentifier)) {
             throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
         }
         return items;
@@ -67,7 +68,7 @@ public class CartService {
     @Transactional
     public long createCartItem(Long cartId, UUID cartIdentifier, BaseTree<CartItem> cartItem) {
         long result = cartRepository.createCartItem(cartId, cartItem);
-        if (!incrementVersion(cartIdentifier)){
+        if (!incrementVersion(cartIdentifier)) {
             throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
         }
         return result;
@@ -78,12 +79,12 @@ public class CartService {
         Cart cart = getCartByUuid(cartIdentifier);
         items.forEach(cartItem -> {
             if (!cart.findCartItem(cartItem.getIdentifier()).isPresent()) {
-                throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
-                        + cartItem.getIdentifier() + " is not belong cart id:" + cart.getIdentifier());
+                throw new CartException(ErrorCode.VALIDATION_ERROR,
+                    " cart item id: " + cartItem.getIdentifier() + " is not belong cart id:" + cart.getIdentifier());
             }
         });
         cartRepository.updateCartItems(items);
-        if (!incrementVersion(cartIdentifier)){
+        if (!incrementVersion(cartIdentifier)) {
             throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
         }
         return items;
@@ -93,15 +94,14 @@ public class CartService {
     public void deleteCartItem(Cart cart, UUID cartItemUuid) {
         Optional<CartItem> cartItem = cart.findCartItem(cartItemUuid);
         if (!cartItem.isPresent()) {
-            throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
-                    + cartItemUuid + " is not belong cart id:" + cart.getIdentifier());
+            throw new CartException(ErrorCode.VALIDATION_ERROR,
+                " cart item id: " + cartItemUuid + " is not belong cart id:" + cart.getIdentifier());
         }
-        List<UUID> idsToDelete = cartItem.get().getFlattenSubItems()
-                        .stream()
-                        .map(CartItem::getIdentifier).collect(Collectors.toList());
+        List<UUID> idsToDelete =
+            cartItem.get().getFlattenSubItems().stream().map(CartItem::getIdentifier).collect(Collectors.toList());
 
         cartRepository.batchDeleteCartItems(idsToDelete);
-        if (!incrementVersion(cart.getIdentifier())){
+        if (!incrementVersion(cart.getIdentifier())) {
             throw new CartException(ErrorCode.INTERNAL_ERROR, "increment version fail");
         }
     }
@@ -122,8 +122,9 @@ public class CartService {
             if (cartItem.getIdentifier() != null) {
                 if (!cart.findCartItem(cartItem.getIdentifier()).isPresent()) {
                     // cart item not exist, need error msg
-                    throw new CartException(ErrorCode.VALIDATION_ERROR, " cart item id: "
-                            + cartItem.getIdentifier() + " is not belong cart id:" + cart.getIdentifier());
+                    throw new CartException(ErrorCode.VALIDATION_ERROR,
+                        " cart item id: " + cartItem.getIdentifier() + " is not belong cart id:" + cart
+                            .getIdentifier());
                 }
                 parentId = getCartItemIdByCartItemUuid(cartItem.getIdentifier());
             } else {
@@ -140,7 +141,7 @@ public class CartService {
 
     @Transactional
     public boolean finalizeCart(UUID cartId) {
-         return cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
+        return cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor()) == UPDATE_SUCCESS;
     }
 
     @Transactional

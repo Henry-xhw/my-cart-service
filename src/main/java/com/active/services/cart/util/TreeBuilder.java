@@ -15,11 +15,8 @@ public class TreeBuilder<T extends BaseTree> {
     }
 
     /**
-     *
      * build tree structure
-     *
-     * @return
-     */
+     **/
 
     public List<T> buildTree() {
         List<T> treeBaseTrees = new ArrayList<>();
@@ -55,7 +52,7 @@ public class TreeBuilder<T extends BaseTree> {
      *
      * @param baseTree
      *
-     * @return
+     * @return all children
      */
 
     public List<BaseTree> getChildBaseTrees(BaseTree baseTree) {
@@ -74,7 +71,7 @@ public class TreeBuilder<T extends BaseTree> {
      *
      * @param baseTree
      *
-     * @return
+     * @return is root node
      */
 
     public boolean rootBaseTree(BaseTree baseTree) {
@@ -92,7 +89,7 @@ public class TreeBuilder<T extends BaseTree> {
      *
      * get all root nodes
      *
-     * @return
+     * @return all root nodes
      */
 
     public List<T> getRootBaseTrees() {

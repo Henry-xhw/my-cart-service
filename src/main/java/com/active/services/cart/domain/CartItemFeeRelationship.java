@@ -1,10 +1,12 @@
 package com.active.services.cart.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.UUID;
 
-import lombok.Data;
-
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CartItemFeeRelationship extends BaseDomainObject {
 
     private Long cartItemId;

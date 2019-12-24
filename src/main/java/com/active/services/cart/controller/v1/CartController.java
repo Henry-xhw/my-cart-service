@@ -1,17 +1,5 @@
 package com.active.services.cart.controller.v1;
 
-import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.ID_PARAM_PATH;
-import static com.active.services.cart.controller.v1.Constants.OWNER_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.OWNER_PATH;
-import static com.active.services.cart.controller.v1.Constants.QUOTE_PATH;
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-
-import java.util.List;
-import java.util.UUID;
-import javax.validation.constraints.NotNull;
-
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CheckoutReq;
@@ -22,6 +10,7 @@ import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +20,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.UUID;
+
+import javax.validation.constraints.NotNull;
+
+import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.ID_PARAM_PATH;
+import static com.active.services.cart.controller.v1.Constants.OWNER_ID_PARAM;
+import static com.active.services.cart.controller.v1.Constants.OWNER_PATH;
+import static com.active.services.cart.controller.v1.Constants.QUOTE_PATH;
+import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)

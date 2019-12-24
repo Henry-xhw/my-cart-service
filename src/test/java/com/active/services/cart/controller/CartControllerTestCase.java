@@ -1,7 +1,31 @@
 package com.active.services.cart.controller;
 
+import com.active.services.cart.common.CartException;
+import com.active.services.cart.controller.v1.CartController;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.mock.MockCart;
+import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.CreateCartRsp;
+import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
+import com.active.services.cart.model.v1.rsp.SearchCartRsp;
+import com.active.services.cart.service.CartService;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-import static com.active.services.cart.restdocs.RestDocument.autoApiDescriptionDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;
@@ -18,32 +42,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import com.active.services.cart.controller.v1.CartMapper;
-import com.active.services.cart.model.ErrorCode;
-import com.active.services.cart.model.v1.rsp.CreateCartRsp;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.active.services.cart.common.CartException;
-import com.active.services.cart.controller.v1.CartController;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
-import com.active.services.cart.mock.MockCart;
-import com.active.services.cart.model.v1.CartDto;
-import com.active.services.cart.model.v1.req.CreateCartReq;
-import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
-import com.active.services.cart.model.v1.rsp.SearchCartRsp;
-import com.active.services.cart.service.CartService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CartController.class, secure = false)
