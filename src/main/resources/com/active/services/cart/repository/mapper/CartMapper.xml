@@ -153,6 +153,7 @@
 
     <resultMap id="CartResultMap" type="Cart">
         <id property="id" column="id"/>
+        <result property="cartStatus" column="cart_status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"></result>
         <collection property="items" ofType="CartItem" notNullColumn="id" columnPrefix="item_">
             <id property="id" column="id"/>
             <association property="bookingRange" javaType="com.active.services.cart.model.Range">

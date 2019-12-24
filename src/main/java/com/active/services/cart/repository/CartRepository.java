@@ -8,6 +8,7 @@ import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
+import com.active.services.cart.util.TreeBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +26,12 @@ public class CartRepository {
     }
 
     public Optional<Cart> getCart(UUID cartId) {
-        return cartMapper.getCart(cartId);
+        Optional<Cart> cart = cartMapper.getCart(cartId);
+        cart.ifPresent(cart1 -> {
+            TreeBuilder<CartItem> treeBuilder = new TreeBuilder<>(cart1.getItems());
+            cart1.setItems(treeBuilder.buildTree());
+        });
+        return cart;
     }
 
     public void createCartItems(Long cartId, List<CartItem> items) {
@@ -57,23 +63,23 @@ public class CartRepository {
         cartMapper.batchDeleteCartItems(uuidList);
     }
 
-    public int finalizeCart(UUID cartId, String modifiedBy){
+    public int finalizeCart(UUID cartId, String modifiedBy) {
         return cartMapper.finalizeCart(cartId, modifiedBy);
     }
 
-    public int incrementVersion(UUID cartId, String modifiedBy){
+    public int incrementVersion(UUID cartId, String modifiedBy) {
         return cartMapper.incrementVersion(cartId, modifiedBy);
     }
 
-    public int incrementPriceVersion(UUID cartId, String modifiedBy){
+    public int incrementPriceVersion(UUID cartId, String modifiedBy) {
         return cartMapper.incrementPriceVersion(cartId, modifiedBy);
     }
 
-    public int acquireLock(UUID cartId, String modifiedBy){
+    public int acquireLock(UUID cartId, String modifiedBy) {
         return cartMapper.acquireLock(cartId, modifiedBy);
     }
 
-    public int releaseLock(UUID cartId, String modifiedBy){
+    public int releaseLock(UUID cartId, String modifiedBy) {
         return cartMapper.releaseLock(cartId, modifiedBy);
     }
 }

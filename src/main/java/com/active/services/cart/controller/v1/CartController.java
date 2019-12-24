@@ -82,7 +82,7 @@ public class CartController {
         return rsp;
     }
 
-    @PostMapping("/{cartId}/checkout")
+    @PostMapping("/{cart-id}/checkout")
     public CheckoutRsp checkout(@PathVariable UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
         CheckoutRsp rsp = new CheckoutRsp();
         return rsp;

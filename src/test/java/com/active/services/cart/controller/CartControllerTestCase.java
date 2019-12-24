@@ -1,7 +1,6 @@
 package com.active.services.cart.controller;
 
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-import static com.active.services.cart.restdocs.RestDocument.autoApiDescriptionDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.active.services.cart.controller.v1.CartMapper;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import org.junit.Assert;
