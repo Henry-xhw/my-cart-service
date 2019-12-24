@@ -9,15 +9,15 @@ import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderLineDTO;
 import com.active.services.order.management.api.v3.types.OrderLineFeeDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
-import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
+
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
+@Ignore
 public class OrderServiceConfigurationTestCase {
 
     @Autowired OrderService orderService;

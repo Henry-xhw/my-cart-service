@@ -215,13 +215,13 @@ public class CartService {
         }
         if (cart.getVersion() != cart.getPriceVersion()) {
             throw new CartException(ErrorCode.CART_PRICING_OUT_OF_DATE,
-                    "Cart : {0} pricing had out of date. Price version : {1}, cart version : {2} Please call quote " +
+                    "Cart: {0} pricing had out of date. Price version : {1}, cart version: {2} Please call quote " +
                             "before checkout.",
                     cartId, cart.getPriceVersion(), cart.getVersion());
         }
         if (!acquireLock(cartId)) {
             LOG.warn("Cart {} had been locked by other call", cartId);
-            throw new CartException(ErrorCode.CART_LOCKED, "Cart : {0} had been locked by other call.", cartId);
+            throw new CartException(ErrorCode.CART_LOCKED, "Cart: {0} had been locked by other call.", cartId);
         }
 
         PlaceOrderRsp rsp;
