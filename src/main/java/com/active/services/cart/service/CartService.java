@@ -53,7 +53,7 @@ public class CartService {
         return cart;
     }
 
-    public Cart loadCartByUuid(UUID cartId) {
+    public Cart getCartWithFullPriceByUuid(UUID cartId) {
         Cart cart = getCartByUuid(cartId);
         buildCartItemFeeTree(cart);
         return cart;
@@ -174,6 +174,7 @@ public class CartService {
         // Manual control the tx
         dataAccess.doInTx(() -> {
             saveQuoteResult(cart);
+            incrementPriceVersion(cartId);
         });
         return cart;
     }
