@@ -6,6 +6,7 @@ import static com.active.services.cart.controller.v1.Constants.ID_PARAM_PATH;
 import static com.active.services.cart.controller.v1.Constants.OWNER_ID_PARAM;
 import static com.active.services.cart.controller.v1.Constants.OWNER_PATH;
 import static com.active.services.cart.controller.v1.Constants.QUOTE_PATH;
+import static com.active.services.cart.controller.v1.Constants.CHECKOUT_PATH;
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 
 import java.util.List;
@@ -82,8 +83,8 @@ public class CartController {
         return rsp;
     }
 
-    @PostMapping("/{cartId}/checkout")
-    public CheckoutRsp checkout(@PathVariable UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
+    @PostMapping(CHECKOUT_PATH)
+    public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
         CheckoutRsp rsp = new CheckoutRsp();
         return rsp;
     }

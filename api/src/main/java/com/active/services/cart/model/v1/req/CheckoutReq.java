@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.active.services.cart.model.BillingContact;
+import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.domain.Address;
 
@@ -19,5 +20,6 @@ public class CheckoutReq {
     private String orderUrl;
     private Address billingAddress;
     private BillingContact billingContact;
+    private CartHolder cartHolder;
 
 }
