@@ -1,7 +1,8 @@
 package com.active.services.cart.repository.mapper;
 
-import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeeRelationship;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

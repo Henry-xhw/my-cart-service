@@ -12,12 +12,11 @@ public enum CartStatus {
      */
     FINALIZED;
 
-
     /**
      * Indicates whether the given status is considered complete. (i.e. must be FINALIZED)
      */
     public static boolean isFinalized(CartStatus status) {
         return FINALIZED == status;
     }
-    
+
 }

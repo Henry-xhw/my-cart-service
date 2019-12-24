@@ -118,7 +118,7 @@ public class CartService {
 
     @Transactional
     public void finalizeCart(UUID cartId) {
-         cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
+        cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
     }
 
     @Transactional

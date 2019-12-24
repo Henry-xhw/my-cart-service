@@ -1,12 +1,13 @@
 package com.active.services.cart.controller;
 
-import java.util.UUID;
-
 import com.active.services.cart.domain.BaseDomainObject;
 import com.active.services.cart.model.v1.BaseDto;
+
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.MappingTarget;
+
+import java.util.UUID;
 
 public class UUIDGenerator {
 

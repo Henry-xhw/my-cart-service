@@ -1,13 +1,16 @@
 package com.active.services.cart.domain;
 
+import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.FeeTransactionType;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.model.CartItemFeeType;
-import lombok.Data;
-
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CartItemFee extends BaseTree<CartItemFee> {
     private String name;
 

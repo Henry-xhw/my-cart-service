@@ -4,8 +4,9 @@ import com.active.services.cart.CartServiceApp;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeeRelationship;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
