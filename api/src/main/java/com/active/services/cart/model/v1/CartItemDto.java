@@ -61,8 +61,5 @@ public class CartItemDto extends BaseDto {
     private Integer feeVolumeIndex;
 
     @Valid
-    private List<CartItemFeeDto> fees = new ArrayList<>();
-
-    @Valid
     private List<CartItemDto> subItems = new ArrayList<>();
 }

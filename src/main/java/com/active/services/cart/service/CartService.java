@@ -121,7 +121,6 @@ public class CartService {
                 .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: {0}", cartItemId));
     }
 
-    @Transactional
     public void insertCartItems(Cart cart, List<CartItem> cartItemList, Long requestParentId) {
         Long cartId = cart.getId();
         for (CartItem it : cartItemList) {
@@ -141,7 +140,6 @@ public class CartService {
                 insertCartItems(cart, subItems, parentId);
             }
         }
-        incrementVersion(cart.getIdentifier());
     }
 
     @Transactional
@@ -176,9 +174,7 @@ public class CartService {
         // Manual control the tx
         dataAccess.doInTx(() -> {
             saveQuoteResult(cart);
-            incrementPriceVersion(cartId);
         });
-
         return cart;
     }
 

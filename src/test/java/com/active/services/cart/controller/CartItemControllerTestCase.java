@@ -12,8 +12,6 @@ import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.req.UpdateCartItemReq;
-import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
-import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
 
 import org.junit.Before;
@@ -33,7 +31,6 @@ import java.util.UUID;
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
-import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.newErrorDocument;
 import static com.active.services.cart.restdocs.RestDocument.newSuccessDocument;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,8 +68,6 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         when(cartService.getCartByUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
         CreateCartItemReq req = new CreateCartItemReq();
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
-        CreateCartItemRsp rsp = new CreateCartItemRsp();
-        rsp.setCartId(UUID.randomUUID());
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
@@ -80,8 +75,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
           .andExpect(status().isOk())
           .andDo(newSuccessDocument("Cart-Item", "Create-Cart-Item",
             pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
-            autoRequestFieldsDoc(req),
-            autoResponseFieldsDoc(rsp)));
+            autoRequestFieldsDoc(req)));
     }
 
     @Test
@@ -135,9 +129,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartItemSuccess() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
@@ -154,16 +146,13 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 .andExpect(status().isOk())
                 .andDo(newSuccessDocument("Cart-Item", "Update-Cart-Item",
                         pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
-                        autoRequestFieldsDoc(req),
-                        autoResponseFieldsDoc(rsp)));
+                        autoRequestFieldsDoc(req)));
     }
 
     @Test
     public void updateCartItemWhenCartItemNotExistThrowException() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
@@ -184,9 +173,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartItemWhenIdentifierIsNullThrowException() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
@@ -209,9 +196,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartItemWhenCartItemIsNotBelongCartThrowException() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem1 = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem1);
