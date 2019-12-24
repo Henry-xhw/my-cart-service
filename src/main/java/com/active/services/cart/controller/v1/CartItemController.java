@@ -4,9 +4,6 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.req.UpdateCartItemReq;
-import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
-import com.active.services.cart.model.v1.rsp.DeleteCartItemRsp;
-import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +33,7 @@ public class CartItemController {
     private final CartService cartService;
 
     @PostMapping
-    public CreateCartItemRsp create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
+    public void create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
         Cart cart = cartService.getCartByUuid(cartIdentifier);
         List<CartItem> items = req.getItems()
@@ -44,30 +41,19 @@ public class CartItemController {
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
                 .collect(Collectors.toList());
         cartService.insertCartItems(cart, items, null);
-
-        CreateCartItemRsp rsp = new CreateCartItemRsp();
-        rsp.setCartId(cartIdentifier);
-        return rsp;
     }
 
     @PutMapping
-    public UpdateCartItemRsp update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
+    public void update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated UpdateCartItemReq req) {
         List<CartItem> items = req.getItems().stream().map(CartItem::new).collect(Collectors.toList());
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         cartService.updateCartItems(cartIdentifier, items);
-        rsp.setCartId(cartIdentifier);
-
-        return rsp;
     }
 
     @DeleteMapping(CART_ITEM_ID_PATH)
-    public DeleteCartItemRsp delete(@PathVariable(CART_ID_PARAM) UUID cartId,
+    public void delete(@PathVariable(CART_ID_PARAM) UUID cartId,
                                     @PathVariable(CART_ITEM_ID_PARAM) UUID cartItemId) {
         Cart cart = cartService.getCartByUuid(cartId);
         cartService.deleteCartItem(cart, cartItemId);
-        DeleteCartItemRsp rsp = new DeleteCartItemRsp();
-        rsp.setCartId(cartId);
-        return rsp;
     }
 }
