@@ -2,11 +2,14 @@ package com.active.services.cart.domain;
 
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +18,7 @@ import java.util.Queue;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class CartItem extends BaseTree<CartItem> {
 
@@ -34,6 +38,14 @@ public class CartItem extends BaseTree<CartItem> {
 
     private String groupingIdentifier;
 
+    private BigDecimal grossPrice;
+
+    private BigDecimal netPrice;
+
+    private Integer feeVolumeIndex;
+
+    private List<CartItemFee> fees = new ArrayList<>();
+
     public CartItem(UpdateCartItemDto updateCartItemDto) {
         this.productId = updateCartItemDto.getProductId();
         this.productName = updateCartItemDto.getProductName();
@@ -43,6 +55,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.quantity = updateCartItemDto.getQuantity();
         this.unitPrice = updateCartItemDto.getUnitPrice();
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
+        this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
     }
 

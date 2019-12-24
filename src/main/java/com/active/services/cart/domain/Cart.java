@@ -4,6 +4,7 @@ import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.service.CartStatus;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Cart extends BaseDomainObject {
 
     private UUID ownerId;
@@ -37,24 +39,9 @@ public class Cart extends BaseDomainObject {
     private List<CartItem> items = new ArrayList<>();
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {
-        return Optional.ofNullable(findInItems(items, cartItemId));
-    }
-
-    private CartItem findInItems(List<CartItem> items, UUID cartItemId) {
-        CartItem found = items.stream()
-                .filter(it -> Objects.equals(it.getIdentifier(), cartItemId))
-                .findAny()
-                .orElse(null);
-        if (found != null) {
-            return found;
-        }
-        for (CartItem it : items) {
-            found = findInItems(it.getSubItems(), cartItemId);
-            if (found != null) {
-                return found;
-            }
-        }
-        return null;
+        return getFlattenCartItems().stream()
+            .filter(it -> Objects.equals(it.getIdentifier(), cartItemId))
+            .findAny();
     }
 
     public List<CartItem> getFlattenCartItems() {

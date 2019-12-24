@@ -1,7 +1,31 @@
 package com.active.services.cart.controller;
 
+import com.active.services.cart.common.CartException;
+import com.active.services.cart.controller.v1.CartController;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.mock.MockCart;
+import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.rsp.CreateCartRsp;
+import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
+import com.active.services.cart.model.v1.rsp.SearchCartRsp;
+import com.active.services.cart.service.CartService;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
-import static com.active.services.cart.restdocs.RestDocument.autoApiDescriptionDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;
@@ -19,30 +43,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import com.active.services.cart.model.ErrorCode;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.active.services.cart.common.CartException;
-import com.active.services.cart.controller.v1.CartController;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
-import com.active.services.cart.mock.MockCart;
-import com.active.services.cart.model.v1.CartDto;
-import com.active.services.cart.model.v1.req.CreateCartReq;
-import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
-import com.active.services.cart.model.v1.rsp.SearchCartRsp;
-import com.active.services.cart.service.CartService;
-
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CartController.class, secure = false)
 public class CartControllerTestCase extends BaseControllerTestCase {
@@ -59,14 +59,17 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(cartDtoReq.getOwnerId());
         req.setKeyerId(cartDtoReq.getKeyerId());
         req.setCurrencyCode(cartDtoReq.getCurrencyCode());
+        CreateCartRsp rsp = new CreateCartRsp();
+        rsp.setCart(cartDtoReq);
+        //req.setIdentifier(cartDtoReq.getIdentifier());
         doNothing().when(cartService).create(any());
 
         String result = mockMvc.perform(
           post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
             .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
-          newSuccessDocument("Cart", "Create-Cart", autoApiDescriptionDoc(CartController.class, "create"),
-            autoRequestFieldsDoc(req), autoResponseFieldsDoc(new CreateCartReq())))
-          .andExpect(MockMvcResultMatchers.jsonPath("$.currencyCode").value("USD")).andReturn().getResponse()
+          newSuccessDocument("Cart", "Create-Cart",
+            autoRequestFieldsDoc(req)))
+          .andReturn().getResponse()
           .getContentAsString();
         CreateCartReq resultRsp = objectMapper.readValue(result, CreateCartReq.class);
         verify(cartService, times(1)).create(any());
@@ -120,7 +123,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartSuccess() throws Exception {
-        when(cartService.getCartByCartUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
+        when(cartService.getCartByUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
         mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
@@ -131,7 +134,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartWhenCartNotExistThrowException() throws Exception {
-        when(cartService.getCartByCartUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
         mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))
@@ -145,7 +148,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         rsp.setCart(MockCart.mockCartDto());
         UUID identifier = UUID.randomUUID();
         Cart cart = MockCart.mockCartDomain();
-        when(cartService.getCartByCartUuid(identifier)).thenReturn(cart);
+        when(cartService.getCartByUuid(identifier)).thenReturn(cart);
         String result = mockMvc.perform(get("/carts/{id}", identifier)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader()))
@@ -170,12 +173,12 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         cartIds.add(cart2.getIdentifier());
         rsp.setCartIds(cartIds);
         when(cartService.search(ownerId)).thenReturn(cartIds);
-        mockMvc.perform(get("/carts/ownerId/{ownerId}", ownerId)
+        mockMvc.perform(get("/carts/owners/{owner-id}", ownerId)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader()))
                 .andExpect(status().isOk())
                 .andDo(newSuccessDocument("Cart", "Find-Cart-By-OwnerId",
-                        pathParameters(autoPathParameterDoc("ownerId", CartDto.class, "ownerId")),
+                        pathParameters(autoPathParameterDoc("owner-id", CartDto.class, "ownerId")),
                         autoResponseFieldsDoc(rsp)));
     }
 }

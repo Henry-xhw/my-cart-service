@@ -1,7 +1,8 @@
 package com.active.services.cart.restdocs;
 
-import capital.scalable.restdocs.javadoc.JavadocReaderImpl;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import capital.scalable.restdocs.javadoc.JavadocReaderImpl;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
@@ -13,10 +14,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +23,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -117,7 +119,7 @@ public class RestDocument {
 
     private static List<FieldDescriptor> generateAllFieldDescriptors(String path, Object object) {
         final String pathPrefix = StringUtils.isEmpty(path) ? path : (path + ".");
-        List<FieldDescriptor> fieldDescriptors = generateAllFieldDescriptors(pathPrefix, object.getClass());
+        List<FieldDescriptor> fieldDescriptors = generateAllFieldDescriptors(pathPrefix, object.getClass(), object);
         fieldDescriptors.addAll(Stream.of(object.getClass().getDeclaredFields())
           .filter(field -> field.isAnnotationPresent(Valid.class))
           .map(field -> {
@@ -135,11 +137,11 @@ public class RestDocument {
         return fieldDescriptors;
     }
 
-    private static List<FieldDescriptor> generateAllFieldDescriptors(String path, Class clazz) {
+    private static List<FieldDescriptor> generateAllFieldDescriptors(String path, Class clazz, Object object) {
         List<List<FieldDescriptor>> fieldDescriptorGroups = new ArrayList<>();
         Class currentClass = clazz;
         while (currentClass != null) {
-            fieldDescriptorGroups.add(generateFieldDescriptors(path, currentClass));
+            fieldDescriptorGroups.add(generateFieldDescriptors(path, currentClass, object));
             currentClass = currentClass.getSuperclass();
         }
         Collections.reverse(fieldDescriptorGroups);
@@ -148,9 +150,9 @@ public class RestDocument {
           .collect(Collectors.toList());
     }
 
-    private static List<FieldDescriptor> generateFieldDescriptors(String path, Class clazz) {
+    private static List<FieldDescriptor> generateFieldDescriptors(String path, Class clazz, Object object) {
         return Stream.of(clazz.getDeclaredFields())
-          .filter(field -> !"$jacocoData".equals(field.getName()))
+          .filter(field -> !"$jacocoData".equals(field.getName())).filter(field ->  ReflectionTestUtils.getField(object, clazz, field.getName())!=null)
           .map(field -> fieldWithPath(path + field.getName())
             .type(getType(field))
             .description(getComment(clazz, field.getName()))

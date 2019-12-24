@@ -1,31 +1,31 @@
 package com.active.services.cart.common;
 
-import static com.active.services.cart.model.ErrorCode.INTERNAL_ERROR;
-import static com.active.services.cart.model.ErrorCode.VALIDATION_ERROR;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.active.services.cart.model.ErrorItem;
 import com.active.services.cart.model.v1.rsp.BaseRsp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.active.services.cart.model.ErrorCode.INTERNAL_ERROR;
+import static com.active.services.cart.model.ErrorCode.VALIDATION_ERROR;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private static final String ERROR_MSG_TMPL = "%s: %s";
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public BaseRsp methodArgumentNotValidException(MethodArgumentNotValidException exception)

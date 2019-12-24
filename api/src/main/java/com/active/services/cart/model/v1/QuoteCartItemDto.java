@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class CartItemDto extends BaseDto {
+public class QuoteCartItemDto extends BaseDto {
 
     @NotNull
     private Long productId;
@@ -61,5 +61,5 @@ public class CartItemDto extends BaseDto {
     private Integer feeVolumeIndex;
 
     @Valid
-    private List<CartItemDto> subItems = new ArrayList<>();
+    private List<QuoteCartItemFeeDto> fees = new ArrayList<>();
 }

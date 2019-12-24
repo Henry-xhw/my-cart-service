@@ -4,6 +4,9 @@ import com.active.services.cart.CartServiceApp;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeeRelationship;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,9 +14,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -24,11 +29,15 @@ import static junit.framework.TestCase.assertNotNull;
 @SpringBootTest(classes = CartServiceApp.class)
 @Transactional
 @Rollback
+@ActiveProfiles("local")
 public class CartRepositoryIntegrationTest {
 
     private static final String identifier = "34D725FD-85CC-4724-BA6E-1B3CC41CDE31";
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private CartItemFeeRepository cartItemFeeRepository;
 
     @Test
     public void cartCRUD() {
@@ -63,5 +72,21 @@ public class CartRepositoryIntegrationTest {
                 });
             });
         });
+    }
+
+    @Test
+    public void cartItemFeeCRUD() {
+        Cart cart = CartDataFactory.cart();
+        cartRepository.createCart(cart);
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        CartItemFee cartItemFee = CartDataFactory.cartItemFee();
+        cartItem.setFees(Arrays.asList(cartItemFee));
+        cartRepository.createCartItem(cart.getId(), cartItem);
+        cartItemFeeRepository.createCartItemFee(cartItemFee);
+        cartItemFeeRepository.createCartItemCartItemFee(
+            CartItemFeeRelationship.buildCartItemCartItemFee(cartItem.getId(), cartItemFee.getId()));
+        cartItemFeeRepository.deleteLastQuoteResult(cartItem.getId());
+        assertNotNull(cartItem.getId());
     }
 }

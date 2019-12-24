@@ -9,25 +9,26 @@ import com.active.services.cart.model.v1.req.CreateCartReq;
 import org.mapstruct.Context;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper {
 
     CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
     Cart toDomain(CartDto dto, @Context boolean isCreate);
 
-    @InheritInverseConfiguration
-    CartDto toDto(Cart dto);
-
     CartItem toDomain(CartItemDto dto, @Context boolean isCreate);
 
     @InheritInverseConfiguration
-    CartItemDto toDto(CartItem dto);
+    CartDto toDto(Cart cart);
+
+    @InheritInverseConfiguration
+    CartItemDto toDto(CartItem cartItem);
 
     Cart toDomainFromCreateCartReq(CreateCartReq req, @Context boolean isCreate);
 
     @InheritInverseConfiguration
-    CreateCartReq toCreateCartReq(Cart dto);
+    CreateCartReq toCreateCartReq(Cart cart);
 }
