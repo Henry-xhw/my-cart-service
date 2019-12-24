@@ -18,16 +18,16 @@ public interface CartMapper {
 
     Cart toDomain(CartDto dto, @Context boolean isCreate);
 
-    @InheritInverseConfiguration
-    CartDto toDto(Cart dto);
-
     CartItem toDomain(CartItemDto dto, @Context boolean isCreate);
 
     @InheritInverseConfiguration
-    CartItemDto toDto(CartItem dto);
+    CartDto toDto(Cart cart);
+
+    @InheritInverseConfiguration
+    CartItemDto toDto(CartItem cartItem);
 
     Cart toDomainFromCreateCartReq(CreateCartReq req, @Context boolean isCreate);
 
     @InheritInverseConfiguration
-    CreateCartReq toCreateCartReq(Cart dto);
+    CreateCartReq toCreateCartReq(Cart cart);
 }

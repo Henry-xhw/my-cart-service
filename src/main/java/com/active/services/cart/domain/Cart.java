@@ -1,10 +1,10 @@
 package com.active.services.cart.domain;
 
-
 import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.service.CartStatus;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +17,7 @@ import java.util.UUID;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Cart extends BaseDomainObject {
 
     private UUID ownerId;

@@ -34,8 +34,6 @@ public class CartService {
 
     private final DataAccess dataAccess;
 
-    private static final int UPDATE_SUCCESS = 1;
-
     @Transactional
     public void create(Cart cart) {
         cartRepository.createCart(cart);
@@ -122,7 +120,7 @@ public class CartService {
 
     @Transactional
     public void finalizeCart(UUID cartId) {
-         cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
+        cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
     }
 
     @Transactional
