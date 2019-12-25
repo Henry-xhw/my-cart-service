@@ -74,7 +74,6 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CreateCartReq resultRsp = objectMapper.readValue(result, CreateCartReq.class);
         verify(cartService, times(1)).create(any());
         Assert.assertNotNull(resultRsp);
-        //Assert.assertFalse(cartDtoReq.getIdentifier().toString().equals(resultRsp.getIdentifier().toString()));
     }
 
     @Test
@@ -84,7 +83,6 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(null);
         req.setKeyerId(cartDtoReq.getKeyerId());
         req.setCurrencyCode(cartDtoReq.getCurrencyCode());
-        //req.setIdentifier(cartDtoReq.getIdentifier());
         doNothing().when(cartService).create(any());
         mockMvc.perform(
             post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
@@ -100,7 +98,6 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(cartDtoReq.getOwnerId());
         req.setKeyerId(null);
         req.setCurrencyCode(cartDtoReq.getCurrencyCode());
-        //req.setIdentifier(cartDtoReq.getIdentifier());
         doNothing().when(cartService).create(any());
         mockMvc.perform(
             post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
@@ -116,7 +113,6 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(cartDtoReq.getOwnerId());
         req.setKeyerId(cartDtoReq.getKeyerId());
         req.setCurrencyCode(null);
-        //req.setIdentifier(cartDtoReq.getIdentifier());
         doNothing().when(cartService).create(any());
         mockMvc.perform(
             post("/carts").contentType(V1_MEDIA).accept(V1_MEDIA).headers(actorIdHeader())
