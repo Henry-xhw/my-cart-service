@@ -16,4 +16,8 @@ public class CheckoutResult {
     private BillingContact billingContact;
     private Long agencyId;
     private PaymentAccountResult accountResult;
+
+    public CheckoutResult(Long orderId) {
+        this.orderId = orderId;
+    }
 }
