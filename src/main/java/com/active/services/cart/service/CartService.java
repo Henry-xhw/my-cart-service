@@ -230,7 +230,7 @@ public class CartService {
             commitInventory(cart.getItems().stream().map(CartItem::getIdentifier).collect(Collectors.toList()));
             commitPayment();
             rsp = placeOrder(cart, req.getOrderUrl(), req.isSendReceipt(),
-                    Optional.of(req.getPaymentAccount()).map(PaymentAccount::getAmsAccountId).orElse(null));
+                    Optional.ofNullable(req.getPaymentAccount()).map(PaymentAccount::getAmsAccountId).orElse(null));
         } catch (CartException e) {
             if (ErrorCode.PAYMENT_AUTH_ERROR == e.getErrorCode()) {
                 // reverse inventory.

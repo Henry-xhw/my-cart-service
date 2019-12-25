@@ -4,9 +4,12 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.order.FeeTransactionType;
 import com.active.services.order.OrderLineFeeType;
 
-public class OrderTypeMapping {
+public final class OrderTypeMapping {
 
-    OrderLineFeeType setFeeType(CartItemFeeType type) {
+    private OrderTypeMapping() {
+    }
+
+    static OrderLineFeeType setFeeType(CartItemFeeType type) {
         if (type == CartItemFeeType.PRICE) {
             return OrderLineFeeType.PRICE;
         }
@@ -22,7 +25,7 @@ public class OrderTypeMapping {
         return null;
     }
 
-    FeeTransactionType setFeeTransactionType(com.active.services.cart.model.FeeTransactionType feeTransactionType) {
+    static FeeTransactionType setFeeTransactionType(com.active.services.cart.model.FeeTransactionType feeTransactionType) {
         if (feeTransactionType == com.active.services.cart.model.FeeTransactionType.DEBIT) {
             return FeeTransactionType.DEBIT;
         }

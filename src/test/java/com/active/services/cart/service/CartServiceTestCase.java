@@ -7,6 +7,8 @@ import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.PaymentAccount;
+import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.repository.CartItemFeeRepository;
@@ -18,7 +20,6 @@ import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -176,6 +177,7 @@ public class CartServiceTestCase {
         UUID cartId = UUID.randomUUID();
         Cart cart = getQualifiedCart(cartId);
         cart.setItems(new ArrayList<>());
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(new ArrayList<>());
         when(cartRepository.getCart(cartId)).thenReturn(Optional.of(cart));
         when(cartRepository.acquireLock(any(), anyString())).thenReturn(1);
         try {
@@ -191,6 +193,7 @@ public class CartServiceTestCase {
         UUID cartId = UUID.randomUUID();
         Cart cart = getQualifiedCart(cartId);
         cart.setVersion(3);
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(new ArrayList<>());
         when(cartRepository.getCart(cartId)).thenReturn(Optional.of(cart));
         when(cartRepository.acquireLock(any(), anyString())).thenReturn(0);
         try {
@@ -205,7 +208,7 @@ public class CartServiceTestCase {
     public void checkoutWhenLockCartFailed() {
         UUID cartId = UUID.randomUUID();
         Cart cart = getQualifiedCart(cartId);
-
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(new ArrayList<>());
         when(cartRepository.getCart(cartId)).thenReturn(Optional.of(cart));
         when(cartRepository.acquireLock(any(), anyString())).thenReturn(0);
         try {
@@ -217,21 +220,33 @@ public class CartServiceTestCase {
     }
 
     @Test
-    @Ignore
-    public void checkoutWhen() {
+    public void checkout() {
         UUID cartId = UUID.randomUUID();
         Cart cart = getQualifiedCart(cartId);
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(new ArrayList<>());
         when(cartRepository.getCart(cartId)).thenReturn(Optional.of(cart));
         when(cartRepository.acquireLock(any(), anyString())).thenReturn(1);
         Long orderId = RandomUtils.nextLong();
+        CheckoutReq req = getCheckoutReq();
         when(orderService.placeOrder(any())).thenReturn(buildRsp(orderId));
         try {
-            List<CheckoutResult> results = cartService.checkout(cartId, new CheckoutReq());
+            List<CheckoutResult> results = cartService.checkout(cartId, req);
             assertTrue(CollectionUtils.isNotEmpty(results));
             assertEquals(orderId, results.get(0).getOrderId());
         } catch (CartException e) {
             fail("no exception");
         }
+    }
+
+    private CheckoutReq getCheckoutReq() {
+        CheckoutReq req = new CheckoutReq();
+        PaymentAccount paymentAccount = new PaymentAccount();
+        paymentAccount.setAmsAccountId("2323232");
+        paymentAccount.setPaymentType(PaymentType.CREDIT_CARD);
+        req.setPaymentAccount(paymentAccount);
+        req.setOrderUrl("www.active.com");
+        req.setSendReceipt(true);
+        return req;
     }
 
     private PlaceOrderRsp buildRsp(Long orderId) {

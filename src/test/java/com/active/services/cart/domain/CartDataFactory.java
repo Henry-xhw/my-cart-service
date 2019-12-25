@@ -7,9 +7,11 @@ import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.service.CartStatus;
 
+import org.apache.commons.lang3.RandomUtils;
+
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,30 +32,14 @@ public class CartDataFactory {
     }
 
     private static List<CartItem> cartItems() {
-        return Arrays.asList();
+        List<CartItem> cartItems = new ArrayList<>();
+        cartItems.add(cartItem());
+        cartItems.add(cartItem());
+        return cartItems;
     }
 
     public static CartItem cartItem() {
-        CartItem cartItem = new CartItem();
-
-        cartItem.setIdentifier(UUID.randomUUID());
-        cartItem.setProductId(1L);
-        cartItem.setProductName("product name");
-        cartItem.setProductDescription("product description");
-        Range<Instant> bookingRange = new Range<>();
-        bookingRange.setLower(Instant.now());
-        bookingRange.setUpper(Instant.now());
-        cartItem.setBookingRange(bookingRange);
-        Range<Instant> trimmedBookingRange = new Range<>();
-        trimmedBookingRange.setLower(Instant.now());
-        trimmedBookingRange.setUpper(Instant.now());
-        cartItem.setTrimmedBookingRange(trimmedBookingRange);
-        cartItem.setQuantity(1);
-        cartItem.setUnitPrice(BigDecimal.ONE);
-        cartItem.setGroupingIdentifier("grouping identifier");
-        cartItem.setFeeVolumeIndex(0);
-
-        return cartItem;
+        return getCartItem(1, new BigDecimal(10), "description");
     }
 
     public static UpdateCartItemDto updateCartItemDto(CartItem cartItem) {
@@ -71,15 +57,48 @@ public class CartDataFactory {
     }
 
     public static CartItemFee cartItemFee() {
+        return getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PRICE, 1, new BigDecimal(1), "description",
+                "name");
+    }
+
+    public static CartItemFee getCartItemFee(FeeTransactionType transactionType, CartItemFeeType feeType, int unit,
+                                              BigDecimal price,
+                                              String description,
+                                              String name) {
         CartItemFee cartItemFee = new CartItemFee();
-        cartItemFee.setId(1L);
+        cartItemFee.setId(RandomUtils.nextLong());
         cartItemFee.setIdentifier(UUID.randomUUID());
-        cartItemFee.setDescription("Description");
-        cartItemFee.setName("name");
-        cartItemFee.setTransactionType(FeeTransactionType.CREDIT);
-        cartItemFee.setType(CartItemFeeType.DISCOUNT);
-        cartItemFee.setUnitPrice(new BigDecimal(1));
-        cartItemFee.setUnits(1);
+        cartItemFee.setTransactionType(transactionType);
+        cartItemFee.setType(feeType);
+        cartItemFee.setUnits(unit);
+        cartItemFee.setUnitPrice(price);
+        cartItemFee.setDescription(description);
+        cartItemFee.setName(name);
         return cartItemFee;
+    }
+
+    public static CartItem getCartItem(Integer quantity, BigDecimal price, String description) {
+        CartItem cartItem = new CartItem();
+        cartItem.setIdentifier(UUID.randomUUID());
+        cartItem.setProductId(RandomUtils.nextLong());
+        cartItem.setProductName("product name");
+        cartItem.setProductDescription(description);
+        Range<Instant> bookingRange = new Range<>();
+        bookingRange.setLower(Instant.now());
+        bookingRange.setUpper(Instant.now());
+        cartItem.setBookingRange(bookingRange);
+        Range<Instant> trimmedBookingRange = new Range<>();
+        trimmedBookingRange.setLower(Instant.now());
+        trimmedBookingRange.setUpper(Instant.now());
+        cartItem.setTrimmedBookingRange(trimmedBookingRange);
+        cartItem.setQuantity(quantity);
+        cartItem.setUnitPrice(price);
+        cartItem.setGroupingIdentifier("grouping identifier");
+        cartItem.setFeeVolumeIndex(0);
+        List<CartItemFee> cartItemFees = new ArrayList<>();
+        cartItemFees.add(cartItemFee());
+        cartItemFees.add(cartItemFee());
+        cartItem.setFees(cartItemFees);
+        return cartItem;
     }
 }

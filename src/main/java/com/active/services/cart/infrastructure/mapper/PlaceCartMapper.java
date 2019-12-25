@@ -43,7 +43,10 @@ public interface PlaceCartMapper {
     OrderLineDTO toLineDTO(CartItem cartItem);
 
     @Mappings({
-            @Mapping(target = "orderLineFees", source = "subItems")
+            @Mapping(target = "orderLineFees", source = "subItems"),
+            @Mapping(target = "amount", source = "unitPrice"),
+            @Mapping(target = "feeTransactionType", source = "transactionType"),
+            @Mapping(target = "feeType", source = "type")
     })
     OrderLineFeeDTO toFeeDTO(CartItemFee cartItemFee);
 }
