@@ -2,7 +2,6 @@ package com.active.services.cart.controller.v1;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
-import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.CheckoutRsp;
@@ -89,7 +88,7 @@ public class CartController {
 
     @PostMapping("/{cart-id}/checkout")
     public CheckoutRsp checkout(@PathVariable UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
-        List<CheckoutResult> results = cartService.checkout(cartId, req);
-        return new CheckoutRsp(results);
+        CheckoutRsp rsp = new CheckoutRsp();
+        return rsp;
     }
 }

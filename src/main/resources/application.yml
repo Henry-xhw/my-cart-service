@@ -39,11 +39,3 @@ management:
   endpoint:
     shutdown:
       enabled: false
-
-order:
-  okHttp:
-    connectTimeout: 10
-    readWriteTimeout: ${order.okHttp.connectTimeout}
-
-url:
-  orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
