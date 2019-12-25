@@ -155,6 +155,7 @@ public class CartService {
                 insertCartItems(cart, subItems, parentId);
             }
         }
+        incrementVersion(cart.getIdentifier());
     }
 
     @Transactional
