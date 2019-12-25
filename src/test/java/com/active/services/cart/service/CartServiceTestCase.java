@@ -5,43 +5,41 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
-import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
-import com.active.services.cart.util.AuditorAwareUtil;
+import com.active.services.cart.service.quote.CartPriceEngine;
+import com.active.services.cart.util.DataAccess;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static com.active.services.cart.domain.CartDataFactory.cartItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -49,6 +47,15 @@ public class CartServiceTestCase {
 
     @Mock
     private CartRepository cartRepository;
+
+    @Mock
+    private CartItemFeeRepository cartItemFeeRepository;
+
+    @Mock
+    private CartPriceEngine cartPriceEngine;
+
+    @Mock
+    private DataAccess dataAccess;
 
     @Mock
     private OrderService orderService;
@@ -67,7 +74,7 @@ public class CartServiceTestCase {
         CartItem cartItem = CartDataFactory.cartItem();
         try {
             cartService.createCartItems(1L, cart.getIdentifier(), Collections.singletonList(cartItem));
-            verify(cartRepository, any()).createCartItem(cart.getId(), cartItem);
+            Mockito.verify(cartRepository).createCartItems(cart.getId(), Arrays.asList(cartItem));
         } catch (NullPointerException e) {
 
         }
@@ -133,6 +140,26 @@ public class CartServiceTestCase {
     }
 
     @Test
+    public void quoteSuccess() {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = new CartService(cartRepository, orderService, cartItemFeeRepository, cartPriceEngine,
+                dataAccess);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        CartItemFee cartItemFee = CartDataFactory.cartItemFee();
+        cartItem.setFees(Arrays.asList(cartItemFee));
+        cart.setItems(Arrays.asList(cartItem));
+        UUID identifier = cart.getIdentifier();
+        when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
+        Cart quote = cartService.quote(identifier);
+        Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
+        Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
+        Mockito.verify(cartItemFeeRepository).createCartItemCartItemFee(any());
+    }
+
+    @Test
     public void checkoutNullCart() {
         UUID cartId = UUID.randomUUID();
         when(cartRepository.getCart(cartId)).thenReturn(Optional.ofNullable(null));
@@ -175,7 +202,6 @@ public class CartServiceTestCase {
     }
 
     @Test
-    @Ignore
     public void checkoutWhenLockCartFailed() {
         UUID cartId = UUID.randomUUID();
         Cart cart = getQualifiedCart(cartId);
