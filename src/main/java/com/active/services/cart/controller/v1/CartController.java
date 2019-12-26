@@ -88,7 +88,9 @@ public class CartController {
 
     @PostMapping(CHECKOUT_PATH)
     public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody CheckoutReq req) {
+        CheckoutRsp rsp = new CheckoutRsp();
         List<CheckoutResult> results = cartService.checkout(cartId, req);
-        return new CheckoutRsp(results);
+        rsp.setCheckoutResults(results);
+        return rsp;
     }
 }

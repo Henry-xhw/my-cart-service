@@ -11,6 +11,7 @@ import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.infrastructure.mapper.PlaceCartMapper;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.PaymentAccount;
+import com.active.services.cart.model.PaymentAccountResult;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.repository.CartItemFeeRepository;
@@ -210,7 +211,7 @@ public class CartService {
         }
         if (cart.getVersion() != cart.getPriceVersion()) {
             throw new CartException(ErrorCode.CART_PRICING_OUT_OF_DATE,
-                    "Cart: {0} pricing had out of date. Price version : {1}, cart version: {2} Please call quote " +
+                    "Cart: {0} price had out of date. Price version : {1}, cart version: {2}. Please call quote " +
                             "before checkout.",
                     cartId, cart.getPriceVersion(), cart.getVersion());
         }
@@ -236,7 +237,8 @@ public class CartService {
         }
         finalizeCart(cartId);
         return rsp.getOrderResponses().stream().map(OrderResponseDTO::getOrderId)
-            .map(orderId -> new CheckoutResult(orderId)).collect(Collectors.toList());
+                .map(orderId -> new CheckoutResult(orderId, new PaymentAccountResult()))
+                .collect(Collectors.toList());
     }
 
     private PlaceOrderRsp placeOrder(Cart cart, String orderUrl, boolean sendReceipt, String payAccountId) {
