@@ -68,24 +68,6 @@ public class CartService {
         return cart;
     }
 
-    public Cart getCartWithFullPriceByUuid(UUID cartId) {
-        Cart cart = getCartByUuid(cartId);
-        buildCartItemFeeTree(cart);
-        return cart;
-    }
-
-    private void buildCartItemFeeTree(Cart cart) {
-        List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
-        cart.getItems().forEach(cartItem -> {
-            List<CartItemFeesInCart> collect =
-                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId())
-                            .collect(Collectors.toList());
-
-            TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
-            cartItem.setFees(baseTreeTreeBuilder.buildTree());
-        });
-    }
-
     @Transactional
     public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
         cartRepository.createCartItems(cartId, items);
@@ -126,11 +108,6 @@ public class CartService {
         return cartRepository.search(ownerId);
     }
 
-    public Long getCartItemIdByCartItemUuid(UUID cartItemId) {
-        return cartRepository.getCartItemIdByCartItemUuid(cartItemId)
-                .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: {0}", cartItemId));
-    }
-
     public void insertCartItems(Cart cart, List<CartItem> cartItemList, Long requestParentId) {
         Long cartId = cart.getId();
         for (CartItem it : cartItemList) {
@@ -153,26 +130,6 @@ public class CartService {
         incrementVersion(cart.getIdentifier());
     }
 
-    public void finalizeCart(UUID cartId) {
-        cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
-    }
-
-    public void incrementVersion(UUID cartId) {
-        cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor());
-    }
-
-    public void incrementPriceVersion(UUID cartId) {
-        cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor());
-    }
-
-    public boolean acquireLock(UUID cartId) {
-        return cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
-    }
-
-    public boolean releaseLock(UUID cartId) {
-        return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
-    }
-
     public Cart quote(UUID cartId) {
         Cart cart = getCartByUuid(cartId);
         cartPriceEngine.quote(new CartQuoteContext(cart));
@@ -183,17 +140,6 @@ public class CartService {
             incrementPriceVersion(cartId);
         });
         return cart;
-    }
-
-    private void saveQuoteResult(Cart cart) {
-        cart.getItems().stream().filter(Objects::nonNull).forEach(item -> {
-            cartItemFeeRepository.deleteLastQuoteResult(item.getId());
-            item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
-                cartItemFeeRepository.createCartItemFee(cartItemFee);
-                cartItemFeeRepository.createCartItemCartItemFee(
-                        CartItemFeeRelationship.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
-            });
-        });
     }
 
     @Transactional
@@ -228,6 +174,60 @@ public class CartService {
         return rsp.getOrderResponses().stream().map(OrderResponseDTO::getOrderId)
                 .map(orderId -> new CheckoutResult(orderId, new PaymentAccountResult()))
                 .collect(Collectors.toList());
+    }
+
+    private void finalizeCart(UUID cartId) {
+        cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
+    }
+
+    private void incrementVersion(UUID cartId) {
+        cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor());
+    }
+
+    private void incrementPriceVersion(UUID cartId) {
+        cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor());
+    }
+
+    private boolean acquireLock(UUID cartId) {
+        return cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
+    }
+
+    private boolean releaseLock(UUID cartId) {
+        return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
+    }
+
+    private Long getCartItemIdByCartItemUuid(UUID cartItemId) {
+        return cartRepository.getCartItemIdByCartItemUuid(cartItemId)
+                .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: {0}", cartItemId));
+    }
+
+    private void saveQuoteResult(Cart cart) {
+        cart.getItems().stream().filter(Objects::nonNull).forEach(item -> {
+            cartItemFeeRepository.deleteLastQuoteResult(item.getId());
+            item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
+                cartItemFeeRepository.createCartItemFee(cartItemFee);
+                cartItemFeeRepository.createCartItemCartItemFee(
+                        CartItemFeeRelationship.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
+            });
+        });
+    }
+
+    private Cart getCartWithFullPriceByUuid(UUID cartId) {
+        Cart cart = getCartByUuid(cartId);
+        buildCartItemFeeTree(cart);
+        return cart;
+    }
+
+    private void buildCartItemFeeTree(Cart cart) {
+        List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
+        cart.getItems().forEach(cartItem -> {
+            List<CartItemFeesInCart> collect =
+                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId())
+                            .collect(Collectors.toList());
+
+            TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
+            cartItem.setFees(baseTreeTreeBuilder.buildTree());
+        });
     }
 
     private PlaceOrderRsp placeOrder(Cart cart, String orderUrl, boolean sendReceipt, String payAccountId) {

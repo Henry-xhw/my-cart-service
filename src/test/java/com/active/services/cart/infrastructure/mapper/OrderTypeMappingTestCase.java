@@ -15,7 +15,6 @@ public class OrderTypeMappingTestCase {
         assertEquals(OrderLineFeeType.PRICE, OrderTypeMapping.setFeeType(CartItemFeeType.PRICE));
         assertEquals(OrderLineFeeType.REGISTRATION_PERCENT, OrderTypeMapping.setFeeType(CartItemFeeType.PROCESSING_PERCENT));
         assertEquals(OrderLineFeeType.REGISTRATION_FLAT, OrderTypeMapping.setFeeType(CartItemFeeType.PROCESSING_FLAT));
-        assertEquals(OrderLineFeeType.ADJUSTMENT_CREDIT, OrderTypeMapping.setFeeType(CartItemFeeType.PRICE_ADJUSTMENT));
     }
 
     @Test
