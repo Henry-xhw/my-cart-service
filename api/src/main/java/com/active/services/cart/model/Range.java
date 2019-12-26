@@ -1,6 +1,7 @@
 package com.active.services.cart.model;
 
 import com.active.services.cart.model.validation.ValidRange;
+
 import lombok.Data;
 
 @Data
