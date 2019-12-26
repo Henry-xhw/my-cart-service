@@ -1,11 +1,10 @@
 package com.active.services.cart.model;
 
+import com.active.services.CardType;
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.UUID;
-
-import com.active.services.CardType;
-
-import lombok.Data;
 
 @Data
 public class PaymentAccountResult {
