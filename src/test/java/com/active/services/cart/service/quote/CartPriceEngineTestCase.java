@@ -29,6 +29,7 @@ public class CartPriceEngineTestCase {
         Cart cart = CartDataFactory.cart();
         cart.setIdentifier(cartId);
         CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setFees(new ArrayList<>());
         ArrayList<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem);
         cart.setItems(cartItems);
