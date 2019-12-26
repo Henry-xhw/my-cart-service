@@ -1,8 +1,8 @@
 package com.active.services.cart.model;
 
-import javax.validation.constraints.NotNull;
-
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 public class PaymentAccount {
