@@ -153,27 +153,22 @@ public class CartService {
         incrementVersion(cart.getIdentifier());
     }
 
-    @Transactional
     public void finalizeCart(UUID cartId) {
         cartRepository.finalizeCart(cartId, AuditorAwareUtil.getAuditor());
     }
 
-    @Transactional
     public void incrementVersion(UUID cartId) {
         cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor());
     }
 
-    @Transactional
     public void incrementPriceVersion(UUID cartId) {
         cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor());
     }
 
-    @Transactional
     public boolean acquireLock(UUID cartId) {
         return cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
     }
 
-    @Transactional
     public boolean releaseLock(UUID cartId) {
         return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
     }
@@ -226,12 +221,6 @@ public class CartService {
             commitPayment();
             rsp = placeOrder(cart, req.getOrderUrl(), req.isSendReceipt(),
                     Optional.ofNullable(req.getPaymentAccount()).map(PaymentAccount::getAmsAccountId).orElse(null));
-        } catch (CartException e) {
-            if (ErrorCode.PAYMENT_AUTH_ERROR == e.getErrorCode()) {
-                // reverse inventory.
-            }
-            LOG.info(e.getErrorMessage());
-            throw e;
         } finally {
             releaseLock(cartId);
         }
@@ -252,7 +241,7 @@ public class CartService {
         try {
             rsp = orderService.placeOrder(req);
         } catch (Exception e) {
-            handleException(e);
+            handleException(e, cart.getIdentifier(), req);
         }
         if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())) {
             throw new CartException(ErrorCode.PLACE_ORDER_ERROR, "There is no order response from order service for " +
@@ -262,13 +251,15 @@ public class CartService {
         return rsp;
     }
 
-    private void handleException(Exception e) {
-        // do we need to update cart status?
-    }
-
     private void commitInventory(List<UUID> inventoryReservationIds) {
     }
 
     private void commitPayment() {
+    }
+
+    private void handleException(Exception ex, UUID cartId, PlaceOrderReq req) {
+        LOG.error("Encounter exception when calling order service place order for cart {}", cartId, ex);
+        throw new CartException(ex, ErrorCode.PLACE_ORDER_ERROR, "Encounter exception {0} when calling order " +
+                "service place order for cart {1}.", ex.getMessage(), cartId);
     }
 }

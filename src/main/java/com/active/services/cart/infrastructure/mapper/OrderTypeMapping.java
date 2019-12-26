@@ -13,9 +13,6 @@ public final class OrderTypeMapping {
         if (type == CartItemFeeType.PRICE) {
             return OrderLineFeeType.PRICE;
         }
-        if (type == CartItemFeeType.PRICE_ADJUSTMENT) {
-            return OrderLineFeeType.ADJUSTMENT_CREDIT;
-        }
         if (type == CartItemFeeType.PROCESSING_FLAT) {
             return OrderLineFeeType.REGISTRATION_FLAT;
         }

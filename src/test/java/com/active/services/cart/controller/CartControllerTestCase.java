@@ -134,7 +134,8 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartWhenCartNotExistThrowException() throws Exception {
-        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
+                "not found"));
         mockMvc.perform(delete("/carts/{id}", cartId)
           .headers(actorIdHeader())
           .contentType(V1_MEDIA))

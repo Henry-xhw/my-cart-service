@@ -80,7 +80,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void createCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
+                "not found"));
         CreateCartItemReq req = new CreateCartItemReq();
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
@@ -106,7 +107,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
+                "no found"));
         mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
@@ -160,7 +162,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         items.add(cartItem);
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
-        when(cartService.getCartByUuid(identifier)).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND));
+        when(cartService.getCartByUuid(identifier)).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart not " +
+                "found"));
         when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)

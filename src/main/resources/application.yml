@@ -3,9 +3,9 @@ spring:
     banner-mode: console
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:sqlserver://DBDEVAW01.dev.activenetwork.com:1433;databaseName=cart_service
-    username: cart_service
-    password: sb9O1AlbwSjJYTgjPrfn
+    url: jdbc:sqlserver://localhost:1433;databaseName=cart_service
+    username: sa
+    password: 123!P01@W
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       poolName: oltpPool
@@ -47,3 +47,4 @@ order:
 
 url:
   orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
+  orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
