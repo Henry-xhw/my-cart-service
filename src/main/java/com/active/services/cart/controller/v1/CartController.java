@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.constraints.NotNull;
-
 import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
 import static com.active.services.cart.controller.v1.Constants.CHECKOUT_PATH;
 import static com.active.services.cart.controller.v1.Constants.ID_PARAM;
@@ -43,7 +41,7 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public CreateCartRsp create(@RequestBody @NotNull @Validated CreateCartReq req) {
+    public CreateCartRsp create(@RequestBody @Validated CreateCartReq req) {
         Cart cart = CartMapper.INSTANCE.toDomainFromCreateCartReq(req, true);
         cart.setIdentifier(UUID.randomUUID());
         cartService.create(cart);
@@ -86,7 +84,7 @@ public class CartController {
     }
 
     @PostMapping(CHECKOUT_PATH)
-    public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @NotNull @RequestBody @Validated CheckoutReq req) {
+    public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody CheckoutReq req) {
         CheckoutRsp rsp = new CheckoutRsp();
         return rsp;
     }

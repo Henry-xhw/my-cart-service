@@ -1,7 +1,5 @@
 package com.active.services.cart.model.v1.req;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
@@ -13,8 +11,6 @@ import lombok.Data;
 @Data
 public class CheckoutReq {
 
-    @NotNull
-    @Valid
     private PaymentAccount paymentAccount;
     private boolean sendReceipt = true;
     private String orderUrl;
