@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class DateTimeTypeAdapter extends TypeAdapter<DateTime> {
 
-    private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     @Override
     public void write(JsonWriter out, DateTime value) throws IOException {
