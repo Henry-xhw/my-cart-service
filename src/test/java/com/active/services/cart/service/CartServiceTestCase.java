@@ -1,5 +1,7 @@
 package com.active.services.cart.service;
 
+import com.active.services.billing.Recurrable;
+import com.active.services.billing.RecurringBillingSchedulePeriod;
 import com.active.services.cart.client.rest.OrderService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
@@ -11,6 +13,7 @@ import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
+import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.quote.CartPriceEngine;
@@ -20,6 +23,7 @@ import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,6 +32,7 @@ import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -186,6 +191,43 @@ public class CartServiceTestCase {
         List<CartItem> cartItemList = new ArrayList<>();
         cartItemList.add(cartItem);
         cartService.insertCartItems(cart, cartItemList, null);
+    }
+
+    @Test
+    public void getCartWithFullSuccess() throws Exception {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = new CartService(cartRepository, orderService, cartItemFeeRepository, cartPriceEngine,
+                dataAccess);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        cart.setItems(Arrays.asList(cartItem));
+        UUID identifier = cart.getIdentifier();
+        when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
+        CartItemFeesInCart cartItemFee1 = new CartItemFeesInCart();
+        cartItemFee1.setCartItemId(cartItem.getId());
+        cartItemFee1.setId(1L);
+        cartItemFee1.setParentId(null);
+        CartItemFeesInCart cartItemFee2 = new CartItemFeesInCart();
+        cartItemFee2.setCartItemId(cartItem.getId());
+        cartItemFee2.setId(2L);
+        cartItemFee2.setParentId(1L);
+        List<CartItemFeesInCart> fees = new ArrayList<>();
+        fees.add(cartItemFee1);
+        fees.add(cartItemFee2);
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(fees);
+
+        Class cl = cartService.getClass();
+        Method method = cl.getDeclaredMethod("getCartWithFullPriceByUuid", new Class[]{UUID.class});
+
+        method.setAccessible(true);
+
+        Cart cartWithFullPrice = (Cart) method.invoke(cartService, new Object[]{identifier});
+
+        Assert.assertEquals(1, cartWithFullPrice.getItems().size());
+        Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().size());
+        Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().get(0).getSubItems().size());
     }
 
     @Test

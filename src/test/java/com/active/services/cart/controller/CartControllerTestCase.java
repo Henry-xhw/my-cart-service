@@ -4,12 +4,15 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.controller.v1.CartController;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.mock.MockCart;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
+import com.active.services.cart.model.v1.rsp.QuoteRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 
@@ -22,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -181,5 +185,27 @@ public class CartControllerTestCase extends BaseControllerTestCase {
                 .andDo(newSuccessDocument("Cart", "Find-Cart-By-OwnerId",
                         pathParameters(autoPathParameterDoc("owner-id", CartDto.class, "ownerId")),
                         autoResponseFieldsDoc(rsp)));
+    }
+
+    @Test
+    public void quoteCartSuccess() throws Exception {
+        QuoteRsp rsp = new QuoteRsp();
+        Cart cart = CartDataFactory.cart();
+        cart.setIdentifier(cartId);
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        CartItemFee cartItemFee = CartDataFactory.cartItemFee();
+        cartItem.setFees(Arrays.asList(cartItemFee));
+        cart.setItems(Arrays.asList(cartItem));
+        when(cartService.quote(cartId)).thenReturn(cart);
+        String result = mockMvc.perform(post("/carts/{cart-id}/quote", cartId)
+                .contentType(V1_MEDIA).accept(V1_MEDIA)
+                .headers(actorIdHeader()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        QuoteRsp resultRsp = objectMapper.readValue(result, QuoteRsp.class);
+        verify(cartService, times(1)).quote(any());
+        Assert.assertNotNull(resultRsp);
+
     }
 }
