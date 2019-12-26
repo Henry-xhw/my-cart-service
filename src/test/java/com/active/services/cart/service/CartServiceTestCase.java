@@ -41,6 +41,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -158,6 +159,33 @@ public class CartServiceTestCase {
         Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
         Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
         Mockito.verify(cartItemFeeRepository).createCartItemCartItemFee(any());
+    }
+
+    @Test
+    public void insertCartItemSuccess() {
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        CartItem childCartItem = CartDataFactory.cartItem();
+        cartItem.setIdentifier(UUID.randomUUID());
+        childCartItem.setIdentifier(null);
+        List<CartItem> childCartItemList = new ArrayList<>();
+        childCartItemList.add(childCartItem);
+        cartItem.setSubItems(childCartItemList);
+        List<CartItem> cartItemList = new ArrayList<>();
+        cartItemList.add(cartItem);
+        cart.setItems(cartItemList);
+        when(cartRepository.getCartItemIdByCartItemUuid(cartItem.getIdentifier())).thenReturn(Optional.ofNullable(cart.getId()));
+        cartService.insertCartItems(cart, cartItemList, null);
+        Mockito.verify(cartRepository, times(1)).createCartItem(any(), any());
+    }
+
+    @Test(expected = CartException.class)
+    public void insertCartItemFailedWithNotExistCartId() {
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        List<CartItem> cartItemList = new ArrayList<>();
+        cartItemList.add(cartItem);
+        cartService.insertCartItems(cart, cartItemList, null);
     }
 
     @Test
