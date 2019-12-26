@@ -64,7 +64,6 @@ public class CartService {
     public Cart getCartByUuid(UUID cartId) {
         Cart cart = cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
                 " cart id does not exist: {0}", cartId));
-        buildCartItemTree(cart);
         return cart;
     }
 
@@ -72,11 +71,6 @@ public class CartService {
         Cart cart = getCartByUuid(cartId);
         buildCartItemFeeTree(cart);
         return cart;
-    }
-
-    private void buildCartItemTree(Cart cart) {
-        TreeBuilder<CartItem> treeBuilder = new TreeBuilder<>(cart.getItems());
-        cart.setItems(treeBuilder.buildTree());
     }
 
     private void buildCartItemFeeTree(Cart cart) {
