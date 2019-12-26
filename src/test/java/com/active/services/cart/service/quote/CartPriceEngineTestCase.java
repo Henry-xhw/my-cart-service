@@ -25,7 +25,7 @@ public class CartPriceEngineTestCase {
     private CartPriceEngine cartPriceEngine;
 
     @Test
-    public void createCartItemsSuccess() {
+    public void quoteSuccess() {
         Cart cart = CartDataFactory.cart();
         cart.setIdentifier(cartId);
         CartItem cartItem = CartDataFactory.cartItem();
