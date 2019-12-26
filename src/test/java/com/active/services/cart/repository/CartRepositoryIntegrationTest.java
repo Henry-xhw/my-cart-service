@@ -31,8 +31,9 @@ import static junit.framework.TestCase.assertNotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CartServiceApp.class)
 @Transactional
-@Rollback(false)
+@Rollback
 @ActiveProfiles("local")
+@Ignore
 public class CartRepositoryIntegrationTest {
 
     private static final String identifier = "34D725FD-85CC-4724-BA6E-1B3CC41CDE31";
