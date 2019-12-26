@@ -5,11 +5,13 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.util.DataAccess;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -168,5 +170,35 @@ public class CartServiceTestCase {
         List<CartItem> cartItemList = new ArrayList<>();
         cartItemList.add(cartItem);
         cartService.insertCartItems(cart, cartItemList, null);
+    }
+
+    @Test
+    public void getCartWithFullSuccess() {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine, dataAccess);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        cart.setItems(Arrays.asList(cartItem));
+        UUID identifier = cart.getIdentifier();
+        when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
+        CartItemFeesInCart cartItemFee1 = new CartItemFeesInCart();
+        cartItemFee1.setCartItemId(cartItem.getId());
+        cartItemFee1.setId(1L);
+        cartItemFee1.setParentId(null);
+        CartItemFeesInCart cartItemFee2 = new CartItemFeesInCart();
+        cartItemFee2.setCartItemId(cartItem.getId());
+        cartItemFee2.setId(2L);
+        cartItemFee2.setParentId(1L);
+        List<CartItemFeesInCart> fees = new ArrayList<>();
+        fees.add(cartItemFee1);
+        fees.add(cartItemFee2);
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(fees);
+
+        Cart cartWithFullPrice = cartService.getCartWithFullPriceByUuid(identifier);
+        Assert.assertEquals(1, cartWithFullPrice.getItems().size());
+        Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().size());
+        Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().get(0).getSubItems().size());
     }
 }
