@@ -6,5 +6,5 @@ public enum CartItemFeeType {
     PROCESSING_FLAT,
     PROCESSING_PERCENT,
     DISCOUNT,
-    SURCHARGE;
+    SURCHARGE
 }

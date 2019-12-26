@@ -26,6 +26,7 @@ import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
 import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -145,21 +146,7 @@ public class CartService {
     @Transactional
     public List<CheckoutResult> checkout(UUID cartId, CheckoutReq req) {
         Cart cart = getCartWithFullPriceByUuid(cartId);
-
-        if (CollectionUtils.isEmpty(cart.getFlattenCartItems())) {
-            throw new CartException(ErrorCode.CART_ITEM_NOT_FOUND,
-                    "There is no cart item for cartId: {0} ", cartId);
-        }
-        if (cart.getVersion() != cart.getPriceVersion()) {
-            throw new CartException(ErrorCode.CART_PRICING_OUT_OF_DATE,
-                    "Cart: {0} price had out of date. Price version : {1}, cart version: {2}. Please call quote " +
-                            "before checkout.",
-                    cartId, cart.getPriceVersion(), cart.getVersion());
-        }
-        if (!acquireLock(cartId)) {
-            LOG.warn("Cart {} had been locked by other call", cartId);
-            throw new CartException(ErrorCode.CART_LOCKED, "Cart: {0} had been locked by other call.", cartId);
-        }
+        validate(cart);
 
         PlaceOrderRsp rsp;
         try {
@@ -174,6 +161,24 @@ public class CartService {
         return rsp.getOrderResponses().stream().map(OrderResponseDTO::getOrderId)
                 .map(orderId -> new CheckoutResult(orderId, new PaymentAccountResult()))
                 .collect(Collectors.toList());
+    }
+
+    private void validate(@NonNull Cart cart) {
+        UUID cartId = cart.getIdentifier();
+        if (CollectionUtils.isEmpty(cart.getFlattenCartItems())) {
+            throw new CartException(ErrorCode.CART_ITEM_NOT_FOUND,
+                    "There is no cart item for cartId: {0} ", cartId);
+        }
+        if (cart.getVersion() != cart.getPriceVersion()) {
+            throw new CartException(ErrorCode.CART_PRICING_OUT_OF_DATE,
+                    "Cart: {0} price had out of date. Price version : {1}, cart version: {2}. Please call quote " +
+                            "before checkout.",
+                    cartId, cart.getPriceVersion(), cart.getVersion());
+        }
+        if (!acquireLock(cartId)) {
+            LOG.warn("Cart {} had been locked by other call", cartId);
+            throw new CartException(ErrorCode.CART_LOCKED, "Cart: {0} had been locked by other call.", cartId);
+        }
     }
 
     private void finalizeCart(UUID cartId) {
