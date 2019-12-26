@@ -2,9 +2,10 @@ package com.active.services.cart.model.validation;
 
 import com.active.services.cart.model.Range;
 
+import java.util.Objects;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Objects;
 
 public class RangeValidator implements ConstraintValidator<ValidRange, Range> {
 

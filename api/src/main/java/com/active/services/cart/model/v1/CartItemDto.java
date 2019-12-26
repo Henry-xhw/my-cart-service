@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class CartItemDto extends BaseDto {
 
     @NotNull
@@ -59,9 +59,6 @@ public class CartItemDto extends BaseDto {
     private BigDecimal netPrice;
 
     private Integer feeVolumeIndex;
-
-    @Valid
-    private List<CartItemFeeDto> fees = new ArrayList<>();
 
     @Valid
     private List<CartItemDto> subItems = new ArrayList<>();

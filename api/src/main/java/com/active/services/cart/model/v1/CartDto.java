@@ -1,15 +1,15 @@
 package com.active.services.cart.model.v1;
 
+import com.active.services.cart.model.CurrencyCode;
+
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.active.services.cart.model.CurrencyCode;
-
-import lombok.Data;
 
 @Data
 public class CartDto extends BaseDto {

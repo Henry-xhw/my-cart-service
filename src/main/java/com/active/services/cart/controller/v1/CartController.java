@@ -10,6 +10,7 @@ import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
+import com.active.services.cart.service.CartStatus;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,7 @@ public class CartController {
     public CreateCartRsp create(@RequestBody @Validated CreateCartReq req) {
         Cart cart = CartMapper.INSTANCE.toDomainFromCreateCartReq(req, true);
         cart.setIdentifier(UUID.randomUUID());
+        cart.setCartStatus(CartStatus.CREATED);
         cartService.create(cart);
         CreateCartRsp rsp = new CreateCartRsp();
         CartDto cartDto = CartMapper.INSTANCE.toDto(cart);
