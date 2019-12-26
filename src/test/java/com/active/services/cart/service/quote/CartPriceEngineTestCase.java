@@ -28,9 +28,9 @@ public class CartPriceEngineTestCase {
     public void quoteSuccess() {
         Cart cart = CartDataFactory.cart();
         cart.setIdentifier(cartId);
-            CartItem cartItem = CartDataFactory.cartItem();
-        ArrayList<CartItem> cartItems = new ArrayList<>();
+        CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setFees(new ArrayList<>());
+        ArrayList<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem);
         cart.setItems(cartItems);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
