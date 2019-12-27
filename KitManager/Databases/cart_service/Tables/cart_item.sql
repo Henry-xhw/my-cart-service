@@ -19,7 +19,8 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL
+        [modified_dt]               DATETIME            NOT NULL,
+        [reservation_id]            UNIQUEIDENTIFIER    NULL
     )
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
@@ -75,5 +76,16 @@ BEGIN
 	ALTER TABLE dbo.cart_items ADD fee_volume_index BIGINT NULL
 
 	PRINT 'Added column fee_volume_index to dbo.cart_items'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.cart_items ADD reservation_id UNIQUEIDENTIFIER NULL
+
+	PRINT 'Added column reservation_id to dbo.cart_items'
 END
 GO
