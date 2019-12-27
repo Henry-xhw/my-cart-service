@@ -225,7 +225,7 @@ public class CartService {
 
     private void buildCartItemFeeTree(Cart cart) {
         List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
-        cart.getItems().forEach(cartItem -> {
+        cart.getFlattenCartItems().forEach(cartItem -> {
             List<CartItemFeesInCart> collect =
                     cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId())
                             .collect(Collectors.toList());
