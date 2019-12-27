@@ -207,7 +207,7 @@ public class CartService {
     }
 
     private void saveQuoteResult(Cart cart) {
-        cart.getItems().stream().filter(Objects::nonNull).forEach(item -> {
+        cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             cartItemFeeRepository.deleteLastQuoteResult(item.getId());
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 cartItemFeeRepository.createCartItemFee(cartItemFee);

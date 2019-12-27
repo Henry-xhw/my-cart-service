@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.Assert.assertTrue;
+
 @Slf4j
 @Ignore
 public class OrderServiceConfigurationTestCase {
@@ -42,7 +44,7 @@ public class OrderServiceConfigurationTestCase {
             if (e instanceof FeignException.BadRequest) {
                 LOG.info(((FeignException.BadRequest) e).contentUTF8());
             } else {
-                LOG.info(e.getMessage());
+                assertTrue(e.getMessage().contains("feign.FeignException$InternalServerError: status 500"));
             }
         }
     }
