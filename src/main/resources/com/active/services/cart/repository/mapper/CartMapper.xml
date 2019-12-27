@@ -50,6 +50,7 @@
             [quantity],
             [unit_price],
             [grouping_identifier],
+            [reservation_id],
             [created_by],
             [created_dt],
             [modified_by],
@@ -86,6 +87,7 @@
              #{item.quantity},
              #{item.unitPrice},
              #{item.groupingIdentifier},
+             #{item.reservationId},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -146,6 +148,14 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
+        <choose>
+            <when test="item.reservationId!=null">
+                [reservation_id] = #{item.reservationId},
+            </when>
+            <otherwise>
+                [reservation_id] = null,
+            </otherwise>
+        </choose>
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -198,6 +208,7 @@
         item.unit_price               AS item_unit_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
+        item.reservation_id           AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
