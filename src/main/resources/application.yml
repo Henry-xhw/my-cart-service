@@ -3,9 +3,9 @@ spring:
     banner-mode: console
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=cart_service
-    username: sa
-    password: 123!P01@W
+    url: jdbc:sqlserver://localhost.dev.activenetwork.com:1434;databaseName=cart_service
+    username: fnd_dev_usr
+    password: fnd_dev_usr$2008
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       poolName: oltpPool
