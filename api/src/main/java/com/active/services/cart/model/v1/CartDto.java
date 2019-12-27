@@ -3,6 +3,7 @@ package com.active.services.cart.model.v1;
 import com.active.services.cart.model.CurrencyCode;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CartDto extends BaseDto {
 
     @NotNull

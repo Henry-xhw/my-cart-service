@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -44,6 +45,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer feeVolumeIndex;
 
+    private UUID reservationId;
+
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -57,6 +60,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
+        this.setReservationId(updateCartItemDto.getReservationId());
     }
 
     public List<CartItem> getFlattenSubItems() {
