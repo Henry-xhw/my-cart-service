@@ -20,12 +20,15 @@ import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
+import com.active.services.cart.util.JacksonUtils;
 import com.active.services.cart.util.TreeBuilder;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
 import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
+import com.active.services.order.management.api.v3.types.Result;
 
+import feign.FeignException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 
 @Service
@@ -263,8 +268,21 @@ public class CartService {
     }
 
     private void handleException(Exception ex, UUID cartId, PlaceOrderReq req) {
+        String errorMessage = ex.getMessage();
+        if (ex instanceof FeignException) {
+            String placeOrderResponse = ((FeignException) ex).contentUTF8();
+            try {
+                Result result = JacksonUtils.readValue(placeOrderResponse, Result.class);
+                errorMessage = emptyIfNull(result.getErrorMessages()).stream().collect(Collectors.joining(","));
+            } catch (Exception e) {
+                LOG.error("Failed to parse place order response:", e);
+                errorMessage = placeOrderResponse;
+            }
+        }
+
         LOG.error("Encounter exception when calling order service place order for cart {}", cartId, ex);
         throw new CartException(ex, ErrorCode.PLACE_ORDER_ERROR, "Encounter exception {0} when calling order " +
-                "service place order for cart {1}.", ex.getMessage(), cartId);
+                "service place order for cart {1}.", errorMessage, cartId);
     }
+
 }
