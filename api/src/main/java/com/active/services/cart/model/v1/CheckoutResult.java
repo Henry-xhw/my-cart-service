@@ -2,15 +2,16 @@ package com.active.services.cart.model.v1;
 
 import com.active.services.cart.model.PaymentAccountResult;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CheckoutResult {
     private Long orderId;
     private PaymentAccountResult paymentResult;
-
-    public CheckoutResult(Long orderId, PaymentAccountResult paymentResult) {
-        this.orderId = orderId;
-        this.paymentResult = paymentResult;
-    }
 }
