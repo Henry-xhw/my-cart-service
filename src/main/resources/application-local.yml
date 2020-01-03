@@ -18,3 +18,4 @@ logging:
 url:
   orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
   inventoryServiceBase: http://localhost.dev.activenetwork.com:8271
+  productServiceBase: http://localhost.dev.activenetwork.com:8272

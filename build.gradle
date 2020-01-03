@@ -39,6 +39,8 @@ dependencies {
     implementation 'org.aspectj:aspectjweaver:1.9.2'
     implementation 'org.mybatis:mybatis-typehandlers-jsr310:1.0.2'
     implementation 'org.apache.commons:commons-collections4'
+    implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws:3.2.0'
+    implementation 'org.apache.cxf:cxf-rt-features-logging:3.1.8'
 
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
@@ -55,6 +57,7 @@ dependencies {
 
     implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'inventory-service-api', version: '1.1.52'
+    implementation group: 'com.active.services', name:'product-service-api', version: '3.5.27'
     implementation group: 'com.active.services', name:'order-management-service', version: '4.1.0.7', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
