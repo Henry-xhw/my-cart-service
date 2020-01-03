@@ -40,11 +40,13 @@ management:
     shutdown:
       enabled: false
 
-order:
-  okHttp:
-    connectTimeout: 10
-    readWriteTimeout: ${order.okHttp.connectTimeout}
+okHttp:
+  connectTimeout: 10
+  readWriteTimeout: ${order.okHttp.connectTimeout}
 
 url:
   orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
+  inventoryServiceBase: http://inventory
+  productServiceBase: http://product
+  inventoryReservationServiceRest: ${url.inventoryServiceBase}/api
   orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com

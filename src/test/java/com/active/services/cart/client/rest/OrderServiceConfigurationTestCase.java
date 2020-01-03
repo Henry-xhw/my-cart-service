@@ -32,7 +32,7 @@ public class OrderServiceConfigurationTestCase {
 
     @Test
     public void orderService() {
-        OrderServiceConfiguration conf = new OrderServiceConfiguration();
+        RestServiceConfiguration conf = new RestServiceConfiguration();
         ReflectionTestUtils.setField(conf, "orderServiceUrl",
             "http://127.0.0.1:8200/order-management-service/api/place-order");
         orderService = conf.orderService();
