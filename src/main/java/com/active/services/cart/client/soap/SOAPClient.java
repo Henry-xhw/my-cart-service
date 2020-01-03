@@ -22,7 +22,7 @@ public class SOAPClient {
     private ApplicationContext appContext;
 
     @Bean
-    public ProductServiceSOAPEndPoint contractServiceSOAPEndPoint() {
+    public ProductServiceSOAPEndPoint productServiceSOAPEndPoint() {
         ProductServiceSOAPEndPoint target = buildClientService(productServiceSOAPV1, ProductServiceSOAPEndPoint.class);
 
         return target;
