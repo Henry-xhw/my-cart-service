@@ -90,9 +90,31 @@ public class CartServiceTestCase {
     @Test
     public void updateCartItemSuccess() {
         Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        List<CartItem> list = new ArrayList<>();
+        list.add(cartItem);
+        cart.setItems(list);
         when(cartRepository.getCart(cart.getIdentifier())).thenReturn(Optional.of(cart));
         try {
-            cartService.updateCartItems(cart.getIdentifier(), Collections.singletonList(CartDataFactory.cartItem()));
+            cartService.updateCartItems(cart.getIdentifier(), list);
+            Mockito.verify(cartRepository, times(1)).updateCartItems(list);
+        }
+        catch (CartException e) {
+
+        }
+    }
+
+    @Test
+    public void updateCartItemWithNotExistCartItemId() {
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        List<CartItem> list = new ArrayList<>();
+        list.add(cartItem);
+        cart.setItems(Collections.singletonList(CartDataFactory.cartItem()));
+        when(cartRepository.getCart(cart.getIdentifier())).thenReturn(Optional.of(cart));
+        try {
+            cartService.updateCartItems(cart.getIdentifier(), list);
+            Mockito.verify(cartRepository, times(0)).updateCartItems(list);
         }
         catch (CartException e) {
 
@@ -130,10 +152,29 @@ public class CartServiceTestCase {
     public void deleteCartItemSuccess() {
         Cart cart = CartDataFactory.cart();
         Optional<CartItem> cartItem = Optional.of(CartDataFactory.cartItem());
-        UUID cartItemId = cart.getIdentifier();
+        List<CartItem> list = new ArrayList<>();
+        list.add(cartItem.get());
+        cart.setItems(list);
+        UUID cartItemId = cartItem.get().getIdentifier();
         try {
             cartService.deleteCartItem(cart, cartItemId);
-            Mockito.verify(cartRepository).deleteCartItem(cart.getId());
+            Mockito.verify(cartRepository).batchDeleteCartItems(any());
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Test
+    public void deleteCartItemFailedWithNotExistCartItemId() {
+        Cart cart = CartDataFactory.cart();
+        Optional<CartItem> cartItem = Optional.of(CartDataFactory.cartItem());
+        List<CartItem> list = new ArrayList<>();
+        list.add(cartItem.get());
+        cart.setItems(list);
+        UUID cartItemId = UUID.randomUUID();
+        try {
+            cartService.deleteCartItem(cart, cartItemId);
+            Mockito.verify(cartRepository, times(0)).batchDeleteCartItems(any());
         } catch (Exception e) {
 
         }
