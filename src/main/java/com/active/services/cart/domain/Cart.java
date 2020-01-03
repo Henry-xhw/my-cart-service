@@ -1,13 +1,7 @@
 package com.active.services.cart.domain;
 
-import com.active.services.cart.model.CurrencyCode;
-import com.active.services.cart.service.CartStatus;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.commons.collections4.CollectionUtils;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +10,10 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+import com.active.services.cart.service.CartStatus;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -26,7 +23,7 @@ public class Cart extends BaseDomainObject {
 
     private UUID keyerId;
 
-    private CurrencyCode currencyCode;
+    private String currencyCode;
 
     private int version;
 
