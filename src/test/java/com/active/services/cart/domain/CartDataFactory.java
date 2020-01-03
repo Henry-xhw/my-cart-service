@@ -1,7 +1,6 @@
 package com.active.services.cart.domain;
 
 import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;

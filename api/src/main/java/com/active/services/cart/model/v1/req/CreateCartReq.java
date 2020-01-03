@@ -1,12 +1,9 @@
 package com.active.services.cart.model.v1.req;
 
-import com.active.services.cart.model.CurrencyCode;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
-
-import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateCartReq {
@@ -18,5 +15,5 @@ public class CreateCartReq {
     private UUID keyerId;
 
     @NotNull
-    private CurrencyCode currencyCode;
+    private String currencyCode;
 }

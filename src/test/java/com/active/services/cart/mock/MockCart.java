@@ -2,7 +2,6 @@ package com.active.services.cart.mock;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.CurrencyCode;
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
