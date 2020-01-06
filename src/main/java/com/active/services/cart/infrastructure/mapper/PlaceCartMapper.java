@@ -30,13 +30,11 @@ public interface PlaceCartMapper {
     /*    private String groupingIdentifier;
           private UUID identifier;
         private Long glcodeId;
-        private BigDecimal price;   -----need to double check.
     */
     @Mappings({@Mapping(target = "description", source = "productDescription"),
             @Mapping(target = "childOrderLines", source = "subItems"),
             @Mapping(target = "orderLineType", expression = "java(com.active.services.order.OrderLineType.SALE)"),
             @Mapping(target = "orderLineFees", source = "fees"),
-            @Mapping(target = "price", source = "netPrice"),
             @Mapping(target = "systemPrice", source = "grossPrice")
     })
     OrderLineDTO toLineDTO(CartItem cartItem);
