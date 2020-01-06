@@ -1,16 +1,17 @@
 package com.active.services.cart.infrastructure.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderLineDTO;
 import com.active.services.order.management.api.v3.types.OrderLineFeeDTO;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = OrderTypeMapping.class)
 public interface PlaceCartMapper {

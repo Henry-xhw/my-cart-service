@@ -1,10 +1,5 @@
 package com.active.services.cart.client.rest;
 
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import com.active.services.cart.client.rest.gson.DateTimeTypeAdapter;
 
 import feign.Feign;
@@ -15,6 +10,11 @@ import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 @ConfigurationProperties(prefix = "ok-http")
 @Data
@@ -25,7 +25,7 @@ public class FeignConfigurator {
 
     private int readWriteTimeOut = 10;
 
-    public <T> T buildService(String url, Class<T> tClass) {
+    public <T> T buildService(String url, Class<T> clz) {
         okhttp3.OkHttpClient target = new okhttp3.OkHttpClient.Builder().connectTimeout(connectTimeOut, TimeUnit.SECONDS)
                 .writeTimeout(readWriteTimeOut, TimeUnit.SECONDS).readTimeout(readWriteTimeOut, TimeUnit.SECONDS).build();
 
@@ -36,6 +36,6 @@ public class FeignConfigurator {
                 .client(new OkHttpClient(target))
                 .logger(new Slf4jLogger(RestServiceConfiguration.class))
                 .logLevel(level)
-                .target(tClass, url);
+                .target(clz, url);
     }
 }

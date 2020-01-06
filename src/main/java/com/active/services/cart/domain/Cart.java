@@ -1,6 +1,9 @@
 package com.active.services.cart.domain;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+import com.active.services.cart.service.CartStatus;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,10 +13,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
 
-import com.active.services.cart.service.CartStatus;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
