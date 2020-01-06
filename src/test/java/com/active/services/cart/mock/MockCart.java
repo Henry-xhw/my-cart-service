@@ -1,22 +1,22 @@
 package com.active.services.cart.mock;
 
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.Range;
-import com.active.services.cart.model.v1.CartDto;
-import com.active.services.cart.model.v1.CartItemDto;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.Range;
+import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.CartItemDto;
+
 public class MockCart {
 
     public static Cart mockCartDomain() {
         Cart cart = new Cart();
-        cart.setCurrencyCode(CurrencyCode.USD);
+        cart.setCurrencyCode("USD");
         cart.setKeyerId(UUID.randomUUID());
         cart.setOwnerId(UUID.randomUUID());
         cart.setIdentifier(UUID.randomUUID());
@@ -45,7 +45,7 @@ public class MockCart {
 
     public static CartDto mockCartDto() {
         CartDto cartDto = new CartDto();
-        cartDto.setCurrencyCode(CurrencyCode.USD);
+        cartDto.setCurrencyCode("USD");
         cartDto.setKeyerId(UUID.randomUUID());
         cartDto.setOwnerId(UUID.randomUUID());
         cartDto.setIdentifier(UUID.randomUUID());

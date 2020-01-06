@@ -1,5 +1,13 @@
 package com.active.services.cart.infrastructure.mapper;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
@@ -11,15 +19,6 @@ import com.active.services.order.OrderStatus;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderLineDTO;
 import com.active.services.order.management.api.v3.types.OrderLineFeeDTO;
-
-import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class PlaceCartMapperTestCase {
 
@@ -98,7 +97,7 @@ public class PlaceCartMapperTestCase {
 
     private void checkOrderDTO(Cart cart, OrderDTO orderDTO) {
         assertNotNull(orderDTO);
-        assertEquals(cart.getCurrencyCode().name(), orderDTO.getCurrencyCode());
+        assertEquals("USD", orderDTO.getCurrencyCode());
         assertEquals(OrderStatus.PENDING, orderDTO.getOrderStatus());
         assertEquals(cart.getKeyerId(), orderDTO.getEnterprisePersonId());
         assertEquals(cart.getOwnerId(), orderDTO.getOrderOwnerEnterprisePersonId());
