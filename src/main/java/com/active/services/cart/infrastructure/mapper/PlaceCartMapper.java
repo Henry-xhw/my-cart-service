@@ -18,8 +18,7 @@ public interface PlaceCartMapper {
 
     PlaceCartMapper MAPPER = Mappers.getMapper(PlaceCartMapper.class);
 
-    @Mappings({@Mapping(target = "currencyCode", expression = "java(cart.getCurrencyCode().name())"),
-            @Mapping(target = "orderStatus", expression = "java(com.active.services.order.OrderStatus.PENDING)"),
+    @Mappings({@Mapping(target = "orderStatus", expression = "java(com.active.services.order.OrderStatus.PENDING)"),
             @Mapping(target = "orderOwnerEnterprisePersonId", source = "ownerId"),
             @Mapping(target = "enterprisePersonId", source = "keyerId"),
             @Mapping(target = "orderLines", source = "items"),

@@ -1,7 +1,6 @@
 package com.active.services.cart.client.soap;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.active.services.product.api.v1.soap.ProductServiceSOAPEndPoint;
 
 import org.apache.cxf.jaxws.spring.JaxWsProxyFactoryBeanDefinitionParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import com.active.services.product.api.v1.soap.ProductServiceSOAPEndPoint;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @Lazy

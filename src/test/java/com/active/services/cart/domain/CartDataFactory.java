@@ -1,18 +1,17 @@
 package com.active.services.cart.domain;
 
-import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.model.Range;
-import com.active.services.cart.model.v1.UpdateCartItemDto;
-import com.active.services.cart.service.CartStatus;
-
-import org.apache.commons.lang3.RandomUtils;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.commons.lang3.RandomUtils;
+import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.model.Range;
+import com.active.services.cart.model.v1.UpdateCartItemDto;
+import com.active.services.cart.service.CartStatus;
 
 public class CartDataFactory {
 
@@ -20,7 +19,7 @@ public class CartDataFactory {
         Cart cart = new Cart();
 
         cart.setId(1L);
-        cart.setCurrencyCode(CurrencyCode.USD);
+        cart.setCurrencyCode("USD");
         cart.setKeyerId(UUID.randomUUID());
         cart.setOwnerId(UUID.randomUUID());
         cart.setIdentifier(UUID.randomUUID());
