@@ -33,6 +33,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,15 +115,18 @@ public class CartService {
         return cartRepository.search(ownerId);
     }
 
-    public void insertCartItems(Cart cart, List<CartItem> cartItemList, Long requestParentId) {
+    public void insertCartItems(UUID cartIdentifier, List<CartItem> cartItems) {
+        Cart cart = getCartByUuid(cartIdentifier);
+        getCartItemsValidator(cart, cartItems).validate();
+        dataAccess.doInTx(() -> doInsertCartItems(cart, cartItems, null));
+    }
+
+    private void doInsertCartItems(Cart cart, List<CartItem> cartItems, Long parentId) {
         Long cartId = cart.getId();
-        for (CartItem it : cartItemList) {
-            Long parentId = requestParentId;
+
+        for (CartItem it : cartItems) {
             if (it.getIdentifier() != null) {
-                cart.findCartItem(it.getIdentifier())
-                        .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
-                                "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier()));
-                parentId = getCartItemIdByCartItemUuid(it.getIdentifier());
+                parentId = cart.findCartItem(it.getIdentifier()).get().getId();
             } else {
                 it.setIdentifier(UUID.randomUUID());
                 it.setParentId(parentId);
@@ -130,10 +134,15 @@ public class CartService {
             }
             List<CartItem> subItems = it.getSubItems();
             if (subItems.size() > 0) {
-                insertCartItems(cart, subItems, parentId);
+                doInsertCartItems(cart, subItems, parentId);
             }
         }
         incrementVersion(cart.getIdentifier());
+    }
+
+    @Lookup
+    public CartItemsValidator getCartItemsValidator(Cart cart, List<CartItem> cartItems) {
+        return null;
     }
 
     public Cart quote(UUID cartId) {
@@ -204,11 +213,6 @@ public class CartService {
 
     private boolean releaseLock(UUID cartId) {
         return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
-    }
-
-    private Long getCartItemIdByCartItemUuid(UUID cartItemId) {
-        return cartRepository.getCartItemIdByCartItemUuid(cartItemId)
-                .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: {0}", cartItemId));
     }
 
     private void saveQuoteResult(Cart cart) {

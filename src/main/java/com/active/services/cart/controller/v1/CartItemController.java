@@ -35,12 +35,11 @@ public class CartItemController {
     @PostMapping
     public void create(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated CreateCartItemReq req) {
-        Cart cart = cartService.getCartByUuid(cartIdentifier);
         List<CartItem> items = req.getItems()
                 .stream()
                 .map(item -> CartMapper.INSTANCE.toDomain(item, true))
                 .collect(Collectors.toList());
-        cartService.insertCartItems(cart, items, null);
+        cartService.insertCartItems(cartIdentifier, items);
     }
 
     @PutMapping
