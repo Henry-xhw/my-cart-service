@@ -1,22 +1,21 @@
 package com.active.services.cart.service;
 
-import com.active.services.billing.Recurrable;
-import com.active.services.billing.RecurringBillingSchedulePeriod;
 import com.active.services.cart.client.rest.OrderService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
-import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.quote.CartPriceEngine;
+import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
@@ -24,12 +23,14 @@ import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.lang.reflect.Method;
@@ -45,11 +46,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
-@RunWith(SpringRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({CartService.class})
 public class CartServiceTestCase {
 
     @Mock
@@ -70,21 +74,14 @@ public class CartServiceTestCase {
     @InjectMocks
     private CartService cartService;
 
-    @Test
-    public void deleteSuccess() {
-        cartService.delete(1L);
+    @Before
+    public void setUp() {
+        cartService = spy(cartService);
     }
 
     @Test
-    public void createCartItemsSuccess() {
-        Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem();
-        try {
-            cartService.createCartItems(1L, cart.getIdentifier(), Collections.singletonList(cartItem));
-            Mockito.verify(cartRepository).createCartItems(cart.getId(), Arrays.asList(cartItem));
-        } catch (NullPointerException e) {
-
-        }
+    public void deleteSuccess() {
+        cartService.delete(1L);
     }
 
     @Test
@@ -220,18 +217,12 @@ public class CartServiceTestCase {
         List<CartItem> cartItemList = new ArrayList<>();
         cartItemList.add(cartItem);
         cart.setItems(cartItemList);
+        CreateCartItemsValidator createCartItemsValidator = spy(new CreateCartItemsValidator(cart, cartItemList));
+        doNothing().when(createCartItemsValidator).validate();
+        when(cartService.getCartItemsValidator(cart, cartItemList)).thenReturn(createCartItemsValidator);
         when(cartRepository.getCartItemIdByCartItemUuid(cartItem.getIdentifier())).thenReturn(Optional.ofNullable(cart.getId()));
-        cartService.insertCartItems(cart, cartItemList, null);
-        Mockito.verify(cartRepository, times(1)).createCartItem(any(), any());
-    }
-
-    @Test(expected = CartException.class)
-    public void insertCartItemFailedWithNotExistCartId() {
-        Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem();
-        List<CartItem> cartItemList = new ArrayList<>();
-        cartItemList.add(cartItem);
-        cartService.insertCartItems(cart, cartItemList, null);
+        when(cartRepository.getCart(cart.getIdentifier())).thenReturn(Optional.of(cart));
+        cartService.insertCartItems(cart.getIdentifier(), cartItemList);
     }
 
     @Test

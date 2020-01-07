@@ -18,6 +18,7 @@ import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.cart.util.JacksonUtils;
@@ -73,13 +74,6 @@ public class CartService {
         Cart cart = cartRepository.getCart(cartId).orElseThrow(() -> new CartException(ErrorCode.CART_NOT_FOUND,
                 " cart id does not exist: {0}", cartId));
         return cart;
-    }
-
-    @Transactional
-    public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
-        cartRepository.createCartItems(cartId, items);
-        incrementVersion(cartIdentifier);
-        return items;
     }
 
     @Transactional
@@ -141,7 +135,7 @@ public class CartService {
     }
 
     @Lookup
-    public CartItemsValidator getCartItemsValidator(Cart cart, List<CartItem> cartItems) {
+    public CreateCartItemsValidator getCartItemsValidator(Cart cart, List<CartItem> cartItems) {
         return null;
     }
 

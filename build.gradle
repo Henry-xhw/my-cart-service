@@ -61,10 +61,20 @@ dependencies {
     implementation group: 'com.active.services', name:'order-management-service', version: '4.1.0.7', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.4'
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.4'
+//    testImplementation group: 'org.powermock', name: 'powermock-core', version: '2.0.4'
+//    testImplementation group: 'org.powermock', name: 'powermock-reflect', version: '2.0.4'
+
+//            <dependency org="org.powermock" name="powermock-core" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-api-mockito" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-api-support" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-reflect" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-module-junit4" transitive="false" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-module-junit4-common" rev="1.6.4" conf="test->default"/>
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
     testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testCompile 'com.epages:restdocs-api-spec-mockmvc:0.9.4'
