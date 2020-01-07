@@ -48,7 +48,7 @@ dependencies {
     
     implementation group: 'io.github.openfeign', name: 'feign-core', version: '10.2.3'
     implementation group: 'io.github.openfeign', name: 'feign-slf4j', version: '10.2.3'
-    implementation group: 'io.github.openfeign', name: 'feign-gson', version: '10.2.3'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '10.2.3'
     implementation group: 'io.github.openfeign', name: 'feign-okhttp', version: '10.2.3'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.2'
@@ -58,7 +58,7 @@ dependencies {
     implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'inventory-service-api', version: '1.1.52'
     implementation group: 'com.active.services', name:'product-service-api', version: '3.5.27'
-    implementation group: 'com.active.services', name:'order-management-service', version: '4.1.0.7', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'order-management-service', version: '4.1.0.12', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
 
