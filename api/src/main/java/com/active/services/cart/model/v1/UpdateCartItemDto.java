@@ -23,6 +23,8 @@ public class UpdateCartItemDto {
 
     private Long parentId;
 
+    private Long productId;
+
     @NotBlank(message = "cartItem's product name can not be blank")
     @Size(max = 255)
     private String productName;
