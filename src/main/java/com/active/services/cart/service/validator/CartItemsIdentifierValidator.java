@@ -27,7 +27,7 @@ public class CartItemsIdentifierValidator {
                     anyIdentifierNotFound = true;
                     msg.append("cart item - ");
                     msg.append(it.getIdentifier());
-                    msg.append("does not exist.");
+                    msg.append(" does not exist.");
                 }
             }
         }
