@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -97,8 +98,7 @@ public class CartService {
         CartItem cartItem = cart.findCartItem(cartItemUuid)
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                         "cart item id: {0} is not belong cart id: {1}", cartItemUuid, cart.getIdentifier()));
-        List<UUID> idsToDelete = cartItem.getFlattenSubItems()
-                        .stream()
+        List<UUID> idsToDelete = Cart.flattenCartItems(Arrays.asList(cartItem)).stream()
                         .map(CartItem::getIdentifier).collect(Collectors.toList());
 
         cartRepository.batchDeleteCartItems(idsToDelete);
