@@ -13,6 +13,8 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+import java.time.Instant;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = OrderTypeMapping.class)
 public interface PlaceCartMapper {
 
@@ -22,7 +24,7 @@ public interface PlaceCartMapper {
             @Mapping(target = "orderOwnerEnterprisePersonId", source = "ownerId"),
             @Mapping(target = "enterprisePersonId", source = "keyerId"),
             @Mapping(target = "orderLines", source = "items"),
-            @Mapping(target = "businessDate", expression = "java(new com.active.services.domain.DateTime(new java.util.Date()))")
+            @Mapping(target = "businessDate", expression = "java(java.time.Instant.now())")
     })
     OrderDTO toOrderDTO(Cart cart);
 

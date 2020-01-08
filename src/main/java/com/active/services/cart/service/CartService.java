@@ -20,15 +20,12 @@ import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
-import com.active.services.cart.util.JacksonUtils;
 import com.active.services.cart.util.TreeBuilder;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
 import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
-import com.active.services.order.management.api.v3.types.Result;
 
-import feign.FeignException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +39,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.active.services.cart.model.ErrorCode.PLACE_ORDER_ERROR;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 
@@ -247,17 +245,13 @@ public class CartService {
         orderDTO.setPayAccountId(payAccountId);
         PlaceOrderReq req = new PlaceOrderReq();
         req.setOrderDTO(orderDTO);
-        PlaceOrderRsp rsp = null;
-        try {
-            rsp = orderService.placeOrder(req);
-        } catch (Exception e) {
-            handleException(e, cart.getIdentifier(), req);
-        }
+
+        PlaceOrderRsp rsp = orderService.placeOrder(req);
         if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())) {
-            throw new CartException(ErrorCode.PLACE_ORDER_ERROR, "There is no order response from order service for " +
-                    "cart: {0}",
-                    cart.getIdentifier());
+            throw new CartException(PLACE_ORDER_ERROR, "Failed to placeOrder for cart: {0}, {1}", rsp.getErrorCode(),
+                emptyIfNull(rsp.getErrorMessages()).stream().collect(Collectors.joining(",")));
         }
+
         return rsp;
     }
 
@@ -265,24 +259,6 @@ public class CartService {
     }
 
     private void commitPayment() {
-    }
-
-    private void handleException(Exception ex, UUID cartId, PlaceOrderReq req) {
-        String errorMessage = ex.getMessage();
-        if (ex instanceof FeignException) {
-            String placeOrderResponse = ((FeignException) ex).contentUTF8();
-            try {
-                Result result = JacksonUtils.readValue(placeOrderResponse, Result.class);
-                errorMessage = emptyIfNull(result.getErrorMessages()).stream().collect(Collectors.joining(","));
-            } catch (Exception e) {
-                LOG.error("Failed to parse place order response:", e);
-                errorMessage = placeOrderResponse;
-            }
-        }
-
-        LOG.error("Encounter exception when calling order service place order for cart {}", cartId, ex);
-        throw new CartException(ex, ErrorCode.PLACE_ORDER_ERROR, "Encounter exception {0} when calling order " +
-                "service place order for cart {1}.", errorMessage, cartId);
     }
 
 }

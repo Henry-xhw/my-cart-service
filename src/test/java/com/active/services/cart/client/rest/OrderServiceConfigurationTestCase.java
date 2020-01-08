@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -93,7 +94,7 @@ public class OrderServiceConfigurationTestCase {
         orderDTO.setEnterprisePersonId(UUID.randomUUID());
         orderDTO.setOrderOwnerEnterprisePersonId(UUID.randomUUID());
         orderDTO.setOrderUrl("ss.sl");
-        orderDTO.setBusinessDate(new DateTime(new Date()));
+        orderDTO.setBusinessDate(Instant.now());
         return orderDTO;
     }
 }
