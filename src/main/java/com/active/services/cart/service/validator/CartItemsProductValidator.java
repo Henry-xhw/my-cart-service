@@ -32,7 +32,7 @@ public class CartItemsProductValidator {
                 .collect(toMap(ProductDto::getId, Function.identity()));
 
         StringBuilder msg = new StringBuilder();
-        msg.append("Product not fund: ");
+        msg.append("Product not found: ");
         boolean anyProductNotFound = false;
 
         StringBuilder noCurrencyMsg = new StringBuilder();

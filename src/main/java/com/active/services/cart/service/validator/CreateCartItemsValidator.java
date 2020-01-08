@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static com.active.services.cart.domain.Cart.flattenCartItems;
 import static com.active.services.cart.util.AuditorAwareUtil.getContext;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Component
 @Slf4j
@@ -48,7 +49,7 @@ public class CreateCartItemsValidator {
         List<CartItem> newCartItems = cartItems.stream().filter(item -> item.getIdentifier() == null)
                 .collect(Collectors.toList());
         if (!newCartItems.isEmpty()) {
-            List<ProductDto> foundProducts = getProducts(newCartItems);
+            List<ProductDto> foundProducts = emptyIfNull(getProducts(newCartItems));
             new CartItemsProductValidator(newCartItems, foundProducts).validate();
             new CartItemsCurrencyValidator(cart, foundProducts).validate();
         }

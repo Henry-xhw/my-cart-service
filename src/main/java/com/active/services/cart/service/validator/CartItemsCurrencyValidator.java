@@ -31,9 +31,9 @@ public class CartItemsCurrencyValidator {
             msg.append(cart.getCurrencyCode());
             msg.append(". Cart item currency -");
             productsByCurrency.forEach((productCurrency, products) -> {
-                msg.append("[currency code ->");
+                msg.append("[currency code -> ");
                 msg.append(productCurrency);
-                msg.append(", product ids ->");
+                msg.append(", product ids -> ");
                 msg.append(products.stream().map(p -> p.getId().toString()).collect(joining(",")));
                 msg.append("]");
             });
