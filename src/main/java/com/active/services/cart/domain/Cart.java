@@ -4,7 +4,6 @@ import com.active.services.cart.service.CartStatus;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,7 +12,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -44,6 +42,10 @@ public class Cart extends BaseDomainObject {
     }
 
     public List<CartItem> getFlattenCartItems() {
+        return flattenCartItems(items);
+    }
+
+    public static List<CartItem> flattenCartItems(List<CartItem> items) {
         Queue<CartItem> q = new LinkedList<>(items);
         List<CartItem> flatten = new LinkedList<>();
         while (!q.isEmpty()) {
@@ -59,17 +61,5 @@ public class Cart extends BaseDomainObject {
             }
         }
         return flatten;
-    }
-
-    public static List<CartItem> flattenCartItems(List<CartItem> items) {
-        List<CartItem> results = new ArrayList<>();
-
-        if (CollectionUtils.isNotEmpty(items)) {
-            results.addAll(items);
-            results.addAll(flattenCartItems(items.stream().map(CartItem::getSubItems).flatMap(List::stream)
-                    .collect(Collectors.toList())));
-        }
-
-        return results;
     }
 }
