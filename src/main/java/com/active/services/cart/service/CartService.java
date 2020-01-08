@@ -246,15 +246,7 @@ public class CartService {
         PlaceOrderReq req = new PlaceOrderReq();
         req.setOrderDTO(orderDTO);
 
-        PlaceOrderRsp rsp;
-        try {
-            rsp = orderService.placeOrder(req);
-        } catch (Exception e) {
-            // IOException / FeignException
-            throw new CartException(e, PLACE_ORDER_ERROR, "Failed to placeOrder for cart: {0}, errorMsg: {1}",
-                cart.getIdentifier(), e.getCause() == null ? e.getMessage() : e.getCause().getMessage());
-        }
-
+        PlaceOrderRsp rsp = orderService.placeOrder(req);
         if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())) {
             throw new CartException(PLACE_ORDER_ERROR, "Failed to placeOrder for cart: {0}, {1}", rsp.getErrorCode(),
                 emptyIfNull(rsp.getErrorMessages()).stream().collect(Collectors.joining(",")));
