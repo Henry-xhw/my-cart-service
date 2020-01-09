@@ -4,3 +4,4 @@ replace_from: /develop/
 replace_to: /PROMOTE_VERSION/
 extra_kits:
 - 4609
+- 4610
