@@ -5,7 +5,8 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.product.nextgen.v1.rsp.QuoteSingleRsp;
+import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
+import com.active.services.product.nextgen.v1.rsp.GetProductFeeRsp;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,7 +34,6 @@ public class CartItemUnitPricePricerTest {
 
     @Test
     public void quoteCartItemUnitPriceNotNull() {
-        BigDecimal unitPrice = new BigDecimal(1);
         Cart cart = CartDataFactory.cart();
         cart.setIdentifier(UUID.randomUUID());
         CartItem cartItem = CartDataFactory.cartItem();
@@ -41,8 +41,6 @@ public class CartItemUnitPricePricerTest {
         ArrayList<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem);
         cart.setItems(cartItems);
-        QuoteSingleRsp quoteSingleRsp = new QuoteSingleRsp();
-        quoteSingleRsp.setAmount(unitPrice);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         cartItemUnitPricePricer.quote(cartQuoteContext, cartItem);
         Assert.assertEquals(cartQuoteContext.getCart().getItems().get(0).getUnitPrice(),
@@ -60,19 +58,20 @@ public class CartItemUnitPricePricerTest {
         ArrayList<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem);
         cart.setItems(cartItems);
-        QuoteSingleRsp quoteSingleRsp = new QuoteSingleRsp();
-        quoteSingleRsp.setAmount(unitPrice);
-        when(productService.quote(any())).thenReturn(quoteSingleRsp);
+        FeeDto feeDto = new FeeDto();
+        feeDto.setAmount(unitPrice);
+        GetProductFeeRsp getProductFeeRsp = new GetProductFeeRsp(feeDto);
+        when(productService.quote(any())).thenReturn(getProductFeeRsp);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         cartItemUnitPricePricer.quote(cartQuoteContext, cartItem);
-        assertEquals(0, unitPrice.compareTo(cartQuoteContext.getCart().getItems().get(0).getFees().get(0).getUnitPrice()));
+        assertEquals(unitPrice, cartQuoteContext.getCart().getItems().get(0).getFees().get(0).getUnitPrice());
     }
 
     @Test(expected = CartException.class)
     public void quoteCallProductServiceResultSuccessFalse() {
-        QuoteSingleRsp quoteSingleRsp = new QuoteSingleRsp();
-        quoteSingleRsp.setSuccess(false);
-        when(productService.quote(any())).thenReturn(quoteSingleRsp);
+        GetProductFeeRsp getProductFeeRsp = new GetProductFeeRsp(new FeeDto());
+        getProductFeeRsp.setSuccess(false);
+        when(productService.quote(any())).thenReturn(getProductFeeRsp);
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         CartItem cartItem = CartDataFactory.cartItem();
@@ -81,10 +80,9 @@ public class CartItemUnitPricePricerTest {
     }
 
     @Test(expected = CartException.class)
-    public void quoteCallProductServiceAmountNull() {
-        QuoteSingleRsp quoteSingleRsp = new QuoteSingleRsp();
-        quoteSingleRsp.setAmount(null);
-        when(productService.quote(any())).thenReturn(quoteSingleRsp);
+    public void quoteCallProductServiceFeeDtoNull() {
+        GetProductFeeRsp getProductFeeRsp = new GetProductFeeRsp(null);
+        when(productService.quote(any())).thenReturn(getProductFeeRsp);
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         CartItem cartItem = CartDataFactory.cartItem();

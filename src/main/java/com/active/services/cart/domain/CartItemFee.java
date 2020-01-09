@@ -2,7 +2,7 @@ package com.active.services.cart.domain;
 
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.product.nextgen.v1.rsp.QuoteSingleRsp;
+import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,15 +37,15 @@ public class CartItemFee extends BaseTree<CartItemFee> {
         return unitPriceFee;
     }
 
-    public static CartItemFee buildCartItemFee(CartItem cartItem, QuoteSingleRsp rsp,
+    public static CartItemFee buildCartItemFee(CartItem cartItem, FeeDto feeDto,
                                                CartItemFeeType cartItemFeeType) {
         CartItemFee unitPriceFee = new CartItemFee();
         unitPriceFee.setIdentifier(UUID.randomUUID());
-        unitPriceFee.setDescription(rsp.getDescription());
-        unitPriceFee.setName(rsp.getName());
+        unitPriceFee.setDescription(feeDto.getDescription());
+        unitPriceFee.setName(feeDto.getName());
         unitPriceFee.setTransactionType(FeeTransactionType.DEBIT);
         unitPriceFee.setType(cartItemFeeType);
-        unitPriceFee.setUnitPrice(rsp.getAmount());
+        unitPriceFee.setUnitPrice(feeDto.getAmount());
         unitPriceFee.setUnits(cartItem.getQuantity());
         return unitPriceFee;
     }

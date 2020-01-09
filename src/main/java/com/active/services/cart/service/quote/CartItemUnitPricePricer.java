@@ -5,8 +5,9 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.product.nextgen.v1.req.QuoteSingleReq;
-import com.active.services.product.nextgen.v1.rsp.QuoteSingleRsp;
+import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
+import com.active.services.product.nextgen.v1.req.GetProductFeeReq;
+import com.active.services.product.nextgen.v1.rsp.GetProductFeeRsp;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.BooleanUtils;
@@ -31,10 +32,10 @@ public class CartItemUnitPricePricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
         if (Objects.isNull(cartItem.getUnitPrice())) {
-            QuoteSingleReq quoteSingleReq = new QuoteSingleReq();
-            quoteSingleReq.setProductId(cartItem.getProductId());
-            quoteSingleReq.setBusinessDate(new Date());
-            cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, getUnitPriceFromProductService(quoteSingleReq),
+            GetProductFeeReq getProductFeeReq = new GetProductFeeReq();
+            getProductFeeReq.setProductId(cartItem.getProductId());
+            getProductFeeReq.setBusinessDate(new Date());
+            cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, getUnitPriceFromProductService(getProductFeeReq),
                     CartItemFeeType.PRICE));
         } else {
             cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE));
@@ -42,13 +43,13 @@ public class CartItemUnitPricePricer implements CartItemPricer {
         setGrossAndNetPriceValue(cartItem);
     }
 
-    private QuoteSingleRsp getUnitPriceFromProductService(QuoteSingleReq quoteSingleReq) {
-        QuoteSingleRsp result = productService.quote(quoteSingleReq);
-        if (BooleanUtils.isFalse(result.isSuccess()) || Objects.isNull(result.getAmount())) {
+    private FeeDto getUnitPriceFromProductService(GetProductFeeReq getProductFeeReq) {
+        GetProductFeeRsp result = productService.quote(getProductFeeReq);
+        if (BooleanUtils.isFalse(result.isSuccess()) || Objects.isNull(result.getFeeDto())) {
             throw new CartException(QUOTE_ERROR, "Failed to quote for cart: {0}, {1}", result.getErrorCode(),
                     result.getErrorMessage());
         }
-        return result;
+        return result.getFeeDto();
     }
 
     private void setGrossAndNetPriceValue(CartItem cartItem) {
