@@ -247,7 +247,7 @@ public class CartService {
         req.setOrderDTO(orderDTO);
 
         PlaceOrderRsp rsp = orderService.placeOrder(req);
-        if (rsp == null || CollectionUtils.isEmpty(rsp.getOrderResponses())) {
+        if (CollectionUtils.isEmpty(rsp.getOrderResponses())) {
             throw new CartException(PLACE_ORDER_ERROR, "Failed to placeOrder for cart: {0}, {1}", rsp.getErrorCode(),
                 emptyIfNull(rsp.getErrorMessages()).stream().collect(Collectors.joining(",")));
         }
