@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://DBDEVAW01.dev.activenetwork.com:1433;databaseName=cart_service
-    username: cart_service
-    password: sb9O1AlbwSjJYTgjPrfn
+    url: jdbc:sqlserver://localhost:1435;databaseName=cart_service
+    username: fnd_dev_usr
+    password: fnd_dev_usr$2008
   output:
     ansi:
       enabled: ALWAYS
@@ -16,6 +16,6 @@ logging:
             repository: DEBUG
 
 url:
-  orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
-  inventoryServiceBase: http://localhost.dev.activenetwork.com:8271
-  productServiceBase: http://localhost.dev.activenetwork.com:8272
+  orderManagementBase: http://order-vip.pint.aw.dev.activenetwork.com
+  inventoryServiceBase: http://inventory-pint-awplatform.aw.k8sw.dev.activenetwork.com
+  productServiceBase: http://product-pint-awplatform.aw.k8sw.dev.activenetwork.com/product-service
