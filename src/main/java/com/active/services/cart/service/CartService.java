@@ -43,8 +43,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.active.services.cart.model.ErrorCode.PLACE_ORDER_ERROR;
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-
 
 @Service
 @RequiredArgsConstructor
