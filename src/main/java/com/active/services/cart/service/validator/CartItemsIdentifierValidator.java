@@ -32,7 +32,6 @@ public class CartItemsIdentifierValidator {
             }
         }
         if (anyIdentifierNotFound) {
-            LOG.error(msg.toString());
             throw new CartException(ErrorCode.VALIDATION_ERROR, msg.toString());
         }
     }

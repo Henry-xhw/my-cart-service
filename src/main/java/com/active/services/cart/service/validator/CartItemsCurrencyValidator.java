@@ -38,7 +38,6 @@ public class CartItemsCurrencyValidator {
                 msg.append("]");
             });
 
-            LOG.error(msg.toString());
             throw new CartException(ErrorCode.VALIDATION_ERROR, msg.toString());
         }
     }

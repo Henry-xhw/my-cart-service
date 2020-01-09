@@ -50,12 +50,10 @@ public class CartItemsProductValidator {
         }
 
         if (anyProductNotFound) {
-            LOG.error(msg.toString());
             throw new CartException(ErrorCode.VALIDATION_ERROR, msg.toString());
         }
 
         if (anyProductCurrencyNotFound) {
-            LOG.error(noCurrencyMsg.toString());
             throw new CartException(ErrorCode.VALIDATION_ERROR, noCurrencyMsg.toString());
         }
     }
