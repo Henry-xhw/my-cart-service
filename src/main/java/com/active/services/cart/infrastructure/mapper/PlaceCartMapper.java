@@ -52,6 +52,10 @@ public interface PlaceCartMapper {
     OrderLineFeeDTO toFeeDTO(CartItemFee cartItemFee);
 
     default String map(java.util.UUID value) {
+        if (value == null) {
+            return "";
+        }
+
         return value.toString();
     }
 }
