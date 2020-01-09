@@ -18,6 +18,7 @@ import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.cart.util.TreeBuilder;
@@ -30,9 +31,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -73,13 +76,6 @@ public class CartService {
     }
 
     @Transactional
-    public List<CartItem> createCartItems(Long cartId, UUID cartIdentifier, List<CartItem> items) {
-        cartRepository.createCartItems(cartId, items);
-        incrementVersion(cartIdentifier);
-        return items;
-    }
-
-    @Transactional
     public long createCartItem(Long cartId, BaseTree<CartItem> cartItem) {
         return cartRepository.createCartItem(cartId, cartItem);
     }
@@ -100,8 +96,7 @@ public class CartService {
         CartItem cartItem = cart.findCartItem(cartItemUuid)
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                         "cart item id: {0} is not belong cart id: {1}", cartItemUuid, cart.getIdentifier()));
-        List<UUID> idsToDelete = cartItem.getFlattenSubItems()
-                        .stream()
+        List<UUID> idsToDelete = Cart.flattenCartItems(Arrays.asList(cartItem)).stream()
                         .map(CartItem::getIdentifier).collect(Collectors.toList());
 
         cartRepository.batchDeleteCartItems(idsToDelete);
@@ -112,15 +107,18 @@ public class CartService {
         return cartRepository.search(ownerId);
     }
 
-    public void insertCartItems(Cart cart, List<CartItem> cartItemList, Long requestParentId) {
+    public void insertCartItems(UUID cartIdentifier, List<CartItem> cartItems) {
+        Cart cart = getCartByUuid(cartIdentifier);
+        getCartItemsValidator(cart, cartItems).validate();
+        dataAccess.doInTx(() -> doInsertCartItems(cart, cartItems, null));
+    }
+
+    private void doInsertCartItems(Cart cart, List<CartItem> cartItems, Long parentId) {
         Long cartId = cart.getId();
-        for (CartItem it : cartItemList) {
-            Long parentId = requestParentId;
+
+        for (CartItem it : cartItems) {
             if (it.getIdentifier() != null) {
-                cart.findCartItem(it.getIdentifier())
-                        .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
-                                "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier()));
-                parentId = getCartItemIdByCartItemUuid(it.getIdentifier());
+                parentId = cart.findCartItem(it.getIdentifier()).get().getId();
             } else {
                 it.setIdentifier(UUID.randomUUID());
                 it.setParentId(parentId);
@@ -128,10 +126,15 @@ public class CartService {
             }
             List<CartItem> subItems = it.getSubItems();
             if (subItems.size() > 0) {
-                insertCartItems(cart, subItems, parentId);
+                doInsertCartItems(cart, subItems, parentId);
             }
         }
         incrementVersion(cart.getIdentifier());
+    }
+
+    @Lookup
+    public CreateCartItemsValidator getCartItemsValidator(Cart cart, List<CartItem> cartItems) {
+        return null;
     }
 
     public Cart quote(UUID cartId) {
@@ -202,11 +205,6 @@ public class CartService {
 
     private boolean releaseLock(UUID cartId) {
         return cartRepository.releaseLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
-    }
-
-    private Long getCartItemIdByCartItemUuid(UUID cartItemId) {
-        return cartRepository.getCartItemIdByCartItemUuid(cartItemId)
-                .orElseThrow(() -> new CartException(ErrorCode.CART_ITEM_NOT_FOUND, " cartItem id: {0}", cartItemId));
     }
 
     private void saveQuoteResult(Cart cart) {

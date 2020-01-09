@@ -42,18 +42,19 @@ public class Cart extends BaseDomainObject {
     }
 
     public List<CartItem> getFlattenCartItems() {
+        return flattenCartItems(items);
+    }
+
+    public static List<CartItem> flattenCartItems(List<CartItem> items) {
         Queue<CartItem> q = new LinkedList<>(items);
         List<CartItem> flatten = new LinkedList<>();
         while (!q.isEmpty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                CartItem it = q.poll();
-                if (it != null) {
-                    flatten.add(it);
-                    emptyIfNull(it.getSubItems()).stream()
-                            .filter(Objects::nonNull)
-                            .forEach(q::offer);
-                }
+            CartItem it = q.poll();
+            if (it != null) {
+                flatten.add(it);
+                emptyIfNull(it.getSubItems()).stream()
+                        .filter(Objects::nonNull)
+                        .forEach(q::offer);
             }
         }
         return flatten;
