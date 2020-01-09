@@ -12,5 +12,6 @@ public enum ErrorCode {
     CART_LOCKED,
     PLACE_ORDER_ERROR,
     PAYMENT_AUTH_ERROR,
+    QUOTE_ERROR,
     CART_PRICING_OUT_OF_DATE
 }

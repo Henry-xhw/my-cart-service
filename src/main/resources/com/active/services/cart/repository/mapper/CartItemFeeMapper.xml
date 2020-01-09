@@ -5,8 +5,11 @@
 <mapper namespace="com.active.services.cart.repository.mapper.CartItemFeeMapper">
     <delete id="deleteCartItemFeeById">
         DELETE cart_item_fees
-        FROM cart_item_fees a LEFT JOIN cart_item_cart_item_fees b ON a.id=b.cart_item_fee_id
-        WHERE b.cart_item_id = #{id}
+        FROM cart_item_fees a
+        LEFT JOIN cart_item_cart_item_fees b ON a.id=b.cart_item_fee_id
+        LEFT JOIN cart_items c on c.id=b.cart_item_id
+        LEFT JOIN carts d on d.id=c.cart_id
+        WHERE d.id = #{id}
     </delete>
 
     <insert id="createCartItemFee" useGeneratedKeys="true" keyProperty="id">

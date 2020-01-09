@@ -15,6 +15,9 @@ public class RestServiceConfiguration {
     @Value("${url.inventoryReservationServiceRest}")
     private String reservationServiceUrl;
 
+    @Value("${url.productServiceBase}")
+    private String productServiceUrl;
+
     @Autowired
     private FeignConfigurator feignConfigurator;
 
@@ -26,5 +29,10 @@ public class RestServiceConfiguration {
     @Bean
     public ReservationService reservationService() {
         return feignConfigurator.buildService(reservationServiceUrl, ReservationService.class);
+    }
+
+    @Bean
+    public ProductService productService() {
+        return feignConfigurator.buildService(productServiceUrl, ProductService.class);
     }
 }
