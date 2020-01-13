@@ -24,8 +24,6 @@ import java.util.UUID;
 
     void deleteCartItem(Long cartItemId);
 
-    void deleteCartItemByCartId(Long cartId);
-
     List<UUID> search(@Param("ownerId") UUID ownerId);
 
     Optional<Long> getCartItemIdByCartItemUuid(@Param("cartItemId") UUID cartItemId);
@@ -41,5 +39,7 @@ import java.util.UUID;
     int acquireLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
     int releaseLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
+
+    void updateCartReservationGroupId(Cart cart);
 
 }

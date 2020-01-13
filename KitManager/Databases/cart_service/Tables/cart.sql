@@ -14,7 +14,8 @@ BEGIN
         [version]                   INT                 DEFAULT ((0)) NOT NULL,
         [price_version]             INT                 DEFAULT ((0)) NOT NULL,
         [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
-        [cart_status]               VARCHAR (255)       NOT NULL
+        [cart_status]               VARCHAR (255)       NOT NULL,
+        [reservation_id]            UNIQUEIDENTIFIER    NULL
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
@@ -99,5 +100,16 @@ BEGIN
     CREATE NONCLUSTERED INDEX [ix_cart_owner_id] ON [dbo].[carts] ([owner_id])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
     PRINT 'Added index ix_cart_owner_id to dbo.carts.'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.carts ADD reservation_id UNIQUEIDENTIFIER NULL
+
+	PRINT 'Added column reservation_id to dbo.carts'
 END
 GO

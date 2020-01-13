@@ -6,32 +6,34 @@
 
     <insert id="createCart" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO [dbo].[carts]
-        (identifier,
-        owner_id,
-        keyer_id,
-        currency_code,
-        created_by,
-        created_dt,
-        modified_by,
-        modified_dt,
-        version,
-        price_version,
-        is_lock,
-        cart_status)
+            (identifier,
+            owner_id,
+            keyer_id,
+            currency_code,
+            created_by,
+            created_dt,
+            modified_by,
+            modified_dt,
+            version,
+            price_version,
+            is_lock,
+            cart_status,
+            reservation_id)
         VALUES
-        (#{identifier},
-        #{ownerId},
-        #{keyerId},
-        #{currencyCode},
-        #{createdBy},
-        getutcdate(),
-        #{modifiedBy},
-        getutcdate(),
-        #{version},
-        #{priceVersion},
-        #{lock},
-        #{cartStatus}
-        )
+            (#{identifier},
+            #{ownerId},
+            #{keyerId},
+            #{currencyCode},
+            #{createdBy},
+            getutcdate(),
+            #{modifiedBy},
+            getutcdate(),
+            #{version},
+            #{priceVersion},
+            #{lock},
+            #{cartStatus},
+            #{reservation_id}
+            )
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
@@ -215,19 +217,15 @@
         item.modified_dt              AS item_modifiedDt
         FROM dbo.carts cart
         LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
-        WHERE cart.identifier = #{cartId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE cart.identifier = #{cartId} and cart_status != 'FINALIZED'
     </select>
 
     <delete id="deleteCart">
-        DELETE FROM carts WHERE id = #{cartId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        DELETE FROM carts WHERE id = #{cartId} and cart_status != 'FINALIZED'
     </delete>
 
     <delete id="deleteCartItem">
         DELETE FROM cart_items WHERE id = #{cartItemId}
-    </delete>
-
-    <delete id="deleteCartItemByCartId">
-        DELETE FROM cart_items WHERE cart_id = #{cartId}
     </delete>
 
     <delete id="batchDeleteCartItems" parameterType="java.util.List">
@@ -238,7 +236,7 @@
     </delete>
 
     <select id="search" resultType="java.util.UUID">
-        SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != 'FINALIZED'
     </select>
 
     <select id="getCartItemIdByCartItemUuid" resultType="Long">
@@ -253,7 +251,7 @@
         cart_status = '${@com.active.services.cart.service.CartStatus@FINALIZED}',
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
     <update id="acquireLock">
@@ -262,7 +260,7 @@
         [is_lock] = 1,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and is_lock != 1 and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and is_lock != 1 and cart_status != 'FINALIZED'
     </update>
 
     <update id="releaseLock">
@@ -271,7 +269,7 @@
         [is_lock] = 0,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
     <update id="incrementVersion">
@@ -280,7 +278,7 @@
         version = version + 1,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
     <update id="incrementPriceVersion">
@@ -289,7 +287,16 @@
         price_version = version,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
+
+    <update id="incrementPriceVersion">
+        UPDATE [dbo].[carts]
+        SET
+        [reservation_id] = #{reservation_id},
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier}
+    </update>
 </mapper>

@@ -16,6 +16,8 @@ import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.service.checkout.CheckoutContext;
+import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
@@ -145,6 +147,21 @@ public class CartService {
             incrementPriceVersion(cartId);
         });
         return cart;
+    }
+
+    public List<CheckoutResult> checkout2(UUID cartId, CheckoutContext context) {
+        Cart cart = getCartWithFullPriceByUuid(cartId);
+        cart.setModifiedBy(AuditorAwareUtil.getAuditor());
+        context.setCart(cart);
+
+        getCheckoutProcessor(context).process();
+
+        return context.getCheckoutResults();
+    }
+
+    @Lookup
+    public CheckoutProcessor getCheckoutProcessor(CheckoutContext context) {
+        return null;
     }
 
     @Transactional

@@ -83,4 +83,8 @@ public class CartRepository {
     public int releaseLock(UUID cartId, String modifiedBy) {
         return cartMapper.releaseLock(cartId, modifiedBy);
     }
+
+    public void updateCartReservationId(Cart cart) {
+        cartMapper.updateCartReservationGroupId(cart);
+    }
 }

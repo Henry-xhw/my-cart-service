@@ -61,8 +61,6 @@ public class CartItemDto extends BaseDto {
 
     private Integer feeVolumeIndex;
 
-    private UUID reservationId;
-
     @Valid
     private List<CartItemDto> subItems = new ArrayList<>();
 }
