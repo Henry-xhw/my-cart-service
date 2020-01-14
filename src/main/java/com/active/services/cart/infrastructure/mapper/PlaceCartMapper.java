@@ -24,7 +24,8 @@ public interface PlaceCartMapper {
             @Mapping(target = "orderOwnerEnterprisePersonId", source = "ownerId"),
             @Mapping(target = "enterprisePersonId", source = "keyerId"),
             @Mapping(target = "orderLines", source = "items"),
-            @Mapping(target = "businessDate", expression = "java(java.time.Instant.now())")
+            @Mapping(target = "businessDate", expression = "java(java.time.Instant.now())"),
+            @Mapping(target = "referenceId", source = "identifier")
     })
     OrderDTO toOrderDTO(Cart cart);
 
@@ -37,7 +38,8 @@ public interface PlaceCartMapper {
             @Mapping(target = "childOrderLines", source = "subItems"),
             @Mapping(target = "orderLineType", expression = "java(com.active.services.order.OrderLineType.SALE)"),
             @Mapping(target = "orderLineFees", source = "fees"),
-            @Mapping(target = "systemPrice", source = "grossPrice")
+            @Mapping(target = "systemPrice", source = "grossPrice"),
+            @Mapping(target = "referenceId", source = "identifier")
     })
     OrderLineDTO toLineDTO(CartItem cartItem);
 
@@ -48,4 +50,12 @@ public interface PlaceCartMapper {
             @Mapping(target = "feeType", source = "type")
     })
     OrderLineFeeDTO toFeeDTO(CartItemFee cartItemFee);
+
+    default String map(java.util.UUID value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value.toString();
+    }
 }
