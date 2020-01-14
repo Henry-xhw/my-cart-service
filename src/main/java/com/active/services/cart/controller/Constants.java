@@ -1,4 +1,4 @@
-package com.active.services.cart.controller.v1;
+package com.active.services.cart.controller;
 
 public class Constants {
 

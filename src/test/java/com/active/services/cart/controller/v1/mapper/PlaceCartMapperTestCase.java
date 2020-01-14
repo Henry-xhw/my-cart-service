@@ -1,24 +1,27 @@
-package com.active.services.cart.infrastructure.mapper;
+package com.active.services.cart.controller.v1.mapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.service.checkout.OrderTypeMapper;
+import com.active.services.cart.service.checkout.PlaceCartMapper;
 import com.active.services.order.OrderLineType;
 import com.active.services.order.OrderStatus;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderLineDTO;
 import com.active.services.order.management.api.v3.types.OrderLineFeeDTO;
+
+import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class PlaceCartMapperTestCase {
 
@@ -80,8 +83,8 @@ public class PlaceCartMapperTestCase {
         assertEquals(fee.getName(), orderLineFee.getName());
         assertEquals(fee.getDescription(), orderLineFee.getDescription());
         assertEquals(fee.getUnitPrice(), orderLineFee.getAmount());
-        assertEquals(OrderTypeMapping.setFeeTransactionType(fee.getTransactionType()), orderLineFee.getFeeTransactionType());
-        assertEquals(OrderTypeMapping.setFeeType(fee.getType()), orderLineFee.getFeeType());
+        assertEquals(OrderTypeMapper.setFeeTransactionType(fee.getTransactionType()), orderLineFee.getFeeTransactionType());
+        assertEquals(OrderTypeMapper.setFeeType(fee.getType()), orderLineFee.getFeeType());
         assertEquals(fee.getUnits(), orderLineFee.getUnits());
         assertEquals(fee.getSubItems().size(), orderLineFee.getOrderLineFees().size());
     }

@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.active.services.cart.model.ErrorCode.QUOTE_ERROR;
+import static com.active.services.cart.model.ErrorCode.INTERNAL_ERROR;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -46,7 +46,7 @@ public class CartItemUnitPricePricer implements CartItemPricer {
     private FeeDto getUnitPriceFromProductService(GetProductFeeReq getProductFeeReq) {
         GetProductFeeRsp result = productService.quote(getProductFeeReq);
         if (BooleanUtils.isFalse(result.isSuccess()) || Objects.isNull(result.getFeeDto())) {
-            throw new CartException(QUOTE_ERROR, "Failed to quote for cart: {0}, {1}", result.getErrorCode(),
+            throw new CartException(INTERNAL_ERROR, "Failed to quote for cart: {0}, {1}", result.getErrorCode(),
                     result.getErrorMessage());
         }
         return result.getFeeDto();

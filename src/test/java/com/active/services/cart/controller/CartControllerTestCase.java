@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.controller.Constants.V1_MEDIA;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;

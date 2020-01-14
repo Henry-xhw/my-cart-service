@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * Order checkout flow handling to simuate two phase commit:
+ * Order checkout flow handling to simulate two phase commit:
  * 1. Prepare phase: validation and lock resources.
  * 2. Commit phase: commit changes to db/other services.
  *
@@ -28,10 +28,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class CheckoutProcessor {
-    private final CheckoutContext checkoutContext;
-
     @Autowired
     private CartRepository cartRepository;
+
+    private final CheckoutContext checkoutContext;
 
     public void process() {
         new CheckoutValidator().validate(checkoutContext);
@@ -40,8 +40,6 @@ public class CheckoutProcessor {
         try {
             getCheckoutPreparePhaseProcessor(checkoutContext).process();
             getCheckoutCommitPhaseProcessor(checkoutContext).process();
-
-            cartRepository.finalizeCart(checkoutContext.getCart().getIdentifier(), AuditorAwareUtil.getAuditor());
         } finally {
             releaseLock();
         }

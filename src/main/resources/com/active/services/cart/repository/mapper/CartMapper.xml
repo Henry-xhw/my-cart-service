@@ -32,7 +32,7 @@
             #{priceVersion},
             #{lock},
             #{cartStatus},
-            #{reservation_id}
+            #{reservationId}
             )
     </insert>
 
@@ -52,7 +52,6 @@
             [quantity],
             [unit_price],
             [grouping_identifier],
-            [reservation_id],
             [created_by],
             [created_dt],
             [modified_by],
@@ -89,7 +88,6 @@
              #{item.quantity},
              #{item.unitPrice},
              #{item.groupingIdentifier},
-             #{item.reservationId},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -150,14 +148,6 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
-        <choose>
-            <when test="item.reservationId!=null">
-                [reservation_id] = #{item.reservationId},
-            </when>
-            <otherwise>
-                [reservation_id] = null,
-            </otherwise>
-        </choose>
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -210,7 +200,6 @@
         item.unit_price               AS item_unit_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
-        item.reservation_id           AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
@@ -248,10 +237,10 @@
     <update id="finalizeCart">
         UPDATE [dbo].[carts]
         SET
-        cart_status = '${@com.active.services.cart.service.CartStatus@FINALIZED}',
+        cart_status = 'FINALIZED',
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
+        WHERE identifier = #{identifier} AND cart_status != 'FINALIZED'
     </update>
 
     <update id="acquireLock">
@@ -291,10 +280,10 @@
     </update>
 
 
-    <update id="incrementPriceVersion">
+    <update id="updateCartReservationGroupId">
         UPDATE [dbo].[carts]
         SET
-        [reservation_id] = #{reservation_id},
+        [reservation_id] = #{reservationId},
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier}

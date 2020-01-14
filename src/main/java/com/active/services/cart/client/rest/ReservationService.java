@@ -13,7 +13,8 @@ import feign.RequestLine;
 import java.util.List;
 import java.util.UUID;
 
-@Headers("Accept: application/vnd.active.inventory-service.v1+json")
+@Headers({"Accept: application/vnd.active.inventory-service.v1+json",
+        "Content-Type: application/vnd.active.inventory-service.v1+json"})
 public interface ReservationService {
     @RequestLine("POST /reservations")
     ReservationResultDTO reserve(List<ReservationDTO> reservationDTOS);

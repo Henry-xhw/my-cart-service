@@ -14,6 +14,9 @@ logging:
         services:
           cart:
             repository: DEBUG
+            client:
+              rest:
+                FeignConfigurator: DEBUG
 
 url:
   orderManagementBase: http://order-vip.pint.aw.dev.activenetwork.com

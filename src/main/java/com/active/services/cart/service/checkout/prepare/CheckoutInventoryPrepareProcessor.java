@@ -28,16 +28,17 @@ import java.util.stream.Collectors;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CheckoutInventoryPrepareProcessor {
+
     private final CheckoutContext checkoutContext;
 
     @Autowired
-    private ReservationService reservationService;
+    private CartRepository cartRepository;
 
     @Autowired
-    private CartRepository cartRepository;
+    private ReservationService reservationService;
 
     public void process() {
         Cart cart = checkoutContext.getCart();
@@ -70,7 +71,6 @@ public class CheckoutInventoryPrepareProcessor {
 
         ReservationResultDTO reservationResult = reservationService.reserve(reservations);
         cart.setReservationId(reservationResult.getReservationId());
-        // TODO: handle error case.
         cartRepository.updateCartReservationId(cart);
     }
 }

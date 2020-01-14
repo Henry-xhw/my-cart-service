@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.aspectj:aspectjweaver:1.9.2'
     implementation 'org.mybatis:mybatis-typehandlers-jsr310:1.0.2'
     implementation 'org.apache.commons:commons-collections4'
+    implementation 'com.google.guava:guava'
     implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws:3.2.0'
     implementation 'org.apache.cxf:cxf-rt-features-logging:3.1.8'
 

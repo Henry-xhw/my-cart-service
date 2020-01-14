@@ -1,12 +1,12 @@
-package com.active.services.cart.infrastructure.mapper;
+package com.active.services.cart.service.checkout;
 
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.order.FeeTransactionType;
 import com.active.services.order.OrderLineFeeType;
 
-public final class OrderTypeMapping {
+public final class OrderTypeMapper {
 
-    private OrderTypeMapping() {
+    private OrderTypeMapper() {
     }
 
     static OrderLineFeeType setFeeType(CartItemFeeType type) {

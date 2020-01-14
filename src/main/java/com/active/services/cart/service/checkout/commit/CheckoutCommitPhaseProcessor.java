@@ -15,9 +15,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CheckoutCommitPhaseProcessor {
+
     private final CheckoutContext checkoutContext;
 
     public void process() {

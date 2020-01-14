@@ -3,6 +3,7 @@ package com.active.services.cart.service.checkout;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.service.CartStatus;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -23,6 +24,9 @@ public class CheckoutValidator {
                     "Cart: {0} price had out of date. Price version : {1}, cart version: {2}. Please call quote " +
                             "before checkout.",
                     cartId, cart.getPriceVersion(), cart.getVersion());
+        }
+        if (cart.getCartStatus() == CartStatus.FINALIZED) {
+            throw new CartException(ErrorCode.VALIDATION_ERROR, "Cart already been finalized.");
         }
     }
 }

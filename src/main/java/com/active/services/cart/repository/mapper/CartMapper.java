@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Mapper public interface CartMapper {
+@Mapper
+public interface CartMapper {
     void createCart(Cart cart);
 
     void deleteCart(Long cartId);
