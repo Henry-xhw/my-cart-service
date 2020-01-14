@@ -8,6 +8,6 @@ import feign.RequestLine;
 
 @Headers("Content-Type: application/vnd.active.product-service.v1+json")
 public interface ProductService {
-    @RequestLine("POST /api/quote/fee")
+    @RequestLine("POST /api/product/fee")
     GetProductFeeRsp quote(GetProductFeeReq getProductFeeReq);
 }
