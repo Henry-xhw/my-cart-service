@@ -1,6 +1,5 @@
 package com.active.services.cart.service;
 
-import com.active.services.cart.client.rest.OrderService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CartService {
     private final CartRepository cartRepository;
-    private final OrderService orderService;
 
     private final CartItemFeeRepository cartItemFeeRepository;
 
@@ -150,7 +148,6 @@ public class CartService {
     public CheckoutProcessor getCheckoutProcessor(CheckoutContext context) {
         return null;
     }
-
 
     private void incrementVersion(UUID cartId) {
         cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor());
