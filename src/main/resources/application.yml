@@ -47,7 +47,7 @@ ok-http:
 url:
   orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
   inventoryServiceBase: http://inventory
-  productServiceBase: http://product
+  productServiceRest: ${url.productServiceBase}/product-service
   inventoryReservationServiceRest: ${url.inventoryServiceBase}/api
   productServiceSOAPV1: ${url.productServiceBase}/product-service/services/soap/v1/internal
   orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
