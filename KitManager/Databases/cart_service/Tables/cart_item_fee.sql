@@ -5,8 +5,8 @@ BEGIN
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                UNIQUEIDENTIFIER    NOT NULL,
         [parent_id]                 BIGINT              NULL,
-        [name]                      NVARCHAR(255)       NOT NULL,
-        [description]               NVARCHAR(255)       NOT NULL,
+        [name]                      NVARCHAR(255)       NULL,
+        [description]               NVARCHAR(255)       NULL,
         [type]                      NVARCHAR(25)        NOT NULL,
         [transaction_type]          NVARCHAR(25)        NOT NULL,
         [units]                     BIGINT              NOT NULL,
@@ -148,3 +148,18 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'name'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_item_fees ALTER COLUMN [name] NVARCHAR(255)  NULL;
+	PRINT 'modify column name null, dbo.cart_item_fees'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'description'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_item_fees ALTER COLUMN [description] NVARCHAR(255)  NULL;
+	PRINT 'modify column name null, dbo.cart_item_fees'
+END
