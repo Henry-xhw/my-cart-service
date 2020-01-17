@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,7 +34,7 @@ public class CartItemUnitPricePricer implements CartItemPricer {
         if (Objects.isNull(cartItem.getUnitPrice())) {
             GetProductFeeReq getProductFeeReq = new GetProductFeeReq();
             getProductFeeReq.setProductId(cartItem.getProductId());
-            getProductFeeReq.setBusinessDate(new Date());
+            getProductFeeReq.setBusinessDate(Instant.now());
             cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, getUnitPriceFromProductService(getProductFeeReq),
                     CartItemFeeType.PRICE));
         } else {
