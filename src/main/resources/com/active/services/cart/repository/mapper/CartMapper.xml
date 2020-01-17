@@ -288,4 +288,19 @@
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier}
     </update>
+
+    <insert id="createEvents">
+        INSERT INTO [dbo].[events]
+            (
+                [identifier],
+                [type],
+                [payload]
+            )
+        VALUES
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item.identifier},
+            #{item.type},
+            #{item.payload}
+        </foreach>
+    </insert>
 </mapper>

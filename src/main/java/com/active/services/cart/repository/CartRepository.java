@@ -1,5 +1,6 @@
 package com.active.services.cart.repository;
 
+import com.active.services.cart.common.Event;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -86,5 +87,9 @@ public class CartRepository {
 
     public void updateCartReservationId(Cart cart) {
         cartMapper.updateCartReservationGroupId(cart);
+    }
+
+    public void createEvents(List<Event> events) {
+        cartMapper.createEvents(events);
     }
 }

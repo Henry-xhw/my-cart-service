@@ -1,5 +1,6 @@
 package com.active.services.cart.service.checkout;
 
+import com.active.services.cart.repository.CartRepository;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -7,6 +8,8 @@ import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
@@ -17,10 +20,13 @@ public class CheckoutEventSubscriber {
     @Autowired
     private EventBus eventBus;
 
+    @Autowired
+    private CartRepository cartRepository;
+
     @Subscribe
     @AllowConcurrentEvents
     public void handleCheckoutEvent(CheckoutEvent checkoutEvent) {
-        LOG.info(checkoutEvent.getIdentifier() + checkoutEvent.getType());
+        cartRepository.createEvents(Arrays.asList(checkoutEvent));
     }
 
     @PostConstruct

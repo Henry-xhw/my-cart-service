@@ -52,24 +52,7 @@ public class CheckoutPreparePhaseProcessor {
 
     private void reserveInventory() {
         Cart cart = checkoutContext.getCart();
-        List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
-            ReservationDTO reservationDTO = new ReservationDTO();
-
-            reservationDTO.setProductId(cartItem.getProductId());
-            reservationDTO.setQuantity(cartItem.getQuantity());
-            Range<Instant> br = cartItem.getBookingRange();
-            if (br != null && (br.getLower() != null || br.getUpper() != null)) {
-                DateTimeRange dateTimeRange = new DateTimeRange();
-                dateTimeRange.setStartDateTime(br.getLower());
-                dateTimeRange.setEndDateTime(br.getUpper());
-                List<DateTimeRange> dateTimeRanges = Arrays.asList(dateTimeRange);
-                reservationDTO.setDateTimeRanges(dateTimeRanges);
-            }
-
-            return reservationDTO;
-        }).collect(Collectors.toList());
-
-        ReservationResultDTO reservationResult = reservationService.reserve(reservations);
+        ReservationResultDTO reservationResult = reservationService.reserve(checkoutContext.getReservations());
         cart.setReservationId(reservationResult.getReservationId());
         cartRepository.updateCartReservationId(cart);
     }

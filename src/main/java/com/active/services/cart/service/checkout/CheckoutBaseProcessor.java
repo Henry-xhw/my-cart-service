@@ -19,6 +19,7 @@ public abstract class CheckoutBaseProcessor  {
             doProcess();
         } catch (Exception e) {
             publishFailedEvent(e);
+            throw new RuntimeException(e);
         }
     }
 

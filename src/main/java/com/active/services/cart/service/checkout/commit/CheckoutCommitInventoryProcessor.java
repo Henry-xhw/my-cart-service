@@ -31,6 +31,7 @@ public class CheckoutCommitInventoryProcessor extends CheckoutBaseProcessor {
     protected void doProcess() {
         ReservationCheckoutDto reservationCheckoutDto = new ReservationCheckoutDto();
         reservationCheckoutDto.setReservationGroupId(checkoutContext.getCart().getReservationId());
+        reservationCheckoutDto.setReservationDTOS(checkoutContext.getReservations());
         ReservationCheckoutResultDTO reservationCheckoutResultDto = reservationService.checkout(reservationCheckoutDto);
         if (reservationCheckoutResultDto.getIsSucceed() == null || !reservationCheckoutResultDto.getIsSucceed()) {
             publishFailedEvent();

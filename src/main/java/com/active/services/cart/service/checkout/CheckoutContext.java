@@ -4,13 +4,19 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
+import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.domain.Address;
+import com.active.services.inventory.rest.dto.DateTimeRange;
+import com.active.services.inventory.rest.dto.ReservationDTO;
 
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class CheckoutContext {
@@ -29,4 +35,25 @@ public class CheckoutContext {
     private Cart cart;
 
     private List<CheckoutResult> checkoutResults = new ArrayList<>();
+
+    public List<ReservationDTO> getReservations() {
+        List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
+            ReservationDTO reservationDTO = new ReservationDTO();
+
+            reservationDTO.setProductId(cartItem.getProductId());
+            reservationDTO.setQuantity(cartItem.getQuantity());
+            Range<Instant> br = cartItem.getBookingRange();
+            if (br != null && (br.getLower() != null || br.getUpper() != null)) {
+                DateTimeRange dateTimeRange = new DateTimeRange();
+                dateTimeRange.setStartDateTime(br.getLower());
+                dateTimeRange.setEndDateTime(br.getUpper());
+                List<DateTimeRange> dateTimeRanges = Arrays.asList(dateTimeRange);
+                reservationDTO.setDateTimeRanges(dateTimeRanges);
+            }
+
+            return reservationDTO;
+        }).collect(Collectors.toList());
+
+        return reservations;
+    }
 }
