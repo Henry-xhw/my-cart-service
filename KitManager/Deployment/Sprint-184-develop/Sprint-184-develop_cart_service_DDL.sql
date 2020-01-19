@@ -22,7 +22,8 @@ BEGIN
         [version]                   INT                 DEFAULT ((0)) NOT NULL,
         [price_version]             INT                 DEFAULT ((0)) NOT NULL,
         [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
-        [cart_status]               VARCHAR (255)       NOT NULL
+        [cart_status]               VARCHAR (255)       NOT NULL,
+        [reservation_id]            UNIQUEIDENTIFIER    NULL
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
@@ -110,6 +111,17 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
+BEGIN
+
+	ALTER TABLE dbo.carts ADD reservation_id UNIQUEIDENTIFIER NULL
+
+	PRINT 'Added column reservation_id to dbo.carts'
+END
+GO
+
 GO
 --/KitManagerFileID=17804
 if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
@@ -141,8 +153,7 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL,
-        [reservation_id]            UNIQUEIDENTIFIER    NULL
+        [modified_dt]               DATETIME            NOT NULL
     )
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
@@ -201,14 +212,14 @@ BEGIN
 END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
 BEGIN
 
-	ALTER TABLE dbo.cart_items ADD reservation_id UNIQUEIDENTIFIER NULL
+	ALTER TABLE dbo.cart_items DROP COLUMN reservation_id
 
-	PRINT 'Added column reservation_id to dbo.cart_items'
+	PRINT 'Drop column reservation_id from dbo.cart_items'
 END
 GO
 GO
@@ -491,6 +502,42 @@ GO
 --/KitManagerFileID=17877
 if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
 exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4610,17877,'cart_items_cart_item_fee.sql',0
+GO
+
+--KitManagerFileID=17942
+--FileName=event.sql
+--SubmittedBy=herbert chen (ACTIVE\hchen)
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='events' AND type = 'U')
+BEGIN
+	 CREATE TABLE [dbo].[events] (
+        [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
+        [identifier]                NVARCHAR(255)       NOT NULL,
+        [type]                      NVARCHAR(255)       NOT NULL,
+        [payload]                   NVARCHAR(MAX)       NULL
+    )
+	 PRINT 'CREATE TABLE dbo.events'
+END
+GO
+
+IF NOT EXISTS(
+    SELECT TOP 1 1
+    FROM
+        sys.tables t WITH(NOLOCK)
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_event_identifier_type'
+    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'events' AND t.type = 'U')
+BEGIN
+    CREATE NONCLUSTERED INDEX [ix_event_identifier_type] ON [dbo].[events] ([identifier], [type])
+    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+    PRINT 'Added index ix_event_identifier_type to dbo.events.'
+END
+GO
+
+GO
+--/KitManagerFileID=17942
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4610,17942,'event.sql',0
 GO
 
 --/ 	 KitSection = Tables
