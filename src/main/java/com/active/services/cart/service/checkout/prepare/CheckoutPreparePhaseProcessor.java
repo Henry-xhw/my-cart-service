@@ -2,11 +2,8 @@ package com.active.services.cart.service.checkout.prepare;
 
 import com.active.services.cart.client.rest.ReservationService;
 import com.active.services.cart.domain.Cart;
-import com.active.services.cart.model.Range;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.checkout.CheckoutContext;
-import com.active.services.inventory.rest.dto.DateTimeRange;
-import com.active.services.inventory.rest.dto.ReservationDTO;
 import com.active.services.inventory.rest.dto.ReservationResultDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -16,11 +13,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Prepare phase to lock resource for commit.
@@ -43,10 +36,11 @@ public class CheckoutPreparePhaseProcessor {
     public void process() {
         Cart cart = checkoutContext.getCart();
         UUID reservationId = cart.getReservationId();
+        
         if (reservationId == null) {
             reserveInventory();
         } else {
-            reservationService.touchReserve(reservationId);
+            reservationService.edit(reservationId, checkoutContext.getReservations());
         }
     }
 
