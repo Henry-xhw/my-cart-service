@@ -26,6 +26,6 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
     @Override
     protected void doProcess() {
         // Should place order to be finalized if payment passed.
-        cartRepository.finalizeCart(checkoutContext.getCart().getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.finalizeCart(getCheckoutContext().getCart().getIdentifier(), AuditorAwareUtil.getAuditor());
     }
 }

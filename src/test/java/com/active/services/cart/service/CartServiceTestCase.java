@@ -51,6 +51,9 @@ public class CartServiceTestCase {
     @Mock
     private CartPriceEngine cartPriceEngine;
 
+    @Mock
+    private DataAccess dataAccess;
+
     @InjectMocks
     private CartService cartService;
 

@@ -27,7 +27,7 @@ public class CheckoutCommitInventoryProcessor extends CheckoutBaseProcessor {
     @Override
     protected void doProcess() {
         ReservationCheckoutDto reservationCheckoutDto = new ReservationCheckoutDto();
-        reservationCheckoutDto.setReservationGroupId(checkoutContext.getCart().getReservationId());
+        reservationCheckoutDto.setReservationGroupId(getCheckoutContext().getCart().getReservationId());
         reservationService.commit(reservationCheckoutDto);
     }
 }

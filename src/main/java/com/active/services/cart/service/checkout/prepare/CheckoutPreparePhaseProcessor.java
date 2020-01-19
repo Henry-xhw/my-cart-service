@@ -36,7 +36,6 @@ public class CheckoutPreparePhaseProcessor {
     public void process() {
         Cart cart = checkoutContext.getCart();
         UUID reservationId = cart.getReservationId();
-        
         if (reservationId == null) {
             reserveInventory();
         } else {

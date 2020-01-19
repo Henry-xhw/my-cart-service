@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Event {
 
-    static ObjectMapper objectMapper;
+    private static ObjectMapper objectMapper;
 
     private String identifier;
 
@@ -24,5 +24,9 @@ public class Event {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void setObjectMapper(ObjectMapper om) {
+        objectMapper = om;
     }
 }

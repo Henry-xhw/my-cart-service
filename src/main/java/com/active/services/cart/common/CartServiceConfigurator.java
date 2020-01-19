@@ -12,7 +12,7 @@ public class CartServiceConfigurator {
 
     @Autowired
     public void configureObjectMapper(ObjectMapper objectMapper) {
-        Event.objectMapper = objectMapper;
+        Event.setObjectMapper(objectMapper);
     }
 
     @Bean

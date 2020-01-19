@@ -57,7 +57,7 @@ public class CheckoutProcessor {
 
     private void acquireLock() {
         UUID cartId = checkoutContext.getCart().getIdentifier();
-        boolean lockAcquired = (cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == 1);
+        boolean lockAcquired = cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
         if (!lockAcquired) {
             LOG.warn("Cart {} had been locked by other call", cartId);
             throw new CartException(ErrorCode.CART_LOCKED, "Cart: {0} had been locked by other call.", cartId);
