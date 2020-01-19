@@ -49,6 +49,4 @@ public class UpdateCartItemDto {
     private String groupingIdentifier;
 
     private Integer feeVolumeIndex;
-
-    private UUID reservationId;
 }

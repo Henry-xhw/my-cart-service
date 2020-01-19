@@ -1,4 +1,4 @@
-package com.active.services.cart.infrastructure.mapper;
+package com.active.services.cart.service.checkout;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -13,9 +13,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-import java.time.Instant;
-
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = OrderTypeMapping.class)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = OrderTypeMapper.class)
 public interface PlaceCartMapper {
 
     PlaceCartMapper MAPPER = Mappers.getMapper(PlaceCartMapper.class);

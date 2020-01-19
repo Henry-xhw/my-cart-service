@@ -1,9 +1,11 @@
 package com.active.services.cart.repository;
 
+import com.active.services.cart.common.Event;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
+import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.TreeBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -82,5 +84,13 @@ public class CartRepository {
 
     public int releaseLock(UUID cartId, String modifiedBy) {
         return cartMapper.releaseLock(cartId, modifiedBy);
+    }
+
+    public void updateCartReservationId(Cart cart) {
+        cartMapper.updateCartReservationGroupId(cart, AuditorAwareUtil.getAuditor());
+    }
+
+    public void createEvents(List<Event> events) {
+        cartMapper.createEvents(events);
     }
 }

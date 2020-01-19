@@ -1,5 +1,6 @@
 package com.active.services.cart.repository.mapper;
 
+import com.active.services.cart.common.Event;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Mapper public interface CartMapper {
+@Mapper
+public interface CartMapper {
     void createCart(Cart cart);
 
     void deleteCart(Long cartId);
@@ -23,8 +25,6 @@ import java.util.UUID;
     void createCartItem(@Param("cartId") Long cartId, @Param("item") BaseTree<CartItem> item);
 
     void deleteCartItem(Long cartItemId);
-
-    void deleteCartItemByCartId(Long cartId);
 
     List<UUID> search(@Param("ownerId") UUID ownerId);
 
@@ -42,4 +42,7 @@ import java.util.UUID;
 
     int releaseLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
+    void updateCartReservationGroupId( @Param("cart") Cart cart,  @Param("modifiedBy") String modifiedBy);
+
+    void createEvents(List<Event> events);
 }

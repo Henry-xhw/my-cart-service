@@ -2,7 +2,7 @@ package com.active.services.cart.controller;
 
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.controller.v1.CartItemController;
-import com.active.services.cart.controller.v1.CartMapper;
+import com.active.services.cart.controller.v1.mapper.CartMapper;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.controller.Constants.V1_MEDIA;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.newErrorDocument;

@@ -1,4 +1,4 @@
-package com.active.services.cart.controller.v1;
+package com.active.services.cart.controller.v1.mapper;
 
 import com.active.services.cart.controller.UUIDGenerator;
 import com.active.services.cart.domain.Cart;

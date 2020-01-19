@@ -6,32 +6,34 @@
 
     <insert id="createCart" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO [dbo].[carts]
-        (identifier,
-        owner_id,
-        keyer_id,
-        currency_code,
-        created_by,
-        created_dt,
-        modified_by,
-        modified_dt,
-        version,
-        price_version,
-        is_lock,
-        cart_status)
+            (identifier,
+            owner_id,
+            keyer_id,
+            currency_code,
+            created_by,
+            created_dt,
+            modified_by,
+            modified_dt,
+            version,
+            price_version,
+            is_lock,
+            cart_status,
+            reservation_id)
         VALUES
-        (#{identifier},
-        #{ownerId},
-        #{keyerId},
-        #{currencyCode},
-        #{createdBy},
-        getutcdate(),
-        #{modifiedBy},
-        getutcdate(),
-        #{version},
-        #{priceVersion},
-        #{lock},
-        #{cartStatus}
-        )
+            (#{identifier},
+            #{ownerId},
+            #{keyerId},
+            #{currencyCode},
+            #{createdBy},
+            getutcdate(),
+            #{modifiedBy},
+            getutcdate(),
+            #{version},
+            #{priceVersion},
+            #{lock},
+            #{cartStatus},
+            #{reservationId}
+            )
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
@@ -50,7 +52,6 @@
             [quantity],
             [unit_price],
             [grouping_identifier],
-            [reservation_id],
             [created_by],
             [created_dt],
             [modified_by],
@@ -87,7 +88,6 @@
              #{item.quantity},
              #{item.unitPrice},
              #{item.groupingIdentifier},
-             #{item.reservationId},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -148,14 +148,6 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
-        <choose>
-            <when test="item.reservationId!=null">
-                [reservation_id] = #{item.reservationId},
-            </when>
-            <otherwise>
-                [reservation_id] = null,
-            </otherwise>
-        </choose>
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -208,26 +200,21 @@
         item.unit_price               AS item_unit_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
-        item.reservation_id           AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
         item.modified_dt              AS item_modifiedDt
         FROM dbo.carts cart
         LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
-        WHERE cart.identifier = #{cartId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE cart.identifier = #{cartId} and cart_status != 'FINALIZED'
     </select>
 
     <delete id="deleteCart">
-        DELETE FROM carts WHERE id = #{cartId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        DELETE FROM carts WHERE id = #{cartId} and cart_status != 'FINALIZED'
     </delete>
 
     <delete id="deleteCartItem">
         DELETE FROM cart_items WHERE id = #{cartItemId}
-    </delete>
-
-    <delete id="deleteCartItemByCartId">
-        DELETE FROM cart_items WHERE cart_id = #{cartId}
     </delete>
 
     <delete id="batchDeleteCartItems" parameterType="java.util.List">
@@ -238,7 +225,7 @@
     </delete>
 
     <select id="search" resultType="java.util.UUID">
-        SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != 'FINALIZED'
     </select>
 
     <select id="getCartItemIdByCartItemUuid" resultType="Long">
@@ -250,10 +237,10 @@
     <update id="finalizeCart">
         UPDATE [dbo].[carts]
         SET
-        cart_status = '${@com.active.services.cart.service.CartStatus@FINALIZED}',
+        cart_status = 'FINALIZED',
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} AND cart_status != 'FINALIZED'
     </update>
 
     <update id="acquireLock">
@@ -262,7 +249,7 @@
         [is_lock] = 1,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and is_lock != 1 and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and is_lock != 1 and cart_status != 'FINALIZED'
     </update>
 
     <update id="releaseLock">
@@ -271,7 +258,7 @@
         [is_lock] = 0,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
     <update id="incrementVersion">
@@ -280,7 +267,7 @@
         version = version + 1,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
     <update id="incrementPriceVersion">
@@ -289,7 +276,31 @@
         price_version = version,
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier} and cart_status != '${@com.active.services.cart.service.CartStatus@FINALIZED}'
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
     </update>
 
+
+    <update id="updateCartReservationGroupId">
+        UPDATE [dbo].[carts]
+        SET
+        [reservation_id] = #{cart.reservationId},
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{cart.identifier}
+    </update>
+
+    <insert id="createEvents">
+        INSERT INTO [dbo].[events]
+            (
+                [identifier],
+                [type],
+                [payload]
+            )
+        VALUES
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item.identifier},
+            #{item.type},
+            #{item.payload}
+        </foreach>
+    </insert>
 </mapper>

@@ -32,7 +32,7 @@ public class FeignConfigurator {
         Logger.Level level = LOG.isDebugEnabled() ? Logger.Level.FULL : Logger.Level.BASIC;
 
         return Feign.builder().encoder(new JacksonEncoder(objectMapper)).decoder(new JacksonDecoder(objectMapper))
-                .client(new OkHttpClient(target)).logger(new Slf4jLogger(RestServiceConfiguration.class))
+                .client(new OkHttpClient(target)).logger(new Slf4jLogger(FeignConfigurator.class))
                 .logLevel(level).target(clz, url);
     }
 }

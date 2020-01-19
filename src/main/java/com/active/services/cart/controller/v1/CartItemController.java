@@ -1,5 +1,6 @@
 package com.active.services.cart.controller.v1;
 
+import com.active.services.cart.controller.v1.mapper.CartMapper;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
@@ -20,10 +21,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.CART_ITEM_ID_PATH;
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.controller.Constants.CART_ID_PARAM;
+import static com.active.services.cart.controller.Constants.CART_ITEM_ID_PARAM;
+import static com.active.services.cart.controller.Constants.CART_ITEM_ID_PATH;
+import static com.active.services.cart.controller.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)

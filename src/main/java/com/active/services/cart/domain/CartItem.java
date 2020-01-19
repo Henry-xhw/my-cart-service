@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -40,8 +39,6 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer feeVolumeIndex;
 
-    private UUID reservationId;
-
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -55,6 +52,5 @@ public class CartItem extends BaseTree<CartItem> {
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
-        this.setReservationId(updateCartItemDto.getReservationId());
     }
 }

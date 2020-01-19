@@ -1,5 +1,7 @@
 package com.active.services.cart.controller.v1;
 
+import com.active.services.cart.controller.v1.mapper.CartMapper;
+import com.active.services.cart.controller.v1.mapper.QuoteCartMapper;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CheckoutResult;
@@ -12,6 +14,7 @@ import com.active.services.cart.model.v1.rsp.QuoteRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 import com.active.services.cart.service.CartStatus;
+import com.active.services.cart.service.checkout.CheckoutContext;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -26,14 +29,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-import static com.active.services.cart.controller.v1.Constants.CART_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.CHECKOUT_PATH;
-import static com.active.services.cart.controller.v1.Constants.ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.ID_PARAM_PATH;
-import static com.active.services.cart.controller.v1.Constants.OWNER_ID_PARAM;
-import static com.active.services.cart.controller.v1.Constants.OWNER_PATH;
-import static com.active.services.cart.controller.v1.Constants.QUOTE_PATH;
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.controller.Constants.CART_ID_PARAM;
+import static com.active.services.cart.controller.Constants.CHECKOUT_PATH;
+import static com.active.services.cart.controller.Constants.ID_PARAM;
+import static com.active.services.cart.controller.Constants.ID_PARAM_PATH;
+import static com.active.services.cart.controller.Constants.OWNER_ID_PARAM;
+import static com.active.services.cart.controller.Constants.OWNER_PATH;
+import static com.active.services.cart.controller.Constants.QUOTE_PATH;
+import static com.active.services.cart.controller.Constants.V1_MEDIA;
 
 @RestController
 @RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
@@ -89,8 +92,10 @@ public class CartController {
     @PostMapping(CHECKOUT_PATH)
     public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody CheckoutReq req) {
         CheckoutRsp rsp = new CheckoutRsp();
-        List<CheckoutResult> results = cartService.checkout(cartId, req);
+        CheckoutContext context = CartMapper.INSTANCE.toDomain(req);
+        List<CheckoutResult> results = cartService.checkout(cartId, context);
         rsp.setCheckoutResults(results);
+
         return rsp;
     }
 }
