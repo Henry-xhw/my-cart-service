@@ -136,7 +136,6 @@ public class CartService {
 
     public List<CheckoutResult> checkout(UUID cartId, CheckoutContext context) {
         Cart cart = getCartWithFullPriceByUuid(cartId);
-        cart.setModifiedBy(AuditorAwareUtil.getAuditor());
         context.setCart(cart);
 
         getCheckoutProcessor(context).process();

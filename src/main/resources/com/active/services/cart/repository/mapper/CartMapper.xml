@@ -283,10 +283,10 @@
     <update id="updateCartReservationGroupId">
         UPDATE [dbo].[carts]
         SET
-        [reservation_id] = #{reservationId},
+        [reservation_id] = #{cart.reservationId},
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{identifier}
+        WHERE identifier = #{cart.identifier}
     </update>
 
     <insert id="createEvents">
