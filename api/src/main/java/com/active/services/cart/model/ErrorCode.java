@@ -5,10 +5,18 @@ package com.active.services.cart.model;
  *
  */
 public enum ErrorCode {
-    INTERNAL_ERROR,
-    VALIDATION_ERROR,
-    CART_NOT_FOUND,
-    CART_ITEM_NOT_FOUND,
-    CART_LOCKED,
-    CART_PRICING_OUT_OF_DATE
+    QUOTE_ERROR(false),
+    INTERNAL_ERROR(false),
+    VALIDATION_ERROR(false),
+    CART_NOT_FOUND(false),
+    CART_ITEM_NOT_FOUND(false),
+    CART_LOCKED(true),
+    CART_PRICING_OUT_OF_DATE(true),
+    OUT_OF_INVENTORY(true);
+
+    private final boolean isBizException;
+
+    private ErrorCode(boolean isBizException) {
+        this.isBizException = isBizException;
+    }
 }
