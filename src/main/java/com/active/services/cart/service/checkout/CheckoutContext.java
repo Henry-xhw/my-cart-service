@@ -1,8 +1,10 @@
 package com.active.services.cart.service.checkout;
 
 import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.Payment;
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
+import com.active.services.cart.model.CartItemFeeAllocation;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.CheckoutResult;
@@ -35,6 +37,10 @@ public class CheckoutContext {
     private Cart cart;
 
     private List<CheckoutResult> checkoutResults = new ArrayList<>();
+
+    private List<CartItemFeeAllocation> allocations;
+
+    private List<Payment> payments = new ArrayList<>();
 
     public List<ReservationDTO> getReservations() {
         List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {

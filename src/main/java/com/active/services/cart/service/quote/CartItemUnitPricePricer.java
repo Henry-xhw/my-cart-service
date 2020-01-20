@@ -20,12 +20,16 @@ public class CartItemUnitPricePricer implements CartItemPricer {
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem, Map<Long, FeeDto> feeDtoHashMap) {
+        CartItemFee priceFee;
+
         if (Objects.isNull(cartItem.getUnitPrice())) {
-            cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem,
-                    feeDtoHashMap.get(cartItem.getProductId()), CartItemFeeType.PRICE));
+            priceFee = CartItemFee.buildCartItemFee(cartItem,
+                    feeDtoHashMap.get(cartItem.getProductId()), CartItemFeeType.PRICE);
         } else {
-            cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE));
+            priceFee = CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE);
         }
+        priceFee.setDueAmount(priceFee.getUnitPrice());
+        cartItem.getFees().add(priceFee);
         setGrossAndNetPriceValue(cartItem);
     }
 
