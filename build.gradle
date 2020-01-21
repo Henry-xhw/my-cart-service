@@ -79,6 +79,7 @@ dependencies {
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
     testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testCompile 'com.epages:restdocs-api-spec-mockmvc:0.9.4'
+    compile group: 'com.active.platform', name: 'platform-lib', version: '1.0.18'
 }
 
 active {

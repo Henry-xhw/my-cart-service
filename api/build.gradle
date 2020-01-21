@@ -23,4 +23,5 @@ dependencies {
     
     testImplementation 'org.hibernate.validator:hibernate-validator'
     testImplementation 'junit:junit'
+    compile group: 'com.active.platform', name: 'platform-lib', version: '1.0.18'
 }
