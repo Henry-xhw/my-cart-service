@@ -98,10 +98,11 @@ public class CartService {
         dataAccess.doInTx(() -> doInsertCartItems(cart, cartItems, null));
     }
 
-    private void doInsertCartItems(Cart cart, List<CartItem> cartItems, Long parentId) {
+    private void doInsertCartItems(Cart cart, List<CartItem> cartItems, Long requestParentId) {
         Long cartId = cart.getId();
 
         for (CartItem it : cartItems) {
+            Long parentId = requestParentId;
             if (it.getIdentifier() != null) {
                 parentId = cart.findCartItem(it.getIdentifier()).get().getId();
             } else {
