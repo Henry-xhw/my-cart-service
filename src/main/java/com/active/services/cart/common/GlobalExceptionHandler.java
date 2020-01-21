@@ -1,12 +1,12 @@
 package com.active.services.cart.common;
 
-import com.active.services.cart.model.ErrorItem;
 import com.active.services.cart.model.v1.rsp.BaseRsp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,14 +30,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public BaseRsp methodArgumentNotValidException(MethodArgumentNotValidException exception)
             throws JsonProcessingException {
-        List<ErrorItem> errors = exception.getBindingResult().getFieldErrors().stream()
-            .map(item -> {
-                ErrorItem errorItem = new ErrorItem();
-                errorItem.setIdentifier(item.getField());
-                errorItem.setMsg(item.getDefaultMessage());
+        ResponseEntity.BodyBuilder builder = ResponseEntity.badRequest();
 
-                return errorItem;
-            }).collect(Collectors.toList());
+        List<String> errors = exception.getBindingResult().getFieldErrors().stream()
+            .map(item -> item.getField() + ": " + item.getDefaultMessage()).collect(Collectors.toList());
 
         String msg = errorMsgWithTrackingId(objectMapper.writeValueAsString(errors));
         BaseRsp rsp = new BaseRsp();
