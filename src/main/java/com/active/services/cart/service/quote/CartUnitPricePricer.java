@@ -62,12 +62,11 @@ public class CartUnitPricePricer implements CartPricer {
                 .collect(toMap(FeeDto::getSequence, Function.identity()));
 
         emptyIfNull(notUnitPriceItems)
-                .stream()
-                .filter(Objects::nonNull)
-                .forEach(notUnitPriceItem ->
-                        feeDtoHashMap.put(notUnitPriceItem.getProductId(),
-                                sequenceFeedtoMap.get(notUnitPriceItem.getSequence()))
-                );
+            .stream()
+            .filter(Objects::nonNull)
+            .forEach(notUnitPriceItem ->
+                feeDtoHashMap.put(notUnitPriceItem.getProductId(), sequenceFeedtoMap.get(notUnitPriceItem.getSequence()))
+            );
     }
 
     private List<QuoteItemDto> getNotUnitPriceItems(List<CartItem> flattenCartItems) {
