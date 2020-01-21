@@ -1,13 +1,13 @@
 package com.active.services.cart.client.rest;
 
-import com.active.services.product.nextgen.v1.req.GetProductFeeReq;
-import com.active.services.product.nextgen.v1.rsp.GetProductFeeRsp;
+import com.active.services.product.nextgen.v1.req.QuoteReq;
+import com.active.services.product.nextgen.v1.rsp.QuoteRsp;
 
 import feign.Headers;
 import feign.RequestLine;
 
 @Headers("Content-Type: application/vnd.active.product-service.v1+json")
 public interface ProductService {
-    @RequestLine("POST /api/product/fee")
-    GetProductFeeRsp quote(GetProductFeeReq getProductFeeReq);
+    @RequestLine("POST /api/products/quotation")
+    QuoteRsp quote(QuoteReq quoteReq);
 }

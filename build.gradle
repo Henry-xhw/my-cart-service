@@ -58,7 +58,7 @@ dependencies {
     implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.51'
     implementation group: 'com.active.services', name:'order-management-service', version: '4.1.0.15', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
-    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.19'
+    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
 
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"

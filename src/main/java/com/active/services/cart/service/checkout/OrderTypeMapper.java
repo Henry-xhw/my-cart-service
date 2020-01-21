@@ -9,7 +9,7 @@ public final class OrderTypeMapper {
     private OrderTypeMapper() {
     }
 
-    static OrderLineFeeType setFeeType(CartItemFeeType type) {
+    public static OrderLineFeeType setFeeType(CartItemFeeType type) {
         if (type == CartItemFeeType.PRICE) {
             return OrderLineFeeType.PRICE;
         }
@@ -22,7 +22,7 @@ public final class OrderTypeMapper {
         return null;
     }
 
-    static FeeTransactionType setFeeTransactionType(com.active.services.cart.model.FeeTransactionType feeTransactionType) {
+    public static FeeTransactionType setFeeTransactionType(com.active.services.cart.model.FeeTransactionType feeTransactionType) {
         if (feeTransactionType == com.active.services.cart.model.FeeTransactionType.DEBIT) {
             return FeeTransactionType.DEBIT;
         }

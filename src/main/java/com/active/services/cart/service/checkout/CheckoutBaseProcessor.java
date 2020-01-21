@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor
 public abstract class CheckoutBaseProcessor  {
-    protected final CheckoutContext checkoutContext;
+    private final CheckoutContext checkoutContext;
 
     private final CheckoutEvent.CheckoutPhase checkoutPhase;
 
@@ -23,13 +23,17 @@ public abstract class CheckoutBaseProcessor  {
         }
     }
 
+    protected CheckoutContext getCheckoutContext() {
+        return checkoutContext;
+    }
+
     protected abstract void doProcess();
 
     protected void publishFailedEvent(Exception e) {
         CheckoutEvent event = new CheckoutEvent();
         event.setIdentifier(checkoutContext.getCart().getIdentifier().toString());
         event.setType(checkoutPhase + "_FAILED");
-        event.setPayload(e == null ? null: e.getMessage());
+        event.setPayload(e == null ? null : e.getMessage());
         eventBus.post(event);
     }
 

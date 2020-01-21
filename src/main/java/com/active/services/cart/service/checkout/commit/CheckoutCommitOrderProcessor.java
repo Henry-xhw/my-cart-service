@@ -2,13 +2,13 @@ package com.active.services.cart.service.checkout.commit;
 
 import com.active.services.cart.client.rest.OrderService;
 import com.active.services.cart.common.CartException;
-import com.active.services.cart.service.checkout.PlaceCartMapper;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.PaymentAccountResult;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.service.checkout.CheckoutBaseProcessor;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutEvent;
+import com.active.services.cart.service.checkout.PlaceCartMapper;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
@@ -40,6 +40,7 @@ public class CheckoutCommitOrderProcessor extends CheckoutBaseProcessor {
 
     @Override
     protected void doProcess() {
+        CheckoutContext checkoutContext = getCheckoutContext();
         OrderDTO orderDTO = PlaceCartMapper.MAPPER.toOrderDTO(checkoutContext.getCart());
         orderDTO.setOrderUrl(checkoutContext.getOrderUrl());
         orderDTO.setSendOrderReceipt(checkoutContext.isSendReceipt());
