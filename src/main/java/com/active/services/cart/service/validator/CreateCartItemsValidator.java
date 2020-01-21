@@ -1,6 +1,7 @@
 package com.active.services.cart.service.validator;
 
 import com.active.services.ActiveEntityNotFoundException;
+import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.active.services.cart.domain.Cart.flattenCartItems;
-import static com.active.services.cart.util.AuditorAwareUtil.getContext;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Component
@@ -63,7 +63,7 @@ public class CreateCartItemsValidator {
             FindProductsByIdListReq req = new FindProductsByIdListReq();
             req.setProductIds(uniqueProductIds);
             FindProductsByIdListRsp rsp = soapClient.productServiceSOAPEndPoint()
-                    .findProductsByIdList(getContext(), req);
+                    .findProductsByIdList(ContextWrapper.get(), req);
 
             return rsp.getProducts();
         } catch (ActiveEntityNotFoundException e) {

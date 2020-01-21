@@ -1,11 +1,11 @@
 package com.active.services.cart.repository;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.common.Event;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
-import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.TreeBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -87,7 +87,7 @@ public class CartRepository {
     }
 
     public void updateCartReservationId(Cart cart) {
-        cartMapper.updateCartReservationGroupId(cart, AuditorAwareUtil.getAuditor());
+        cartMapper.updateCartReservationGroupId(cart, ContextWrapper.get().getActorId());
     }
 
     public void createEvents(List<Event> events) {

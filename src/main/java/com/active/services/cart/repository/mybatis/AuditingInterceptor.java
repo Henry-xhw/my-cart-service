@@ -1,7 +1,7 @@
 package com.active.services.cart.repository.mybatis;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.domain.BaseDomainObject;
-import com.active.services.cart.util.AuditorAwareUtil;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -39,11 +39,11 @@ public class AuditingInterceptor implements Interceptor {
         if (parameter instanceof BaseDomainObject) {
             BaseDomainObject baseDomain = (BaseDomainObject) parameter;
             if (SqlCommandType.INSERT.equals(sqlCommandType)) {
-                baseDomain.setCreatedBy(AuditorAwareUtil.getAuditor());
+                baseDomain.setCreatedBy(ContextWrapper.get().getActorId());
                 baseDomain.setCreatedDt(Instant.now());
             }
             if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                baseDomain.setModifiedBy(AuditorAwareUtil.getAuditor());
+                baseDomain.setModifiedBy(ContextWrapper.get().getActorId());
                 baseDomain.setModifiedDt(Instant.now());
             }
         }
