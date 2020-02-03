@@ -38,13 +38,18 @@ public class AuditingInterceptor implements Interceptor {
     private void setAuditingInfo(Object parameter, SqlCommandType sqlCommandType) {
         if (parameter instanceof BaseDomainObject) {
             BaseDomainObject baseDomain = (BaseDomainObject) parameter;
+            String actorId = ContextWrapper.get().getActorId();
+            Instant nowInstant = Instant.now();
+
             if (SqlCommandType.INSERT.equals(sqlCommandType)) {
-                baseDomain.setCreatedBy(ContextWrapper.get().getActorId());
-                baseDomain.setCreatedDt(Instant.now());
+                baseDomain.setCreatedBy(actorId);
+                baseDomain.setCreatedDt(nowInstant);
+                baseDomain.setModifiedBy(actorId);
+                baseDomain.setModifiedDt(nowInstant);
             }
-            if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                baseDomain.setModifiedBy(ContextWrapper.get().getActorId());
-                baseDomain.setModifiedDt(Instant.now());
+            if (SqlCommandType.UPDATE.equals(sqlCommandType)) {
+                baseDomain.setModifiedBy(actorId);
+                baseDomain.setModifiedDt(nowInstant);
             }
         }
     }
