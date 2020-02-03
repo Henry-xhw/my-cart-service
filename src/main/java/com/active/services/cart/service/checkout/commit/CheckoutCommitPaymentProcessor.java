@@ -1,10 +1,10 @@
 package com.active.services.cart.service.checkout.commit;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.checkout.CheckoutBaseProcessor;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutEvent;
-import com.active.services.cart.util.AuditorAwareUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,6 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
     @Override
     protected void doProcess() {
         // Should place order to be finalized if payment passed.
-        cartRepository.finalizeCart(getCheckoutContext().getCart().getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.finalizeCart(getCheckoutContext().getCart().getIdentifier(), ContextWrapper.get().getActorId());
     }
 }

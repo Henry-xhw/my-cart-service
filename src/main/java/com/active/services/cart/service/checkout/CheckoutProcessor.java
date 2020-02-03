@@ -1,11 +1,11 @@
 package com.active.services.cart.service.checkout;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.checkout.commit.CheckoutCommitPhaseProcessor;
 import com.active.services.cart.service.checkout.prepare.CheckoutPreparePhaseProcessor;
-import com.active.services.cart.util.AuditorAwareUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +57,7 @@ public class CheckoutProcessor {
 
     private void acquireLock() {
         UUID cartId = checkoutContext.getCart().getIdentifier();
-        boolean lockAcquired = cartRepository.acquireLock(cartId, AuditorAwareUtil.getAuditor()) == 1;
+        boolean lockAcquired = cartRepository.acquireLock(cartId, ContextWrapper.get().getActorId()) == 1;
         if (!lockAcquired) {
             LOG.warn("Cart {} had been locked by other call", cartId);
             throw new CartException(ErrorCode.CART_LOCKED, "Cart: {0} had been locked by other call.", cartId);
@@ -65,7 +65,7 @@ public class CheckoutProcessor {
     }
 
     private boolean releaseLock() {
-        return cartRepository.releaseLock(checkoutContext.getCart().getIdentifier(), AuditorAwareUtil.getAuditor()) == 1;
+        return cartRepository.releaseLock(checkoutContext.getCart().getIdentifier(), ContextWrapper.get().getActorId()) == 1;
     }
 
 }

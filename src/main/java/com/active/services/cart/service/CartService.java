@@ -1,5 +1,6 @@
 package com.active.services.cart.service;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
@@ -16,7 +17,6 @@ import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
-import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.cart.util.TreeBuilder;
 
@@ -150,11 +150,11 @@ public class CartService {
     }
 
     private void incrementVersion(UUID cartId) {
-        cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor());
+        cartRepository.incrementVersion(cartId, ContextWrapper.get().getActorId());
     }
 
     private void incrementPriceVersion(UUID cartId) {
-        cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor());
+        cartRepository.incrementPriceVersion(cartId, ContextWrapper.get().getActorId());
     }
 
     private void saveQuoteResult(Cart cart) {

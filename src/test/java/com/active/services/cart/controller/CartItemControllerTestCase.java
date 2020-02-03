@@ -68,7 +68,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         when(cartService.getCartByUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
         CreateCartItemReq req = new CreateCartItemReq();
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
-        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
+        mockMvc.perform(post("/api/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
           .content(objectMapper.writeValueAsString(req)))
@@ -84,7 +84,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 "not found"));
         CreateCartItemReq req = new CreateCartItemReq();
         req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
-        mockMvc.perform(post("/carts/{cart-id}/items", cartId)
+        mockMvc.perform(post("/api/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
           .content(objectMapper.writeValueAsString(req)))
@@ -95,7 +95,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void deleteCartItemSuccess() throws Exception {
         when(cartService.getCartByUuid(any(UUID.class))).thenReturn(cart);
-        mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
+        mockMvc.perform(delete("/api/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
                 .contentType(V1_MEDIA))
@@ -109,7 +109,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     public void deleteCartItemWhenCartNotExistThrowException() throws Exception {
         when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
                 "no found"));
-        mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
+        mockMvc.perform(delete("/api/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
                 .contentType(V1_MEDIA))
@@ -120,7 +120,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void deleteCartItemWhenCartItemNotExistThrowException() throws Exception {
         when(cartService.getCartByUuid(any(UUID.class))).thenReturn(cart);
-        mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
+        mockMvc.perform(delete("/api/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId2)
                 .headers(actorIdHeader())
                 .contentType(V1_MEDIA))
@@ -141,7 +141,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.getCartByUuid(identifier)).thenReturn(cart);
         when(cartService.updateCartItems(identifier, items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+        mockMvc.perform(put("/api/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))
@@ -165,7 +165,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         when(cartService.getCartByUuid(identifier)).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart not " +
                 "found"));
         when(cartService.updateCartItems(identifier, items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+        mockMvc.perform(put("/api/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))
@@ -187,7 +187,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.getCartByUuid(identifier)).thenReturn(cart);
         when(cartService.updateCartItems(identifier, items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+        mockMvc.perform(put("/api/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))
@@ -220,7 +220,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         req.setItems(Collections.singletonList(updateCartItemDto));
         when(cartService.getCartByUuid(identifier)).thenReturn(cart);
         when(cartService.updateCartItems(identifier, items)).thenReturn(items);
-        mockMvc.perform(put("/carts/{cart-id}/items", identifier)
+        mockMvc.perform(put("/api/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))

@@ -1,5 +1,7 @@
 package com.active.services.cart.client.rest;
 
+import com.active.platform.filter.ContextFilter;
+import com.active.services.ContextWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Feign;
@@ -15,6 +17,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.HEAD;
 
 @ConfigurationProperties(prefix = "ok-http")
 @Data
@@ -36,6 +40,7 @@ public class FeignConfigurator {
         Feign.Builder builder = Feign.builder().encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
                 .client(new OkHttpClient(target)).logger(new Slf4jLogger(FeignConfigurator.class))
+                .requestInterceptor(template -> template.header(ContextFilter.ACTOR_ID, ContextWrapper.get().getActorId()))
                 .logLevel(level);
         if (errorDecoder != null) {
             builder.errorDecoder(errorDecoder);
