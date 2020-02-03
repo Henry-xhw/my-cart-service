@@ -23,6 +23,8 @@ public interface CartMapper {
 
     CartItem toDomain(CartItemDto dto, @Context boolean isCreate);
 
+    CheckoutContext toDomain(CheckoutReq req);
+
     @InheritInverseConfiguration
     CartDto toDto(Cart cart);
 
@@ -33,7 +35,5 @@ public interface CartMapper {
 
     @InheritInverseConfiguration
     CreateCartReq toCreateCartReq(Cart cart);
-
-    CheckoutContext toDomain(CheckoutReq req);
 
 }

@@ -22,7 +22,13 @@ public interface CartMapper {
 
     void updateCartItem(@Param("item") CartItem item);
 
+    void batchDeleteCartItems(List<UUID> uuidList);
+
     void createCartItem(@Param("cartId") Long cartId, @Param("item") BaseTree<CartItem> item);
+
+    int incrementPriceVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
+
+    int incrementVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
     void deleteCartItem(Long cartItemId);
 
@@ -30,13 +36,7 @@ public interface CartMapper {
 
     Optional<Long> getCartItemIdByCartItemUuid(@Param("cartItemId") UUID cartItemId);
 
-    void batchDeleteCartItems(List<UUID> uuidList);
-
     int finalizeCart(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
-
-    int incrementVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
-
-    int incrementPriceVersion(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
     int acquireLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
