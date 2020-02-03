@@ -86,8 +86,8 @@ public class CartRepository {
         return cartMapper.releaseLock(cartId, modifiedBy);
     }
 
-    public void updateCartReservationId(UUID cartId, UUID identifier) {
-        cartMapper.updateCartReservationGroupId(cartId, identifier, ContextWrapper.get().getActorId());
+    public void updateCartReservationId(UUID cartId, UUID reservationId) {
+        cartMapper.updateCartReservationGroupId(cartId, reservationId, ContextWrapper.get().getActorId());
     }
 
     public void createEvents(List<Event> events) {
