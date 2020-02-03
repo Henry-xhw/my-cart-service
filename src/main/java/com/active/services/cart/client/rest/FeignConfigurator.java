@@ -1,5 +1,6 @@
 package com.active.services.cart.client.rest;
 
+import com.active.platform.filter.ContextFilter;
 import com.active.services.ContextWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +36,7 @@ public class FeignConfigurator {
 
         return Feign.builder().encoder(new JacksonEncoder(objectMapper)).decoder(new JacksonDecoder(objectMapper))
                 .client(new OkHttpClient(target)).logger(new Slf4jLogger(FeignConfigurator.class))
-                .requestInterceptor(template -> template.header("Actor-Id", ContextWrapper.get().getActorId()))
+                .requestInterceptor(template -> template.header(ContextFilter.ACTOR_ID, ContextWrapper.get().getActorId()))
                 .logLevel(level).target(clz, url);
     }
 }

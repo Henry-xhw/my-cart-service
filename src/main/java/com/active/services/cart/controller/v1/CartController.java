@@ -39,7 +39,7 @@ import static com.active.services.cart.controller.Constants.QUOTE_PATH;
 import static com.active.services.cart.controller.Constants.V1_MEDIA;
 
 @RestController
-@RequestMapping(value = "/api/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequestMapping(value = "/carts", consumes = V1_MEDIA, produces = V1_MEDIA)
 @RequiredArgsConstructor
 public class CartController {
 

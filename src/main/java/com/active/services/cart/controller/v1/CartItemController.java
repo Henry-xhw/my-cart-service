@@ -27,7 +27,7 @@ import static com.active.services.cart.controller.Constants.CART_ITEM_ID_PATH;
 import static com.active.services.cart.controller.Constants.V1_MEDIA;
 
 @RestController
-@RequestMapping(value = "/api/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
+@RequestMapping(value = "/carts/{cart-id}/items", consumes = V1_MEDIA, produces = V1_MEDIA)
 @RequiredArgsConstructor
 public class CartItemController {
 

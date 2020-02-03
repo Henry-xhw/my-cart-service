@@ -27,7 +27,7 @@ public class CartServiceConfigurator {
         FilterRegistrationBean contextFilterReg = new FilterRegistrationBean();
 
         contextFilterReg.setFilter(new ContextFilter());
-        contextFilterReg.addUrlPatterns("/api/*");
+        contextFilterReg.addUrlPatterns("/carts/*");
 
         return contextFilterReg;
     }
