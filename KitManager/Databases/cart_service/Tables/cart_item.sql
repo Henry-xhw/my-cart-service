@@ -88,3 +88,14 @@ BEGIN
 	PRINT 'Drop column reservation_id from dbo.cart_items'
 END
 GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'oversold'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items ADD oversold BIT DEFAULT ((0)) NOT NULL
+
+        PRINT 'Added column oversold to dbo.cart_items'
+    END
+GO
