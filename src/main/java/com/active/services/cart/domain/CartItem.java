@@ -39,6 +39,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer feeVolumeIndex;
 
+    private boolean oversold;
+
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -52,5 +54,6 @@ public class CartItem extends BaseTree<CartItem> {
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
+        this.oversold = updateCartItemDto.isOversold();
     }
 }

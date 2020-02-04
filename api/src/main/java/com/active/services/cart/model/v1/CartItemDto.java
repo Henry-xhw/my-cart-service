@@ -63,4 +63,6 @@ public class CartItemDto extends BaseDto {
 
     @Valid
     private List<CartItemDto> subItems = new ArrayList<>();
+
+    private boolean oversold;
 }
