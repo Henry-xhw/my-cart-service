@@ -1,8 +1,7 @@
 package com.active.services.cart.service.quote;
 
-import com.active.services.ActiveEntityNotFoundException;
 import com.active.services.cart.client.rest.ContractService;
-import com.active.services.cart.client.soap.SOAPClient;
+import com.active.services.cart.client.soap.ProductService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
@@ -18,8 +17,6 @@ import com.active.services.contract.controller.v1.req.CalculateFeeAmountsReq;
 import com.active.services.contract.controller.v1.rsp.CalculateFeeAmountsRsp;
 import com.active.services.contract.controller.v1.type.FeeType;
 import com.active.services.domain.dto.ProductDto;
-import com.active.services.product.FindProductsByIdListReq;
-import com.active.services.product.FindProductsByIdListRsp;
 import com.active.services.product.ProductSaleSettings;
 
 import lombok.RequiredArgsConstructor;
@@ -38,10 +35,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.active.services.cart.model.ErrorCode.INTERNAL_ERROR;
-import static com.active.services.cart.util.AuditorAwareUtil.getContext;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -52,7 +47,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 @RequiredArgsConstructor
 public class ProductProcessingFeePricer implements ProcessingFeePricer {
     private final ContractService contractService;
-    private final SOAPClient soapClient;
+    private final ProductService productService;
     public static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100.000")
             .setScale(3, BigDecimal.ROUND_HALF_UP);
 
@@ -64,13 +59,14 @@ public class ProductProcessingFeePricer implements ProcessingFeePricer {
         Instant businessDate = Instant.now();
 
         // get products by cartItems
-        List<ProductDto> productDtos = getProducts(flattenCartItems);
+        List<ProductDto> productDtos = productService.getProducts(flattenCartItems);
 
-        Map<Long, ProductDto> foundProductById = productDtos.stream().collect(toMap(ProductDto::getId,
+        Map<Long, ProductDto> foundProductById =
+                emptyIfNull(productDtos).stream().filter(Objects::nonNull).collect(toMap(ProductDto::getId,
                 Function.identity()));
 
         Map<UUID, CartItem> foundCartItemByIdentifier =
-                emptyIfNull(flattenCartItems).stream().collect(toMap(CartItem::getIdentifier,
+                flattenCartItems.stream().collect(toMap(CartItem::getIdentifier,
                         Function.identity()));
         List<CalculationItem> items = new ArrayList<>();
 
@@ -133,7 +129,7 @@ public class ProductProcessingFeePricer implements ProcessingFeePricer {
         UUID referenceId = cartItem.getIdentifier();
         ProductDto product = checkNotNull(foundProductById.get(cartItem.getProductId()), "no " +
                 "found product by productId:" +
-                " " + cartItem.getProductId() + "; cartItem identifier: " + referenceId);
+                " " + cartItem.getProductId() + "; cartItem's identifier: " + referenceId);
         item.setAgencyId(product.getAgencyId());
         item.setBusinessDate(businessDate);
         item.setContractSetting(buildContractSetting(product, online, feeOwner));
@@ -183,23 +179,4 @@ public class ProductProcessingFeePricer implements ProcessingFeePricer {
         return rsp.getFeeResults();
 
     }
-
-
-    private List<ProductDto> getProducts(List<CartItem> newCartItems) {
-        List<Long> uniqueProductIds = newCartItems.stream().map(CartItem::getProductId)
-                .distinct().collect(Collectors.toList());
-
-        try {
-            FindProductsByIdListReq req = new FindProductsByIdListReq();
-            req.setProductIds(uniqueProductIds);
-            FindProductsByIdListRsp rsp = soapClient.productServiceSOAPEndPoint()
-                    .findProductsByIdList(getContext(), req);
-
-            return rsp.getProducts();
-        } catch (ActiveEntityNotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
-
 }

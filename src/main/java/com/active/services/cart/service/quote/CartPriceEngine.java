@@ -10,7 +10,7 @@ public class CartPriceEngine {
 
     public void quote(CartQuoteContext context) {
         getCartUnitPricePricer().quote(context);
-//        getProductProcessingFeePricer().quote(context, FeeOwner.CONSUMER);
+        getProductProcessingFeePricer().quote(context, FeeOwner.CONSUMER);
     }
 
     @Lookup

@@ -11,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.active.services.cart.util.AuditorAwareUtil.getContext;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 /**
  * @author henryxu
@@ -25,7 +27,7 @@ public class ProductService {
     private final SOAPClient soapClient;
 
     public List<ProductDto> getProducts(List<CartItem> cartItems) {
-        List<Long> uniqueProductIds = cartItems.stream().map(CartItem::getProductId)
+        List<Long> uniqueProductIds = emptyIfNull(cartItems).stream().filter(Objects::nonNull).map(CartItem::getProductId)
                 .distinct().collect(Collectors.toList());
 
         try {
