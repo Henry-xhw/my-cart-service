@@ -51,3 +51,4 @@ url:
   inventoryReservationServiceRest: ${url.inventoryServiceBase}/api
   productServiceSOAPV1: ${url.productServiceBase}/product-service/services/soap/v1/internal
   orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
+  contractServiceRest: ${url.contractServiceBase}/contract-service
