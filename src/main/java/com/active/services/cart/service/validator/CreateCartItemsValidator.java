@@ -1,6 +1,6 @@
 package com.active.services.cart.service.validator;
 
-import com.active.services.cart.client.soap.ProductService;
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.domain.dto.ProductDto;
@@ -26,13 +26,13 @@ public class CreateCartItemsValidator {
 
     private final List<CartItem> cartItems;
 
-    private final ProductService productService;
+    private final ProductServiceSoap productServiceSoap;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public CreateCartItemsValidator(Cart cart, List<CartItem> cartItems, ProductService productService) {
+    public CreateCartItemsValidator(Cart cart, List<CartItem> cartItems, ProductServiceSoap productServiceSoap) {
         this.cart = cart;
         this.cartItems = flattenCartItems(cartItems);
-        this.productService = productService;
+        this.productServiceSoap = productServiceSoap;
     }
 
     public void validate() {
@@ -45,7 +45,7 @@ public class CreateCartItemsValidator {
         List<CartItem> newCartItems = cartItems.stream().filter(item -> item.getIdentifier() == null)
                 .collect(Collectors.toList());
         if (!newCartItems.isEmpty()) {
-            List<ProductDto> foundProducts = emptyIfNull(productService.getProducts(newCartItems));
+            List<ProductDto> foundProducts = emptyIfNull(productServiceSoap.getProducts(newCartItems));
             new CartItemsProductValidator(newCartItems, foundProducts).validate();
             new CartItemsCurrencyValidator(cart, foundProducts).validate();
         }

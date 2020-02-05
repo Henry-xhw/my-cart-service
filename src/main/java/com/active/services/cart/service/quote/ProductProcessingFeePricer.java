@@ -1,7 +1,7 @@
 package com.active.services.cart.service.quote;
 
 import com.active.services.cart.client.rest.ContractService;
-import com.active.services.cart.client.soap.ProductService;
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
@@ -47,7 +47,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 @RequiredArgsConstructor
 public class ProductProcessingFeePricer implements ProcessingFeePricer {
     private final ContractService contractService;
-    private final ProductService productService;
+    private final ProductServiceSoap productServiceSoap;
     public static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal("100.000")
             .setScale(3, BigDecimal.ROUND_HALF_UP);
 
@@ -59,7 +59,7 @@ public class ProductProcessingFeePricer implements ProcessingFeePricer {
         Instant businessDate = Instant.now();
 
         // get products by cartItems
-        List<ProductDto> productDtos = productService.getProducts(flattenCartItems);
+        List<ProductDto> productDtos = productServiceSoap.getProducts(flattenCartItems);
 
         Map<Long, ProductDto> foundProductById =
                 emptyIfNull(productDtos).stream().filter(Objects::nonNull).collect(toMap(ProductDto::getId,

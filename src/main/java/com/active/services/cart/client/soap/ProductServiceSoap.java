@@ -23,7 +23,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductServiceSoap {
     private final SOAPClient soapClient;
 
     public List<ProductDto> getProducts(List<CartItem> cartItems) {
