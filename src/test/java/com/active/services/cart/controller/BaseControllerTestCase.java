@@ -1,5 +1,6 @@
 package com.active.services.cart.controller;
 
+import com.active.services.cart.BaseTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureRestDocs
-public class BaseControllerTestCase {
+public class BaseControllerTestCase extends BaseTestCase {
 
     protected static final String ACTOR_ID = "Actor-Id";
 

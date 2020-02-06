@@ -1,5 +1,6 @@
 package com.active.services.cart.service;
 
+import com.active.services.cart.BaseTestCase;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
@@ -40,7 +41,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CartService.class})
-public class CartServiceTestCase {
+public class CartServiceTestCase extends BaseTestCase {
 
     @Mock
     private CartRepository cartRepository;
@@ -60,11 +61,13 @@ public class CartServiceTestCase {
     @Before
     public void setUp() {
         cartService = spy(cartService);
+        super.setUp();
     }
 
     @Test
     public void deleteSuccess() {
         cartService.delete(1L);
+        super.tearDown();
     }
 
     @Test

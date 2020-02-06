@@ -20,8 +20,8 @@ dependencies {
     implementation 'javax.validation:validation-api'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.9'
     implementation 'com.active.platform:core-services-api-migration:6.0.8'
-    
+    implementation group: 'com.active.platform', name: 'platform-lib'
+
     testImplementation 'org.hibernate.validator:hibernate-validator'
     testImplementation 'junit:junit'
-    compile group: 'com.active.platform', name: 'platform-lib', version: '1.0.18'
 }
