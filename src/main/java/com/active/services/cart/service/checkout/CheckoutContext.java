@@ -4,7 +4,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
-import com.active.services.cart.model.Range;
+import com.active.platform.types.range.Range;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.domain.Address;
 import com.active.services.inventory.rest.dto.DateTimeRange;
@@ -43,10 +43,10 @@ public class CheckoutContext {
             reservationDTO.setProductId(cartItem.getProductId());
             reservationDTO.setQuantity(cartItem.getQuantity());
             Range<Instant> br = cartItem.getBookingRange();
-            if (br != null && (br.getLower() != null || br.getUpper() != null)) {
+            if (br != null && (br.getLowerInclusive() != null || br.getUpperExclusive() != null)) {
                 DateTimeRange dateTimeRange = new DateTimeRange();
-                dateTimeRange.setStartDateTime(br.getLower());
-                dateTimeRange.setEndDateTime(br.getUpper());
+                dateTimeRange.setStartDateTime(br.getLowerInclusive());
+                dateTimeRange.setEndDateTime(br.getUpperExclusive());
                 List<DateTimeRange> dateTimeRanges = Arrays.asList(dateTimeRange);
                 reservationDTO.setDateTimeRanges(dateTimeRanges);
             }
