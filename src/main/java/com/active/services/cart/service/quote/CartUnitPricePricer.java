@@ -38,41 +38,44 @@ public class CartUnitPricePricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-        Map<Long, FeeDto> feeDtoHashMap = new HashMap<>(3);
+        Map<Long, FeeDto> feeDtoHashMap = new HashMap<>();
         List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
         List<QuoteItemDto> notUnitPriceItems = getNotUnitPriceItems(flattenCartItems);
         if (CollectionUtils.isNotEmpty(notUnitPriceItems)) {
             QuoteReq quoteReq = new QuoteReq();
             quoteReq.setItems(notUnitPriceItems);
             List<FeeDto> feeDtos = getUnitPriceFromProductService(quoteReq);
-            buildCartItemFeeResult(notUnitPriceItems, feeDtos, feeDtoHashMap);
+            feeDtoHashMap = buildCartItemFeeResult(notUnitPriceItems, feeDtos);
         }
+        Map<Long, FeeDto> finalFeeDtoHashMap = feeDtoHashMap;
         flattenCartItems.forEach(cartItem ->
-                getCartItemPricer().quote(context, cartItem, feeDtoHashMap)
+                getCartItemPricer(finalFeeDtoHashMap).quote(context, cartItem)
         );
         TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(flattenCartItems);
         context.getCart().setItems(baseTreeTreeBuilder.buildTree());
     }
 
-    private void buildCartItemFeeResult(List<QuoteItemDto> notUnitPriceItems, List<FeeDto> feeDtos,
-                                        Map<Long, FeeDto> feeDtoHashMap) {
-        Map<Integer, FeeDto> sequenceFeeDtoMap = emptyIfNull(feeDtos)
+    private Map<Long, FeeDto> buildCartItemFeeResult(List<QuoteItemDto> notUnitPriceItems, List<FeeDto> feeDtos) {
+        Map<Long, FeeDto> feeDtoHashMap = new HashMap<>();
+        Map<Integer, FeeDto> sequenceFeedtoMap = emptyIfNull(feeDtos)
                 .stream()
                 .filter(Objects::nonNull)
                 .collect(toMap(FeeDto::getSequence, Function.identity()));
 
         emptyIfNull(notUnitPriceItems)
-            .stream()
-            .filter(Objects::nonNull)
-            .forEach(notUnitPriceItem ->
-                feeDtoHashMap.put(notUnitPriceItem.getProductId(), sequenceFeeDtoMap.get(notUnitPriceItem.getSequence()))
-            );
+                .stream()
+                .filter(Objects::nonNull)
+                .forEach(notUnitPriceItem ->
+                        feeDtoHashMap.put(notUnitPriceItem.getProductId(),
+                                sequenceFeedtoMap.get(notUnitPriceItem.getSequence()))
+                );
+        return feeDtoHashMap;
     }
 
     private List<QuoteItemDto> getNotUnitPriceItems(List<CartItem> flattenCartItems) {
         ArrayList<QuoteItemDto> quoteItemDtos = new ArrayList<>();
         emptyIfNull(flattenCartItems).forEach(cartItem -> {
-            if (Objects.nonNull(cartItem) && Objects.isNull(cartItem.getUnitPrice())) {
+            if (Objects.isNull(cartItem.getUnitPrice())) {
                 QuoteItemDto quoteItemDto = new QuoteItemDto();
                 quoteItemDto.setSequence(quoteItemDtos.size());
                 quoteItemDto.setBusinessDate(Instant.now());
@@ -92,9 +95,8 @@ public class CartUnitPricePricer implements CartPricer {
         return result.getFeeDtos();
     }
 
-
     @Lookup
-    public CartItemUnitPricePricer getCartItemPricer() {
+    public CartItemUnitPricePricer getCartItemPricer(Map<Long, FeeDto> feeDtoHashMap) {
         return null;
     }
 }
