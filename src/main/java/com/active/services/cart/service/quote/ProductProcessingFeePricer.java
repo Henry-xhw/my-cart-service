@@ -41,6 +41,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
+/**
+ * @author henryxu
+ */
 @Component
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -81,6 +84,7 @@ public class ProductProcessingFeePricer implements ProcessingFeePricer {
         req.setFeeOwner(feeOwner);
         req.setOnline(online);
         req.setItems(items);
+
         List<FeeResult> feeResults = getProcessingFeesFromContractService(req);
 
         // build cartItemFees
@@ -173,7 +177,8 @@ public class ProductProcessingFeePricer implements ProcessingFeePricer {
     private List<FeeResult> getProcessingFeesFromContractService(CalculateFeeAmountsReq req) {
         CalculateFeeAmountsRsp rsp = contractService.calculateFeeAmounts(req);
         if (BooleanUtils.isFalse(rsp.isSuccess()) || CollectionUtils.isEmpty(rsp.getFeeResults())) {
-            throw new CartException(INTERNAL_ERROR, "Failed to quote for cart: {0}, {1}", rsp.getErrorCode(),
+            throw new CartException(INTERNAL_ERROR, "Failed to quote product processing fee for cart: {0}, {1}",
+                    rsp.getErrorCode(),
                     rsp.getErrorMessage());
         }
         return rsp.getFeeResults();
