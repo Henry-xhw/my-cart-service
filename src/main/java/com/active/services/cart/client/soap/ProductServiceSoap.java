@@ -1,10 +1,8 @@
 package com.active.services.cart.client.soap;
 
-import com.active.services.ActiveEntityNotFoundException;
+import com.active.services.ContextWrapper;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.domain.dto.ProductDto;
-import com.active.services.product.FindProductsByIdListReq;
-import com.active.services.product.FindProductsByIdListRsp;
+import com.active.services.product.Product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +12,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.active.services.cart.util.AuditorAwareUtil.getContext;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 /**
  * @author henryxu
+ * The class will wrap all soap call in product-service
  */
 @Component
 @Slf4j
@@ -26,20 +24,11 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 public class ProductServiceSoap {
     private final SOAPClient soapClient;
 
-    public List<ProductDto> getProducts(List<CartItem> cartItems) {
+    public List<Product> getProductsByCartItems(List<CartItem> cartItems) {
+
         List<Long> uniqueProductIds = emptyIfNull(cartItems).stream().filter(Objects::nonNull).map(CartItem::getProductId)
                 .distinct().collect(Collectors.toList());
-
-        try {
-            FindProductsByIdListReq req = new FindProductsByIdListReq();
-            req.setProductIds(uniqueProductIds);
-            FindProductsByIdListRsp rsp = soapClient.productServiceSOAPEndPoint()
-                    .findProductsByIdList(getContext(), req);
-
-            return rsp.getProducts();
-        } catch (ActiveEntityNotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+        return soapClient.productServiceSOAPEndPoint()
+                .findProductsByProductIdList(ContextWrapper.get(), uniqueProductIds);
     }
 }
