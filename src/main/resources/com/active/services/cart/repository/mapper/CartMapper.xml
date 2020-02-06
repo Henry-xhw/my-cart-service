@@ -52,6 +52,7 @@
             [quantity],
             [unit_price],
             [grouping_identifier],
+            [oversold],
             [created_by],
             [created_dt],
             [modified_by],
@@ -88,6 +89,7 @@
              #{item.quantity},
              #{item.unitPrice},
              #{item.groupingIdentifier},
+             #{item.oversold},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -148,6 +150,7 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
+        [oversold] = #{item.oversold},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -200,6 +203,7 @@
         item.unit_price               AS item_unit_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
+        item.oversold                 AS item_oversold,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
@@ -283,10 +287,10 @@
     <update id="updateCartReservationGroupId">
         UPDATE [dbo].[carts]
         SET
-        [reservation_id] = #{cart.reservationId},
+        [reservation_id] = #{reservationId},
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{cart.identifier}
+        WHERE identifier = #{identifier}
     </update>
 
     <insert id="createEvents">

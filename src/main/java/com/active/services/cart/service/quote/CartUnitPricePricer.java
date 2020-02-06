@@ -1,13 +1,9 @@
 package com.active.services.cart.service.quote;
 
-import com.active.services.cart.client.rest.ContractService;
 import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.util.TreeBuilder;
-import com.active.services.contract.controller.v1.FeeResult;
-import com.active.services.contract.controller.v1.req.CalculateFeeAmountsReq;
-import com.active.services.contract.controller.v1.rsp.CalculateFeeAmountsRsp;
 import com.active.services.product.nextgen.v1.dto.QuoteItemDto;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 import com.active.services.product.nextgen.v1.req.QuoteReq;
@@ -29,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static com.active.services.cart.model.ErrorCode.INTERNAL_ERROR;
+import static com.active.services.cart.model.ErrorCode.QUOTE_ERROR;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
@@ -66,12 +62,11 @@ public class CartUnitPricePricer implements CartPricer {
                 .collect(toMap(FeeDto::getSequence, Function.identity()));
 
         emptyIfNull(notUnitPriceItems)
-                .stream()
-                .filter(Objects::nonNull)
-                .forEach(notUnitPriceItem ->
-                        feeDtoHashMap.put(notUnitPriceItem.getProductId(),
-                                sequenceFeeDtoMap.get(notUnitPriceItem.getSequence()))
-                );
+            .stream()
+            .filter(Objects::nonNull)
+            .forEach(notUnitPriceItem ->
+                feeDtoHashMap.put(notUnitPriceItem.getProductId(), sequenceFeeDtoMap.get(notUnitPriceItem.getSequence()))
+            );
     }
 
     private List<QuoteItemDto> getNotUnitPriceItems(List<CartItem> flattenCartItems) {
@@ -91,7 +86,7 @@ public class CartUnitPricePricer implements CartPricer {
     private List<FeeDto> getUnitPriceFromProductService(QuoteReq quoteReq) {
         QuoteRsp result = productService.quote(quoteReq);
         if (BooleanUtils.isFalse(result.isSuccess()) || CollectionUtils.isEmpty(result.getFeeDtos())) {
-            throw new CartException(INTERNAL_ERROR, "Failed to quote for cart: {0}, {1}", result.getErrorCode(),
+            throw new CartException(QUOTE_ERROR, "Failed to quote for cart: {0}, {1}", result.getErrorCode(),
                     result.getErrorMessage());
         }
         return result.getFeeDtos();

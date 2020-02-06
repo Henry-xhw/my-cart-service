@@ -1,3 +1,11 @@
+USE cart_service
+GO
+
+-- 	 KitSection = Tables
+--KitManagerFileID=17805
+--FileName=cart_item.sql
+--SubmittedBy=shan li (ACTIVE\tli4)
+
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_items' AND type = 'U')
 BEGIN
@@ -99,3 +107,9 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
         PRINT 'Added column oversold to dbo.cart_items'
     END
 GO
+GO
+--/KitManagerFileID=17805
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4655,17805,'cart_item.sql',0
+GO
+

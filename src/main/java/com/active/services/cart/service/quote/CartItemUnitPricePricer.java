@@ -31,14 +31,14 @@ public class CartItemUnitPricePricer implements CartItemPricer {
 
     private void setGrossAndNetPriceValue(CartItem cartItem) {
         Optional.ofNullable(cartItem.getFees()).ifPresent(
-                fees -> fees.stream().filter(cartItemFee -> Objects.equals(cartItemFee.getType(), CartItemFeeType.PRICE))
-                        .findAny().ifPresent(cartItemFee -> {
-                            cartItem.setGrossPrice(cartItemFee.getUnitPrice().multiply(new BigDecimal(cartItemFee.getUnits())));
-                            //OMS-10128 Net Price = Gross Price - Price Hikes Amount - Discounts Amount
-                            //Since we didn't plan to implement discount and price hike in cart service at this point,
-                            //hence the gross price = net price
-                            cartItem.setNetPrice(cartItem.getGrossPrice());
-//                            return cartItemFee;
-                        }));
+            fees -> fees.stream().filter(cartItemFee -> Objects.equals(cartItemFee.getType(), CartItemFeeType.PRICE))
+                .findAny().ifPresent(cartItemFee -> {
+                    cartItem.setGrossPrice(cartItemFee.getUnitPrice().multiply(new BigDecimal(cartItemFee.getUnits())));
+                    //OMS-10128 Net Price = Gross Price - Price Hikes Amount - Discounts Amount
+                    //Since we didn't plan to implement discount and price hike in cart service at this point,
+                    //hence the gross price = net price
+                    cartItem.setNetPrice(cartItem.getGrossPrice());
+                    })
+        );
     }
 }
