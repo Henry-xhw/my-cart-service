@@ -5,21 +5,26 @@ import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@RequiredArgsConstructor
 public class CartItemUnitPricePricer implements CartItemPricer {
 
+    private final Map<Long, FeeDto> feeDtoHashMap;
+
     @Override
-    public void quote(CartQuoteContext context, CartItem cartItem, Map<Long, FeeDto> feeDtoHashMap) {
+    public void quote(CartQuoteContext context, CartItem cartItem) {
         if (Objects.isNull(cartItem.getUnitPrice())) {
             cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem,
                     feeDtoHashMap.get(cartItem.getProductId()), CartItemFeeType.PRICE));
