@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -42,7 +43,8 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 @RequiredArgsConstructor
 public class CartProductProcessingFeePricer implements CartPricer {
 
-    private final ContractService contractService;
+    @Autowired
+    private ContractService contractService;
     private final FeeOwner feeOwner;
 
     @Override
