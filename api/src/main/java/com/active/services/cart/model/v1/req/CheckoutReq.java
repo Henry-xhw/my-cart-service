@@ -10,6 +10,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @Data
 public class CheckoutReq {
 
@@ -19,5 +21,6 @@ public class CheckoutReq {
     private Address billingAddress;
     private BillingContact billingContact;
     private CartHolder cartHolder;
+    @Valid
     private List<CartItemFeeAllocation> feeAllocations;
 }
