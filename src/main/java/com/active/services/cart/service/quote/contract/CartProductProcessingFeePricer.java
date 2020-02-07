@@ -1,15 +1,17 @@
-package com.active.services.cart.service.quote;
+package com.active.services.cart.service.quote.contract;
 
 import com.active.services.cart.client.rest.ContractService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.service.quote.CartPricer;
+import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.util.TreeBuilder;
 import com.active.services.contract.controller.v1.CalculationItem;
+import com.active.services.contract.controller.v1.FeeAmountResult;
 import com.active.services.contract.controller.v1.FeeOwner;
 import com.active.services.contract.controller.v1.FeeResult;
 import com.active.services.contract.controller.v1.req.CalculateFeeAmountsReq;
 import com.active.services.contract.controller.v1.rsp.CalculateFeeAmountsRsp;
-import com.active.services.domain.dto.ProductDto;
 import com.active.services.product.Product;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,7 @@ public class CartProductProcessingFeePricer implements CartPricer {
 
     @Autowired
     private ContractService contractService;
+
     private final FeeOwner feeOwner;
 
     @Override
@@ -64,8 +67,8 @@ public class CartProductProcessingFeePricer implements CartPricer {
 
         List<CalculationItem> items = new ArrayList<>();
         flattenCartItems.forEach(cartItem -> {
-            CalculationItem item = getCartItemProductProcessingFeePricer(cartItem).buildCalculationItem(foundProductById, businessDate,
-                    true, feeOwner);
+            CalculationItem item = new ContractCalculationItemBuilder().product(foundProductById.get(cartItem.getProductId()))
+                    .businessDate(businessDate).cartItem(cartItem).feeOwner(feeOwner).online(true).build();
             items.add(item);
         });
 
@@ -82,8 +85,8 @@ public class CartProductProcessingFeePricer implements CartPricer {
         emptyIfNull(feeResults).stream().filter(Objects::nonNull).forEach(
                 feeResult -> {
                     // get cartItem by referenceId
-                    getCartItemProductProcessingFeePricer(foundCartItemByIdentifier.get(feeResult.getReferenceId()))
-                            .buildCartItemFees(feeResult.getFeeAmountResults());
+                    getCartItemProductProcessingFeePricer(feeResult.getFeeAmountResults())
+                            .quote(context, foundCartItemByIdentifier.get(feeResult.getReferenceId()));
                 }
         );
 
@@ -103,7 +106,7 @@ public class CartProductProcessingFeePricer implements CartPricer {
     }
 
     @Lookup
-    public CartItemProductProcessingFeePricer getCartItemProductProcessingFeePricer(CartItem cartItem) {
+    public CartItemProductProcessingFeePricer getCartItemProductProcessingFeePricer(List<FeeAmountResult> results) {
         return null;
     }
 }

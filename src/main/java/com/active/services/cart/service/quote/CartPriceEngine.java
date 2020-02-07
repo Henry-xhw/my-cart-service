@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote;
 
 import com.active.services.cart.client.soap.ProductServiceSoap;
+import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
 import com.active.services.contract.controller.v1.FeeOwner;
 
 import lombok.RequiredArgsConstructor;
