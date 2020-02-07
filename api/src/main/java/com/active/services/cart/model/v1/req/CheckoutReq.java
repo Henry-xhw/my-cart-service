@@ -2,8 +2,8 @@ package com.active.services.cart.model.v1.req;
 
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
-import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.CartItemFeeAllocation;
+import com.active.services.cart.model.PaymentAccount;
 import com.active.services.domain.Address;
 
 import lombok.Data;
@@ -19,6 +19,5 @@ public class CheckoutReq {
     private Address billingAddress;
     private BillingContact billingContact;
     private CartHolder cartHolder;
-
-    private List<CartItemFeeAllocation> allocations;
+    private List<CartItemFeeAllocation> feeAllocations;
 }

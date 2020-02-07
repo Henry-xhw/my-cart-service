@@ -177,8 +177,8 @@ public class CartService {
         List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
         cart.getFlattenCartItems().forEach(cartItem -> {
             List<CartItemFeesInCart> collect =
-                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId())
-                            .collect(Collectors.toList());
+                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId()
+                    && itemFee.getId() != null).collect(Collectors.toList());
 
             TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
             cartItem.setFees(baseTreeTreeBuilder.buildTree());

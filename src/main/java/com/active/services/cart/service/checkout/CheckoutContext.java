@@ -16,7 +16,7 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,12 +38,12 @@ public class CheckoutContext {
 
     private List<CheckoutResult> checkoutResults = new ArrayList<>();
 
-    private List<CartItemFeeAllocation> allocations;
+    private List<CartItemFeeAllocation> feeAllocations;
 
     private List<Payment> payments = new ArrayList<>();
 
     public List<ReservationDTO> getReservations() {
-        List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
+        return cart.getFlattenCartItems().stream().map(cartItem -> {
             ReservationDTO reservationDTO = new ReservationDTO();
 
             reservationDTO.setProductId(cartItem.getProductId());
@@ -53,13 +53,11 @@ public class CheckoutContext {
                 DateTimeRange dateTimeRange = new DateTimeRange();
                 dateTimeRange.setStartDateTime(br.getLower());
                 dateTimeRange.setEndDateTime(br.getUpper());
-                List<DateTimeRange> dateTimeRanges = Arrays.asList(dateTimeRange);
+                List<DateTimeRange> dateTimeRanges = Collections.singletonList(dateTimeRange);
                 reservationDTO.setDateTimeRanges(dateTimeRanges);
             }
 
             return reservationDTO;
         }).collect(Collectors.toList());
-
-        return reservations;
     }
 }
