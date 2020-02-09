@@ -52,6 +52,7 @@
             [quantity],
             [unit_price],
             [grouping_identifier],
+            [oversold],
             [created_by],
             [created_dt],
             [modified_by],
@@ -67,8 +68,8 @@
              #{item.productDescription},
             <choose>
                 <when test="item.bookingRange != null">
-                    #{item.bookingRange.lower},
-                    #{item.bookingRange.upper},
+                    #{item.bookingRange.lowerInclusive},
+                    #{item.bookingRange.upperExclusive},
                 </when>
                 <otherwise>
                     null,
@@ -77,8 +78,8 @@
             </choose>
             <choose>
                 <when test="item.trimmedBookingRange != null">
-                    #{item.trimmedBookingRange.lower},
-                    #{item.trimmedBookingRange.upper},
+                    #{item.trimmedBookingRange.lowerInclusive},
+                    #{item.trimmedBookingRange.upperExclusive},
                 </when>
                 <otherwise>
                     null,
@@ -88,6 +89,7 @@
              #{item.quantity},
              #{item.unitPrice},
              #{item.groupingIdentifier},
+             #{item.oversold},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -111,8 +113,8 @@
         </choose>
         <choose>
             <when test="item.bookingRange != null">
-                [booking_start_dt] = #{item.bookingRange.lower},
-                [booking_end_dt] = #{item.bookingRange.upper},
+                [booking_start_dt] = #{item.bookingRange.lowerInclusive},
+                [booking_end_dt] = #{item.bookingRange.upperExclusive},
             </when>
             <otherwise>
                 [booking_start_dt] = null,
@@ -121,8 +123,8 @@
         </choose>
         <choose>
             <when test="item.trimmedBookingRange != null">
-                [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lower},
-                [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upper},
+                [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lowerInclusive},
+                [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upperExclusive},
             </when>
             <otherwise>
                 [trimmed_booking_start_dt] = null,
@@ -148,6 +150,7 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
+        [oversold] = #{item.oversold},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -157,16 +160,16 @@
         <id property="id" column="id"/>
         <collection property="items" ofType="CartItem" notNullColumn="id" columnPrefix="item_">
             <id property="id" column="id"/>
-            <association property="bookingRange" javaType="com.active.services.cart.model.Range">
-                <result property="lower" column="booking_start_dt"
+            <association property="bookingRange" javaType="com.active.platform.types.range.Range">
+                <result property="lowerInclusive" column="booking_start_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
-                <result property="upper" column="booking_end_dt"
+                <result property="upperExclusive" column="booking_end_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
-            <association property="trimmedBookingRange" javaType="com.active.services.cart.model.Range">
-                <result property="lower" column="trimmed_booking_start_dt"
+            <association property="trimmedBookingRange" javaType="com.active.platform.types.range.Range">
+                <result property="lowerInclusive" column="trimmed_booking_start_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
-                <result property="upper" column="trimmed_booking_end_dt"
+                <result property="upperExclusive" column="trimmed_booking_end_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
         </collection>
@@ -200,6 +203,7 @@
         item.unit_price               AS item_unit_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
+        item.oversold                 AS item_oversold,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
@@ -283,10 +287,10 @@
     <update id="updateCartReservationGroupId">
         UPDATE [dbo].[carts]
         SET
-        [reservation_id] = #{cart.reservationId},
+        [reservation_id] = #{reservationId},
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
-        WHERE identifier = #{cart.identifier}
+        WHERE identifier = #{identifier}
     </update>
 
     <insert id="createEvents">

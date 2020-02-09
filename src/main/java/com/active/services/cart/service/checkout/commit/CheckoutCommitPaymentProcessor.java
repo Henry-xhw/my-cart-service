@@ -1,5 +1,6 @@
 package com.active.services.cart.service.checkout.commit;
 
+import com.active.services.ContextWrapper;
 import com.active.services.TenderType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
@@ -9,9 +10,7 @@ import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.checkout.CheckoutBaseProcessor;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutEvent;
-import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.payment.management.PaymentStatus;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -40,7 +39,7 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         Cart cart = getCheckoutContext().getCart();
         Payment payment = new Payment();
         BigDecimal totalAmount = cart.getFlattenCartItems().stream()
-                .filter(item -> !Objects.isNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
+                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
                 .flatMap(List::stream).map(CartItemFee::getDueAmount)
                 .reduce(BigDecimal::add).get();
         payment.setIdentifier(UUID.randomUUID());
@@ -50,6 +49,6 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         getCheckoutContext().setPayments(Arrays.asList(payment));
 
         // Should place order to be finalized if payment passed.
-        cartRepository.finalizeCart(getCheckoutContext().getCart().getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.finalizeCart(getCheckoutContext().getCart().getIdentifier(), ContextWrapper.get().getActorId());
     }
 }

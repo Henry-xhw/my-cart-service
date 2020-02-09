@@ -47,6 +47,6 @@ public class CheckoutPreparePhaseProcessor {
         Cart cart = checkoutContext.getCart();
         ReservationResultDTO reservationResult = reservationService.reserve(checkoutContext.getReservations());
         cart.setReservationId(reservationResult.getReservationId());
-        cartRepository.updateCartReservationId(cart);
+        cartRepository.updateCartReservationId(cart.getIdentifier(), cart.getReservationId());
     }
 }

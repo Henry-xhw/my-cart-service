@@ -1,6 +1,6 @@
 package com.active.services.cart.model.v1;
 
-import com.active.services.cart.model.Range;
+import com.active.platform.types.range.Range;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,4 +62,6 @@ public class CartItemDto extends BaseDto {
 
     @Valid
     private List<CartItemDto> subItems = new ArrayList<>();
+
+    private boolean oversold;
 }

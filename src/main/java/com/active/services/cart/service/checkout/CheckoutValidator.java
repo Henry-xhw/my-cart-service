@@ -7,10 +7,8 @@ import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeAllocation;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.service.CartStatus;
-
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,16 +43,34 @@ public class CheckoutValidator {
             return;
         }
 
-        Map<UUID, BigDecimal> dueAmountMap = cart.getFlattenCartItems().stream()
-            .filter(item -> !Objects.isNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-            .flatMap(List::stream).collect(Collectors.toMap(CartItemFee::getIdentifier, CartItemFee::getDueAmount));
-        if (isInvalidAllocation(context.getFeeAllocations(), dueAmountMap)) {
+        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
+                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
+                .flatMap(List::stream).collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(cartItemFees)) {
+            throw new CartException(ErrorCode.VALIDATION_ERROR, "Not found cart item fees.");
+        }
+
+        if (context.getFeeAllocations().size() != cartItemFees.size()) {
+            throw new CartException(ErrorCode.VALIDATION_ERROR, "feeAllocations must include all cart item fees.");
+        }
+
+
+        if (isInvalidAllocation(cartItemFees, context.getFeeAllocations())) {
             throw new CartException(ErrorCode.VALIDATION_ERROR, "Invalid allocation amount.");
         }
     }
 
-    private boolean isInvalidAllocation(List<CartItemFeeAllocation> allocations, Map<UUID, BigDecimal> dueAmountMap) {
-        return allocations.stream().anyMatch(alc -> dueAmountMap.containsKey(alc.getCartItemFeeIdentifier())
-            && alc.getAmount().compareTo(dueAmountMap.get(alc.getCartItemFeeIdentifier())) != 0);
+    private boolean isInvalidAllocation(List<CartItemFee> cartItemFees, List<CartItemFeeAllocation> feeAllocations) {
+        Map<UUID, CartItemFeeAllocation> feeAllocationMap = feeAllocations.stream()
+                .collect(Collectors.toMap(CartItemFeeAllocation::getCartItemFeeIdentifier, f -> f));
+
+        return cartItemFees.stream().anyMatch(fee -> !feeAllocationMap.containsKey(fee.getIdentifier()) ||
+                isValidAllocationAmount(feeAllocationMap.get(fee.getIdentifier()), fee));
+    }
+
+    private boolean isValidAllocationAmount(CartItemFeeAllocation feeAllocation, CartItemFee cartItemFee) {
+        return feeAllocation.getAmount().compareTo(cartItemFee.getUnitPrice()) <= 0 &&
+                feeAllocation.getAmount().compareTo(cartItemFee.getDueAmount()) >= 0;
     }
 }

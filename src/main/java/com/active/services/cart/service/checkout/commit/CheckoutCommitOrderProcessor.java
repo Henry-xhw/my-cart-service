@@ -2,7 +2,6 @@ package com.active.services.cart.service.checkout.commit;
 
 import com.active.services.cart.client.rest.OrderService;
 import com.active.services.cart.common.CartException;
-import com.active.services.cart.domain.Payment;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.PaymentAccountResult;
 import com.active.services.cart.model.v1.CheckoutResult;

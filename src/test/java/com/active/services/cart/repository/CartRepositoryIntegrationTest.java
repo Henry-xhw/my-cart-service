@@ -7,7 +7,6 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.service.CartStatus;
-import com.active.services.cart.util.AuditorAwareUtil;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -100,7 +99,7 @@ public class CartRepositoryIntegrationTest {
         cartRepository.createCart(cart);
         Assert.assertEquals(CartStatus.CREATED, cartRepository.getCart(cart.getIdentifier()).get().getCartStatus());
 
-        cartRepository.finalizeCart(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.finalizeCart(cart.getIdentifier(), "actorId");
         Assert.assertEquals(false, cartRepository.getCart(cart.getIdentifier()).isPresent());
     }
 
@@ -110,21 +109,20 @@ public class CartRepositoryIntegrationTest {
         cartRepository.createCart(cart);
         Assert.assertEquals(0, cartRepository.getCart(cart.getIdentifier()).get().getVersion(), 0);
 
-        cartRepository.incrementVersion(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.incrementVersion(cart.getIdentifier(), "actorId");
         Assert.assertEquals(1, cartRepository.getCart(cart.getIdentifier()).get().getVersion());
 
-        cartRepository.finalizeCart(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
-        Assert.assertEquals(0, cartRepository.incrementVersion(cart.getIdentifier(), AuditorAwareUtil.getAuditor()));
+        cartRepository.finalizeCart(cart.getIdentifier(), "actorId");
+        Assert.assertEquals(0, cartRepository.incrementVersion(cart.getIdentifier(), "actorId"));
     }
 
     @Test
     public void cartPriceVersionTest(){
         Cart cart = CartDataFactory.cart();
         cartRepository.createCart(cart);
-        cartRepository.incrementVersion(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
-        cartRepository.incrementVersion(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
-        Assert.assertEquals(1, cartRepository.incrementPriceVersion(cart.getIdentifier(),
-                AuditorAwareUtil.getAuditor()));
+        cartRepository.incrementVersion(cart.getIdentifier(), "actorId");
+        cartRepository.incrementVersion(cart.getIdentifier(), "actorId");
+        Assert.assertEquals(1, cartRepository.incrementPriceVersion(cart.getIdentifier(), "actorId"));
         Assert.assertEquals(2, cartRepository.getCart(cart.getIdentifier()).get().getPriceVersion());
     }
 
@@ -132,9 +130,9 @@ public class CartRepositoryIntegrationTest {
     public void cartLockTest(){
         Cart cart = CartDataFactory.cart();
         cartRepository.createCart(cart);
-        cartRepository.acquireLock(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.acquireLock(cart.getIdentifier(), "actorId");
         Assert.assertEquals(true, cartRepository.getCart(cart.getIdentifier()).get().isLock());
-        cartRepository.releaseLock(cart.getIdentifier(), AuditorAwareUtil.getAuditor());
+        cartRepository.releaseLock(cart.getIdentifier(), "actorId");
         Assert.assertEquals(false, cartRepository.getCart(cart.getIdentifier()).get().isLock());
     }
 }

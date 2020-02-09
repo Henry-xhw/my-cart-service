@@ -4,13 +4,14 @@ import com.active.services.DomainObject;
 import com.active.services.TenderType;
 import com.active.services.payment.management.PaymentStatus;
 
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Payment extends DomainObject {
 
     private UUID identifier;

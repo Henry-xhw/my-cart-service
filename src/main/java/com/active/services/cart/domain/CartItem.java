@@ -1,7 +1,7 @@
 package com.active.services.cart.domain;
 
+import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.cart.model.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 
 import lombok.Data;
@@ -45,6 +45,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer feeVolumeIndex;
 
+    private boolean oversold;
+
     private List<CartItemFee> fees = new ArrayList<>();
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -58,6 +60,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
+        this.oversold = updateCartItemDto.isOversold();
     }
 
     public List<CartItemFee> getFlattenCartItemFees() {

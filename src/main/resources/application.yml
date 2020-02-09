@@ -44,6 +44,10 @@ ok-http:
   connect-timeout: 10
   read-write-timeout: ${ok-http.connect-timeout}
 
+aw-context:
+  url-patterns:
+    - /carts/*
+
 url:
   orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
   inventoryServiceBase: http://inventory

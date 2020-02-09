@@ -1,5 +1,6 @@
 package com.active.services.cart.service;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
@@ -16,7 +17,6 @@ import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
-import com.active.services.cart.util.AuditorAwareUtil;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.cart.util.TreeBuilder;
 
@@ -98,10 +98,11 @@ public class CartService {
         dataAccess.doInTx(() -> doInsertCartItems(cart, cartItems, null));
     }
 
-    private void doInsertCartItems(Cart cart, List<CartItem> cartItems, Long parentId) {
+    private void doInsertCartItems(Cart cart, List<CartItem> cartItems, Long requestParentId) {
         Long cartId = cart.getId();
 
         for (CartItem it : cartItems) {
+            Long parentId = requestParentId;
             if (it.getIdentifier() != null) {
                 parentId = cart.findCartItem(it.getIdentifier()).get().getId();
             } else {
@@ -149,11 +150,11 @@ public class CartService {
     }
 
     private void incrementVersion(UUID cartId) {
-        cartRepository.incrementVersion(cartId, AuditorAwareUtil.getAuditor());
+        cartRepository.incrementVersion(cartId, ContextWrapper.get().getActorId());
     }
 
     private void incrementPriceVersion(UUID cartId) {
-        cartRepository.incrementPriceVersion(cartId, AuditorAwareUtil.getAuditor());
+        cartRepository.incrementPriceVersion(cartId, ContextWrapper.get().getActorId());
     }
 
     private void saveQuoteResult(Cart cart) {
@@ -177,8 +178,8 @@ public class CartService {
         List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
         cart.getFlattenCartItems().forEach(cartItem -> {
             List<CartItemFeesInCart> collect =
-                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId()
-                    && itemFee.getId() != null).collect(Collectors.toList());
+                    cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId() &&
+                            itemFee.getId() != null).collect(Collectors.toList());
 
             TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
             cartItem.setFees(baseTreeTreeBuilder.buildTree());
