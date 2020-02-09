@@ -11,6 +11,7 @@ import java.util.List;
 public class CartQuoteContext {
     private Cart cart;
     private List<Product> products;
+
     public CartQuoteContext(Cart cart) {
         this.cart = cart;
     }

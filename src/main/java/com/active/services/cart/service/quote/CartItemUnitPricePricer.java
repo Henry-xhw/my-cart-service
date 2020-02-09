@@ -43,7 +43,7 @@ public class CartItemUnitPricePricer implements CartItemPricer {
                     //Since we didn't plan to implement discount and price hike in cart service at this point,
                     //hence the gross price = net price
                     cartItem.setNetPrice(cartItem.getGrossPrice());
-                    })
+                })
         );
     }
 }

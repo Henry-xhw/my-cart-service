@@ -58,10 +58,10 @@ public class CartProductProcessingFeePricer implements CartPricer {
 
         List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
         Instant businessDate = Instant.now();
-        Map<Long, Product> foundProductById =
+        final Map<Long, Product> foundProductById =
                 emptyIfNull(context.getProducts()).stream().filter(Objects::nonNull).collect(toMap(Product::getId,
                 Function.identity()));
-        Map<UUID, CartItem> foundCartItemByIdentifier =
+        final Map<UUID, CartItem> foundCartItemByIdentifier =
                 flattenCartItems.stream().collect(toMap(CartItem::getIdentifier,
                         Function.identity()));
 
@@ -83,11 +83,11 @@ public class CartProductProcessingFeePricer implements CartPricer {
 
         // build cartItemFees
         emptyIfNull(feeResults).stream().filter(Objects::nonNull).forEach(
-                feeResult -> {
-                    // get cartItem by referenceId
-                    getCartItemProductProcessingFeePricer(feeResult.getFeeAmountResults())
-                            .quote(context, foundCartItemByIdentifier.get(feeResult.getReferenceId()));
-                }
+            feeResult -> {
+                // get cartItem by referenceId
+                getCartItemProductProcessingFeePricer(feeResult.getFeeAmountResults())
+                        .quote(context, foundCartItemByIdentifier.get(feeResult.getReferenceId()));
+            }
         );
 
         TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(flattenCartItems);

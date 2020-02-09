@@ -1,6 +1,8 @@
 package com.active.services.cart.service.quote.contract;
 
+import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.contract.controller.v1.CalculationItem;
 import com.active.services.contract.controller.v1.ContractSetting;
 import com.active.services.contract.controller.v1.FeeOwner;
@@ -61,7 +63,9 @@ public class ContractCalculationItemBuilder implements Builder<CalculationItem> 
     public CalculationItem build() {
         CalculationItem item = new CalculationItem();
 
-        UUID referenceId = cartItem.getIdentifier();
+        if (product == null) {
+            throw new CartException(ErrorCode.VALIDATION_ERROR, "Product not found: " + cartItem.getProductId());
+        }
         item.setAgencyId(product.getAgencyId());
         item.setBusinessDate(businessDate);
         item.setContractSetting(buildContractSetting());
@@ -70,7 +74,7 @@ public class ContractCalculationItemBuilder implements Builder<CalculationItem> 
         // need to confirm surcharge in cartItem
         item.setSurcharge(null);
         item.setProductType(product.getProductType());
-        item.setReferenceId(referenceId);
+        item.setReferenceId(cartItem.getIdentifier());
         return item;
     }
 

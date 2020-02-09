@@ -32,21 +32,21 @@ public class CartItemProductProcessingFeePricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
         emptyIfNull(feeAmountResults).stream().filter(Objects::nonNull).forEach(
-                feeAmountResult -> {
-                    // build cartItemFee
-                    CartItemFee cartItemFee = new CartItemFee();
-                    cartItemFee.setIdentifier(UUID.randomUUID());
-                    cartItemFee.setDescription(feeAmountResult.getDescription());
-                    cartItemFee.setTransactionType(FeeTransactionType.DEBIT);
-                    cartItemFee.setUnitPrice(feeAmountResult.getAmount());
-                    cartItemFee.setUnits(cartItem.getQuantity());
-                    if (feeAmountResult.getFeeType() == FeeType.PERCENT) {
-                        cartItemFee.setType(CartItemFeeType.PROCESSING_PERCENT);
-                    } else {
-                        cartItemFee.setType(CartItemFeeType.PROCESSING_FLAT);
-                    }
-                    cartItem.getFees().add(cartItemFee);
+            feeAmountResult -> {
+                // build cartItemFee
+                CartItemFee cartItemFee = new CartItemFee();
+                cartItemFee.setIdentifier(UUID.randomUUID());
+                cartItemFee.setDescription(feeAmountResult.getDescription());
+                cartItemFee.setTransactionType(FeeTransactionType.DEBIT);
+                cartItemFee.setUnitPrice(feeAmountResult.getAmount());
+                cartItemFee.setUnits(cartItem.getQuantity());
+                if (feeAmountResult.getFeeType() == FeeType.PERCENT) {
+                    cartItemFee.setType(CartItemFeeType.PROCESSING_PERCENT);
+                } else {
+                    cartItemFee.setType(CartItemFeeType.PROCESSING_FLAT);
                 }
+                cartItem.getFees().add(cartItemFee);
+            }
         );
     }
 }
