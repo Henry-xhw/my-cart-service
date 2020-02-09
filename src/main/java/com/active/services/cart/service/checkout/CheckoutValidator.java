@@ -35,10 +35,10 @@ public class CheckoutValidator {
             throw new CartException(ErrorCode.VALIDATION_ERROR, "Cart already been finalized.");
         }
 
-        validateAllocation(context, cart);
+        validateFeeAllocation(context, cart);
     }
 
-    private void validateAllocation(CheckoutContext context, Cart cart) {
+    private void validateFeeAllocation(CheckoutContext context, Cart cart) {
         if (CollectionUtils.isEmpty(context.getFeeAllocations())) {
             return;
         }
@@ -66,11 +66,11 @@ public class CheckoutValidator {
                 .collect(Collectors.toMap(CartItemFeeAllocation::getCartItemFeeIdentifier, f -> f));
 
         return cartItemFees.stream().anyMatch(fee -> !feeAllocationMap.containsKey(fee.getIdentifier()) ||
-                isValidAllocationAmount(feeAllocationMap.get(fee.getIdentifier()), fee));
+                isInvalidAllocationAmount(feeAllocationMap.get(fee.getIdentifier()), fee));
     }
 
-    private boolean isValidAllocationAmount(CartItemFeeAllocation feeAllocation, CartItemFee cartItemFee) {
-        return feeAllocation.getAmount().compareTo(cartItemFee.getUnitPrice()) <= 0 &&
-                feeAllocation.getAmount().compareTo(cartItemFee.getDueAmount()) >= 0;
+    private boolean isInvalidAllocationAmount(CartItemFeeAllocation feeAllocation, CartItemFee cartItemFee) {
+        return feeAllocation.getAmount().compareTo(cartItemFee.getUnitPrice()) > 0 ||
+                feeAllocation.getAmount().compareTo(cartItemFee.getDueAmount()) < 0;
     }
 }

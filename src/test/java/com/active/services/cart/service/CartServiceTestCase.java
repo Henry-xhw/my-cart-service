@@ -7,8 +7,14 @@ import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeesInCart;
+import com.active.services.cart.model.AuthorizedStatus;
+import com.active.services.cart.model.PaymentAccountResult;
+import com.active.services.cart.model.PaymentType;
+import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.service.checkout.CheckoutContext;
+import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
@@ -20,9 +26,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import sun.tools.tree.CheckContext;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -247,4 +257,50 @@ public class CartServiceTestCase extends BaseTestCase {
         Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().size());
         Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().get(0).getSubItems().size());
     }
+
+    @Test
+    public void testCheckout() {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
+                dataAccess);
+        Cart cart = CartDataFactory.cart();
+        CartItem cartItem = CartDataFactory.cartItem();
+        cartItem.setId(1L);
+        cart.setItems(Arrays.asList(cartItem));
+        UUID identifier = cart.getIdentifier();
+        when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
+        CartItemFeesInCart cartItemFee1 = new CartItemFeesInCart();
+        cartItemFee1.setCartItemId(cartItem.getId());
+        cartItemFee1.setId(1L);
+        cartItemFee1.setParentId(null);
+        CartItemFeesInCart cartItemFee2 = new CartItemFeesInCart();
+        cartItemFee2.setCartItemId(cartItem.getId());
+        cartItemFee2.setId(2L);
+        cartItemFee2.setParentId(1L);
+        List<CartItemFeesInCart> fees = new ArrayList<>();
+        fees.add(cartItemFee1);
+        fees.add(cartItemFee2);
+        when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(fees);
+
+        CheckoutContext checkoutContext = new CheckoutContext();
+        CartService spyCartService = spy(cartService);
+        CheckoutProcessor checkoutProcessor = mock(CheckoutProcessor.class);
+        when(spyCartService.getCheckoutProcessor(checkoutContext)).thenReturn(checkoutProcessor);
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                PaymentAccountResult paymentAccountResult = new PaymentAccountResult();
+                paymentAccountResult.setPaymentId(UUID.randomUUID());
+                paymentAccountResult.setPaymentType(PaymentType.CREDIT_CARD);
+                paymentAccountResult.setAuthorizedStatus(AuthorizedStatus.APPROVED);
+                CheckoutResult checkoutResult = new CheckoutResult(1L, paymentAccountResult);
+                checkoutContext.setCheckoutResults(Arrays.asList(checkoutResult));
+                return null;
+            }
+        }
+        ).when(checkoutProcessor).process();
+        assertThat(spyCartService.checkout(cart.getIdentifier(), checkoutContext).size()).isEqualTo(1);
+    }
+
 }

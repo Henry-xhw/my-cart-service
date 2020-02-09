@@ -179,7 +179,7 @@ public class CartService {
         cart.getFlattenCartItems().forEach(cartItem -> {
             List<CartItemFeesInCart> collect =
                     cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId() &&
-                            itemFee.getId() != null).collect(Collectors.toList());
+                             Objects.nonNull(itemFee.getId())).collect(Collectors.toList());
 
             TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
             cartItem.setFees(baseTreeTreeBuilder.buildTree());
