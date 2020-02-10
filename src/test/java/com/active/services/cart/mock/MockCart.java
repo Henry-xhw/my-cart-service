@@ -42,6 +42,7 @@ public class MockCart {
         List<CartItem> list = new ArrayList<>();
         list.add(cartItem);
         cart.setItems(list);
+        cart.setReservationId(UUID.randomUUID());
         return cart;
     }
 
