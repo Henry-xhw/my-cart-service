@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.RandomUtils;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.model.Range;
+import com.active.platform.types.range.Range;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.service.CartStatus;
 
@@ -82,12 +82,12 @@ public class CartDataFactory {
         cartItem.setProductName("product name");
         cartItem.setProductDescription(description);
         Range<Instant> bookingRange = new Range<>();
-        bookingRange.setLower(Instant.now());
-        bookingRange.setUpper(Instant.now());
+        bookingRange.setLowerInclusive(Instant.now());
+        bookingRange.setUpperExclusive(Instant.now());
         cartItem.setBookingRange(bookingRange);
         Range<Instant> trimmedBookingRange = new Range<>();
-        trimmedBookingRange.setLower(Instant.now());
-        trimmedBookingRange.setUpper(Instant.now());
+        trimmedBookingRange.setLowerInclusive(Instant.now());
+        trimmedBookingRange.setUpperExclusive(Instant.now());
         cartItem.setTrimmedBookingRange(trimmedBookingRange);
         cartItem.setQuantity(quantity);
         cartItem.setUnitPrice(price);
