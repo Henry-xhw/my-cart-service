@@ -1,10 +1,10 @@
 package com.active.services.cart.service.checkout;
 
+import com.active.platform.types.range.Range;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
-import com.active.platform.types.range.Range;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.domain.Address;
 import com.active.services.inventory.rest.dto.DateTimeRange;
@@ -39,9 +39,10 @@ public class CheckoutContext {
     public List<ReservationDTO> getReservations() {
         List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
             ReservationDTO reservationDTO = new ReservationDTO();
-
+            reservationDTO.setAllowOversold(cartItem.isOversold());
             reservationDTO.setProductId(cartItem.getProductId());
             reservationDTO.setQuantity(cartItem.getQuantity());
+
             Range<Instant> br = cartItem.getBookingRange();
             if (br != null && (br.getLowerInclusive() != null || br.getUpperExclusive() != null)) {
                 DateTimeRange dateTimeRange = new DateTimeRange();
