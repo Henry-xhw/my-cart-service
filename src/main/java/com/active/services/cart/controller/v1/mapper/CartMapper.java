@@ -2,8 +2,10 @@ package com.active.services.cart.controller.v1.mapper;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.CartItemFeeAllocation;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
+import com.active.services.cart.model.v1.CartItemFeeAllocationDTO;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.service.checkout.CheckoutContext;
@@ -24,6 +26,8 @@ public interface CartMapper {
     CartItem toDomain(CartItemDto dto, @Context boolean isCreate);
 
     CheckoutContext toDomain(CheckoutReq req);
+
+    CartItemFeeAllocation toDomain(CartItemFeeAllocationDTO dto);
 
     @InheritInverseConfiguration
     CartDto toDto(Cart cart);

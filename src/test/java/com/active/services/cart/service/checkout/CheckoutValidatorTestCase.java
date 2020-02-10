@@ -97,29 +97,6 @@ public class CheckoutValidatorTestCase {
     }
 
     @Test(expected = CartException.class)
-    public void testFeeAllocationAmountLessDueAmount() {
-        Cart cart = CartDataFactory.cart();
-        CheckoutContext checkoutContext = new CheckoutContext();
-        checkoutContext.setCart(cart);
-
-        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
-                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-                .flatMap(List::stream).collect(Collectors.toList());
-
-        List<CartItemFeeAllocation> feeAllocations = new ArrayList<>();
-        cartItemFees.stream().forEach(fee -> {
-            CartItemFeeAllocation feeAllocation = new CartItemFeeAllocation();
-            feeAllocation.setCartItemFeeIdentifier(fee.getIdentifier());
-            feeAllocation.setAmount(BigDecimal.ZERO);
-            feeAllocations.add(feeAllocation);
-        });
-        checkoutContext.setFeeAllocations(feeAllocations);
-
-        CheckoutValidator validator = new CheckoutValidator();
-        validator.validate(checkoutContext);
-    }
-
-    @Test(expected = CartException.class)
     public void testFeeAllocationAmountGraterUnitPrice() {
         Cart cart = CartDataFactory.cart();
         CheckoutContext checkoutContext = new CheckoutContext();

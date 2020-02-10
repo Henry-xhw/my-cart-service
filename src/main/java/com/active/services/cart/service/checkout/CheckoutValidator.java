@@ -9,6 +9,7 @@ import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.service.CartStatus;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +44,14 @@ public class CheckoutValidator {
             return;
         }
 
+        Map<UUID, List<CartItemFeeAllocation>> feeAllocationMap = context.getFeeAllocations().stream()
+                .collect(Collectors.groupingBy(CartItemFeeAllocation::getCartItemFeeIdentifier));
+        feeAllocationMap.forEach((key, values) -> {
+            if (values.size() > 1) {
+                throw new CartException(ErrorCode.VALIDATION_ERROR, "cartItemFeeAllocation {0} is not unique.", key);
+            }
+        });
+
         List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
                 .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
                 .flatMap(List::stream).collect(Collectors.toList());
@@ -69,8 +78,7 @@ public class CheckoutValidator {
                 isInvalidAllocationAmount(feeAllocationMap.get(fee.getIdentifier()), fee));
     }
 
-    private boolean isInvalidAllocationAmount(CartItemFeeAllocation feeAllocation, CartItemFee cartItemFee) {
-        return feeAllocation.getAmount().compareTo(cartItemFee.getUnitPrice()) > 0 ||
-                feeAllocation.getAmount().compareTo(cartItemFee.getDueAmount()) < 0;
+    private boolean isInvalidAllocationAmount(CartItemFeeAllocation allocation, CartItemFee fee) {
+        return allocation.getAmount().compareTo(fee.getUnitPrice().multiply(BigDecimal.valueOf(fee.getUnits()))) > 0;
     }
 }

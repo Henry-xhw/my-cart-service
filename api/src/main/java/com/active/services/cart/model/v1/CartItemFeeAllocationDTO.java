@@ -1,4 +1,4 @@
-package com.active.services.cart.model;
+package com.active.services.cart.model.v1;
 
 import lombok.Data;
 
@@ -8,10 +8,10 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class CartItemFeeAllocation {
+public class CartItemFeeAllocationDTO {
+    @NotNull
     private UUID cartItemFeeIdentifier;
 
-    private UUID paymentTxId;
-
+    @NotNull
     private BigDecimal amount;
 }

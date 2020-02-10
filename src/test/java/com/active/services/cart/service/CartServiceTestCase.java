@@ -31,7 +31,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.transaction.PlatformTransactionManager;
-import sun.tools.tree.CheckContext;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
