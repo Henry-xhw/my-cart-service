@@ -1,10 +1,10 @@
 package com.active.services.cart.service.checkout;
 
+import com.active.platform.types.range.Range;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
-import com.active.platform.types.range.Range;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.domain.Address;
 import com.active.services.inventory.rest.dto.DateTimeRange;
