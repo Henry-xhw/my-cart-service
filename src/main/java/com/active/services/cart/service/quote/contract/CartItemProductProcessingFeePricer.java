@@ -37,16 +37,25 @@ public class CartItemProductProcessingFeePricer implements CartItemPricer {
                 CartItemFee cartItemFee = new CartItemFee();
                 cartItemFee.setIdentifier(UUID.randomUUID());
                 cartItemFee.setDescription(feeAmountResult.getDescription());
-                cartItemFee.setTransactionType(FeeTransactionType.DEBIT);
                 cartItemFee.setUnitPrice(feeAmountResult.getAmount());
                 cartItemFee.setUnits(cartItem.getQuantity());
-                if (feeAmountResult.getFeeType() == FeeType.PERCENT) {
-                    cartItemFee.setType(CartItemFeeType.PROCESSING_PERCENT);
-                } else {
-                    cartItemFee.setType(CartItemFeeType.PROCESSING_FLAT);
-                }
+                mapTypesToCartItemFee(feeAmountResult.getFeeType(), cartItemFee);
                 cartItem.getFees().add(cartItemFee);
             }
         );
     }
+
+    private void mapTypesToCartItemFee(FeeType feeType, CartItemFee cartItemFee) {
+        if (feeType == FeeType.PERCENT) {
+            cartItemFee.setType(CartItemFeeType.PROCESSING_PERCENT);
+            cartItemFee.setTransactionType(FeeTransactionType.DEBIT);
+        } else if (feeType == FeeType.FLAT_ADJUSTMENT_MAX) {
+            cartItemFee.setType(CartItemFeeType.PROCESSING_FLAT);
+            cartItemFee.setTransactionType(FeeTransactionType.CREDIT);
+        } else {
+            cartItemFee.setType(CartItemFeeType.PROCESSING_FLAT);
+            cartItemFee.setTransactionType(FeeTransactionType.DEBIT);
+        }
+    }
+
 }
