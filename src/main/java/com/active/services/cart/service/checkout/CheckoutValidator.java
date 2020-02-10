@@ -52,10 +52,7 @@ public class CheckoutValidator {
             }
         });
 
-        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
-                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-                .flatMap(List::stream).collect(Collectors.toList());
-
+        List<CartItemFee> cartItemFees = context.getFlattenCartItemFees();
         if (CollectionUtils.isEmpty(cartItemFees)) {
             throw new CartException(ErrorCode.VALIDATION_ERROR, "Not found cart item fees.");
         }

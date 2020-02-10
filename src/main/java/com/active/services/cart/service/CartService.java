@@ -139,6 +139,11 @@ public class CartService {
         Cart cart = getCartWithFullPriceByUuid(cartId);
         context.setCart(cart);
 
+        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
+                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
+                .flatMap(List::stream).collect(Collectors.toList());
+        context.setFlattenCartItemFees(cartItemFees);
+
         getCheckoutProcessor(context).process();
 
         return context.getCheckoutResults();

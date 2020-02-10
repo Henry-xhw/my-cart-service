@@ -101,16 +101,15 @@ public class CheckoutValidatorTestCase {
         Cart cart = CartDataFactory.cart();
         CheckoutContext checkoutContext = new CheckoutContext();
         checkoutContext.setCart(cart);
+        initializeContext(checkoutContext, cart);
 
-        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
-                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-                .flatMap(List::stream).collect(Collectors.toList());
-
+        List<CartItemFee> cartItemFees = checkoutContext.getFlattenCartItemFees();
         List<CartItemFeeAllocation> feeAllocations = new ArrayList<>();
         cartItemFees.stream().forEach(fee -> {
             CartItemFeeAllocation feeAllocation = new CartItemFeeAllocation();
             feeAllocation.setCartItemFeeIdentifier(fee.getIdentifier());
-            feeAllocation.setAmount(BigDecimal.ONE.add(fee.getUnitPrice()));
+            feeAllocation.setAmount(BigDecimal.ONE.add(fee.getUnitPrice()
+                    .multiply(BigDecimal.valueOf(fee.getUnits()))));
             feeAllocations.add(feeAllocation);
         });
         checkoutContext.setFeeAllocations(feeAllocations);
@@ -124,23 +123,27 @@ public class CheckoutValidatorTestCase {
         Cart cart = CartDataFactory.cart();
         CheckoutContext checkoutContext = new CheckoutContext();
         checkoutContext.setCart(cart);
+        initializeContext(checkoutContext, cart);
 
-        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
-                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-                .flatMap(List::stream).collect(Collectors.toList());
-
-
+        List<CartItemFee> cartItemFees = checkoutContext.getFlattenCartItemFees();
         List<CartItemFeeAllocation> feeAllocations = new ArrayList<>();
         cartItemFees.stream().forEach(fee -> {
             fee.setDueAmount(fee.getUnitPrice());
             CartItemFeeAllocation feeAllocation = new CartItemFeeAllocation();
             feeAllocation.setCartItemFeeIdentifier(fee.getIdentifier());
-            feeAllocation.setAmount(fee.getDueAmount());
+            feeAllocation.setAmount(fee.getDueAmount().multiply(BigDecimal.valueOf(fee.getUnits())));
             feeAllocations.add(feeAllocation);
         });
         checkoutContext.setFeeAllocations(feeAllocations);
 
         CheckoutValidator validator = new CheckoutValidator();
         validator.validate(checkoutContext);
+    }
+
+    private void initializeContext(CheckoutContext context, Cart cart) {
+        List<CartItemFee> cartItemFees = cart.getFlattenCartItems().stream()
+                .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
+                .flatMap(List::stream).collect(Collectors.toList());
+        context.setFlattenCartItemFees(cartItemFees);
     }
 }

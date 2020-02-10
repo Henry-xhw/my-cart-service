@@ -59,14 +59,22 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
     }
 
     private void validateFeeAllocation() {
+        Payment payment = getCheckoutContext().getPayments().get(0);
+        BigDecimal payedAmount = payment.getAmount();
         if (CollectionUtils.isEmpty(getCheckoutContext().getFeeAllocations())) {
+            BigDecimal totalDueAmount = getCheckoutContext().getTotalDueAmount();
+            if (payedAmount.compareTo(BigDecimal.ZERO) > 0 && payedAmount.compareTo(totalDueAmount) != 0) {
+                throw new CartException(ErrorCode.VALIDATION_ERROR, "Can not allocate fee as payment amounts not " +
+                        "equal to due amounts.");
+            }
+
             return;
         }
 
         // Allocation amount be the same as payment amounts
         BigDecimal allocatedAmounts = getCheckoutContext().getFeeAllocations().stream()
                 .map(CartItemFeeAllocation::getAmount).reduce((one, two) -> one.add(two)).get();
-        Payment payment = getCheckoutContext().getPayments().get(0);
+
         if (allocatedAmounts.compareTo(payment.getAmount()) != 0) {
             throw new CartException(ErrorCode.VALIDATION_ERROR, "Allocated amount {} should be the same as payed " +
                     "amount {}", payment.getAmount());
@@ -76,4 +84,5 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
             feeAllocation.setPaymentTxId(payment.getIdentifier());
         });
     }
+
 }
