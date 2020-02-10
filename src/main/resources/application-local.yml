@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:sqlserver://localhost:1435;databaseName=cart_service
-    username: fnd_dev_usr
-    password: fnd_dev_usr$2008
+    username: sa
+    password: 123!P01@W
   output:
     ansi:
       enabled: ALWAYS
