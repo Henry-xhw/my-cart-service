@@ -39,9 +39,10 @@ public class CheckoutContext {
     public List<ReservationDTO> getReservations() {
         List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
             ReservationDTO reservationDTO = new ReservationDTO();
-
+            reservationDTO.setAllowOversold(cartItem.isOversold());
             reservationDTO.setProductId(cartItem.getProductId());
             reservationDTO.setQuantity(cartItem.getQuantity());
+
             Range<Instant> br = cartItem.getBookingRange();
             if (br != null && (br.getLowerInclusive() != null || br.getUpperExclusive() != null)) {
                 DateTimeRange dateTimeRange = new DateTimeRange();
