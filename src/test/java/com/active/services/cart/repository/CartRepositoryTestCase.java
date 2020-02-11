@@ -1,5 +1,7 @@
 package com.active.services.cart.repository;
 
+import com.active.services.Context;
+import com.active.services.ContextWrapper;
 import com.active.services.cart.common.Event;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
@@ -71,7 +73,7 @@ public class CartRepositoryTestCase {
         item.setFees(Collections.singletonList(cartItemFee));
         long cartItemId = cartRepository.createCartItem(1L, item);
         Assert.assertEquals(1L, cartItemId);
-        verify(cartMapper, times(items.size()+1)).createCartItem(any(), any());
+        verify(cartMapper, times(items.size() + 1)).createCartItem(any(), any());
 
         List<CartItem> updateItems = CartDataFactory.cart().getItems();
         cartRepository.updateCartItems(updateItems);
@@ -88,7 +90,7 @@ public class CartRepositoryTestCase {
         when(cartMapper.getCartItemIdByCartItemUuid(any())).thenReturn(Optional.of(1L));
         Optional<Long> itemId = cartRepository.getCartItemIdByCartItemUuid(UUID.randomUUID());
         Assert.assertTrue(itemId.isPresent());
-        Assert.assertEquals(1,itemId.get().longValue());
+        Assert.assertEquals(1, itemId.get().longValue());
     }
 
 
@@ -125,7 +127,55 @@ public class CartRepositoryTestCase {
 
     @Test
     public void updateCartReservationIdSuccess() {
+        Context context = new Context() {
+            @Override
+            public String getActorId() {
+                return "system";
+            }
 
+            @Override
+            public UUID getEnterpriseActorId() {
+                return null;
+            }
+
+            @Override
+            public String getOnBehalfOfId() {
+                return null;
+            }
+
+            @Override
+            public UUID getAgencyId() {
+                return null;
+            }
+
+            @Override
+            public Long getAgencyIdLong() {
+                return null;
+            }
+
+            @Override
+            public String getApplicationId() {
+                return null;
+            }
+
+            @Override
+            public String getActionId() {
+                return null;
+            }
+
+            @Override
+            public String getCallerIP() {
+                return null;
+            }
+
+            @Override
+            public Long getExternalClientId() {
+                return null;
+            }
+        };
+        ContextWrapper.set(context);
+        cartRepository.updateCartReservationId(UUID.randomUUID(), UUID.randomUUID());
+        verify(cartMapper, times(1)).updateCartReservationGroupId(any(), any(), any());
     }
 
     @Test
