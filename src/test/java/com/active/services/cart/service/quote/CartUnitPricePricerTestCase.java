@@ -8,6 +8,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 import com.active.services.product.nextgen.v1.rsp.QuoteRsp;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,14 +40,7 @@ public class CartUnitPricePricerTestCase {
 
     @Test
     public void quoteSuccess() {
-        Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.setUnitPrice(null);
-        cartItem.setFees(new ArrayList<>());
-        ArrayList<CartItem> cartItems = new ArrayList<>();
-        cartItems.add(cartItem);
-        cart.setItems(cartItems);
-        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
+        CartQuoteContext cartQuoteContext = buildCartQuoteContext();
         when(cartUnitPricePricer.getCartItemPricer(any())).thenReturn(mock(CartItemUnitPricePricer.class));
         QuoteRsp quoteRsp = new QuoteRsp();
         FeeDto feeDto = new FeeDto();
@@ -57,11 +51,19 @@ public class CartUnitPricePricerTestCase {
         quoteRsp.setSuccess(true);
         when(productService.quote(any())).thenReturn(quoteRsp);
         cartUnitPricePricer.quote(cartQuoteContext);
-        Assert.assertEquals(cartItem.getFees().size(), 0);
+        Assert.assertEquals(cartQuoteContext.getCart().getItems().get(0).getFees().size(), 0);
     }
 
     @Test(expected = CartException.class)
     public void quoteFail() {
+        CartQuoteContext cartQuoteContext = buildCartQuoteContext();
+        when(cartUnitPricePricer.getCartItemPricer(any())).thenReturn(mock(CartItemUnitPricePricer.class));
+        when(productService.quote(any())).thenReturn(mock(QuoteRsp.class));
+        cartUnitPricePricer.quote(cartQuoteContext);
+    }
+
+    @NotNull
+    private CartQuoteContext buildCartQuoteContext() {
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setUnitPrice(null);
@@ -69,9 +71,6 @@ public class CartUnitPricePricerTestCase {
         ArrayList<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem);
         cart.setItems(cartItems);
-        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        when(cartUnitPricePricer.getCartItemPricer(any())).thenReturn(mock(CartItemUnitPricePricer.class));
-        when(productService.quote(any())).thenReturn(mock(QuoteRsp.class));
-        cartUnitPricePricer.quote(cartQuoteContext);
+        return new CartQuoteContext(cart);
     }
 }
