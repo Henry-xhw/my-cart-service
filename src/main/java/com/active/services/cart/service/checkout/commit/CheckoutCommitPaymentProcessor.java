@@ -45,7 +45,7 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         Payment payment = new Payment();
         BigDecimal totalAmount = cart.getFlattenCartItems().stream()
                 .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-                .flatMap(List::stream).map(f -> f.getDueAmount().multiply(new BigDecimal(f.getUnits())))
+                .flatMap(List::stream).map(f -> f.getDueAmount().multiply(BigDecimal.valueOf(f.getUnits())))
                 .reduce(BigDecimal::add).get();
         payment.setIdentifier(UUID.randomUUID());
         payment.setAmount(totalAmount);
