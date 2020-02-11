@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -55,7 +57,7 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         validateFeeAllocation(payment);
 
         // fill paymentTxId for feeAllocation
-        getCheckoutContext().getFeeAllocations().stream().forEach(feeAllocation -> {
+        emptyIfNull(getCheckoutContext().getFeeAllocations()).stream().forEach(feeAllocation -> {
             feeAllocation.setPaymentTxId(payment.getIdentifier());
         });
 

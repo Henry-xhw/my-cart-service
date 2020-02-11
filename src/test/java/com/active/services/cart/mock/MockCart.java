@@ -1,8 +1,10 @@
 package com.active.services.cart.mock;
 
 import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.platform.types.range.Range;
+import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.QuoteCartDto;
@@ -11,6 +13,7 @@ import com.active.services.cart.model.v1.QuoteCartItemDto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,9 +42,15 @@ public class MockCart {
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setId(1L);
         cartItem.setFeeVolumeIndex(1);
+
+        CartItemFee cartItemFee = CartDataFactory.cartItemFee();
+        cartItemFee.setDueAmount(cartItemFee.getUnitPrice());
+        cartItem.setFees(Arrays.asList(cartItemFee));
+
         List<CartItem> list = new ArrayList<>();
         list.add(cartItem);
         cart.setItems(list);
+        cart.setReservationId(UUID.randomUUID());
         return cart;
     }
 
@@ -67,6 +76,7 @@ public class MockCart {
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setFeeVolumeIndex(1);
+
         List<CartItemDto> list = new ArrayList<>();
         list.add(cartItem);
         cartDto.setItems(list);

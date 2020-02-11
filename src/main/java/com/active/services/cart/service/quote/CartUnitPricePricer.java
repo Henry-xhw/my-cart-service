@@ -68,6 +68,7 @@ public class CartUnitPricePricer implements CartPricer {
                 .forEach(notUnitPriceItem ->
                         feeDtoHashMap.put(notUnitPriceItem.getProductId(),
                                 sequenceFeedtoMap.get(notUnitPriceItem.getSequence())));
+
         return feeDtoHashMap;
     }
 
