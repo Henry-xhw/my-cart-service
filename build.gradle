@@ -17,7 +17,7 @@ allprojects {
     dependencyManagement {
         imports {
             mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE'
-            mavenBom 'com.active.platform:platform-dependencies:0.0.18'
+            mavenBom 'com.active.platform:platform-dependencies:0.0.21'
         }
     }
     dependencies {
@@ -49,13 +49,13 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp'
     implementation group: 'com.squareup.okio', name: 'okio'
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
-    implementation group: 'com.active.platform', name: 'platform-lib'
-    implementation group: 'com.active.springboot', name: 'active-spring-boot-starter'
+    implementation group: 'com.active.platform', name: 'platform-lib', version: '1.0.20'
+    implementation group: 'com.active.springboot', name: 'active-spring-boot-starter', version: '0.0.2'
 
-    implementation group: 'com.active.services', name:'core-services-api', configuration: 'runtime-published', ext: 'jar'
-    implementation group: 'com.active.services', name:'inventory-service-api'
-    implementation group: 'com.active.services', name:'order-management-service', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
-    implementation group: 'com.active.services', name:'product-service-api'
+    implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.56'
+    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.1', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
 
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"

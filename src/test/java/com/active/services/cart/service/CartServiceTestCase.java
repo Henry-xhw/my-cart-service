@@ -195,6 +195,10 @@ public class CartServiceTestCase extends BaseTestCase {
 
     @Test
     public void insertCartItemSuccess() {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = spy(new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
+                dataAccess));
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         CartItem childCartItem = CartDataFactory.cartItem();
