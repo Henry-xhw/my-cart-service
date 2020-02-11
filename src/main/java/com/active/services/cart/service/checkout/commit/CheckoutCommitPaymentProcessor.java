@@ -52,18 +52,21 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         getCheckoutContext().setPayments(Arrays.asList(payment));
 
         //validation allocation amount and payment
-        validateFeeAllocation();
+        validateFeeAllocation(payment);
+
+        // fill paymentTxId for feeAllocation
+        getCheckoutContext().getFeeAllocations().stream().forEach(feeAllocation -> {
+            feeAllocation.setPaymentTxId(payment.getIdentifier());
+        });
 
         // Should place order to be finalized if payment passed.
         cartRepository.finalizeCart(getCheckoutContext().getCart().getIdentifier(), ContextWrapper.get().getActorId());
     }
 
-    private void validateFeeAllocation() {
-        Payment payment = getCheckoutContext().getPayments().get(0);
-        BigDecimal payedAmount = payment.getAmount();
+    private void validateFeeAllocation(Payment p) {
         if (CollectionUtils.isEmpty(getCheckoutContext().getFeeAllocations())) {
             BigDecimal totalDueAmount = getCheckoutContext().getTotalDueAmount();
-            if (payedAmount.compareTo(BigDecimal.ZERO) > 0 && payedAmount.compareTo(totalDueAmount) != 0) {
+            if (p.getAmount().compareTo(BigDecimal.ZERO) > 0 && p.getAmount().compareTo(totalDueAmount) != 0) {
                 throw new CartException(ErrorCode.VALIDATION_ERROR, "Can not allocate fee as payment amounts not " +
                         "equal to due amounts.");
             }
@@ -75,14 +78,10 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         BigDecimal allocatedAmounts = getCheckoutContext().getFeeAllocations().stream()
                 .map(CartItemFeeAllocation::getAmount).reduce((one, two) -> one.add(two)).get();
 
-        if (allocatedAmounts.compareTo(payment.getAmount()) != 0) {
+        if (allocatedAmounts.compareTo(p.getAmount()) != 0) {
             throw new CartException(ErrorCode.VALIDATION_ERROR, "Allocated amount {} should be the same as payed " +
-                    "amount {}", payment.getAmount());
+                    "amount {}", p.getAmount());
         }
-
-        getCheckoutContext().getFeeAllocations().stream().forEach(feeAllocation -> {
-            feeAllocation.setPaymentTxId(payment.getIdentifier());
-        });
     }
 
 }
