@@ -16,4 +16,4 @@ cp -r ${KIT_MANAGER_DIR}/SeedData ${SCRIPTS_DIR}/SeedData/
 
 #cp -r ${KIT_MANAGER_DIR}/DataScripts/** ${SCRIPTS_DIR}/DataScripts/
 
-docker build -t ${1} .
+docker build -t cart_service .

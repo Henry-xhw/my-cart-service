@@ -1,7 +1,27 @@
+plugins {
+    id 'io.freefair.lombok' version '3.5.1'
+    id 'org.asciidoctor.convert'
+}
+
+active {
+    coverage {
+        lineMinimum = 0.0
+        branchMinimum = 0.0
+    }
+}
+
+configurations {
+    compile.exclude(module: 'slf4j-log4j12')
+}
+
+apply from: '../gradle/restdocs.gradle'
+
 dependencies {
     implementation 'javax.validation:validation-api'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.9'
-    
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.9'
+    implementation 'com.active.platform:core-services-api-migration:6.0.8'
+    implementation group: 'com.active.platform', name: 'platform-lib', version: '1.0.20'
+
     testImplementation 'org.hibernate.validator:hibernate-validator'
     testImplementation 'junit:junit'
 }

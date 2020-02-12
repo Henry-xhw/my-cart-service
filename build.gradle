@@ -4,7 +4,7 @@ buildscript {
     }
 }
 plugins {
-    id 'com.active.aw-service' version '2.0.9'
+    id 'com.active.aw-service' version '2.0.10'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.3'
 }
@@ -17,7 +17,7 @@ allprojects {
     dependencyManagement {
         imports {
             mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE'
-            mavenBom 'com.active.platform:platform-dependencies:+'
+            mavenBom 'com.active.platform:platform-dependencies:0.0.21'
         }
     }
     dependencies {
@@ -29,46 +29,53 @@ allprojects {
 dependencies {
     implementation project(':api')
 
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    implementation 'com.github.ben-manes.caffeine:caffeine:2.7.0'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
-    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
+    implementation 'org.aspectj:aspectjweaver'
+    implementation 'org.mybatis:mybatis-typehandlers-jsr310'
+    implementation 'org.apache.commons:commons-collections4'
+    implementation 'com.google.guava:guava'
+    implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws'
+    implementation 'org.apache.cxf:cxf-rt-features-logging'
+
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    implementation "org.mapstruct:mapstruct", "org.projectlombok:lombok"
+    annotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
+    
+    implementation group: 'io.github.openfeign', name: 'feign-core'
+    implementation group: 'io.github.openfeign', name: 'feign-slf4j'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson'
+    implementation group: 'io.github.openfeign', name: 'feign-okhttp'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp'
+    implementation group: 'com.squareup.okio', name: 'okio'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
+    implementation group: 'com.active.platform', name: 'platform-lib', version: '1.0.20'
+    implementation group: 'com.active.springboot', name: 'active-spring-boot-starter', version: '0.0.2'
 
-    implementation 'org.drools:drools-core:7.22.0.Final'
-    implementation 'org.drools:drools-decisiontables:7.22.0.Final'
-    implementation 'org.drools:drools-compiler:7.22.0.Final'
-    implementation 'org.apache.commons:commons-csv:1.5'
-    implementation 'com.google.guava:guava:28.0-jre'
+    implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.56'
+    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.1', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
 
-    implementation 'org.apache.cxf:cxf-rt-transports-http-hc:3.2.0'
-    implementation 'org.apache.cxf:cxf-rt-frontend-jaxws:3.2.0'
-    implementation 'com.sun.xml.bind:jaxb-core:2.2.11'
-    implementation 'com.sun.xml.bind:jaxb-impl:2.2.11'
 
-    //needed by oms
-    implementation group: 'com.active.platform', name: 'core-services-api-migration', version: '6.0.6', ext: 'jar', configuration: 'runtime'
-    implementation group: 'com.active.services', name: 'agency-management-service', classifier: 'api', version: '3.116.0.4', ext: 'jar', configuration: 'runtime'
-    implementation group: 'com.active.services', name: 'foundation-user-service', classifier: 'api', version: '4.58.0.2', ext: 'jar', configuration: 'runtime'
-    implementation group: 'com.active.services', name: 'order-management-service', classifier: 'api', version: '3.128.1.8', ext: 'jar', configuration: 'runtime'
-    implementation 'commons-lang:commons-lang:2.6'
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
+    testImplementation group: 'org.powermock', name: 'powermock-module-junit4'
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2'
+//    testImplementation group: 'org.powermock', name: 'powermock-core', version: '2.0.4'
+//    testImplementation group: 'org.powermock', name: 'powermock-reflect', version: '2.0.4'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-        exclude group: 'junit', module: 'junit'
-    }
+//            <dependency org="org.powermock" name="powermock-core" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-api-mockito" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-api-support" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-reflect" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-module-junit4" transitive="false" rev="1.6.4" conf="test->default"/>
+//            <dependency org="org.powermock" name="powermock-module-junit4-common" rev="1.6.4" conf="test->default"/>
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    testCompile 'com.epages:restdocs-api-spec-mockmvc:0.9.4'
-
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompile 'com.epages:restdocs-api-spec-mockmvc'
 }
 
 active {
@@ -84,25 +91,16 @@ active {
 }
 
 // for API document
-ext {
-    snippetsDir = file('build/generated-snippets')
-}
+apply from: 'gradle/restdocs.gradle'
 
 postman {
     title = 'Cart Service'
     baseUrl = '{{cart-service}}'
 }
 
-asciidoctor {
-    inputs.dir snippetsDir
-    dependsOn test
-    attributes 'imagesdir': './images'
-}
-
 test {
     outputs.dir snippetsDir
 }
-
 
 import org.gradle.internal.os.OperatingSystem
 

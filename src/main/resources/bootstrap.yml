@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: cart-service
+    index: 1
+  cloud:
+    config:
+      enabled: false
+  boot:
+    admin:
+      client:
+        enabled: false
+  profiles:
+    active: local
