@@ -2,8 +2,8 @@ package com.active.services.cart.application.impl;
 
 import com.active.services.ProductType;
 import com.active.services.cart.application.CartItemSelector;
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;

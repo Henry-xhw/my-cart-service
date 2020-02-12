@@ -1,6 +1,6 @@
 package com.active.services.cart.domain.discount;
 
-import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.discount.algorithm.DiscountAlgorithm;
 
 import lombok.NonNull;
@@ -18,10 +18,10 @@ public class CartItemDiscountsApplication {
     @NonNull private final CartItem item;
     @NonNull private final List<Discount> discounts;
     @NonNull private final DiscountAlgorithm algorithm;
-    @NonNull private final Currency currency;
+    @NonNull private final String currency;
 
     public void apply() {
-        if (item.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        if (item.getNetPrice().compareTo(BigDecimal.ZERO) <= 0) {
             return;
         }
         List<Discount> qualified = discounts.stream()
@@ -31,6 +31,7 @@ public class CartItemDiscountsApplication {
         if (CollectionUtils.isEmpty(qualified)) {
             return;
         }
-        algorithm.apply(qualified, item.getPrice(), currency).forEach(disc -> item.applyDiscount(disc, currency));
+        algorithm.apply(qualified, item.getNetPrice(), Currency.getInstance(currency)).forEach(disc -> item.applyDiscount(disc,
+                currency));
     }
 }

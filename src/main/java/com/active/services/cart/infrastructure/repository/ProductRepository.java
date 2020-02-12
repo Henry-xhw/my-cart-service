@@ -3,7 +3,6 @@ package com.active.services.cart.infrastructure.repository;
 import com.active.services.AuditableObject;
 import com.active.services.Availability;
 import com.active.services.ContextWrapper;
-import com.active.services.cart.domain.rule.Rule;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.Discount;
@@ -32,10 +31,6 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 @Repository
 public class ProductRepository {
     private final ProductServiceSOAPEndPoint prdSvc;
-
-    public List<Rule> findProductFeeRulesByProductId(Long productId) {
-        return null;
-    }
 
     public Optional<Product> getProduct(Long productId) {
         return Optional.empty();

@@ -1,8 +1,8 @@
 package com.active.services.cart.application.impl;
 
 import com.active.services.cart.application.CartItemSelector;
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

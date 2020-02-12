@@ -1,8 +1,8 @@
 package com.active.services.cart.domain.discount.condition;
 
 import com.active.services.cart.application.CartItemSelector;
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.discount.MembershipMetadata;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.domain.DateTime;

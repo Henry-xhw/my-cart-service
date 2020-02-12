@@ -1,7 +1,8 @@
 package com.active.services.cart.application;
 
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
+
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 
 import java.util.List;
 
