@@ -1,9 +1,9 @@
 package com.active.services.cart.application.impl;
 
 import com.active.services.ProductType;
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
-import com.active.services.cart.domain.cart.CartItemFee;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.infrastructure.repository.ProductMembership;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartItemFeeType;
@@ -20,10 +20,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +61,16 @@ public class MembershipDiscountEngineTestCase {
         item.setPersonIdentifier(UUID.randomUUID().toString());
         item.setProductId(nonMembership.getId());
         item.setQuantity(1);
-        item.setCartItemFees(new ArrayList<>());
-        item.getCartItemFees().add(CartItemFee.builder()
+        item.setFees(new ArrayList<>());
+        item.setNetPrice(BigDecimal.TEN);
+        item.getFees().add(CartItemFee.builder()
                 .name("price")
                 .unitPrice(BigDecimal.TEN)
                 .units(1)
                 .transactionType(FeeTransactionType.DEBIT)
-                .feeType(CartItemFeeType.PRICE)
+                .type(CartItemFeeType.PRICE)
                 .build());
-        cart.getCartItems().add(item);
+        cart.getItems().add(item);
 
         engine.apply(cart);
     }
@@ -91,23 +90,22 @@ public class MembershipDiscountEngineTestCase {
         item.setPersonIdentifier(UUID.randomUUID().toString());
         item.setProductId(membershipProd.getId());
         item.setQuantity(1);
-        item.setCartItemFees(new ArrayList<>());
-        item.getCartItemFees().add(CartItemFee.builder()
+        item.setFees(new ArrayList<>());
+        item.getFees().add(CartItemFee.builder()
                 .name("price")
                 .unitPrice(BigDecimal.TEN)
                 .units(1)
                 .transactionType(FeeTransactionType.DEBIT)
-                .feeType(CartItemFeeType.PRICE)
+                .type(CartItemFeeType.PRICE)
                 .build());
-        cart.getCartItems().add(item);
+        cart.getItems().add(item);
         engine.apply(cart);
     }
 
     private Cart cart() {
         Cart cart = new Cart();
-        cart.setCurrency(Currency.getInstance("USD"));
-        cart.setPriceDate(LocalDateTime.now());
-        cart.setCartItems(new ArrayList<>());
+        cart.setCurrencyCode("USD");
+        cart.setItems(new ArrayList<>());
         return cart;
     }
 
