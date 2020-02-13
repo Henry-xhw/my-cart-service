@@ -62,7 +62,8 @@ public class ProductRepository {
      *      * one MD should be considered the effective one.
      */
     public List<MultiDiscount> findEffectiveMultiDiscountsByProductId(Long productId, LocalDateTime priceDate) {
-        Map<MultiDiscountType, List<MultiDiscount>> type2Mds = emptyIfNull(prdSvc.findMultiDiscountsByProductId(ContextWrapper.get(), productId)).stream()
+        Map<MultiDiscountType, List<MultiDiscount>> type2Mds =
+                emptyIfNull(prdSvc.findMultiDiscountsByProductId(ContextWrapper.get(), productId)).stream()
                 .filter(md -> md.getAvailability() == Availability.ONLINE)
                 .filter(md -> (md.getStartDate() == null || md.getStartDate().before(new DateTime(priceDate))) &&
                         (md.getEndDate() == null || md.getEndDate().after(new DateTime(priceDate))))

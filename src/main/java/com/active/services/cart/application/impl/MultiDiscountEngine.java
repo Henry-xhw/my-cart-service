@@ -1,7 +1,7 @@
 package com.active.services.cart.application.impl;
 
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.discount.CartItemsDiscountApplication;
 import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.domain.discount.condition.DiscountSpecification;
@@ -18,6 +18,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +39,8 @@ public class MultiDiscountEngine {
         ListMultimap<CartItem, MultiDiscount> item2Mds = ArrayListMultimap.create();
         List<CartItem> items = selector.select(cart);
         for (CartItem item : items) {
-            List<MultiDiscount> mds = productRepo.findEffectiveMultiDiscountsByProductId(item.getProductId(), cart.getPriceDate());
+            List<MultiDiscount> mds = productRepo.findEffectiveMultiDiscountsByProductId(item.getProductId(),
+                    LocalDateTime.now());
             item2Mds.putAll(item, mds);
         }
 
@@ -49,7 +51,8 @@ public class MultiDiscountEngine {
 
             List<Discount> discounts = new ArrayList<>();
             if (isEmpty(md.getThresholdSettings())) {
-                DiscountSpecification spec = specs.multiDiscountThreshold(md.getDiscountType(), md2Items.get(md), md.getThreshold());
+                DiscountSpecification spec =
+                        specs.multiDiscountThreshold(md.getDiscountType(), md2Items.get(md), md.getThreshold());
                 md.getTiers().stream()
                         .sorted(Comparator.comparingInt(DiscountTier::getTierLevel))
                         .map(t -> new Discount(md.getName(), md.getDescription(), t.getAmount(), t.getAmountType()))
@@ -58,7 +61,8 @@ public class MultiDiscountEngine {
             } else {
                 Collections.sort(md.getThresholdSettings());
                 for (MultiDiscountThresholdSetting s : md.getThresholdSettings()) {
-                    DiscountSpecification spec = specs.multiDiscountThreshold(md.getDiscountType(), md2Items.get(md), s.getThreshold());
+                    DiscountSpecification spec =
+                            specs.multiDiscountThreshold(md.getDiscountType(), md2Items.get(md), s.getThreshold());
                     s.getTiers().stream()
                             .sorted(Comparator.comparingInt(DiscountTier::getTierLevel))
                             .map(t -> new Discount(md.getName(), md.getDescription(), t.getAmount(), t.getAmountType()))
@@ -66,7 +70,8 @@ public class MultiDiscountEngine {
                             .forEachOrdered(discounts::add);
                 }
             }
-            CartItemsDiscountApplication da = new CartItemsDiscountApplication(md2Items.get(md), discounts, null, cart.getCurrency());
+            CartItemsDiscountApplication da = new CartItemsDiscountApplication(md2Items.get(md), discounts, null,
+                    cart.getCurrencyCode());
         }
     }
 }

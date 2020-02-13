@@ -14,7 +14,7 @@ public class BestDiscountAlgorithm implements DiscountAlgorithm {
     @Override
     public List<Discount> apply(List<Discount> discounts, BigDecimal amountToDiscount, Currency currency) {
         return Collections.singletonList(Collections.max(discounts,
-                comparing(disc ->
-                        DiscountAmountCalcUtil.calcFlatAmount(amountToDiscount, disc.getAmount(), disc.getAmountType(), currency))));
+                comparing(disc -> DiscountAmountCalcUtil.calcFlatAmount(amountToDiscount,
+                        disc.getAmount(), disc.getAmountType(), currency))));
     }
 }

@@ -1,8 +1,8 @@
 package com.active.services.cart.application.impl;
 
 import com.active.services.DiscountModel;
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
 import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
@@ -35,21 +35,23 @@ public class CouponDiscountEngine {
     @NonNull private final DiscountSpecs specs;
 
     public void apply(Cart cart, String coupon) {
-        for (CartItem it : cart.getCartItems()) {
+        for (CartItem it : cart.getFlattenCartItems()) {
             DiscountModel model = productRepo.getProduct(it.getProductId())
                     .map(Product::getDiscountModel)
                     .orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
 
-            List<com.active.services.product.Discount> couponDiscs = productRepo.findDiscountByProductIdAndCode(it.getProductId(), coupon);
+            List<com.active.services.product.Discount> couponDiscs =
+                    productRepo.findDiscountByProductIdAndCode(it.getProductId(), coupon);
 
             List<Discount> discounts = new ArrayList<>(couponDiscs.size());
             for (com.active.services.product.Discount disc : couponDiscs) {
                 Discount discount = new Discount(disc.getName(), disc.getDescription(), disc.getAmount(), disc.getAmountType());
-                discount.setCondition(specs.couponDiscount(disc, coupon, new DateTime(LocalDateTime.now()), null, cart.getId(), it.getId(), it.getQuantity()));
+                discount.setCondition(specs.couponDiscount(disc, coupon, new DateTime(LocalDateTime.now()), null,
+                        cart.getId(), it.getId(), it.getQuantity()));
                 discounts.add(discount);
             }
-
-            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.getAlgorithm(model), cart.getCurrency()).apply();
+            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.getAlgorithm(model),
+                    cart.getCurrencyCode()).apply();
         }
     }
 }

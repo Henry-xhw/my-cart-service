@@ -27,7 +27,8 @@ public class DiscountSpecs {
                 new NotExpiredSpec(md.getStartDate(), md.getEndDate(), evaluateDt),
                 DiscountOrSpec.anyOf(
                         new MembershipInMetadataSpec(membershipId, person, new MembershipMetadata()),
-                        new PurchaseRelatedMembershipProductSpec(membershipId, person, cart, flattenCartItemSelector, productRepo))
+                        new PurchaseRelatedMembershipProductSpec(membershipId, person,
+                                cart, flattenCartItemSelector, productRepo))
                 );
     }
 

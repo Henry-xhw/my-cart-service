@@ -1,6 +1,5 @@
 package com.active.services.cart.domain.discount.condition;
 
-
 import com.active.services.cart.domain.CartItem;
 
 import lombok.RequiredArgsConstructor;

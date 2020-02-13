@@ -1,10 +1,10 @@
 package com.active.services.cart.application.impl;
 
 import com.active.services.cart.application.CartItemSelector;
-import com.active.services.cart.domain.cart.Cart;
-import com.active.services.cart.domain.cart.CartItem;
-import com.active.services.cart.domain.discount.Discount;
+import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
+import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.domain.discount.condition.DiscountSpecs;
 import com.active.services.cart.infrastructure.repository.ProductRepository;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,18 +37,21 @@ public class MembershipDiscountEngine {
         Map<Long, List<MembershipDiscountsHistory>> membershipDiscounts = productRepo.findMembershipDiscounts(productIds);
 
         for (CartItem it : noMembershipItems) {
-            if (!membershipDiscounts.containsKey(it.getProductId())
-                    || CollectionUtils.isEmpty(membershipDiscounts.get(it.getProductId()))) {
+            if (!membershipDiscounts.containsKey(it.getProductId()) ||
+                    CollectionUtils.isEmpty(membershipDiscounts.get(it.getProductId()))) {
                 continue;
             }
 
             List<Discount> discounts = membershipDiscounts.get(it.getProductId()).stream()
                     .map(m -> new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType())
                             .setCondition(discountSpecs
-                                    .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), cart, new DateTime(cart.getPriceDate()), m)))
+                                    .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), cart,
+                                            new DateTime(LocalDateTime.now()), m)))
                     .collect(Collectors.toList());
 
-            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.bestAlgorithm(), cart.getCurrency()).apply();
+
+            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.bestAlgorithm(), cart.getCurrencyCode()).apply();
+
         }
     }
 }
