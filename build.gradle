@@ -41,7 +41,7 @@ dependencies {
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     implementation "org.mapstruct:mapstruct", "org.projectlombok:lombok"
     annotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
-    
+
     implementation group: 'io.github.openfeign', name: 'feign-core'
     implementation group: 'io.github.openfeign', name: 'feign-slf4j'
     implementation group: 'io.github.openfeign', name: 'feign-jackson'
@@ -56,6 +56,7 @@ dependencies {
     implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.59'
     implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.1', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
+    implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
 
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"

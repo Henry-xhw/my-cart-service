@@ -10,4 +10,7 @@ import feign.RequestLine;
 public interface ProductService {
     @RequestLine("POST /api/products/quotation")
     QuoteRsp quote(QuoteReq quoteReq);
+
+
+
 }
