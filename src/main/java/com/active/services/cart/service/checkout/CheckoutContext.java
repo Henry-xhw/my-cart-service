@@ -7,7 +7,6 @@ import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.domain.Address;
-import com.active.services.inventory.rest.dto.DateTimeRange;
 import com.active.services.inventory.rest.dto.ReservationDTO;
 
 import lombok.Data;
@@ -39,18 +38,13 @@ public class CheckoutContext {
     public List<ReservationDTO> getReservations() {
         List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
             ReservationDTO reservationDTO = new ReservationDTO();
-
+            reservationDTO.setAllowOversold(cartItem.isOversold());
             reservationDTO.setProductId(cartItem.getProductId());
             reservationDTO.setQuantity(cartItem.getQuantity());
             Range<Instant> br = cartItem.getBookingRange();
             if (br != null && (br.getLowerInclusive() != null || br.getUpperExclusive() != null)) {
-                DateTimeRange dateTimeRange = new DateTimeRange();
-                dateTimeRange.setStartDateTime(br.getLowerInclusive());
-                dateTimeRange.setEndDateTime(br.getUpperExclusive());
-                List<DateTimeRange> dateTimeRanges = Arrays.asList(dateTimeRange);
-                reservationDTO.setDateTimeRanges(dateTimeRanges);
+                reservationDTO.setDateTimeRanges(Arrays.asList(br));
             }
-
             return reservationDTO;
         }).collect(Collectors.toList());
 
