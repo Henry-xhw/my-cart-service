@@ -53,6 +53,7 @@
             [unit_price],
             [grouping_identifier],
             [oversold],
+            [person_identifier],
             [created_by],
             [created_dt],
             [modified_by],
@@ -90,6 +91,7 @@
              #{item.unitPrice},
              #{item.groupingIdentifier},
              #{item.oversold},
+             #{item.personIdentifier},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -150,6 +152,14 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
+        <choose>
+            <when test="item.personIdentifier!=null">
+                [person_identifier] = #{item.personIdentifier},
+            </when>
+            <otherwise>
+                [person_identifier] = null,
+            </otherwise>
+        </choose>
         [oversold] = #{item.oversold},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
@@ -202,6 +212,7 @@
         item.quantity                 AS item_quantity,
         item.unit_price               AS item_unit_price,
         item.grouping_identifier      AS item_grouping_identifier,
+        item.person_identifier        AS item_person_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
         item.oversold                 AS item_oversold,
         item.created_by               AS item_createdBy,

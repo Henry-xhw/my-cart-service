@@ -99,3 +99,14 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
         PRINT 'Added column oversold to dbo.cart_items'
     END
 GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'person_identifier'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items ADD person_identifier NVARCHAR(50) NULL
+
+        PRINT 'Added column person_identifier to dbo.cart_items'
+    END
+GO

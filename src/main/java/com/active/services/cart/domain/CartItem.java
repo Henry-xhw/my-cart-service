@@ -60,6 +60,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
         this.oversold = updateCartItemDto.isOversold();
+        this.personIdentifier = updateCartItemDto.getPersonIdentifier();
     }
 
     public CartItem applyDiscount(Discount disc, String currency) {

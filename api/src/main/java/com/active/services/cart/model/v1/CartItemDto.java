@@ -64,4 +64,7 @@ public class CartItemDto extends BaseDto {
     private List<CartItemDto> subItems = new ArrayList<>();
 
     private boolean oversold;
+
+    @Size(max = 50)
+    private String personIdentifier;
 }

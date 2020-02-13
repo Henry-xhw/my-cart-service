@@ -51,4 +51,7 @@ public class UpdateCartItemDto {
     private Integer feeVolumeIndex;
 
     private boolean oversold;
+
+    @Size(max = 50)
+    private String personIdentifier;
 }
