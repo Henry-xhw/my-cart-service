@@ -1,7 +1,11 @@
 package com.active.services.cart.domain;
 
+import com.active.services.cart.model.AmountType;
 import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.DiscountOrigin;
+import com.active.services.cart.model.DiscountType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import lombok.Data;
@@ -24,6 +28,30 @@ public class CartItemFee extends BaseTree<CartItemFee> {
     private Integer units;
 
     private BigDecimal unitPrice;
+
+    private DiscountType discountType;
+
+    private Boolean applyToRecurringBilling = false;
+
+    private Long discountId;
+
+    private UUID keyerUUID;
+
+    private Long discountGroupId;
+
+    private AmountType amountType;
+
+    private BigDecimal amount;
+
+    private DiscountOrigin origin;
+
+    private Boolean hasSameDiscountId;
+
+    private boolean isCancelled;
+
+    public boolean isCarryOverDiscount() {
+        return origin.equals(OrderLineDiscountOrigin.CARRY_OVER);
+    }
 
     public static CartItemFee buildCartItemFee(CartItem cartItem, CartItemFeeType cartItemFeeType) {
         CartItemFee unitPriceFee = new CartItemFee();
