@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -31,7 +32,11 @@ public class CartItemProductProcessingFeePricer implements CartItemPricer {
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
-        emptyIfNull(feeAmountResults).stream().filter(Objects::nonNull).forEach(
+
+        Optional<CartItemFee> priceFee = emptyIfNull(cartItem.getFees()).stream()
+                .filter(CartItemProductProcessingFeePricer::isPriceType).findFirst();
+
+        priceFee.ifPresent(itemFee -> emptyIfNull(feeAmountResults).stream().filter(Objects::nonNull).forEach(
             feeAmountResult -> {
                 // build cartItemFee
                 CartItemFee cartItemFee = new CartItemFee();
@@ -40,9 +45,10 @@ public class CartItemProductProcessingFeePricer implements CartItemPricer {
                 cartItemFee.setUnitPrice(feeAmountResult.getAmount());
                 cartItemFee.setUnits(cartItem.getQuantity());
                 mapTypesToCartItemFee(feeAmountResult.getFeeType(), cartItemFee);
-                cartItem.getFees().add(cartItemFee);
+                itemFee.getSubItems().add(cartItemFee);
             }
-        );
+        ));
+
     }
 
     private void mapTypesToCartItemFee(FeeType feeType, CartItemFee cartItemFee) {
@@ -56,6 +62,10 @@ public class CartItemProductProcessingFeePricer implements CartItemPricer {
             cartItemFee.setType(CartItemFeeType.PROCESSING_FLAT);
             cartItemFee.setTransactionType(FeeTransactionType.DEBIT);
         }
+    }
+
+    private static boolean isPriceType(CartItemFee cartItemFee) {
+        return cartItemFee.getType() == CartItemFeeType.PRICE;
     }
 
 }

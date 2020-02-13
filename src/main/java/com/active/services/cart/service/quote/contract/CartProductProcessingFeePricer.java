@@ -84,7 +84,6 @@ public class CartProductProcessingFeePricer implements CartPricer {
         // build cartItemFees
         emptyIfNull(feeResults).stream().filter(Objects::nonNull).forEach(
             feeResult -> {
-                // get cartItem by referenceId
                 getCartItemProductProcessingFeePricer(feeResult.getFeeAmountResults())
                         .quote(context, foundCartItemByIdentifier.get(feeResult.getReferenceId()));
             }
