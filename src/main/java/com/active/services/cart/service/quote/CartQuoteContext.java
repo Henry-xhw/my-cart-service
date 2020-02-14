@@ -6,6 +6,7 @@ import com.active.services.product.Product;
 
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class CartQuoteContext {
     private Cart cart;
     private List<Product> products;
 
-    private Map<Long, Product> productsMap;
+    private Map<Long, Product> productsMap = new HashMap<>();
 
     public DiscountModel getDiscountModel(Long discountId) {
         return Optional.ofNullable(productsMap.get(discountId))

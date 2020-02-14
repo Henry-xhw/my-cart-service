@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 public class CartItemDiscountPricer implements CartItemPricer {
+
     private final DiscountType type;
 
     @Override
