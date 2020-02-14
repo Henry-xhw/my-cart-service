@@ -31,7 +31,7 @@ public class CartItemDiscountsApplication {
         if (CollectionUtils.isEmpty(qualified)) {
             return;
         }
-        algorithm.apply(qualified, item.getNetPrice(), Currency.getInstance(currency)).forEach(disc -> item.applyDiscount(disc,
-                currency));
+        algorithm.apply(qualified, item.getNetPrice(), Currency.getInstance(currency)).forEach(
+                disc -> item.applyDiscount(disc, currency));
     }
 }
