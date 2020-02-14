@@ -1,4 +1,4 @@
-package com.active.services.cart.domain.discount;
+package com.active.services.cart.service.quote.discount;
 
 import com.active.services.oms.BdUtil;
 import com.active.services.product.AmountType;

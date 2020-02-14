@@ -1,4 +1,4 @@
-package com.active.services.cart.domain.discount.algorithm;
+package com.active.services.cart.service.quote.discount.algorithm;
 
 import com.active.services.DiscountModel;
 

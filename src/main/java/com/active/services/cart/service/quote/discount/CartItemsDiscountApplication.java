@@ -1,7 +1,7 @@
-package com.active.services.cart.domain.discount;
+package com.active.services.cart.service.quote.discount;
 
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.discount.algorithm.DiscountAlgorithm;
+import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

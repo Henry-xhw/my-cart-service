@@ -1,10 +1,11 @@
-package com.active.services.cart.domain.discount.condition;
+package com.active.services.cart.service.quote.discount.condition;
 
 import com.active.services.cart.application.CartItemSelector;
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.discount.MembershipMetadata;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
+import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.MembershipMetadata;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.Discount;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiscountSpecs {
     private final CartItemSelector flattenCartItemSelector;
-    private final ProductRepository productRepo;
+    private final ProductServiceSoap productRepo;
 
     public DiscountSpecification membershipDiscount(Long membershipId, String person, Cart cart,
                                                            DateTime evaluateDt, MembershipDiscountsHistory md) {
@@ -48,5 +49,17 @@ public class DiscountSpecs {
         } else {
             return new NumberOfProdGEThanThresholdSpec(items, threshold);
         }
+    }
+
+    public DiscountSpecification couponDiscount(Discount discount, String couponCode, DateTime evaluateDt, String formXml,
+                                                CartQuoteContext context, CartItem cartItem) {
+            return DiscountSequentialSpecs.allOf(
+                    new CouponCodeSpec(discount.getCouponCode(), couponCode),
+                    new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), evaluateDt),
+                    new XmlRestrictionSpec(discount.getRestrictionsExpression(), formXml),
+                    new UsageLimitSpec(productRepo, context.getCart().getId(), cartItem.getId(),
+                            cartItem.getQuantity(), discount),
+                    new UniqueUsedSpec(context.getDiscountModel(cartItem.getProductId()), discount.getId(), context.getUsedCouponDiscountIds())
+            );
     }
 }

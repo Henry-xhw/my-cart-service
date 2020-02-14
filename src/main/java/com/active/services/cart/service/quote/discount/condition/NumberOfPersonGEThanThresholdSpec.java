@@ -1,4 +1,4 @@
-package com.active.services.cart.domain.discount.condition;
+package com.active.services.cart.service.quote.discount.condition;
 
 import com.active.services.cart.domain.CartItem;
 
