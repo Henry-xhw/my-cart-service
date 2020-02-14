@@ -1,8 +1,8 @@
 package com.active.services.cart.domain;
 
-import com.active.services.cart.domain.discount.Discount;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +33,7 @@ public class CartItemFee extends BaseTree<CartItemFee> {
     private Integer units;
 
     private BigDecimal unitPrice;
+
 
     public static CartItemFee buildCartItemFee(CartItem cartItem, CartItemFeeType cartItemFeeType) {
         CartItemFee unitPriceFee = new CartItemFee();
