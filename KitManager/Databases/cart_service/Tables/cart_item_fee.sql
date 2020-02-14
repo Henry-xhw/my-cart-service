@@ -2,29 +2,19 @@ IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_item_fees' AND type = 'U')
 BEGIN
 	 CREATE TABLE [dbo].[cart_item_fees] (
-        [id]                                BIGINT              IDENTITY (1, 1) NOT NULL,
-        [identifier]                        UNIQUEIDENTIFIER    NOT NULL,
-        [parent_id]                         BIGINT              NULL,
-        [name]                              NVARCHAR(255)       NULL,
-        [description]                       NVARCHAR(255)       NULL,
-        [type]                              NVARCHAR(25)        NOT NULL,
-        [transaction_type]                  NVARCHAR(25)        NOT NULL,
-        [units]                             BIGINT              NOT NULL,
-        [unit_price]                        DECIMAL(19, 2)      NOT NULL,
-        [discount_type]                     NVARCHAR(25)        NULL,
-        [is_apply_to_becurring_billing]     BIT                 NULL,
-        [discount_id]                       BIGINT              NULL,
-        [keyer_uuid]                        UNIQUEIDENTIFIER    NULL,
-        [discount_group_id]                 BIGINT              NULL,
-        [amount_type]                       NVARCHAR(25)        NULL,
-        [amount]                            DECIMAL(19, 2)      NULL,
-        [origin]                            NVARCHAR(25)        NULL,
-        [has_same_discount_id]              BIT                 NULL,
-        [is_cancelled]                      BIT                 NULL,
-        [created_by]                        NVARCHAR(255)       NOT NULL,
-        [created_dt]                        DATETIME            NOT NULL,
-        [modified_by]                       NVARCHAR(255)       NOT NULL,
-        [modified_dt]                       DATETIME            NOT NULL
+        [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
+        [identifier]                UNIQUEIDENTIFIER    NOT NULL,
+        [parent_id]                 BIGINT              NULL,
+        [name]                      NVARCHAR(255)       NULL,
+        [description]               NVARCHAR(255)       NULL,
+        [type]                      NVARCHAR(25)        NOT NULL,
+        [transaction_type]          NVARCHAR(25)        NOT NULL,
+        [units]                     BIGINT              NOT NULL,
+        [unit_price]                DECIMAL(19, 2)      NOT NULL,
+        [created_by]                NVARCHAR(255)       NOT NULL,
+        [created_dt]                DATETIME            NOT NULL,
+        [modified_by]               NVARCHAR(255)       NOT NULL,
+        [modified_dt]               DATETIME            NOT NULL
     )
 	 PRINT 'CREATE TABLE dbo.cart_item_fees'
 END
@@ -172,84 +162,4 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
 BEGIN
     ALTER TABLE dbo.cart_item_fees ALTER COLUMN [description] NVARCHAR(255)  NULL;
 	PRINT 'modify column name null, dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_type'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD discount_type NVARCHAR(25) NULL;
-	PRINT 'add column discount_type on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'is_apply_to_becurring_billing'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD is_apply_to_becurring_billing BIT NULL;
-	PRINT 'add column is_apply_to_becurring_billing on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD discount_id BIGINT NULL;
-	PRINT 'add column discount_id on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'keyer_uuid'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD keyer_uuid UNIQUEIDENTIFIER NULL;
-	PRINT 'add column keyer_uuid on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_group_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD discount_group_id BIGINT NULL;
-	PRINT 'add column discount_group_id on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount_type'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD amount_type NVARCHAR(25) NULL;
-	PRINT 'add column amount_type on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD amount DECIMAL(19, 2) NULL;
-	PRINT 'add column amount on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'origin'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD origin NVARCHAR(25) NULL;
-	PRINT 'add column origin on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'has_same_discount_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD has_same_discount_id BIT NULL;
-	PRINT 'add column has_same_discount_id on dbo.cart_item_fees'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'is_cancelled'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD is_cancelled BIT NULL;
-	PRINT 'add column is_cancelled on dbo.cart_item_fees'
 END

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.DiscountMapper">
+    <insert id="createDiscount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[cart_item_fees]
+        (identifier,
+        cart_item_fee_id,
+        discount_type,
+        apply_to_becurring_billing,
+        discount_id,
+        keyer_uuid,
+        discount_group_id,
+        amount_type,
+        amount,
+        origin,
+        has_same_discount_id,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt)
+        VALUES
+        (#{identifier},
+        #{cartItemFeeId},
+        #{discountType},
+        #{applyToRecurringBilling},
+        #{discountId},
+        #{keyerUUID},
+        #{discountGroupId},
+        #{amountType},
+        #{amount},
+        #{origin},
+        #{hasSameDiscountId},
+        #{createdBy},
+        #{createdDt},
+        #{modifiedBy},
+        #{modifiedDt}
+        )
+    </insert>
+
+</mapper>
