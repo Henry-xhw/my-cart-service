@@ -1,13 +1,13 @@
 package com.active.services.cart.application.impl;
 
 import com.active.services.DiscountModel;
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.discount.CartItemDiscountsApplication;
-import com.active.services.cart.domain.discount.Discount;
-import com.active.services.cart.domain.discount.algorithm.DiscountsAlgorithms;
-import com.active.services.cart.domain.discount.condition.DiscountSpecs;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
+import com.active.services.cart.service.quote.discount.CartItemDiscountsApplication;
+import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.algorithm.DiscountsAlgorithms;
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecs;
 import com.active.services.domain.DateTime;
 import com.active.services.product.Product;
 
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CouponDiscountEngine {
-    @NonNull private final ProductRepository productRepo;
+    @NonNull private final ProductServiceSoap productRepo;
     @NonNull private final DiscountSpecs specs;
 
     public void apply(Cart cart, String coupon) {
@@ -41,7 +42,7 @@ public class CouponDiscountEngine {
                     .orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
 
             List<com.active.services.product.Discount> couponDiscs =
-                    productRepo.findDiscountByProductIdAndCode(it.getProductId(), coupon);
+                    productRepo.findDiscountByProductIdAndCode(it.getProductId(), Arrays.asList(coupon));
 
             List<Discount> discounts = new ArrayList<>(couponDiscs.size());
             for (com.active.services.product.Discount disc : couponDiscs) {

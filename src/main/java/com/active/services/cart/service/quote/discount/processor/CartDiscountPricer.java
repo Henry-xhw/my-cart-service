@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount;
+package com.active.services.cart.service.quote.discount.processor;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartPricer;
@@ -26,11 +26,10 @@ public class CartDiscountPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
+
         List<CartItem> cartItems = context.getCart().getFlattenCartItems()
-                .stream().sorted(Comparator.comparing(CartItem::getNetPrice)).collect(Collectors.toList());
-        for (CartItem item : cartItems) {
-            getCartItemDiscountPricer(type).quote(context, item);
-        }
+                .stream().sorted(Comparator.comparing(CartItem::getNetPrice).reversed()).collect(Collectors.toList());
+
         cartItems.forEach(item -> getCartItemDiscountPricer(type).quote(context, item));
     }
 

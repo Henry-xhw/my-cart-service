@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount;
+package com.active.services.cart.service.quote.discount.processor;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartItemPricer;

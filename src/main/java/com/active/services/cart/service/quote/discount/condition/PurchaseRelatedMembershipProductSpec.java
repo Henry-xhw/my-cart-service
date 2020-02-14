@@ -1,9 +1,9 @@
-package com.active.services.cart.domain.discount.condition;
+package com.active.services.cart.service.quote.discount.condition;
 
 import com.active.services.cart.application.CartItemSelector;
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +16,7 @@ public class PurchaseRelatedMembershipProductSpec implements DiscountSpecificati
     private final String person;
     private final Cart cart;
     private final CartItemSelector flattenCartItemSelector;
-    private final ProductRepository productRepo;
+    private final ProductServiceSoap productRepo;
 
     public boolean satisfy() {
         List<Long> productIds = flattenCartItemSelector.select(cart).stream()

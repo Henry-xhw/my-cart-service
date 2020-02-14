@@ -2,9 +2,9 @@ package com.active.services.cart.application.impl;
 
 import com.active.services.ProductType;
 import com.active.services.cart.application.CartItemSelector;
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NonMembershipCartItemSelector implements CartItemSelector {
     private final CartItemSelector flattenCartItemSelector;
-    private final ProductRepository productRepo;
+    private final ProductServiceSoap productRepo;
 
     @Override
     public List<CartItem> select(Cart cart) {

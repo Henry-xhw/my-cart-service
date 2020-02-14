@@ -1,6 +1,6 @@
-package com.active.services.cart.domain.discount.algorithm;
+package com.active.services.cart.service.quote.discount.algorithm;
 
-import com.active.services.cart.domain.discount.Discount;
+import com.active.services.cart.service.quote.discount.Discount;
 
 import java.math.BigDecimal;
 import java.util.Currency;

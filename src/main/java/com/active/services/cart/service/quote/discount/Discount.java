@@ -1,7 +1,8 @@
-package com.active.services.cart.domain.discount;
+package com.active.services.cart.service.quote.discount;
 
-import com.active.services.cart.domain.discount.condition.DiscountSpecification;
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 import com.active.services.product.AmountType;
+import com.active.services.product.DiscountType;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -16,6 +17,8 @@ public class Discount {
     private String description;
     private BigDecimal amount;
     private AmountType amountType;
+    private Long discountId;
+    private DiscountType discountType;
     @Setter private DiscountSpecification condition;
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
