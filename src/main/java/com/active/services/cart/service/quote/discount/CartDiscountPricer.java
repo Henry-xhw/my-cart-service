@@ -1,6 +1,5 @@
 package com.active.services.cart.service.quote.discount;
 
-import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
@@ -23,19 +22,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartDiscountPricer implements CartPricer {
 
-    private final ProductServiceSoap productServiceSoap;
-
     private final DiscountType type;
 
     @Override
     public void quote(CartQuoteContext context) {
         List<CartItem> cartItems = context.getCart().getFlattenCartItems()
                 .stream().sorted(Comparator.comparing(CartItem::getNetPrice)).collect(Collectors.toList());
+        for (CartItem item : cartItems) {
+            getCartItemDiscountPricer(type).quote(context, item);
+        }
         cartItems.forEach(item -> getCartItemDiscountPricer(type).quote(context, item));
     }
 
     @Lookup
-    private CartItemDiscountPricer getCartItemDiscountPricer(DiscountType type) {
+    public CartItemDiscountPricer getCartItemDiscountPricer(DiscountType type) {
         return null;
     }
 }
