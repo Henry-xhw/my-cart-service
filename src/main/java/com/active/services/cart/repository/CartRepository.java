@@ -24,6 +24,10 @@ public class CartRepository {
         cartMapper.createCart(cart);
     }
 
+    public void updateCart(Cart cart) {
+        cartMapper.updateCart(cart);
+    }
+
     public void deleteCart(Long cartId) {
         cartMapper.deleteCart(cartId);
     }

@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,15 @@ public class CartService {
 
     @Transactional
     public void create(Cart cart) {
+        distinctCouponCodes(cart);
         cartRepository.createCart(cart);
+    }
+
+    @Transactional
+    public void update(Cart cart) {
+        cart.setId(getCartByUuid(cart.getIdentifier()).getId());
+        distinctCouponCodes(cart);
+        cartRepository.updateCart(cart);
     }
 
     @Transactional
@@ -184,5 +193,10 @@ public class CartService {
             TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
             cartItem.setFees(baseTreeTreeBuilder.buildTree());
         });
+    }
+
+    private void distinctCouponCodes(Cart cart) {
+        Optional.ofNullable(cart.getCouponCodes()).ifPresent(couponCodes -> cart.setCouponCodes(
+                couponCodes.stream().map(String::toUpperCase).distinct().collect(Collectors.toList())));
     }
 }

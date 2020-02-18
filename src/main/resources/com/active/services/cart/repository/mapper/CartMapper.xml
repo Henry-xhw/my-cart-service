@@ -18,7 +18,8 @@
             price_version,
             is_lock,
             cart_status,
-            reservation_id)
+            reservation_id,
+            coupon_codes)
         VALUES
             (#{identifier},
             #{ownerId},
@@ -32,8 +33,8 @@
             #{priceVersion},
             #{lock},
             #{cartStatus},
-            #{reservationId}
-            )
+            #{reservationId},
+            #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringListTypeHandler})
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
@@ -96,6 +97,15 @@
              #{item.modifiedDt}
         )
     </insert>
+
+    <update id="updateCart">
+        UPDATE [dbo].[carts]
+        SET
+            coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringListTypeHandler},
+            [modified_by] = #{modifiedBy},
+            [modified_dt] = #{modifiedDt}
+        WHERE id = #{id}
+    </update>
 
     <update id="updateCartItem">
         UPDATE [dbo].[cart_items]

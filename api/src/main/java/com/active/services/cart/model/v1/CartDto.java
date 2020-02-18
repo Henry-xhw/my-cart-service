@@ -25,6 +25,8 @@ public class CartDto extends BaseDto {
 
     private UUID reservationId;
 
+    private List<String> couponCodes;
+
     @Valid
     private List<CartItemDto> items = new ArrayList<>();
 }
