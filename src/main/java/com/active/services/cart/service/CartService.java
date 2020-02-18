@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -196,9 +198,9 @@ public class CartService {
         });
     }
 
-    private List<String> distinctCouponCodes(List<String> couponCodes) {
+    private Set<String> distinctCouponCodes(Set<String> couponCodes) {
         return Optional.ofNullable(couponCodes)
-                .map(item -> item.stream().map(String::toUpperCase).distinct().collect(Collectors.toList()))
-                .orElse(null);
+                .map(item -> item.stream().map(String::toUpperCase).collect(Collectors.toSet()))
+                .orElse(new HashSet<>());
     }
 }

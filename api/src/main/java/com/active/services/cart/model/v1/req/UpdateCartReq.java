@@ -2,10 +2,10 @@ package com.active.services.cart.model.v1.req;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class UpdateCartReq {
 
-    private List<String> couponCodes;
+    private Set<String> couponCodes;
 }

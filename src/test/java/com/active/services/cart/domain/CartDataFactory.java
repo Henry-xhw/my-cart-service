@@ -27,7 +27,7 @@ public class CartDataFactory {
         cart.setIdentifier(UUID.randomUUID());
         cart.setItems(cartItems());
         cart.setCartStatus(CartStatus.CREATED);
-        cart.setCouponCodes(Collections.singletonList("FDSAFSA"));
+        cart.setCouponCodes(Collections.singleton("FDSAFSA"));
 
         return cart;
     }

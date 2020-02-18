@@ -10,6 +10,7 @@ import com.active.services.product.Product;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class CartQuoteContext {
     }
 
     public List<String> getCartLevelCouponCodes() {
-        return cart.getCouponCodes();
+        return new ArrayList<>(cart.getCouponCodes());
     }
 
     public List<Long> getUsedCouponDiscountIds() {
