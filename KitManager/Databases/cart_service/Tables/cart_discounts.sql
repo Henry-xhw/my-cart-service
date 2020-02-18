@@ -41,3 +41,101 @@ BEGIN
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
     PRINT 'Added index ix_discounts_identifier to dbo.discounts.'
 END
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','cart_id'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'carts table id',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'cart_id'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','discount_type'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'ACTIVE_ADVANTAGE, COUPON, MULTI, AD_HOC, MEMBERSHIP',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'discount_type'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','apply_to_recurring_billing'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'is apply to recurring billing',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'apply_to_recurring_billing'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','discount_id'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'discounts table id',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'discount_id'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','discount_id'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'keyer uuid',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'keyer_uuid'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','discount_id'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'PERCENT, FLAT, FIXED_AMOUNT',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'amount_type'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_discounts','column','discount_id'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'AUTOMATIC, OVERRIDE, AUTOMATIC_OVERRIDE, AD_HOC,ORDER_LINE_LEVEL_OVERRIDE, CARRY_OVER',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_discounts',
+ @level2type = 'Column',
+ @level2name = 'origin'
+END
+GO

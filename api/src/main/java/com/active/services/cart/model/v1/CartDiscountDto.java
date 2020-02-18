@@ -1,8 +1,9 @@
 package com.active.services.cart.model.v1;
 
+
 import com.active.services.cart.model.AmountType;
-import com.active.services.order.discount.OrderLineDiscountOrigin;
-import com.active.services.product.DiscountType;
+import com.active.services.cart.model.DiscountOrigin;
+import com.active.services.cart.model.DiscountType;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -29,5 +30,5 @@ public class CartDiscountDto extends BaseDto {
     @Digits(integer = 17, fraction = 2)
     private BigDecimal amount;
 
-    private OrderLineDiscountOrigin origin;
+    private DiscountOrigin origin;
 }
