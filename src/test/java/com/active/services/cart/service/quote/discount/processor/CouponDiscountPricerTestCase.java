@@ -17,6 +17,7 @@ import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +49,33 @@ public class CouponDiscountPricerTestCase {
    // @Autowired private DiscountSpecs discountSpecs;
     @Autowired
     private CouponDiscountPricer couponDiscountPricer;
+
+    @Test
+    public void quoteWithoutCouponCodes() {
+        Cart cart = CartDataFactory.cart();
+        CartQuoteContext context = new CartQuoteContext(cart);
+        CartItem cartItem = cart.getFlattenCartItems().get(0);
+
+        couponDiscountPricer.quote(context, cartItem);
+        assertTrue(CollectionUtils.isEmpty(cartItem.getFees().get(0).getSubItems()));
+    }
+
+    @Test
+    public void quoteWithUnmatchedCouponCodes() {
+        Cart cart = CartDataFactory.cart();
+        String code1 = "code 1";
+        String code2 = "code 2";
+        List<String> codes = Arrays.asList(code1, code2);
+
+        cart.setCouponCodes(codes);
+        CartQuoteContext context = new CartQuoteContext(cart);
+        CartItem cartItem = cart.getFlattenCartItems().get(0);
+
+        when(productRepo.findDiscountsByProductIdAndCode(eq(cartItem.getProductId()),
+                eq(codes))).thenReturn(new ArrayList<>());
+        couponDiscountPricer.quote(context, cartItem);
+        assertTrue(CollectionUtils.isEmpty(cartItem.getFees().get(0).getSubItems()));
+    }
 
     @Test
     public void quoteWithBothCartAndCartItemCouponCodePlatFirstAlgorithm() {

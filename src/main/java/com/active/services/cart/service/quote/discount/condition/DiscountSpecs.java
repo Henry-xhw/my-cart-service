@@ -46,7 +46,6 @@ public class DiscountSpecs {
 
     public DiscountSpecification couponDiscount(CartQuoteContext context, CartItem cartItem, Discount discount) {
         return DiscountSequentialSpecs.allOf(
-            // new CouponCodeSpec(discount.getCouponCode(), couponCode),
             new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), new DateTime(LocalDateTime.now())),
             new UsageLimitSpec(productRepo, context.getCart().getId(), cartItem.getId(), cartItem.getQuantity(), discount),
             new UniqueUsedSpec(discount.getId(), context.getUsedUniqueCouponDiscountsIds())

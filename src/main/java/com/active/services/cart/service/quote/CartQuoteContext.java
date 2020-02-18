@@ -41,8 +41,8 @@ public class CartQuoteContext {
                 Function.identity()));
     }
 
-    public DiscountModel getDiscountModel(Long discountId) {
-        return Optional.ofNullable(productsMap.get(discountId)).map(Product::getDiscountModel)
+    public DiscountModel getDiscountModel(Long productId) {
+        return Optional.ofNullable(productsMap.get(productId)).map(Product::getDiscountModel)
                 .orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
     }
 
