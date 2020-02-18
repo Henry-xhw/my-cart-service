@@ -22,6 +22,7 @@ import com.active.services.cart.util.TreeBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
 @RequiredArgsConstructor
@@ -160,12 +163,28 @@ public class CartService {
     private void saveQuoteResult(Cart cart) {
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
+
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
-                cartItemFeeRepository.createCartItemFee(cartItemFee);
-                cartItemFeeRepository.createCartItemCartItemFee(
-                        CartItemFeeRelationship.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
+                createFeeAndRelationship(cartItemFee, item.getId());
+                createSubFeeAndRelationship(cartItemFee, item.getId());
             });
         });
+    }
+
+    private void createFeeAndRelationship(CartItemFee itemFee, Long itemId) {
+        cartItemFeeRepository.createCartItemFee(itemFee);
+        cartItemFeeRepository.createCartItemCartItemFee(
+                CartItemFeeRelationship.buildCartItemCartItemFee(itemId, itemFee.getId()));
+    }
+
+    private void createSubFeeAndRelationship(CartItemFee itemFee, Long itemId) {
+        emptyIfNull(itemFee.getSubItems()).stream().filter(Objects::nonNull).forEach(
+            itemFee1 -> {
+                itemFee1.setParentId(itemFee.getId());
+                createFeeAndRelationship(itemFee1, itemId);
+                createSubFeeAndRelationship(itemFee1, itemId);
+            }
+        );
     }
 
     private Cart getCartWithFullPriceByUuid(UUID cartId) {
