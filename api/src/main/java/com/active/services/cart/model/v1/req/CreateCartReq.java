@@ -17,4 +17,6 @@ public class CreateCartReq {
 
     @NotNull
     private String currencyCode;
+
+    private UUID reservationId;
 }
