@@ -3,7 +3,6 @@ package com.active.services.cart.domain;
 import com.active.services.cart.model.AmountType;
 import com.active.services.cart.model.DiscountOrigin;
 import com.active.services.cart.model.DiscountType;
-import com.active.services.order.discount.OrderLineDiscountOrigin;
 
 import java.math.BigDecimal;
 import java.util.UUID;
