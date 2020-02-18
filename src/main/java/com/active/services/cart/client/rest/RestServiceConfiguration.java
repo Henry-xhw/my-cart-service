@@ -30,6 +30,9 @@ public class RestServiceConfiguration {
     @Value("${url.productServiceRest}")
     private String productServiceUrl;
 
+    @Value("${url.contractServiceRest}")
+    private String contractServiceUrl;
+
     @Autowired
     private FeignConfigurator feignConfigurator;
 
@@ -68,5 +71,11 @@ public class RestServiceConfiguration {
     public ProductService productService() {
         LOG.info("product rest url {}", productServiceUrl);
         return feignConfigurator.buildService(productServiceUrl, ProductService.class);
+    }
+
+    @Bean
+    public ContractService contractService() {
+        LOG.info("contract rest url {}", contractServiceUrl);
+        return feignConfigurator.buildService(contractServiceUrl, ContractService.class);
     }
 }

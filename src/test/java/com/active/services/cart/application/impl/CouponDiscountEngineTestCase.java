@@ -1,9 +1,9 @@
 package com.active.services.cart.application.impl;
 
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.product.AmountType;
@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CouponDiscountEngineTestCase {
-    @MockBean private ProductRepository productRepo;
+    @MockBean private ProductServiceSoap productRepo;
     @Autowired private CouponDiscountEngine engine;
 
     @Test
@@ -49,7 +50,7 @@ public class CouponDiscountEngineTestCase {
         Discount discount = discount();
 
         when(productRepo.getProduct(product.getId())).thenReturn(Optional.of(product));
-        when(productRepo.findDiscountByProductIdAndCode(product.getId(), discount.getCouponCode())).thenReturn(Collections.singletonList(discount));
+        when(productRepo.findDiscountByProductIdAndCode(product.getId(), Arrays.asList(discount.getCouponCode()))).thenReturn(Collections.singletonList(discount));
         when(productRepo.isDiscountLimitReached(discount, cart.getFlattenCartItems().get(0).getQuantity(),
                 cart.getFlattenCartItems().get(0).getId())).thenReturn(false);
 

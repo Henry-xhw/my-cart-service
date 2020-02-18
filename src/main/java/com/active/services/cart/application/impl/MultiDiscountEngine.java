@@ -1,12 +1,12 @@
 package com.active.services.cart.application.impl;
 
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.discount.CartItemsDiscountApplication;
-import com.active.services.cart.domain.discount.Discount;
-import com.active.services.cart.domain.discount.condition.DiscountSpecification;
-import com.active.services.cart.domain.discount.condition.DiscountSpecs;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
+import com.active.services.cart.service.quote.discount.CartItemsDiscountApplication;
+import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecs;
 import com.active.services.product.discount.multi.DiscountTier;
 import com.active.services.product.discount.multi.MultiDiscount;
 import com.active.services.product.discount.multi.MultiDiscountThresholdSetting;
@@ -31,7 +31,7 @@ import static org.apache.cxf.common.util.CollectionUtils.isEmpty;
 @Service
 @RequiredArgsConstructor
 public class MultiDiscountEngine {
-    @NonNull private final ProductRepository productRepo;
+    @NonNull private final ProductServiceSoap productRepo;
     @NonNull private final DiscountSpecs specs;
     @NonNull private final WithPersonIdCartItemSelector selector;
 

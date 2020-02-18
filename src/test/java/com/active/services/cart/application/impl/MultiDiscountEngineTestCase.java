@@ -1,9 +1,9 @@
 package com.active.services.cart.application.impl;
 
+import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
-import com.active.services.cart.infrastructure.repository.ProductRepository;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.product.AmountType;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MultiDiscountEngineTestCase {
-    @MockBean private ProductRepository productRepo;
+    @MockBean private ProductServiceSoap productRepo;
     @Autowired private MultiDiscountEngine engine;
 
     @Test
