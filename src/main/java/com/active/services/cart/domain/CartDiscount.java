@@ -28,6 +28,6 @@ public class CartDiscount extends BaseDomainObject {
     private DiscountOrigin origin;
 
     public boolean isCarryOverDiscount() {
-        return origin.equals(OrderLineDiscountOrigin.CARRY_OVER);
+        return origin.equals(DiscountOrigin.CARRY_OVER);
     }
 }
