@@ -47,14 +47,14 @@ public class CartService {
 
     @Transactional
     public void create(Cart cart) {
-        distinctCouponCodes(cart);
+        cart.setCouponCodes(distinctCouponCodes(cart.getCouponCodes()));
         cartRepository.createCart(cart);
     }
 
     @Transactional
     public void update(Cart cart) {
         cart.setId(getCartByUuid(cart.getIdentifier()).getId());
-        distinctCouponCodes(cart);
+        cart.setCouponCodes(distinctCouponCodes(cart.getCouponCodes()));
         cartRepository.updateCart(cart);
     }
 
@@ -195,8 +195,9 @@ public class CartService {
         });
     }
 
-    private void distinctCouponCodes(Cart cart) {
-        Optional.ofNullable(cart.getCouponCodes()).ifPresent(couponCodes -> cart.setCouponCodes(
-                couponCodes.stream().map(String::toUpperCase).distinct().collect(Collectors.toList())));
+    private List<String> distinctCouponCodes(List<String> couponCodes) {
+        return Optional.ofNullable(couponCodes)
+                .map(item -> item.stream().map(String::toUpperCase).distinct().collect(Collectors.toList()))
+                .orElse(null);
     }
 }
