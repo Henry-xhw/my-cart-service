@@ -173,6 +173,9 @@
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
         </collection>
+        <collection property="cartDiscounts" ofType="CartDiscount" notNullColumn="id" columnPrefix="discount_">
+            <id property="id" column="id"/>
+        </collection>
     </resultMap>
 
     <select id="getCart" resultMap="CartResultMap">
@@ -204,12 +207,21 @@
         item.grouping_identifier      AS item_grouping_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
         item.oversold                 AS item_oversold,
+        discount.discount_type        AS discount_discount_type,
+        discount.apply_to_becurring_billing  AS discount_apply_to_becurring_billing,
+        discount.discount_id          AS discount_discount_id,
+        discount.keyer_uuid           AS discount_keyer_uuid,
+        discount.discount_group_id    AS discount_discount_group_id,
+        discount.amount_type          AS discount_amount_type,
+        discount.amount               AS discount_amount,
+        discount.origin               AS discount_origin,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
         item.modified_dt              AS item_modifiedDt
         FROM dbo.carts cart
         LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
+        LEFT JOIN dbo.cart_discounts discount ON cart.id = discount.cart_id
         WHERE cart.identifier = #{cartId} and cart_status != 'FINALIZED'
     </select>
 

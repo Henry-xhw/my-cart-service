@@ -48,8 +48,7 @@
         discount_group_id,
         amount_type,
         amount,
-        origin,
-        has_same_discount_id
+        origin
         FROM dbo.cart_discounts
         WHERE
         discount_type = #{discountType}
