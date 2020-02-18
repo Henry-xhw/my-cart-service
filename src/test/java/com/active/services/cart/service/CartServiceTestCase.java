@@ -177,8 +177,10 @@ public class CartServiceTestCase extends BaseTestCase {
     public void updateCartSuccess() {
         Cart cart = CartDataFactory.cart();
         when(cartRepository.getCart(any())).thenReturn(Optional.of(cart));
+        when(cartRepository.incrementVersion(any(), any())).thenReturn(1);
         cartService.update(cart);
         Mockito.verify(cartRepository).updateCart(cart);
+        Mockito.verify(cartRepository).incrementVersion(any(), any());
     }
 
     @Test

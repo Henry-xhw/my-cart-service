@@ -56,6 +56,7 @@ public class CartService {
         cart.setId(getCartByUuid(cart.getIdentifier()).getId());
         cart.setCouponCodes(distinctCouponCodes(cart.getCouponCodes()));
         cartRepository.updateCart(cart);
+        incrementVersion(cart.getIdentifier());
     }
 
     @Transactional
