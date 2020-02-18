@@ -32,6 +32,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -161,11 +163,25 @@ public class CartService {
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
-                cartItemFeeRepository.createCartItemFee(cartItemFee);
-                cartItemFeeRepository.createCartItemCartItemFee(
-                        CartItemFeeRelationship.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
+                createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
+    }
+
+    private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {
+        cartItemFeeRepository.createCartItemFee(cartItemFee);
+        cartItemFeeRepository.createCartItemCartItemFee(
+                CartItemFeeRelationship.buildCartItemCartItemFee(itemId, cartItemFee.getId()));
+        createSubFeeAndRelationship(cartItemFee, itemId);
+    }
+
+    private void createSubFeeAndRelationship(CartItemFee itemFee, Long itemId) {
+        emptyIfNull(itemFee.getSubItems()).stream().filter(Objects::nonNull).forEach(
+            itemFee1 -> {
+                itemFee1.setParentId(itemFee.getId());
+                createCartItemFeeAndRelationship(itemFee1, itemId);
+            }
+        );
     }
 
     private Cart getCartWithFullPriceByUuid(UUID cartId) {
