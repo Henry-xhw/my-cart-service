@@ -64,4 +64,6 @@ public class CartItemDto extends BaseDto {
     private List<CartItemDto> subItems = new ArrayList<>();
 
     private boolean oversold;
+
+    private List<String> couponCodes;
 }

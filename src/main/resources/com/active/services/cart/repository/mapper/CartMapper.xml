@@ -54,6 +54,7 @@
             [unit_price],
             [grouping_identifier],
             [oversold],
+            [coupon_codes],
             [created_by],
             [created_dt],
             [modified_by],
@@ -91,6 +92,7 @@
              #{item.unitPrice},
              #{item.groupingIdentifier},
              #{item.oversold},
+             #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringListTypeHandler},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -161,6 +163,7 @@
             </otherwise>
         </choose>
         [oversold] = #{item.oversold},
+        [coupon_codes] = #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringListTypeHandler},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
