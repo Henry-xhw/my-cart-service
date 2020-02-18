@@ -1,17 +1,16 @@
 package com.active.services.cart.domain;
 
 import com.active.services.cart.model.AmountType;
-import com.active.services.cart.model.DiscountOrigin;
-import com.active.services.cart.model.DiscountType;
 import com.active.services.order.discount.OrderLineDiscountOrigin;
+import com.active.services.product.DiscountType;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class Discount extends BaseDomainObject {
-    private Long cartItemFeeId;
+public class CartDiscount extends BaseDomainObject {
+    private Long cartId;
 
-    private DiscountType discountType;
+    private DiscountType cartDiscountType;
 
     private Boolean applyToRecurringBilling = false;
 
@@ -25,7 +24,7 @@ public class Discount extends BaseDomainObject {
 
     private BigDecimal amount;
 
-    private DiscountOrigin origin;
+    private OrderLineDiscountOrigin origin;
 
     private Boolean hasSameDiscountId;
 

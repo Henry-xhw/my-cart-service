@@ -37,7 +37,7 @@ public class Cart extends BaseDomainObject {
 
     private UUID reservationId;
 
-    private List<Discount> discount = new ArrayList<>();
+    private List<CartDiscount> cartDiscount = new ArrayList<>();
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {
         return getFlattenCartItems().stream()
