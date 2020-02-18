@@ -55,9 +55,12 @@ public class CartDataFactory {
         return updateCartItemDto;
     }
 
-    public static CartItemFee cartItemFee() {
-        return getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PRICE, 1, new BigDecimal(1), "description",
+    public static CartItemFee cartItemFee(BigDecimal price) {
+        return getCartItemFee(FeeTransactionType.DEBIT, CartItemFeeType.PRICE, 1, price, "description",
                 "name");
+    }
+    public static CartItemFee cartItemFee() {
+        return cartItemFee(new BigDecimal(1));
     }
 
     public static CartItemFee getCartItemFee(FeeTransactionType transactionType, CartItemFeeType feeType, int unit,
@@ -94,9 +97,9 @@ public class CartDataFactory {
         cartItem.setUnitPrice(price);
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
+        cartItem.setNetPrice(price);
         List<CartItemFee> cartItemFees = new ArrayList<>();
-        cartItemFees.add(cartItemFee());
-        cartItemFees.add(cartItemFee());
+        cartItemFees.add(cartItemFee(price));
         cartItem.setFees(cartItemFees);
         return cartItem;
     }

@@ -10,8 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DiscountFeeLoader {
 
-    @NonNull
-    private final CartQuoteContext cartQuoteContext;
+    @NonNull private final CartQuoteContext cartQuoteContext;
     @NonNull private final CartItem item;
     @NonNull private final Discount disc;
 

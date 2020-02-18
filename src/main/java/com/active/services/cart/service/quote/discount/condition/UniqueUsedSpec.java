@@ -12,6 +12,7 @@ public class UniqueUsedSpec implements DiscountSpecification {
 
     @Override
     public boolean satisfy() {
+
         return !usedDiscountIds.contains(discountId);
     }
 }
