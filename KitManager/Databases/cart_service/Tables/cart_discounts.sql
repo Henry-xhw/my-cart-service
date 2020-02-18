@@ -13,7 +13,6 @@ BEGIN
         [amount_type]                       NVARCHAR(25)        NULL,
         [amount]                            DECIMAL(19, 2)      NULL,
         [origin]                            NVARCHAR(25)        NULL,
-        [has_same_discount_id]              BIT                 NULL,
         [created_by]                        NVARCHAR(255)       NOT NULL,
         [created_dt]                        DATETIME            NOT NULL,
         [modified_by]                       NVARCHAR(255)       NOT NULL,

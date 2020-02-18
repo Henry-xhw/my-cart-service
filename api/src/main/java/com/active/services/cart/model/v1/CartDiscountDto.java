@@ -30,6 +30,4 @@ public class CartDiscountDto extends BaseDto {
     private BigDecimal amount;
 
     private OrderLineDiscountOrigin origin;
-
-    private Boolean hasSameDiscountId;
 }

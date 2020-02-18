@@ -26,8 +26,6 @@ public class CartDiscount extends BaseDomainObject {
 
     private OrderLineDiscountOrigin origin;
 
-    private Boolean hasSameDiscountId;
-
     public boolean isCarryOverDiscount() {
         return origin.equals(OrderLineDiscountOrigin.CARRY_OVER);
     }
