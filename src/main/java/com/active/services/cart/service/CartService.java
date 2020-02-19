@@ -83,6 +83,7 @@ public class CartService {
         items.forEach(it -> cart.findCartItem(it.getIdentifier())
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                 "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
+        items.forEach(item -> item.setCouponCodes(distinctCouponCodes(item.getCouponCodes())));
         cartRepository.updateCartItems(items);
         incrementVersion(cartIdentifier);
         return items;
@@ -120,6 +121,7 @@ public class CartService {
             } else {
                 it.setIdentifier(UUID.randomUUID());
                 it.setParentId(parentId);
+                it.setCouponCodes(distinctCouponCodes(it.getCouponCodes()));
                 parentId = createCartItem(cartId, it);
             }
             List<CartItem> subItems = it.getSubItems();

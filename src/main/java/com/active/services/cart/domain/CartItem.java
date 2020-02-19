@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -49,7 +50,7 @@ public class CartItem extends BaseTree<CartItem> {
 
     private List<CartItemFee> fees = new ArrayList<>();
 
-    private List<String> couponCodes;
+    private Set<String> couponCodes;
 
     private boolean ignoreMultiDiscounts;
 
@@ -67,6 +68,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
         this.oversold = updateCartItemDto.isOversold();
+        this.couponCodes = updateCartItemDto.getCouponCodes();
         this.couponMode = updateCartItemDto.getCouponMode();
         this.personIdentifier = updateCartItemDto.getPersonIdentifier();
         this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
