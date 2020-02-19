@@ -20,7 +20,7 @@ public class DiscountAmountCalcUtil {
 
         switch (amtType) {
             case FLAT:
-                netDiscAmt = discAmt;
+                netDiscAmt = BdUtil.setScalePerCurrency(discAmt, currency);
                 break;
             case PERCENT:
                 netDiscAmt = calcPercent(toDiscount, discAmt, currency);

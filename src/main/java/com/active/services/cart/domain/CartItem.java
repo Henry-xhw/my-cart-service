@@ -2,6 +2,7 @@ package com.active.services.cart.domain;
 
 import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.service.quote.discount.Discount;
@@ -50,6 +51,8 @@ public class CartItem extends BaseTree<CartItem> {
     private List<CartItemFee> fees = new ArrayList<>();
 
     private Set<String> couponCodes;
+
+    private CouponMode couponMode;
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
         this.productId = updateCartItemDto.getProductId();

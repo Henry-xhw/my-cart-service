@@ -4,7 +4,7 @@ import com.active.services.DiscountModel;
 import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.CartItemDiscountsApplication;
+import com.active.services.cart.service.quote.discount.CartItemDiscountsApplicationOld;
 import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecs;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class CouponDiscountEngine {
                     .orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
 
             List<com.active.services.product.Discount> couponDiscs =
-                    productRepo.findDiscountByProductIdAndCode(it.getProductId(), Arrays.asList(coupon));
+                    productRepo.findDiscountsByProductIdAndCode(it.getProductId(), Arrays.asList(coupon));
 
             List<Discount> discounts = new ArrayList<>(couponDiscs.size());
             for (com.active.services.product.Discount disc : couponDiscs) {
@@ -51,7 +52,8 @@ public class CouponDiscountEngine {
                         cart.getId(), it.getId(), it.getQuantity()));
                 discounts.add(discount);
             }
-            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.getAlgorithm(model),
+            new CartItemDiscountsApplicationOld(it, discounts, DiscountsAlgorithms.getAlgorithm(it, model,
+                    Currency.getInstance(cart.getCurrencyCode())),
                     cart.getCurrencyCode()).apply();
         }
     }

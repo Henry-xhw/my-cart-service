@@ -50,7 +50,7 @@ public class CouponDiscountEngineTestCase {
         Discount discount = discount();
 
         when(productRepo.getProduct(product.getId())).thenReturn(Optional.of(product));
-        when(productRepo.findDiscountByProductIdAndCode(product.getId(), Arrays.asList(discount.getCouponCode()))).thenReturn(Collections.singletonList(discount));
+        when(productRepo.findDiscountsByProductIdAndCode(product.getId(), Arrays.asList(discount.getCouponCode()))).thenReturn(Collections.singletonList(discount));
         when(productRepo.isDiscountLimitReached(discount, cart.getFlattenCartItems().get(0).getQuantity(),
                 cart.getFlattenCartItems().get(0).getId())).thenReturn(false);
 

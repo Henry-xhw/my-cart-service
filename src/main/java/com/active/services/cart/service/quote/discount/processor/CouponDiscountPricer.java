@@ -8,7 +8,7 @@ import com.active.services.cart.service.quote.discount.CartItemDiscountsApplicat
 import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecs;
-import com.active.services.domain.DateTime;
+import com.active.services.product.DiscountType;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,11 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -35,28 +37,39 @@ public class CouponDiscountPricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
 
-        List<String> couponCodes = context.getCartLevelCouponCodes();
-
-        // add cartItem couponCodes.
-
-        List<com.active.services.product.Discount> couponDiscs = getDiscount(cartItem.getProductId(), couponCodes);
+        List<com.active.services.product.Discount> couponDiscs = getDiscounts(context, cartItem);
         if (CollectionUtils.isEmpty(couponDiscs)) {
             return;
         }
-        List<Discount> discounts = new ArrayList<>(couponDiscs.size());
 
+        List<Discount> discounts = new ArrayList<>(couponDiscs.size());
         for (com.active.services.product.Discount disc : couponDiscs) {
-            Discount discount = new Discount(disc.getName(), disc.getDescription(), disc.getAmount(), disc.getAmountType());
-            discount.setCondition(specs.couponDiscount(disc, disc.getCouponCode(), new DateTime(LocalDateTime.now()), null,
-                    context, cartItem));
+            Discount discount = new Discount(disc.getName(), disc.getDescription(), disc.getAmount(),
+                    disc.getAmountType(), disc.getId(), DiscountType.COUPON, disc.getCouponCode(),
+                    disc.getDiscountAlgorithm());
+            discount.setCondition(specs.couponDiscount(context, cartItem, disc));
             discounts.add(discount);
         }
-        new CartItemDiscountsApplication(cartItem, discounts,
-                DiscountsAlgorithms.getAlgorithm(context.getDiscountModel(cartItem.getProductId())),
-                context.getCart().getCurrencyCode()).apply();
+        new CartItemDiscountsApplication(context, cartItem, discounts,
+                DiscountsAlgorithms.getAlgorithm(cartItem, context.getDiscountModel(cartItem.getProductId()),
+                        context.getCurrency())).apply();
     }
 
-    private List<com.active.services.product.Discount> getDiscount(Long productId, List<String> couponCodes) {
-        return productRepo.findDiscountByProductIdAndCode(productId, couponCodes);
+    private List<com.active.services.product.Discount> getDiscounts(CartQuoteContext context, CartItem cartItem) {
+
+        Set<String> couponCodes = getCouponCodes(context, cartItem);
+        if (CollectionUtils.isEmpty(couponCodes)) {
+            return new ArrayList<>();
+        }
+        return productRepo.findDiscountsByProductIdAndCode(cartItem.getProductId(), new ArrayList<>(couponCodes));
+    }
+
+    private Set<String> getCouponCodes(CartQuoteContext quoteContext, CartItem cartItem) {
+
+        Set<String> requestedCodes = new HashSet<>();
+        Optional.ofNullable(quoteContext.getCartLevelCouponCodes()).ifPresent(requestedCodes::addAll);
+        Optional.ofNullable(cartItem.getCouponCodes()).ifPresent(requestedCodes::addAll);
+
+        return requestedCodes;
     }
 }

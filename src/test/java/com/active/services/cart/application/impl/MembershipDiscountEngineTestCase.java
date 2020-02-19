@@ -8,6 +8,7 @@ import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.infrastructure.repository.ProductMembership;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.AmountType;
 import com.active.services.product.Product;
@@ -72,12 +73,12 @@ public class MembershipDiscountEngineTestCase {
                 .build());
         cart.getItems().add(item);
 
-        engine.apply(cart);
+        engine.apply(new CartQuoteContext(cart));
     }
 
     @Test
     public void applyMembershipDiscountToEmptyCart() {
-        engine.apply(cart());
+        engine.apply(new CartQuoteContext(cart()));
     }
 
     @Test
@@ -99,7 +100,7 @@ public class MembershipDiscountEngineTestCase {
                 .type(CartItemFeeType.PRICE)
                 .build());
         cart.getItems().add(item);
-        engine.apply(cart);
+        engine.apply(new CartQuoteContext(cart));
     }
 
     private Cart cart() {
