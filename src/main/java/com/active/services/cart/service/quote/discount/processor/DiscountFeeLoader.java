@@ -15,7 +15,12 @@ public class DiscountFeeLoader {
     @NonNull private final Discount disc;
 
     public void apply() {
+
         cartQuoteContext.addAppliedDiscount(disc);
+
+        // item fee
+        // item net price
+
         item.applyDiscount(disc, cartQuoteContext.getCurrency().getCurrencyCode());
     }
 }
