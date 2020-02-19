@@ -51,6 +51,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private List<String> couponCodes;
 
+    private boolean ignoreMultiDiscounts;
+
     private CouponMode couponMode;
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
@@ -65,6 +67,9 @@ public class CartItem extends BaseTree<CartItem> {
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
         this.oversold = updateCartItemDto.isOversold();
+        this.couponMode = updateCartItemDto.getCouponMode();
+        this.personIdentifier = updateCartItemDto.getPersonIdentifier();
+        this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
     }
 
     public CartItem applyDiscount(Discount disc, String currency) {
