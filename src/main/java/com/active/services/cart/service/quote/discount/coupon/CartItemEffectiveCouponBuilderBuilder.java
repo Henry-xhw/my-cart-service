@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.groupingBy;
  *
  *
  */
-public class CartItemEffectiveCouponBuildersBuilder implements Builder<List<CartItemEffectiveCouponBuilder>> {
+public class CartItemEffectiveCouponBuilderBuilder implements Builder<List<CartItemEffectiveCouponBuilder>> {
 
     private CartQuoteContext context;
 
@@ -40,19 +40,19 @@ public class CartItemEffectiveCouponBuildersBuilder implements Builder<List<Cart
 
     private TaskRunner taskRunner;
 
-    public CartItemEffectiveCouponBuildersBuilder context(CartQuoteContext context) {
+    public CartItemEffectiveCouponBuilderBuilder context(CartQuoteContext context) {
         this.context = context;
 
         return this;
     }
 
-    public CartItemEffectiveCouponBuildersBuilder soapClient(SOAPClient soapClient) {
+    public CartItemEffectiveCouponBuilderBuilder soapClient(SOAPClient soapClient) {
         this.soapClient = soapClient;
 
         return this;
     }
 
-    public CartItemEffectiveCouponBuildersBuilder taskRunner(TaskRunner taskRunner) {
+    public CartItemEffectiveCouponBuilderBuilder taskRunner(TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
 
         return this;

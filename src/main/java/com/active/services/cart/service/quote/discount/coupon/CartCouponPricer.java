@@ -22,7 +22,7 @@ public class CartCouponPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-        List<CartItemEffectiveCouponBuilder> builders = new CartItemEffectiveCouponBuildersBuilder()
+        List<CartItemEffectiveCouponBuilder> builders = new CartItemEffectiveCouponBuilderBuilder()
                 .context(context).soapClient(soapClient).taskRunner(taskRunner).build();
 
         for (CartItemEffectiveCouponBuilder builder : builders) {
