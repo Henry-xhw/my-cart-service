@@ -166,17 +166,7 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
-        <choose>
-            <when test="item.personIdentifier!=null">
-                [person_identifier] = #{item.personIdentifier},
-            </when>
-            <otherwise>
-                [person_identifier] = null,
-            </otherwise>
-        </choose>
         [oversold] = #{item.oversold},
-        [coupon_mode] = #{item.couponMode},
-        [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -198,6 +188,9 @@
                 <result property="upperExclusive" column="trimmed_booking_end_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
+        </collection>
+        <collection property="cartDiscounts" ofType="CartDiscount" notNullColumn="id" columnPrefix="discount_">
+            <id property="id" column="id"/>
         </collection>
     </resultMap>
 
@@ -231,6 +224,14 @@
         item.person_identifier        AS item_person_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
         item.oversold                 AS item_oversold,
+        discount.discount_type        AS discount_discount_type,
+        discount.apply_to_becurring_billing  AS discount_apply_to_becurring_billing,
+        discount.discount_id          AS discount_discount_id,
+        discount.keyer_uuid           AS discount_keyer_uuid,
+        discount.discount_group_id    AS discount_discount_group_id,
+        discount.amount_type          AS discount_amount_type,
+        discount.amount               AS discount_amount,
+        discount.origin               AS discount_origin,
         item.coupon_mode              AS item_coupon_mode,
         item.ignore_multi_discounts   AS item_ignore_multi_discounts,
         item.created_by               AS item_createdBy,
