@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +47,6 @@ public class CouponDiscountPricerTestCase {
 
     @MockBean
     private ProductServiceSoap productRepo;
-   // @Autowired private DiscountSpecs discountSpecs;
     @Autowired
     private CouponDiscountPricer couponDiscountPricer;
 
@@ -67,7 +67,7 @@ public class CouponDiscountPricerTestCase {
         String code2 = "code 2";
         List<String> codes = Arrays.asList(code1, code2);
 
-        cart.setCouponCodes(codes);
+        cart.setCouponCodes(new HashSet<>(codes));
         CartQuoteContext context = new CartQuoteContext(cart);
         CartItem cartItem = cart.getFlattenCartItems().get(0);
 
@@ -85,12 +85,12 @@ public class CouponDiscountPricerTestCase {
         String code2 = "code 2";
         String code3 = "code 3";
 
-        cart.setCouponCodes(Arrays.asList(code1, code2));
+        cart.setCouponCodes(new HashSet<>(Arrays.asList(code1, code2)));
 
         CartQuoteContext context = new CartQuoteContext(cart);
 
         CartItem cartItem = cart.getFlattenCartItems().get(0);
-        cartItem.setCouponCodes(Arrays.asList(code2, code3));
+        cartItem.setCouponCodes(new HashSet<>(Arrays.asList(code2, code3)));
         List<String> codes = Arrays.asList(code1, code2, code3);
 
         List<Discount> discounts = new ArrayList<>();
@@ -121,11 +121,11 @@ public class CouponDiscountPricerTestCase {
         String code2 = "code 2";
         String code3 = "code 3";
 
-        cart.setCouponCodes(Arrays.asList(code1, code2));
+        cart.setCouponCodes(new HashSet<>(Arrays.asList(code1, code2)));
 
         CartItem cartItem = cart.getFlattenCartItems().get(0);
         cartItem.setCouponMode(CouponMode.HIGH_PRIORITY);
-        cartItem.setCouponCodes(Arrays.asList(code2, code3));
+        cartItem.setCouponCodes(new HashSet<>(Arrays.asList(code2, code3)));
         List<String> codes = Arrays.asList(code1, code2, code3);
 
         List<Discount> discounts = new ArrayList<>();
@@ -156,11 +156,11 @@ public class CouponDiscountPricerTestCase {
         String code2 = "code 2";
         String code3 = "code 3";
 
-        cart.setCouponCodes(Arrays.asList(code1, code2));
+        cart.setCouponCodes(new HashSet<>(Arrays.asList(code1, code2)));
 
         CartItem cartItem = cart.getFlattenCartItems().get(0);
         cartItem.setCouponMode(CouponMode.HIGH_PRIORITY);
-        cartItem.setCouponCodes(Arrays.asList(code2, code3));
+        cartItem.setCouponCodes(new HashSet<>(Arrays.asList(code2, code3)));
         List<String> codes = Arrays.asList(code1, code2, code3);
 
         List<Discount> discounts = new ArrayList<>();

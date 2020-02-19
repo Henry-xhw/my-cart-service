@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -24,6 +25,8 @@ public class CartDto extends BaseDto {
     private String currencyCode;
 
     private UUID reservationId;
+
+    private Set<String> couponCodes;
 
     @Valid
     private List<CartItemDto> items = new ArrayList<>();

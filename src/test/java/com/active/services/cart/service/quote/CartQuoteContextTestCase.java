@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,10 +74,11 @@ public class CartQuoteContextTestCase {
     public void getCartLevelCouponCodes() {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
+
         assertTrue(CollectionUtils.isEmpty(cartQuoteContext.getCartLevelCouponCodes()));
 
         cart = CartDataFactory.cart();
-        cart.setCouponCodes(Arrays.asList("codee", "coupon"));
+        cart.setCouponCodes(new HashSet<>(Arrays.asList("code", "coupon")));
         cartQuoteContext = new CartQuoteContext(cart);
         assertEquals(cart.getCouponCodes(), cartQuoteContext.getCartLevelCouponCodes());
     }

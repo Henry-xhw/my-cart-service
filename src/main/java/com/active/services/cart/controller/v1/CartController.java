@@ -7,6 +7,7 @@ import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.req.UpdateCartReq;
 import com.active.services.cart.model.v1.rsp.CheckoutRsp;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,6 +58,13 @@ public class CartController {
         rsp.setCart(cartDto);
 
         return rsp;
+    }
+
+    @PutMapping(ID_PARAM_PATH)
+    public void update(@PathVariable(ID_PARAM) UUID cartIdentifier, @RequestBody @Validated UpdateCartReq req) {
+        Cart cart = CartMapper.INSTANCE.toDomainFromUpdateCartReq(req);
+        cart.setIdentifier(cartIdentifier);
+        cartService.update(cart);
     }
 
     @DeleteMapping(ID_PARAM_PATH)

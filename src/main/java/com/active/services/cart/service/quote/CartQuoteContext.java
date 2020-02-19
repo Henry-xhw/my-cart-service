@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class CartQuoteContext {
                 .orElse(DiscountModel.COMBINABLE_FLAT_FIRST);
     }
 
-    public List<String> getCartLevelCouponCodes() {
+    public Set<String> getCartLevelCouponCodes() {
         return cart.getCouponCodes();
     }
 
