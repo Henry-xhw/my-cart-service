@@ -5,6 +5,7 @@ import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.product.DiscountType;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Lookup;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CartItemDiscountPricer implements CartItemPricer {
 
-    private final DiscountType type;
+    @NonNull private final DiscountType type;
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {

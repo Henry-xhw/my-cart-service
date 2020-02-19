@@ -55,7 +55,7 @@ public class ProductServiceSoap {
         return null;
     }
 
-    public List<Discount> findDiscountByProductIdAndCode(Long productId, List<String> couponCodes) {
+    public List<Discount> findDiscountsByProductIdAndCode(Long productId, List<String> couponCodes) {
         return null;
     }
 
@@ -74,7 +74,8 @@ public class ProductServiceSoap {
      */
     public List<MultiDiscount> findEffectiveMultiDiscountsByProductId(Long productId, LocalDateTime priceDate) {
         Map<MultiDiscountType, List<MultiDiscount>> type2Mds =
-                emptyIfNull(soapClient.productServiceSOAPEndPoint().findMultiDiscountsByProductId(ContextWrapper.get(), productId)).stream()
+                emptyIfNull(soapClient.productServiceSOAPEndPoint()
+                        .findMultiDiscountsByProductId(ContextWrapper.get(), productId)).stream()
                         .filter(md -> md.getAvailability() == Availability.ONLINE)
                         .filter(md -> (md.getStartDate() == null || md.getStartDate().before(new DateTime(priceDate))) &&
                                 (md.getEndDate() == null || md.getEndDate().after(new DateTime(priceDate))))

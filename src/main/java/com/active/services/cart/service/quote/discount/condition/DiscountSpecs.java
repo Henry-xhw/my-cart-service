@@ -14,6 +14,7 @@ import com.active.services.product.discount.multi.MultiDiscountType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -43,23 +44,19 @@ public class DiscountSpecs {
         );
     }
 
+    public DiscountSpecification couponDiscount(CartQuoteContext context, CartItem cartItem, Discount discount) {
+        return DiscountSequentialSpecs.allOf(
+            new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), new DateTime(LocalDateTime.now())),
+            new UsageLimitSpec(productRepo, context.getCart().getId(), cartItem.getId(), cartItem.getQuantity(), discount),
+            new UniqueUsedSpec(discount.getId(), context.getUsedUniqueCouponDiscountsIds())
+        );
+    }
+
     public DiscountSpecification multiDiscountThreshold(MultiDiscountType type, List<CartItem> items, int threshold) {
         if (type == MultiDiscountType.MULTI_PERSON) {
             return new NumberOfPersonGEThanThresholdSpec(items, threshold);
         } else {
             return new NumberOfProdGEThanThresholdSpec(items, threshold);
         }
-    }
-
-    public DiscountSpecification couponDiscount(Discount discount, String couponCode, DateTime evaluateDt, String formXml,
-                                                CartQuoteContext context, CartItem cartItem) {
-            return DiscountSequentialSpecs.allOf(
-                    new CouponCodeSpec(discount.getCouponCode(), couponCode),
-                    new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), evaluateDt),
-                    new XmlRestrictionSpec(discount.getRestrictionsExpression(), formXml),
-                    new UsageLimitSpec(productRepo, context.getCart().getId(), cartItem.getId(),
-                            cartItem.getQuantity(), discount),
-                    new UniqueUsedSpec(context.getDiscountModel(cartItem.getProductId()), discount.getId(), context.getUsedCouponDiscountIds())
-            );
     }
 }
