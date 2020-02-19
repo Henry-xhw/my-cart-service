@@ -34,7 +34,7 @@
             #{lock},
             #{cartStatus},
             #{reservationId},
-            #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringListTypeHandler})
+            #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler})
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
@@ -103,7 +103,7 @@
     <update id="updateCart">
         UPDATE [dbo].[carts]
         SET
-            coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringListTypeHandler},
+            coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
             [modified_by] = #{modifiedBy},
             [modified_dt] = #{modifiedDt}
         WHERE id = #{id}

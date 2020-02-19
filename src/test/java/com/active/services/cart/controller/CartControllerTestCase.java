@@ -133,7 +133,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartSuccess() throws Exception {
         UpdateCartReq req = new UpdateCartReq();
-        req.setCouponCodes(Collections.singletonList("FDSAFSA"));
+        req.setCouponCodes(Collections.singleton("FDSAFSA"));
         doNothing().when(cartService).update(any());
 
         mockMvc.perform(put("/carts/{id}", cartId)
