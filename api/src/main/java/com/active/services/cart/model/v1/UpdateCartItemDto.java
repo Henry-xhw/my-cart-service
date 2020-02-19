@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -53,5 +53,5 @@ public class UpdateCartItemDto {
 
     private boolean oversold;
 
-    private List<String> couponCodes;
+    private Set<String> couponCodes;
 }

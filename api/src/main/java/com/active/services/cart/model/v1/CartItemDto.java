@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
@@ -65,5 +66,5 @@ public class CartItemDto extends BaseDto {
 
     private boolean oversold;
 
-    private List<String> couponCodes;
+    private Set<String> couponCodes;
 }

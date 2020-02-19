@@ -54,6 +54,7 @@ public class CartDataFactory {
         updateCartItemDto.setUnitPrice(cartItem.getUnitPrice());
         updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
         updateCartItemDto.setProductName(cartItem.getProductName());
+        updateCartItemDto.setCouponCodes(cartItem.getCouponCodes());
         return updateCartItemDto;
     }
 
@@ -96,6 +97,7 @@ public class CartDataFactory {
         cartItem.setUnitPrice(price);
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
+        cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(cartItemFee());
         cartItemFees.add(cartItemFee());
