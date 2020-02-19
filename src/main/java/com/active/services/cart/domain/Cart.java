@@ -38,6 +38,8 @@ public class Cart extends BaseDomainObject {
 
     private UUID reservationId;
 
+    private List<CartDiscount> cartDiscounts = new ArrayList<>();
+
     private Set<String> couponCodes;
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {

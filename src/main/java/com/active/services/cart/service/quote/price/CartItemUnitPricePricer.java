@@ -41,7 +41,7 @@ public class CartItemUnitPricePricer implements CartItemPricer {
                 .findAny().ifPresent(cartItemFee -> {
                     cartItem.setGrossPrice(cartItemFee.getUnitPrice().multiply(new BigDecimal(cartItemFee.getUnits())));
                     //OMS-10128 Net Price = Gross Price - Price Hikes Amount - Discounts Amount
-                    //Since we didn't plan to implement discount and price hike in cart service at this point,
+                    //Since we didn't plan to implement cartDiscount and price hike in cart service at this point,
                     //hence the gross price = net price
                     cartItem.setNetPrice(cartItem.getGrossPrice());
                 })

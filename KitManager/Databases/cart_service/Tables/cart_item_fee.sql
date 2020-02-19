@@ -11,6 +11,7 @@ BEGIN
         [transaction_type]          NVARCHAR(25)        NOT NULL,
         [units]                     BIGINT              NOT NULL,
         [unit_price]                DECIMAL(19, 2)      NOT NULL,
+        [cart_discount_id]          BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -162,4 +163,12 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
 BEGIN
     ALTER TABLE dbo.cart_item_fees ALTER COLUMN [description] NVARCHAR(255)  NULL;
 	PRINT 'modify column name null, dbo.cart_item_fees'
+END
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_discount_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_item_fees ADD BIGINT BIT NULL;
+	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
 END
