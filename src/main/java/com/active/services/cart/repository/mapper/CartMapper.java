@@ -16,6 +16,8 @@ import java.util.UUID;
 public interface CartMapper {
     void createCart(Cart cart);
 
+    void updateCart(Cart cart);
+
     void deleteCart(Long cartId);
 
     Optional<Cart> getCart(@Param("cartId") UUID cartId);

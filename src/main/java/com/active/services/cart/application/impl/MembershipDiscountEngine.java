@@ -2,8 +2,8 @@ package com.active.services.cart.application.impl;
 
 import com.active.services.cart.application.CartItemSelector;
 import com.active.services.cart.client.soap.ProductServiceSoap;
-import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscountsApplication;
 import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountsAlgorithms;
@@ -27,8 +27,8 @@ public class MembershipDiscountEngine {
     private final ProductServiceSoap productRepo;
     private final DiscountSpecs discountSpecs;
 
-    public void apply(Cart cart) {
-        List<CartItem> noMembershipItems = nonMembershipCartItemSelector.select(cart);
+    public void apply(CartQuoteContext context) {
+        List<CartItem> noMembershipItems = nonMembershipCartItemSelector.select(context.getCart());
 
         List<Long> productIds = noMembershipItems.stream()
                 .map(CartItem::getProductId)
@@ -45,12 +45,13 @@ public class MembershipDiscountEngine {
             List<Discount> discounts = membershipDiscounts.get(it.getProductId()).stream()
                     .map(m -> new Discount(m.getName(), m.getDescription(), m.getAmount(), m.getAmountType())
                             .setCondition(discountSpecs
-                                    .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), cart,
+                                    .membershipDiscount(m.getMembershipId(), it.getPersonIdentifier(), context.getCart(),
                                             new DateTime(LocalDateTime.now()), m)))
                     .collect(Collectors.toList());
 
 
-            new CartItemDiscountsApplication(it, discounts, DiscountsAlgorithms.bestAlgorithm(), cart.getCurrencyCode()).apply();
+            new CartItemDiscountsApplication(context, it, discounts, DiscountsAlgorithms.bestAlgorithm(it, context.getCurrency()))
+                    .apply();
 
         }
     }

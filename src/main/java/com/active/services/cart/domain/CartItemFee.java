@@ -64,13 +64,15 @@ public class CartItemFee extends BaseTree<CartItemFee> {
         if (getSubItems() == null) {
             setSubItems(new ArrayList<>());
         }
+        BigDecimal discAmount = disc.apply(unitPrice, Currency.getInstance(currency));
         getSubItems().add(CartItemFee.builder()
                 .name(disc.getName())
                 .description(disc.getDescription())
                 .type(CartItemFeeType.DISCOUNT)
                 .transactionType(FeeTransactionType.CREDIT)
-                .unitPrice(disc.apply(unitPrice, Currency.getInstance(currency)))
+                .unitPrice(discAmount)
                 .units(units)
                 .build());
+        unitPrice = unitPrice.subtract(discAmount);
     }
 }

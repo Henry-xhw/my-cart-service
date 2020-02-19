@@ -47,6 +47,9 @@ public class CartRepositoryTestCase {
         cartRepository.createCart(cart);
         verify(cartMapper, times(1)).createCart(any());
 
+        cartRepository.updateCart(cart);
+        verify(cartMapper, times(1)).updateCart(any());
+
         cartRepository.deleteCart(1L);
         verify(cartMapper, times(1)).deleteCart(any());
 

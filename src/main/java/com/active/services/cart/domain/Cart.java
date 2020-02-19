@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
@@ -37,7 +38,7 @@ public class Cart extends BaseDomainObject {
 
     private UUID reservationId;
 
-    private List<String> couponCodes;
+    private Set<String> couponCodes;
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {
         return getFlattenCartItems().stream()
