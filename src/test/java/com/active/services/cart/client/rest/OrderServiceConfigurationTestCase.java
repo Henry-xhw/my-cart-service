@@ -1,6 +1,5 @@
 package com.active.services.cart.client.rest;
 
-import com.active.services.domain.DateTime;
 import com.active.services.order.FeeTransactionType;
 import com.active.services.order.OrderLineFeeType;
 import com.active.services.order.OrderLineType;
@@ -21,7 +20,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

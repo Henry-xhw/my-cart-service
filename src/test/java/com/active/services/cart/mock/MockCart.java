@@ -1,8 +1,8 @@
 package com.active.services.cart.mock;
 
+import com.active.platform.types.range.Range;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.platform.types.range.Range;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.QuoteCartDto;
@@ -11,6 +11,7 @@ import com.active.services.cart.model.v1.QuoteCartItemDto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ public class MockCart {
         cart.setKeyerId(UUID.randomUUID());
         cart.setOwnerId(UUID.randomUUID());
         cart.setIdentifier(UUID.randomUUID());
+        cart.setCouponCodes(Collections.singleton("FDSAFSA"));
         Instant lower = Instant.parse("2019-11-11T00:00:00Z");
         Instant upper = Instant.parse("2019-11-21T00:00:00Z");
         Range range = new Range();
@@ -51,6 +53,7 @@ public class MockCart {
         cartDto.setKeyerId(UUID.randomUUID());
         cartDto.setOwnerId(UUID.randomUUID());
         cartDto.setIdentifier(UUID.randomUUID());
+        cartDto.setCouponCodes(Collections.singleton("FDSAFSA"));
         Instant lower = Instant.parse("2019-11-11T00:00:00Z");
         Instant upper = Instant.parse("2019-11-21T00:00:00Z");
         Range range = new Range();

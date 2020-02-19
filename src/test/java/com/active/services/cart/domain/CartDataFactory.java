@@ -1,17 +1,18 @@
 package com.active.services.cart.domain;
 
+import com.active.platform.types.range.Range;
+import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.model.v1.UpdateCartItemDto;
+import com.active.services.cart.service.CartStatus;
+
+import org.apache.commons.lang3.RandomUtils;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.commons.lang3.RandomUtils;
-import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.cart.model.FeeTransactionType;
-import com.active.platform.types.range.Range;
-import com.active.services.cart.model.v1.UpdateCartItemDto;
-import com.active.services.cart.service.CartStatus;
 
 public class CartDataFactory {
 
@@ -54,9 +55,12 @@ public class CartDataFactory {
         return updateCartItemDto;
     }
 
-    public static CartItemFee cartItemFee() {
-        return getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PRICE, 1, new BigDecimal(1), "description",
+    public static CartItemFee cartItemFee(BigDecimal price) {
+        return getCartItemFee(FeeTransactionType.DEBIT, CartItemFeeType.PRICE, 1, price, "description",
                 "name");
+    }
+    public static CartItemFee cartItemFee() {
+        return cartItemFee(new BigDecimal(1));
     }
 
     public static CartItemFee getCartItemFee(FeeTransactionType transactionType, CartItemFeeType feeType, int unit,
@@ -93,9 +97,9 @@ public class CartDataFactory {
         cartItem.setUnitPrice(price);
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
+        cartItem.setNetPrice(price);
         List<CartItemFee> cartItemFees = new ArrayList<>();
-        cartItemFees.add(cartItemFee());
-        cartItemFees.add(cartItemFee());
+        cartItemFees.add(cartItemFee(price));
         cartItem.setFees(cartItemFees);
         return cartItem;
     }

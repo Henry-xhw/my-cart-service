@@ -1,6 +1,8 @@
 package com.active.services.cart.model.v1;
 
 import com.active.platform.types.range.Range;
+import com.active.services.cart.model.CouponMode;
+import com.active.services.cart.model.validation.EnumValidtor;
 
 import lombok.Data;
 
@@ -51,4 +53,12 @@ public class UpdateCartItemDto {
     private Integer feeVolumeIndex;
 
     private boolean oversold;
+
+    @Size(max = 50)
+    private String personIdentifier;
+
+    private boolean ignoreMultiDiscounts;
+
+    @EnumValidtor(target = CouponMode.class, message = "Coupon mode must be NORMAL or HIGH_PRIORITY")
+    private String couponMode;
 }

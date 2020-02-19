@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.HEAD;
-
 @ConfigurationProperties(prefix = "ok-http")
 @Data
 @Component

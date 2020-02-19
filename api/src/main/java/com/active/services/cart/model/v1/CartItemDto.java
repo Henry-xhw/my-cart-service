@@ -1,6 +1,8 @@
 package com.active.services.cart.model.v1;
 
 import com.active.platform.types.range.Range;
+import com.active.services.cart.model.CouponMode;
+import com.active.services.cart.model.validation.EnumValidtor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
@@ -65,4 +66,12 @@ public class CartItemDto extends BaseDto {
     private List<CartItemDto> subItems = new ArrayList<>();
 
     private boolean oversold;
+
+    @Size(max = 50)
+    private String personIdentifier;
+
+    private boolean ignoreMultiDiscounts;
+
+    @EnumValidtor(target = CouponMode.class, message = "Coupon mode must be NORMAL or HIGH_PRIORITY")
+    private String couponMode;
 }
