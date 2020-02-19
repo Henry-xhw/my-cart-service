@@ -54,6 +54,7 @@
             [unit_price],
             [grouping_identifier],
             [oversold],
+            [coupon_codes],
             [person_identifier],
             [coupon_mode],
             [ignore_multi_discounts],
@@ -94,6 +95,7 @@
              #{item.unitPrice},
              #{item.groupingIdentifier},
              #{item.oversold},
+             #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
              #{item.personIdentifier},
              #{item.couponMode},
              #{item.ignoreMultiDiscounts},
@@ -175,6 +177,7 @@
             </otherwise>
         </choose>
         [oversold] = #{item.oversold},
+        [coupon_codes] = #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
         [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
         [coupon_mode] = #{item.couponMode},
         [modified_by] = #{item.modifiedBy},

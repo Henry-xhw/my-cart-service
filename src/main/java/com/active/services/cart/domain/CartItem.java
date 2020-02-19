@@ -68,6 +68,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
         this.oversold = updateCartItemDto.isOversold();
+        this.couponCodes = updateCartItemDto.getCouponCodes();
         this.couponMode = updateCartItemDto.getCouponMode();
         this.personIdentifier = updateCartItemDto.getPersonIdentifier();
         this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
