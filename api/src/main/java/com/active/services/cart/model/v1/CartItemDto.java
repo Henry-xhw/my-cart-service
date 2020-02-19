@@ -74,6 +74,5 @@ public class CartItemDto extends BaseDto {
 
     private boolean ignoreMultiDiscounts;
 
-    @Valid
     private CouponMode couponMode;
 }

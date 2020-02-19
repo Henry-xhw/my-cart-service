@@ -61,6 +61,5 @@ public class UpdateCartItemDto {
 
     private boolean ignoreMultiDiscounts;
 
-    @Valid
     private CouponMode couponMode;
 }
