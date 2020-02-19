@@ -11,6 +11,7 @@ import org.apache.commons.lang3.RandomUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class CartDataFactory {
         cart.setIdentifier(UUID.randomUUID());
         cart.setItems(cartItems());
         cart.setCartStatus(CartStatus.CREATED);
+        cart.setCouponCodes(Collections.singleton("FDSAFSA"));
 
         return cart;
     }

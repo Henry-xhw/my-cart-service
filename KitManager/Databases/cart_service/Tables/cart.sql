@@ -15,7 +15,8 @@ BEGIN
         [price_version]             INT                 DEFAULT ((0)) NOT NULL,
         [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
         [cart_status]               VARCHAR (255)       NOT NULL,
-        [reservation_id]            UNIQUEIDENTIFIER    NULL
+        [reservation_id]            UNIQUEIDENTIFIER    NULL,
+        [coupon_codes]              NVARCHAR(MAX)       NULL
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
@@ -111,5 +112,30 @@ BEGIN
 	ALTER TABLE dbo.carts ADD reservation_id UNIQUEIDENTIFIER NULL
 
 	PRINT 'Added column reservation_id to dbo.carts'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_codes'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
+BEGIN
+
+  ALTER TABLE dbo.carts ADD coupon_codes NVARCHAR(MAX) NULL
+
+  PRINT 'Added column coupon_codes to dbo.carts'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','coupon_codes'))
+BEGIN
+  EXEC sys.sp_addextendedproperty
+  @name = N'MS_Description',
+  @value = N'coupon codes',
+  @level0type = 'SCHEMA',
+  @level0name = 'dbo',
+  @level1type = 'TABLE',
+  @level1name = 'carts',
+  @level2type = 'Column',
+  @level2name = 'coupon_codes'
 END
 GO
