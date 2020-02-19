@@ -18,6 +18,9 @@ import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class CartItemFee extends BaseTree<CartItemFee> {
     private String name;
 
