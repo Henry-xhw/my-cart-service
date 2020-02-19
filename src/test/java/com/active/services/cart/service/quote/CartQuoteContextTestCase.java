@@ -75,7 +75,7 @@ public class CartQuoteContextTestCase {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
-        assertTrue(CollectionUtils.isEmpty(cartQuoteContext.getCartLevelCouponCodes()));
+        assertTrue(CollectionUtils.isNotEmpty(cartQuoteContext.getCartLevelCouponCodes()));
 
         cart = CartDataFactory.cart();
         cart.setCouponCodes(new HashSet<>(Arrays.asList("code", "coupon")));
