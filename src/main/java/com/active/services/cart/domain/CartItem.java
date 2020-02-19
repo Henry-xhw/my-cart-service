@@ -72,6 +72,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.couponMode = updateCartItemDto.getCouponMode();
         this.personIdentifier = updateCartItemDto.getPersonIdentifier();
         this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
+        this.couponMode = updateCartItemDto.getCouponMode();
     }
 
     public CartItem applyDiscount(Discount disc, String currency) {
