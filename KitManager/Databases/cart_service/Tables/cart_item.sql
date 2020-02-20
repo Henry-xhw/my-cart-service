@@ -128,7 +128,7 @@ JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupo
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
     BEGIN
 
-        ALTER TABLE dbo.cart_items ADD coupon_mode NVARCHAR(255) NOT NULL
+        ALTER TABLE dbo.cart_items ADD coupon_mode NVARCHAR(255) NULL
 
         PRINT 'Added column coupon_mode to dbo.cart_items'
     END
