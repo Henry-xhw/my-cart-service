@@ -22,7 +22,6 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -38,29 +37,28 @@ public class CouponCodeDiscountHandler implements DiscountHandler {
 
     @Override
     public List<Discount> loadDiscounts() {
-        List<com.active.services.product.Discount> couponDiscs = getDiscounts();
+        List<com.active.services.product.Discount> couponDiscs = getCouponCodeDiscounts();
         if (CollectionUtils.isEmpty(couponDiscs)) {
             return new ArrayList<>();
         }
-        return couponDiscs.stream().map(disc -> convert(disc)).collect(Collectors.toList());
+        List<Discount> discounts = couponDiscs.stream().map(disc -> convert(disc))
+                .filter(Discount::satisfy).collect(Collectors.toList());
+        return getHighPriorityDiscounts(discounts);
     }
 
     @Override
-    public List<Discount> filterAndSort(List<Discount> discounts) {
-        List<Discount> qualified = discounts.stream().filter(Discount::satisfy).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(qualified)) {
-            return new ArrayList<>();
-        }
-        return getAlgorithm(item, context.getDiscountModel(item.getProductId()),
-                        context.getCurrency()).apply(getHighPriorityDiscounts(qualified));
+    public DiscountAlgorithm getDiscountAlgorithm() {
+        return context.getDiscountModel(item.getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST ?
+                new StackableFlatFirstDiscountAlgorithm() :
+                new BestDiscountAlgorithm(item, context.getCurrency());
     }
 
     private List<Discount> getHighPriorityDiscounts(List<Discount> discounts) {
         List<Discount> cartItemLevelDiscount = new ArrayList<>();
         if (item.getCouponMode() == CouponMode.HIGH_PRIORITY) {
             cartItemLevelDiscount =
-                    discounts.stream().filter(discount -> item.getCouponCodes().contains(discount.getCouponCode()))
-                            .collect(Collectors.toList());
+                    CollectionUtils.emptyIfNull(discounts).stream().filter(discount ->
+                            item.getCouponCodes().contains(discount.getCouponCode())).collect(Collectors.toList());
         }
         return CollectionUtils.isNotEmpty(cartItemLevelDiscount) ?  cartItemLevelDiscount : discounts;
     }
@@ -84,8 +82,7 @@ public class CouponCodeDiscountHandler implements DiscountHandler {
         );
     }
 
-    private List<com.active.services.product.Discount> getDiscounts() {
-
+    private List<com.active.services.product.Discount> getCouponCodeDiscounts() {
         Set<String> couponCodes = getCouponCodes();
         if (CollectionUtils.isEmpty(couponCodes)) {
             return new ArrayList<>();
@@ -101,11 +98,5 @@ public class CouponCodeDiscountHandler implements DiscountHandler {
 
         return requestedCodes;
     }
-
-    private DiscountAlgorithm getAlgorithm(CartItem item, DiscountModel model, Currency currency) {
-        return model == DiscountModel.COMBINABLE_FLAT_FIRST ? new StackableFlatFirstDiscountAlgorithm() :
-                new BestDiscountAlgorithm(item, currency);
-    }
-
 }
 

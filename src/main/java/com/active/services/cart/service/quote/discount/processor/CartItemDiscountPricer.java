@@ -12,6 +12,7 @@ import com.active.services.product.DiscountType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -37,11 +38,16 @@ public class CartItemDiscountPricer implements CartItemPricer {
 
         List<Discount> discounts = handler.loadDiscounts();
 
+        if (CollectionUtils.isEmpty(discounts)) {
+            return;
+        }
+
         if (cartItem.getNetPrice().compareTo(BigDecimal.ZERO) <= 0) {
             return;
         }
 
-        handler.filterAndSort(discounts).forEach(disc -> new DiscountFeeLoader(context, cartItem, disc).apply());
+        handler.getDiscountAlgorithm().apply(discounts).forEach(disc ->
+                new DiscountFeeLoader(context, cartItem, disc).apply());
     }
 
     private DiscountHandler getHandler(CartQuoteContext context, CartItem cartItem) {
