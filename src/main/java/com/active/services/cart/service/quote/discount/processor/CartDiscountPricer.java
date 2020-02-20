@@ -14,7 +14,6 @@ import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,10 +27,10 @@ import javax.ws.rs.NotSupportedException;
 @RequiredArgsConstructor
 public class CartDiscountPricer implements CartPricer {
 
-    @Autowired
     private final SOAPClient soapClient;
-    @NonNull private final DiscountType type;
     private final TaskRunner taskRunner;
+
+    @NonNull private final DiscountType type;
 
     @Override
     public void quote(CartQuoteContext context) {
