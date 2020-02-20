@@ -17,6 +17,7 @@ import static java.util.Comparator.comparing;
 public class BestDiscountAlgorithm implements DiscountAlgorithm {
     @NonNull
     private final CartItem cartItem;
+
     @NonNull
     private Currency currency;
 

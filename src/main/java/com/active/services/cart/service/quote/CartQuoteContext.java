@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 @Data
 public class CartQuoteContext {
-
     private Cart cart;
+
     private Map<Long, Product> productsMap = new HashMap<>();
 
     private List<Discount> appliedDiscounts;
