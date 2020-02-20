@@ -2,6 +2,7 @@ package com.active.services.cart.service.quote;
 
 import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
+import com.active.services.cart.service.quote.discount.coupon.CartCouponPricer;
 import com.active.services.cart.service.quote.discount.processor.CartDiscountPricer;
 import com.active.services.cart.service.quote.price.CartUnitPricePricer;
 import com.active.services.contract.controller.v1.FeeOwner;
@@ -9,6 +10,7 @@ import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartPriceEngine {
     private final ProductServiceSoap productServiceSoap;
+
+    @Autowired
+    private CartCouponPricer cartCouponPricer;
 
     public void quote(CartQuoteContext context) {
 
@@ -33,7 +38,7 @@ public class CartPriceEngine {
     private void applyDiscount(CartQuoteContext context) {
         getCartDiscountPricer(DiscountType.MEMBERSHIP).quote(context);
         getCartDiscountPricer(DiscountType.MULTI).quote(context);
-        getCartDiscountPricer(DiscountType.COUPON).quote(context);
+        cartCouponPricer.quote(context);
     }
 
     private void prepare(CartQuoteContext context) {
