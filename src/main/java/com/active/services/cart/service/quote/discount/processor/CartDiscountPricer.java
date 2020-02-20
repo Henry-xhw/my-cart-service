@@ -57,7 +57,8 @@ public class CartDiscountPricer implements CartPricer {
     private DiscountLoader getDiscountLoader(CartQuoteContext context) {
         if (DiscountType.COUPON_CODE == type) {
             return CouponDiscountLoader.builder().context(context)
-                    .soapClient(soapClient).taskRunner(taskRunner).build();        }
+                    .soapClient(soapClient).taskRunner(taskRunner).build();
+        }
         throw new NotSupportedException();
     }
 
