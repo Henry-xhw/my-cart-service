@@ -3,6 +3,8 @@ package com.active.services.cart.service.quote.discount.processor;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
+import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.NonNull;

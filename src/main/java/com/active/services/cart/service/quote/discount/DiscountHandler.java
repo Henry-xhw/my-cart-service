@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.processor;
+package com.active.services.cart.service.quote.discount;
 
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.domain.Discount;
