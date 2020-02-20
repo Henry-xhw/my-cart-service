@@ -42,6 +42,7 @@ public class CartCouponPricer implements CartPricer {
             return;
         }
 
+        // Step4: apply item level algorithm.
         cartItemCoupons.forEach(effectiveCartItemCoupon ->
                 getCartItemCouponPricer(effectiveCartItemCoupon.getCouponDiscounts()).quote(context,
                         effectiveCartItemCoupon.getCartItem()));
