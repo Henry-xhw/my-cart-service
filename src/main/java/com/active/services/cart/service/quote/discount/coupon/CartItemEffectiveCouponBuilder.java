@@ -16,42 +16,28 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+import static org.apache.commons.collections4.SetUtils.emptyIfNull;
 
-public class CartItemEffectiveCouponBuilder implements Builder<List<Discount>> {
+public class CartItemEffectiveCouponBuilder implements Builder<Optional<CartItemCoupons>> {
 
-    private CartItem cartItem;
+    private CartItemCoupons cartItemCoupons;
 
-    private List<Discount> requestCoupons;
-
-    public CartItem getCartItem() {
-        return cartItem;
-    }
-
-    public List<Discount> getRequestCoupons() {
-        return requestCoupons;
-    }
-
-    public CartItemEffectiveCouponBuilder cartItem(CartItem cartItem) {
-        this.cartItem = cartItem;
-
-        return this;
-    }
-
-    public CartItemEffectiveCouponBuilder requestCoupons(List<Discount> requestCoupons) {
-        this.requestCoupons = requestCoupons;
+    public CartItemEffectiveCouponBuilder cartItemCoupons(CartItemCoupons cartItemCoupons) {
+        this.cartItemCoupons = cartItemCoupons;
 
         return this;
     }
 
     @Override
-    public List<Discount> build() {
+    public Optional<CartItemCoupons> build() {
         List<Discount> results = new ArrayList<>();
 
-        Map<String, Discount> effectiveCouponsByCode = requestCoupons.stream().filter(discount -> {
-            DiscountSpecification spec = DiscountSequentialSpecs.allOf(
+        Map<String, Discount> effectiveCouponsByCode = cartItemCoupons.getCouponDiscounts().stream()
+            .filter(discount -> {
+                DiscountSpecification spec = DiscountSequentialSpecs.allOf(
                     new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), new DateTime(LocalDateTime.now()))
 //                    new UsageLimitSpec(productRepo, context.getCart().getId(), cartItem.getId(), cartItem.getQuantity(), discount),
 //                    new UniqueUsedSpec(discount.getId(), context.getUsedUniqueCouponDiscountsIds())
@@ -60,6 +46,7 @@ public class CartItemEffectiveCouponBuilder implements Builder<List<Discount>> {
             return spec.satisfy();
         }).collect(toMap(Discount::getCouponCode, Functions.identity()));
 
+        CartItem cartItem = cartItemCoupons.getCartItem();
         if (cartItem.getCouponMode() != null &&
             cartItem.getCouponMode() == CouponMode.HIGH_PRIORITY) {
             emptyIfNull(cartItem.getCouponCodes()).forEach(cCode -> {
@@ -73,6 +60,10 @@ public class CartItemEffectiveCouponBuilder implements Builder<List<Discount>> {
             results.addAll(effectiveCouponsByCode.values());
         }
 
-        return results;
+        if (CollectionUtils.isEmpty(results)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(CartItemCoupons.builder().cartItem(cartItem).couponDiscounts(results).build());
     }
 }

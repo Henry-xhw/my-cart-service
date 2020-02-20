@@ -7,10 +7,13 @@ import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.product.Discount;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -22,13 +25,27 @@ public class CartCouponPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-        List<CartItemEffectiveCouponBuilder> builders = new CartItemEffectiveCouponBuilderBuilder()
-                .context(context).soapClient(soapClient).taskRunner(taskRunner).build();
+        // Step1: load
+        List<CartItemCoupons> cartItemCoupons = new CartItemCouponsLoader()
+                .context(context).soapClient(soapClient).taskRunner(taskRunner).load();
 
-        for (CartItemEffectiveCouponBuilder builder : builders) {
-            List<Discount> effectiveCoupons = builder.build();
-            getCartItemCouponPricer(effectiveCoupons).quote(context, builder.getCartItem());
+        // Step2: apply rules
+        cartItemCoupons = cartItemCoupons.stream().map(cartItemCoupon ->
+            new CartItemEffectiveCouponBuilder().cartItemCoupons(cartItemCoupon).build())
+                .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+
+        // Step3: apply most expensive algorithm
+        cartItemCoupons = new MostExpensiveItemAlgorithm()
+                .setCart(context.getCart()).setCartItemCoupons(cartItemCoupons).apply();
+
+        if (CollectionUtils.isEmpty(cartItemCoupons)) {
+            return;
         }
+
+        cartItemCoupons.forEach(effectiveCartItemCoupon ->
+                getCartItemCouponPricer(effectiveCartItemCoupon.getCouponDiscounts()).quote(context,
+                        effectiveCartItemCoupon.getCartItem()));
+
     }
 
     @Lookup

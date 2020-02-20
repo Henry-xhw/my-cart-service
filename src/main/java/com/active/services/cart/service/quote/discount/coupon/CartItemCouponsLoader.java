@@ -11,12 +11,10 @@ import com.active.services.product.Discount;
 
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.builder.Builder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,41 +28,37 @@ import static java.util.stream.Collectors.groupingBy;
  *
  * Batch load product service available product/coupon mapping to improve performance.
  *
- *
  */
-public class CartItemEffectiveCouponBuilderBuilder implements Builder<List<CartItemEffectiveCouponBuilder>> {
-
+public class CartItemCouponsLoader {
     private CartQuoteContext context;
 
     private SOAPClient soapClient;
 
     private TaskRunner taskRunner;
 
-    public CartItemEffectiveCouponBuilderBuilder context(CartQuoteContext context) {
+    public CartItemCouponsLoader context(CartQuoteContext context) {
         this.context = context;
 
         return this;
     }
 
-    public CartItemEffectiveCouponBuilderBuilder soapClient(SOAPClient soapClient) {
+    public CartItemCouponsLoader soapClient(SOAPClient soapClient) {
         this.soapClient = soapClient;
 
         return this;
     }
 
-    public CartItemEffectiveCouponBuilderBuilder taskRunner(TaskRunner taskRunner) {
+    public CartItemCouponsLoader taskRunner(TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
 
         return this;
     }
-
     /**
      * Get product service available discounts builder for future filter.
      *
      * @return
      */
-    @Override
-    public List<CartItemEffectiveCouponBuilder> build() {
+    public List<CartItemCoupons> load() {
         // Filter qualified cart items
         List<CartItem> cartItems = context.getCart().getFlattenCartItems()
                 .stream().filter(item -> item.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
@@ -76,11 +70,10 @@ public class CartItemEffectiveCouponBuilderBuilder implements Builder<List<CartI
                         .collect(groupingBy(cartItem -> cartItemCouponKey(context, cartItem).get()));
 
         Context soapContext = ContextWrapper.get();
-        List<Task<List<CartItemEffectiveCouponBuilder>>> tasks = new ArrayList<>();
-
-        Map<String, List<CartItem>> codeCartItemsMap = new HashMap<>();
+        List<Task<List<CartItemCoupons>>> tasks = new ArrayList<>();
         couponTargetsByKey.forEach((key, items) -> {
-            Task<List<CartItemEffectiveCouponBuilder>> task = () -> {
+            // Build task for each product + couponCode combination.
+            Task<List<CartItemCoupons>> task = () -> {
                 List<Discount> discounts = soapClient.getProductOMSEndpoint()
                         .findLatestDiscountsByProductIdAndCouponCodes(soapContext,
                                 key.getProductId(), new ArrayList<>(key.getCouponCodes()));
@@ -90,19 +83,19 @@ public class CartItemEffectiveCouponBuilderBuilder implements Builder<List<CartI
                 }
 
                 return items.stream().map(item ->
-                        new CartItemEffectiveCouponBuilder().cartItem(item).requestCoupons(discounts))
-                        .collect(Collectors.toList());
+                    CartItemCoupons.builder().cartItem(item).couponDiscounts(discounts).build())
+                    .collect(Collectors.toList());
             };
 
             tasks.add(task);
         });
 
-        List<CartItemEffectiveCouponBuilder> builders = new ArrayList<>();
+        List<CartItemCoupons> results = new ArrayList<>();
         taskRunner.run(tasks).getResults().forEach(r ->
-            builders.addAll((List<CartItemEffectiveCouponBuilder>) r)
+            results.addAll((List<CartItemCoupons>) r)
         );
 
-        return new MostExpensiveItemAlgorithm(builders).apply();
+        return results;
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,
@@ -118,10 +111,9 @@ public class CartItemEffectiveCouponBuilderBuilder implements Builder<List<CartI
         return Optional.of(FindLatestDiscountsByProductIdAndCouponCodesKey.builder()
                 .couponCodes(requestedCodes).productId(cartItem.getProductId()).build());
     }
-
     @Data
     @lombok.Builder
-    public class FindLatestDiscountsByProductIdAndCouponCodesKey {
+    private class FindLatestDiscountsByProductIdAndCouponCodesKey {
 
         private Long productId;
 
