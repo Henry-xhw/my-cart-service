@@ -1,7 +1,7 @@
 package com.active.services.cart.controller.v1.mapper;
 
-import com.active.services.cart.service.checkout.OrderTypeMapper;
 import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.service.checkout.OrderTypeMapper;
 import com.active.services.order.FeeTransactionType;
 import com.active.services.order.OrderLineFeeType;
 

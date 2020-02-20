@@ -1,6 +1,7 @@
 package com.active.services.cart.model;
 
 import com.active.services.CardType;
+
 import lombok.Data;
 
 import java.math.BigDecimal;

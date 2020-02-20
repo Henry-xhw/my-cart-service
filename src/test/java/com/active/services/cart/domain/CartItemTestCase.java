@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CartItemTestCase {
 
     @Test
-    public void testCartIteml() {
+    public void testCartItem() {
         UpdateCartItemDto updateCartItemDto = new UpdateCartItemDto();
         updateCartItemDto.setIdentifier(UUID.randomUUID());
         updateCartItemDto.setProductId(RandomUtils.nextLong());

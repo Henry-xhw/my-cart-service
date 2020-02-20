@@ -2,6 +2,7 @@ package com.active.services.cart.model.v1.req;
 
 import lombok.Data;
 
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ public class CreateCartReq {
 
     @NotNull
     private String currencyCode;
+
+    private Set<String> couponCodes;
 
     private UUID reservationId;
 }

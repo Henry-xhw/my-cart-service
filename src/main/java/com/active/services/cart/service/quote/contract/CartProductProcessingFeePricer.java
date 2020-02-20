@@ -12,7 +12,6 @@ import com.active.services.contract.controller.v1.FeeOwner;
 import com.active.services.contract.controller.v1.FeeResult;
 import com.active.services.contract.controller.v1.req.CalculateFeeAmountsReq;
 import com.active.services.contract.controller.v1.rsp.CalculateFeeAmountsRsp;
-import com.active.services.product.Product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,16 +57,14 @@ public class CartProductProcessingFeePricer implements CartPricer {
 
         List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
         Instant businessDate = Instant.now();
-        final Map<Long, Product> foundProductById =
-                emptyIfNull(context.getProducts()).stream().filter(Objects::nonNull).collect(toMap(Product::getId,
-                Function.identity()));
         final Map<UUID, CartItem> foundCartItemByIdentifier =
                 flattenCartItems.stream().collect(toMap(CartItem::getIdentifier,
                         Function.identity()));
 
         List<CalculationItem> items = new ArrayList<>();
         flattenCartItems.forEach(cartItem -> {
-            CalculationItem item = new ContractCalculationItemBuilder().product(foundProductById.get(cartItem.getProductId()))
+            CalculationItem item =
+                    new ContractCalculationItemBuilder().product(context.getProductsMap().get(cartItem.getProductId()))
                     .businessDate(businessDate).cartItem(cartItem).feeOwner(feeOwner).online(true).build();
             items.add(item);
         });

@@ -1,11 +1,13 @@
 package com.active.services.cart.model.v1;
 
 import com.active.platform.types.range.Range;
+import com.active.services.cart.model.CouponMode;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -51,4 +53,13 @@ public class UpdateCartItemDto {
     private Integer feeVolumeIndex;
 
     private boolean oversold;
+
+    private Set<String> couponCodes;
+
+    @Size(max = 50)
+    private String personIdentifier;
+
+    private boolean ignoreMultiDiscounts;
+
+    private CouponMode couponMode;
 }

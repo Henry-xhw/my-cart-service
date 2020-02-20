@@ -3,6 +3,7 @@ package com.active.services.cart.service.quote;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.service.quote.price.CartItemUnitPricePricer;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import org.junit.Assert;
