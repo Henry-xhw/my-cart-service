@@ -7,13 +7,10 @@ import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.product.Discount;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class CartCouponPricer implements CartPricer {
     @Override
     public void quote(CartQuoteContext context) {
         // Step1: load
-        List<CartItemCoupons> cartItemCoupons = new CartItemCouponsLoader()
+/*        List<CartItemCoupons> cartItemCoupons = new CartItemCouponsLoader()
                 .context(context).soapClient(soapClient).taskRunner(taskRunner).load();
 
         // Step2: apply rules
@@ -45,7 +42,7 @@ public class CartCouponPricer implements CartPricer {
         // Step4: apply item level algorithm.
         cartItemCoupons.forEach(effectiveCartItemCoupon ->
                 getCartItemCouponPricer(effectiveCartItemCoupon.getCouponDiscounts()).quote(context,
-                        effectiveCartItemCoupon.getCartItem()));
+                        effectiveCartItemCoupon.getCartItem()));*/
 
     }
 
