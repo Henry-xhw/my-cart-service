@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -24,14 +26,17 @@ public class CouponDiscountPricer implements CartPricer {
     @Override
     public void quote(CartQuoteContext context) {
 
-        List<CartItemDiscounts> cartItemCoupons = new CartItemCouponsLoader()
+        List<CartItemDiscounts> cartItemCoupons = new CouponDiscountLoader()
                 .context(context).soapClient(soapClient).taskRunner(taskRunner).load();
 
         if (CollectionUtils.isEmpty(cartItemCoupons)) {
             return;
         }
-        cartItemCoupons.stream().forEach(cartItemDisc ->
-            new CartItemDiscountPricer(new CouponCodeDiscountHandler(context, cartItemDisc))
-                    .quote(context, cartItemDisc.getCartItem()));
+
+        cartItemCoupons.stream()
+                .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
+                .sorted(Comparator.comparing(CartItemDiscounts :: getNetPrice).reversed())
+                .forEach(cartItemDisc -> new CartItemDiscountPricer(new CouponDiscountHandler(context, cartItemDisc))
+                        .quote(context, cartItemDisc.getCartItem()));
     }
 }

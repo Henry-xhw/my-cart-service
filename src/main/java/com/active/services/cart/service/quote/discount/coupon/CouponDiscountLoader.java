@@ -14,9 +14,7 @@ import com.active.services.product.Discount;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,26 +29,26 @@ import static java.util.stream.Collectors.groupingBy;
  * Batch load product service available product/coupon mapping to improve performance.
  *
  */
-public class CartItemCouponsLoader {
+public class CouponDiscountLoader {
     private CartQuoteContext context;
 
     private SOAPClient soapClient;
 
     private TaskRunner taskRunner;
 
-    public CartItemCouponsLoader context(CartQuoteContext context) {
+    public CouponDiscountLoader context(CartQuoteContext context) {
         this.context = context;
 
         return this;
     }
 
-    public CartItemCouponsLoader soapClient(SOAPClient soapClient) {
+    public CouponDiscountLoader soapClient(SOAPClient soapClient) {
         this.soapClient = soapClient;
 
         return this;
     }
 
-    public CartItemCouponsLoader taskRunner(TaskRunner taskRunner) {
+    public CouponDiscountLoader taskRunner(TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
 
         return this;
@@ -62,10 +60,7 @@ public class CartItemCouponsLoader {
      */
     public List<CartItemDiscounts> load() {
         // Filter qualified cart items
-        List<CartItem> cartItems = context.getCart().getFlattenCartItems()
-                .stream().filter(item -> item.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
-                .sorted(Comparator.comparing(CartItem::getNetPrice).reversed()).collect(Collectors.toList());
-
+        List<CartItem> cartItems = context.getCart().getFlattenCartItems();
         // Group cart item by productId + couponCodes.
         Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey =
                 cartItems.stream().filter(cartItem -> cartItemCouponKey(context, cartItem).isPresent())

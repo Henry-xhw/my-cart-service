@@ -19,13 +19,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class CouponCodeDiscountHandler implements DiscountHandler {
+public class CouponDiscountHandler implements DiscountHandler {
 
     @NonNull private final CartQuoteContext context;
     @NonNull private final CartItemDiscounts itemDiscounts;
 
     @Override
     public List<Discount> loadDiscounts() {
+        // itemDiscounts  4
+        // discounts 3
+        // context -- unused r
         List<Discount> discounts = itemDiscounts.getCouponDiscounts().stream()
                 .filter(Discount::satisfy)
                 .collect(Collectors.toList());

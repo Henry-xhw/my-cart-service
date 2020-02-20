@@ -5,6 +5,7 @@ import com.active.services.cart.domain.CartItem;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -14,4 +15,8 @@ public class CartItemDiscounts {
     private CartItem cartItem;
 
     private List<Discount> couponDiscounts;
+
+    public BigDecimal getNetPrice() {
+        return cartItem.getNetPrice();
+    }
 }
