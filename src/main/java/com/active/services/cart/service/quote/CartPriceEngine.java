@@ -1,12 +1,9 @@
 package com.active.services.cart.service.quote;
 
-import com.active.platform.concurrent.TaskRunner;
 import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
-import com.active.services.cart.service.quote.discount.coupon.CouponDiscountLoader;
 import com.active.services.cart.service.quote.discount.processor.CartDiscountPricer;
-import com.active.services.cart.service.quote.discount.processor.DiscountLoader;
 import com.active.services.cart.service.quote.price.CartUnitPricePricer;
 import com.active.services.contract.controller.v1.FeeOwner;
 import com.active.services.product.DiscountType;
@@ -21,23 +18,18 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class CartPriceEngine {
-
-    private final TaskRunner taskRunner;
     private final SOAPClient soapClient;
 
     public void quote(CartQuoteContext context) {
         prepare(context);
         getCartUnitPricePricer().quote(context);
         applyDiscount(context);
-        getCartProductProcessingFeePricer(FeeOwner.CONSUMER).
-                quote(context);
+        getCartProductProcessingFeePricer(FeeOwner.CONSUMER).quote(context);
     }
 
     private void applyDiscount(CartQuoteContext context) {
-        getDiscountPricer(CouponDiscountLoader.builder().context(context)
-                .soapClient(soapClient).taskRunner(taskRunner).build(), DiscountType.COUPON);
+        getDiscountPricer(DiscountType.MULTI);
     }
-
 
     private void prepare(CartQuoteContext context) {
         List<Product> products = soapClient.productServiceSOAPEndPoint().
@@ -56,7 +48,7 @@ public class CartPriceEngine {
     }
 
     @Lookup
-    public CartDiscountPricer getDiscountPricer(DiscountLoader loader, DiscountType type)  {
+    public CartDiscountPricer getDiscountPricer(DiscountType type)  {
         return null;
     }
 }

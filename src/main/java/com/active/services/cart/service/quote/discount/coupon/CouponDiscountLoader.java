@@ -8,8 +8,8 @@ import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.DiscountConvertor;
+import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.processor.DiscountLoader;
 import com.active.services.product.Discount;
 
 import lombok.Builder;
@@ -82,9 +82,11 @@ public class CouponDiscountLoader implements DiscountLoader {
             results.addAll((List<CartItemDiscounts>) r)
         );
 
+        //
         return CollectionUtils.emptyIfNull(results).stream()
                 .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
-                .sorted(Comparator.comparing(CartItemDiscounts :: getNetPrice).reversed()).collect(Collectors.toList());
+                .sorted(Comparator.comparing(CartItemDiscounts :: getNetPrice).reversed())
+                .collect(Collectors.toList());
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,
