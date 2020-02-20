@@ -7,6 +7,8 @@ import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.DiscountConvertor;
 import com.active.services.product.Discount;
 
 import lombok.Data;
@@ -58,7 +60,7 @@ public class CartItemCouponsLoader {
      *
      * @return
      */
-    public List<CartItemCoupons> load() {
+    public List<CartItemDiscounts> load() {
         // Filter qualified cart items
         List<CartItem> cartItems = context.getCart().getFlattenCartItems()
                 .stream().filter(item -> item.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
@@ -70,10 +72,10 @@ public class CartItemCouponsLoader {
                         .collect(groupingBy(cartItem -> cartItemCouponKey(context, cartItem).get()));
 
         Context soapContext = ContextWrapper.get();
-        List<Task<List<CartItemCoupons>>> tasks = new ArrayList<>();
+        List<Task<List<CartItemDiscounts>>> tasks = new ArrayList<>();
         couponTargetsByKey.forEach((key, items) -> {
             // Build task for each product + couponCode combination.
-            Task<List<CartItemCoupons>> task = () -> {
+            Task<List<CartItemDiscounts>> task = () -> {
                 List<Discount> discounts = soapClient.getProductOMSEndpoint()
                         .findLatestDiscountsByProductIdAndCouponCodes(soapContext,
                                 key.getProductId(), new ArrayList<>(key.getCouponCodes()));
@@ -81,18 +83,20 @@ public class CartItemCouponsLoader {
                 if (CollectionUtils.isEmpty(discounts)) {
                     return new ArrayList<>();
                 }
+                List<com.active.services.cart.service.quote.discount.Discount> discountsWithCondition =
+                discounts.stream().map(disc -> DiscountConvertor.convert(disc, context)).collect(Collectors.toList());
 
                 return items.stream().map(item ->
-                    CartItemCoupons.builder().cartItem(item).couponDiscounts(discounts).build())
+                    CartItemDiscounts.builder().cartItem(item).couponDiscounts(discountsWithCondition).build())
                     .collect(Collectors.toList());
             };
 
             tasks.add(task);
         });
 
-        List<CartItemCoupons> results = new ArrayList<>();
+        List<CartItemDiscounts> results = new ArrayList<>();
         taskRunner.run(tasks).getResults().forEach(r ->
-            results.addAll((List<CartItemCoupons>) r)
+            results.addAll((List<CartItemDiscounts>) r)
         );
 
         return results;
