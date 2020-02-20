@@ -5,7 +5,7 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

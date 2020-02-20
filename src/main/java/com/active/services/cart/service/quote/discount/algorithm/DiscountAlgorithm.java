@@ -1,6 +1,6 @@
 package com.active.services.cart.service.quote.discount.algorithm;
 
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import java.util.List;
 

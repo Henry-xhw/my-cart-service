@@ -63,7 +63,7 @@ public class DiscountSpecsTestCase {
         assertTrue(discountSpecification.satisfy());
 
         discount.setDiscountAlgorithm(DiscountAlgorithm.MOST_EXPENSIVE);
-        cartQuoteContext.addAppliedDiscount(new com.active.services.cart.service.quote.discount.Discount(
+        cartQuoteContext.addAppliedDiscount(new com.active.services.cart.service.quote.discount.domain.Discount(
                 "name", "disc", discount.getAmount(), discount.getAmountType(),
                 discount.getId(), DiscountType.COUPON,
                 discount.getCouponCode(), discount.getDiscountAlgorithm()

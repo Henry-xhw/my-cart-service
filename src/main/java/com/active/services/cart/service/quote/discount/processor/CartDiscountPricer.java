@@ -1,34 +1,40 @@
 package com.active.services.cart.service.quote.discount.processor;
 
+import com.active.services.cart.model.DiscountType;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.coupon.CouponDiscountPricer;
-import com.active.services.product.DiscountType;
+import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
+import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Lookup;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.apache.commons.collections4.CollectionUtils;
 
-@Component
-@Slf4j
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+import java.util.List;
+
 @RequiredArgsConstructor
 public class CartDiscountPricer implements CartPricer {
 
-    private final DiscountType type;
+    @NonNull private final DiscountLoader loader;
+    @NonNull private final DiscountType type;
 
     @Override
     public void quote(CartQuoteContext context) {
-        if (DiscountType.COUPON == type) {
-            getCouponDiscountPricer().quote(context);
+
+        List<CartItemDiscounts> cartItemCoupons = loader.load();
+        if (CollectionUtils.isEmpty(cartItemCoupons)) {
+            return;
         }
+        cartItemCoupons.stream()
+                .forEach(cartItemDisc -> new CartItemDiscountPricer(getDiscountHandler(context, cartItemDisc))
+                        .quote(context, cartItemDisc.getCartItem()));
     }
 
-    @Lookup
-    public CouponDiscountPricer getCouponDiscountPricer() {
-        return null;
+    private DiscountHandler getDiscountHandler(CartQuoteContext context, CartItemDiscounts cartItemDiscounts) {
+        if (type == DiscountType.COUPON_CODE) {
+            return new CouponDiscountHandler(context, cartItemDiscounts);
+        }
+        return new CouponDiscountHandler(context, cartItemDiscounts);
     }
+
 }

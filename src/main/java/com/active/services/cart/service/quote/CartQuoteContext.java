@@ -3,7 +3,7 @@ package com.active.services.cart.service.quote;
 import com.active.services.DiscountModel;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;

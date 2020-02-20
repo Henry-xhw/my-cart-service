@@ -1,8 +1,8 @@
 package com.active.services.cart.service.quote.discount.algorithm;
 
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

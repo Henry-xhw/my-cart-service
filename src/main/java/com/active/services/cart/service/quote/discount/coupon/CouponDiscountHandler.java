@@ -3,11 +3,11 @@ package com.active.services.cart.service.quote.discount.coupon;
 import com.active.services.DiscountModel;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
+import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 import com.active.services.cart.service.quote.discount.processor.DiscountHandler;
 
 import lombok.NonNull;
@@ -25,10 +25,7 @@ public class CouponDiscountHandler implements DiscountHandler {
     @NonNull private final CartItemDiscounts itemDiscounts;
 
     @Override
-    public List<Discount> loadDiscounts() {
-        // itemDiscounts  4
-        // discounts 3
-        // context -- unused r
+    public List<Discount> filterDiscounts() {
         List<Discount> discounts = itemDiscounts.getCouponDiscounts().stream()
                 .filter(Discount::satisfy)
                 .collect(Collectors.toList());

@@ -1,11 +1,11 @@
 package com.active.services.cart.service.quote.discount.processor;
 
-import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import java.util.List;
 
 public interface DiscountHandler {
-    List<Discount> loadDiscounts();
+    List<Discount> filterDiscounts();
     DiscountAlgorithm getDiscountAlgorithm();
 }

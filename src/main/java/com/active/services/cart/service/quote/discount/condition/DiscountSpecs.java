@@ -34,16 +34,6 @@ public class DiscountSpecs {
                 );
     }
 
-    public DiscountSpecification couponDiscount(Discount discount, String inputCode, DateTime evaluateDt,
-                                                String formXml, Long cartId, Long cartItemId, Integer quantity) {
-        return DiscountSequentialSpecs.allOf(
-                new CouponCodeSpec(discount.getCouponCode(), inputCode),
-                new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), evaluateDt),
-                new XmlRestrictionSpec(discount.getRestrictionsExpression(), formXml),
-                new UsageLimitSpec(productRepo, cartId, cartItemId, quantity, discount)
-        );
-    }
-
     public DiscountSpecification couponDiscount(CartQuoteContext context, CartItem cartItem, Discount discount) {
         return DiscountSequentialSpecs.allOf(
             new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), new DateTime(LocalDateTime.now())),

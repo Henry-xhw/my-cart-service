@@ -7,14 +7,18 @@ import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountConvertor;
+import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.processor.DiscountLoader;
 import com.active.services.product.Discount;
 
+import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,35 +33,19 @@ import static java.util.stream.Collectors.groupingBy;
  * Batch load product service available product/coupon mapping to improve performance.
  *
  */
-public class CouponDiscountLoader {
+@Builder
+public class CouponDiscountLoader implements DiscountLoader {
+
     private CartQuoteContext context;
-
     private SOAPClient soapClient;
-
     private TaskRunner taskRunner;
 
-    public CouponDiscountLoader context(CartQuoteContext context) {
-        this.context = context;
-
-        return this;
-    }
-
-    public CouponDiscountLoader soapClient(SOAPClient soapClient) {
-        this.soapClient = soapClient;
-
-        return this;
-    }
-
-    public CouponDiscountLoader taskRunner(TaskRunner taskRunner) {
-        this.taskRunner = taskRunner;
-
-        return this;
-    }
     /**
      * Get product service available discounts builder for future filter.
      *
      * @return
      */
+    @Override
     public List<CartItemDiscounts> load() {
         // Filter qualified cart items
         List<CartItem> cartItems = context.getCart().getFlattenCartItems();
@@ -78,7 +66,7 @@ public class CouponDiscountLoader {
                 if (CollectionUtils.isEmpty(discounts)) {
                     return new ArrayList<>();
                 }
-                List<com.active.services.cart.service.quote.discount.Discount> discountsWithCondition =
+                List<com.active.services.cart.service.quote.discount.domain.Discount> discountsWithCondition =
                 discounts.stream().map(disc -> DiscountConvertor.convert(disc, context)).collect(Collectors.toList());
 
                 return items.stream().map(item ->
@@ -94,7 +82,9 @@ public class CouponDiscountLoader {
             results.addAll((List<CartItemDiscounts>) r)
         );
 
-        return results;
+        return CollectionUtils.emptyIfNull(results).stream()
+                .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
+                .sorted(Comparator.comparing(CartItemDiscounts :: getNetPrice).reversed()).collect(Collectors.toList());
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,

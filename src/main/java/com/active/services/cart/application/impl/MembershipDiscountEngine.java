@@ -5,9 +5,9 @@ import com.active.services.cart.client.soap.ProductServiceSoap;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscountsApplication;
-import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountsAlgorithms;
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecs;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 

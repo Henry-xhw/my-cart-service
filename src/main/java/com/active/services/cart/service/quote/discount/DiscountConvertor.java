@@ -5,6 +5,7 @@ import com.active.services.cart.service.quote.discount.condition.DiscountSequent
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
 import com.active.services.cart.service.quote.discount.condition.UniqueUsedSpec;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 import com.active.services.domain.DateTime;
 import com.active.services.product.DiscountType;
 

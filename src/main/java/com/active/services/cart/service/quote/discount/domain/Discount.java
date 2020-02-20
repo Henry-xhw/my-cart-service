@@ -1,5 +1,6 @@
-package com.active.services.cart.service.quote.discount;
+package com.active.services.cart.service.quote.discount.domain;
 
+import com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil;
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;

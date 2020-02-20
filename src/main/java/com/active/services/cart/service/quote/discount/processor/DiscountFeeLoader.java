@@ -2,7 +2,7 @@ package com.active.services.cart.service.quote.discount.processor;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

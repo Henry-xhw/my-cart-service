@@ -2,7 +2,7 @@ package com.active.services.cart.domain;
 
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.domain.Discount;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import lombok.AllArgsConstructor;
