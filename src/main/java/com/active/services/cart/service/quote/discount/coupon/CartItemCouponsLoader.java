@@ -108,15 +108,26 @@ public class CartItemCouponsLoader {
             return Optional.empty();
         }
 
-        return Optional.of(FindLatestDiscountsByProductIdAndCouponCodesKey.builder()
-                .couponCodes(requestedCodes).productId(cartItem.getProductId()).build());
+        FindLatestDiscountsByProductIdAndCouponCodesKey key = new FindLatestDiscountsByProductIdAndCouponCodesKey();
+        key.setCouponCodes(requestedCodes);
+        key.setProductId(cartItem.getProductId());
+
+        return Optional.of(key);
     }
+
     @Data
-    @lombok.Builder
-    private class FindLatestDiscountsByProductIdAndCouponCodesKey {
+    class FindLatestDiscountsByProductIdAndCouponCodesKey {
 
         private Long productId;
 
         private Set<String> couponCodes;
+
+        public void setProductId(Long productId) {
+            this.productId = productId;
+        }
+
+        public void setCouponCodes(Set<String> couponCodes) {
+            this.couponCodes = couponCodes;
+        }
     }
 }
