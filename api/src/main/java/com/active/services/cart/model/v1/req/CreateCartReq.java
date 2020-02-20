@@ -20,4 +20,6 @@ public class CreateCartReq {
     private String currencyCode;
 
     private Set<String> couponCodes;
+
+    private UUID reservationId;
 }
