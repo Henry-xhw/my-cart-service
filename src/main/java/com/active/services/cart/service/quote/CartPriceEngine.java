@@ -24,7 +24,7 @@ public class CartPriceEngine {
         prepare(context);
 
         getCartUnitPricePricer().quote(context);
-        applyDiscount(context);
+        //applyDiscount(context);
 
         getCartProductProcessingFeePricer(FeeOwner.CONSUMER).quote(context);
         getCartDiscountPricer(DiscountType.ACTIVE_ADVANTAGE).quote(context);
