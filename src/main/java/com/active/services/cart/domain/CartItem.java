@@ -5,7 +5,6 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
-import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +15,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -75,11 +75,14 @@ public class CartItem extends BaseTree<CartItem> {
         this.couponMode = updateCartItemDto.getCouponMode();
     }
 
-    public CartItem applyDiscount(Discount disc, String currency) {
-        fees.stream()
-                .filter(f -> f.getType() == CartItemFeeType.PRICE)
-                .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT)
-                .forEach(f -> f.applyDiscount(disc, currency));
+    public List<CartItemFee> getPriceCartItemFee() {
+        return getFees().stream()
+                    .filter(f -> f.getType() == CartItemFeeType.PRICE)
+                    .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT).collect(Collectors.toList());
+    }
+
+    public CartItem refreshNetPriceByDiscAmt(BigDecimal amt) {
+        netPrice = netPrice.subtract(amt);
         return this;
     }
 }
