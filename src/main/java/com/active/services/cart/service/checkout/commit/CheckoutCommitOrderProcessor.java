@@ -8,11 +8,9 @@ import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.service.checkout.CheckoutBaseProcessor;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutEvent;
-import com.active.services.cart.service.checkout.FeeAllocationMapper;
 import com.active.services.cart.service.checkout.PaymentMapper;
 import com.active.services.cart.service.checkout.PlaceCartMapper;
 import com.active.services.order.management.api.v3.types.OrderDTO;
-import com.active.services.order.management.api.v3.types.OrderLineFeeAllocationDTO;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
 import com.active.services.order.management.api.v3.types.PaymentDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
@@ -54,12 +52,10 @@ public class CheckoutCommitOrderProcessor extends CheckoutBaseProcessor {
         orderDTO.setPayAccountId(payAccountId);
 
         List<PaymentDTO> payments = PaymentMapper.MAPPER.convert(ctx.getPayments());
-        List<OrderLineFeeAllocationDTO> feeAllocations = FeeAllocationMapper.MAPPER.convert(ctx.getFeeAllocations());
 
         PlaceOrderReq req = new PlaceOrderReq();
         req.setOrderDTO(orderDTO);
         req.setPayments(payments);
-        req.setOrderLineFeeAllocations(feeAllocations);
 
         PlaceOrderRsp rsp = orderService.placeOrder(req);
 

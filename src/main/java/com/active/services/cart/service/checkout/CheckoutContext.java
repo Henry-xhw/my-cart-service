@@ -42,8 +42,6 @@ public class CheckoutContext {
 
     private List<CheckoutResult> checkoutResults = new ArrayList<>();
 
-    private List<CartItemFeeAllocation> feeAllocations;
-
     private List<Payment> payments = new ArrayList<>();
 
     private List<CartItemFee> flattenCartItemFees;
