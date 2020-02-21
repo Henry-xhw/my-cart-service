@@ -3,9 +3,9 @@ package com.active.services.cart.service.quote.discount.processor;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
 import com.active.services.cart.service.quote.discount.DiscountHandler;
-import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class CartItemDiscountPricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
 
-        List<Discount> discounts = handler.filterDiscounts();
+        List<DiscountApplication> discounts = handler.filterDiscounts();
         if (CollectionUtils.isEmpty(discounts)) {
             return;
         }
