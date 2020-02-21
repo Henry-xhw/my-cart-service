@@ -195,4 +195,4 @@ BEGIN
     ALTER TABLE dbo.cart_item_fees ADD cart_discount_id BIGINT NULL;
 	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
 END
-
+GO
