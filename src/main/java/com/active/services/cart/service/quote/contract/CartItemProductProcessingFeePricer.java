@@ -44,6 +44,7 @@ public class CartItemProductProcessingFeePricer implements CartItemPricer {
                 cartItemFee.setDescription(feeAmountResult.getDescription());
                 cartItemFee.setUnitPrice(feeAmountResult.getAmount());
                 cartItemFee.setUnits(cartItem.getQuantity());
+                cartItemFee.setDueAmount(cartItemFee.getUnitPrice());
                 mapTypesToCartItemFee(feeAmountResult.getFeeType(), cartItemFee);
                 itemFee.getSubItems().add(cartItemFee);
             }
