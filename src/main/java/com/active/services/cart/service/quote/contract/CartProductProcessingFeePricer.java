@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static com.active.services.cart.model.ErrorCode.INTERNAL_ERROR;
+import static com.active.services.cart.model.ErrorCode.QUOTE_ERROR;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -93,7 +93,7 @@ public class CartProductProcessingFeePricer implements CartPricer {
     private List<FeeResult> getProcessingFeesFromContractService(CalculateFeeAmountsReq req) {
         CalculateFeeAmountsRsp rsp = contractService.calculateFeeAmounts(req);
         if (BooleanUtils.isFalse(rsp.isSuccess()) || CollectionUtils.isEmpty(rsp.getFeeResults())) {
-            throw new CartException(INTERNAL_ERROR, "Failed to quote product processing fee for cart: {0}, {1}",
+            throw new CartException(QUOTE_ERROR, "Failed to quote product processing fee for cart: {0}, {1}",
                     rsp.getErrorCode(),
                     rsp.getErrorMessage());
         }
