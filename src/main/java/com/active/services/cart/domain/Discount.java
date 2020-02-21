@@ -1,17 +1,12 @@
-package com.active.services.cart.service.quote.discount.domain;
+package com.active.services.cart.domain;
 
-import com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil;
-import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 import com.active.services.product.AmountType;
-import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
 @Getter
 public class Discount {
@@ -22,8 +17,6 @@ public class Discount {
     private Long discountId;
     private DiscountType discountType;
     private String couponCode;
-    private DiscountAlgorithm algorithm;
-    @Setter private DiscountSpecification condition;
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;
@@ -33,7 +26,7 @@ public class Discount {
     }
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType,
-                    Long discountId, DiscountType discountType, String couponCode, DiscountAlgorithm algorithm) {
+                    Long discountId, DiscountType discountType, String couponCode) {
         this.name = name;
         this.description = description;
         this.amount = amount;
@@ -41,14 +34,5 @@ public class Discount {
         this.discountId = discountId;
         this.discountType = discountType;
         this.couponCode = couponCode;
-        this.algorithm = algorithm;
-    }
-
-    public boolean satisfy() {
-        return condition.satisfy();
-    }
-
-    public BigDecimal apply(BigDecimal amountToDiscount, Currency currency) {
-        return DiscountAmountCalcUtil.calcFlatAmount(amountToDiscount, amount, amountType, currency);
     }
 }

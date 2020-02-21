@@ -3,12 +3,12 @@ package com.active.services.cart.service.quote.discount.coupon;
 import com.active.services.DiscountModel;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
-import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.domain.Discount;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +33,9 @@ public class CouponDiscountHandler implements DiscountHandler {
      * Otherwise, high priority discounts {@link #getHighPriorityDiscounts} will be returned.
      */
     @Override
-    public List<Discount> filterDiscounts() {
-        List<Discount> discounts = itemDiscounts.getCouponDiscounts().stream()
-                .filter(Discount::satisfy)
+    public List<DiscountApplication> filterDiscounts() {
+        List<DiscountApplication> discounts = itemDiscounts.getDiscounts().stream()
+                .filter(DiscountApplication::satisfy)
                 .collect(Collectors.toList());
         return isCombinableDiscountMode()? discounts : getHighPriorityDiscounts(discounts);
     }
@@ -53,8 +53,8 @@ public class CouponDiscountHandler implements DiscountHandler {
      * Otherwise, return given discounts.
      *
      */
-    private List<Discount> getHighPriorityDiscounts(List<Discount> discounts) {
-        List<Discount> cartItemLevelDiscount = new ArrayList<>();
+    private List<DiscountApplication> getHighPriorityDiscounts(List<DiscountApplication> discounts) {
+        List<DiscountApplication> cartItemLevelDiscount = new ArrayList<>();
         if (itemDiscounts.getCartItem().getCouponMode() == CouponMode.HIGH_PRIORITY) {
             cartItemLevelDiscount =
                     CollectionUtils.emptyIfNull(discounts).stream().filter(discount ->

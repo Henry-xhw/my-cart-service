@@ -2,9 +2,9 @@ package com.active.services.cart.service.quote;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.service.quote.discount.domain.Discount;
 import com.active.services.contract.controller.v1.FeeAmountResult;
 import com.active.services.contract.controller.v1.type.FeeType;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;

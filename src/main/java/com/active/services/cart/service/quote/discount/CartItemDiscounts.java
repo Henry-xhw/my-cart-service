@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.domain;
+package com.active.services.cart.service.quote.discount;
 
 import com.active.services.cart.domain.CartItem;
 
@@ -14,7 +14,7 @@ public class CartItemDiscounts {
 
     private CartItem cartItem;
 
-    private List<Discount> couponDiscounts;
+    private List<DiscountApplication> discounts;
 
     public BigDecimal getNetPrice() {
         return cartItem.getNetPrice();

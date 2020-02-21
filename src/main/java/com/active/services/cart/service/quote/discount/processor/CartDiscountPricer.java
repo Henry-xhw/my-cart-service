@@ -5,11 +5,11 @@ import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.model.DiscountType;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
 import com.active.services.cart.service.quote.discount.coupon.CouponDiscountLoader;
-import com.active.services.cart.service.quote.discount.domain.CartItemDiscounts;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
