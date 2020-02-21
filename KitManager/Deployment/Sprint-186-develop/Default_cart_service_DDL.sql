@@ -675,8 +675,7 @@ BEGIN
     ALTER TABLE dbo.cart_item_fees ADD cart_discount_id BIGINT NULL;
 	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
 END
-
-
+GO
 GO
 --/KitManagerFileID=17876
 if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
