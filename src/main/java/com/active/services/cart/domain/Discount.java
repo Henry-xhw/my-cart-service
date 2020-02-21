@@ -1,6 +1,7 @@
 package com.active.services.cart.domain;
 
 import com.active.services.product.AmountType;
+import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Discount {
     private Long discountId;
     private DiscountType discountType;
     private String couponCode;
+    private DiscountAlgorithm algorithm;
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;
@@ -26,7 +28,7 @@ public class Discount {
     }
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType,
-                    Long discountId, DiscountType discountType, String couponCode) {
+                    Long discountId, DiscountType discountType, String couponCode, DiscountAlgorithm algorithm) {
         this.name = name;
         this.description = description;
         this.amount = amount;
@@ -34,5 +36,6 @@ public class Discount {
         this.discountId = discountId;
         this.discountType = discountType;
         this.couponCode = couponCode;
+        this.algorithm = algorithm;
     }
 }

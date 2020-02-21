@@ -28,7 +28,7 @@ public class CartPriceEngine {
     }
 
     private void applyDiscount(CartQuoteContext context) {
-        getDiscountPricer(DiscountType.MULTI);
+        getDiscountPricer(DiscountType.MULTI).quote(context);
     }
 
     private void prepare(CartQuoteContext context) {

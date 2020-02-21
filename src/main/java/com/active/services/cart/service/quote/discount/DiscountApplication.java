@@ -15,15 +15,13 @@ import java.math.BigDecimal;
 @Getter
 public class DiscountApplication extends Discount {
 
-    private DiscountAlgorithm algorithm;
     private DiscountSpecification condition;
 
     @Builder
     public DiscountApplication(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType,
                     Long discountId, DiscountType discountType, String couponCode, DiscountAlgorithm algorithm,
                     DiscountSpecification condition) {
-        super(name, description, amount, amountType, discountId, discountType, couponCode);
-        this.algorithm = algorithm;
+        super(name, description, amount, amountType, discountId, discountType, couponCode, algorithm);
         this.condition = condition;
     }
 
