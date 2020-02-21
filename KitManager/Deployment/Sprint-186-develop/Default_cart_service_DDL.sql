@@ -491,6 +491,7 @@ BEGIN
         [transaction_type]          NVARCHAR(25)        NOT NULL,
         [units]                     BIGINT              NOT NULL,
         [unit_price]                DECIMAL(19, 2)      NOT NULL,
+        [due_amount]                DECIMAL(19, 2)      NOT NULL DEFAULT 0,
         [cart_discount_id]          BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
@@ -646,12 +647,35 @@ BEGIN
 END
 
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'due_amount'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_item_fees ADD [due_amount] DECIMAL(19, 2) NOT NULL DEFAULT 0;
+	PRINT 'add column due_amount, dbo.cart_item_fees'
+END
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','due_amount'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'due amount',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_item_fees',
+ @level2type = 'Column',
+ @level2name = 'due_amount'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_discount_id'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
 BEGIN
     ALTER TABLE dbo.cart_item_fees ADD cart_discount_id BIGINT NULL;
 	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
 END
+
 
 GO
 --/KitManagerFileID=17876
