@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -31,7 +32,7 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private BigDecimal unitPrice;
 
-    private Long cartDiscountId;
+    private UUID relatedIdentifier;
 
     public CartItemFee refreshUnitPriceByDiscAmt(BigDecimal amt) {
         unitPrice = unitPrice.subtract(amt);

@@ -32,5 +32,5 @@ public class CartDto extends BaseDto {
     private List<CartItemDto> items = new ArrayList<>();
 
     @Valid
-    private List<CartDiscountDto> discounts = new ArrayList<>();
+    private List<DiscountDto> discounts = new ArrayList<>();
 }

@@ -1,17 +1,18 @@
 package com.active.services.cart.repository.mapper;
 
-import com.active.services.cart.domain.CartDiscount;
+import com.active.services.cart.domain.Discount;
 import com.active.services.product.DiscountType;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper
 public interface CartDiscountMapper {
-    void createDiscount(CartDiscount cartDiscount);
+    void batchInsertDiscount(List<Discount> discounts);
 
-    Optional<CartDiscount> getCartDiscountByDiscountIdAndType(@Param("discountType") DiscountType discountType,
-                                                             @Param("discountId") Long discountId);
+    Optional<Discount> getDiscountByDiscountIdAndType(@Param("discountType") DiscountType discountType,
+                                                      @Param("discountId") Long discountId);
 }

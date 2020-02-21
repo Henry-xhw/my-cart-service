@@ -1,16 +1,24 @@
 package com.active.services.cart.domain;
 
+import com.active.services.cart.model.DiscountOrigin;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
-public class Discount {
+@NoArgsConstructor
+public class Discount extends BaseDomainObject{
+
+    private Long cartId;
     private String name;
     private String description;
     private BigDecimal amount;
@@ -20,6 +28,9 @@ public class Discount {
     private String couponCode;
     private DiscountAlgorithm algorithm;
 
+    private Boolean applyToRecurringBilling;
+    private DiscountOrigin origin;
+
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;
         this.description = description;
@@ -28,7 +39,8 @@ public class Discount {
     }
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType,
-                    Long discountId, DiscountType discountType, String couponCode, DiscountAlgorithm algorithm) {
+                    Long discountId, DiscountType discountType, String couponCode, DiscountAlgorithm algorithm,
+                    Boolean applyToRecurringBilling, UUID identifier, Long cartId) {
         this.name = name;
         this.description = description;
         this.amount = amount;
@@ -37,5 +49,8 @@ public class Discount {
         this.discountType = discountType;
         this.couponCode = couponCode;
         this.algorithm = algorithm;
+        this.applyToRecurringBilling = applyToRecurringBilling;
+        this.cartId = cartId;
+        this.setIdentifier(identifier);
     }
 }

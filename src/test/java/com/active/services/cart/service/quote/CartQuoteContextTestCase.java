@@ -92,12 +92,13 @@ public class CartQuoteContextTestCase {
         cartQuoteContext.addAppliedDiscount(new DiscountApplication(
                 "name", "disc", new BigDecimal(2), AmountType.FLAT,
                 RandomUtils.nextLong(), DiscountType.MULTI, "cde", DiscountAlgorithm.MOST_EXPENSIVE,
-                null));
+                null, null, null, null));
 
 
         cartQuoteContext.addAppliedDiscount(new DiscountApplication(
                 "name", "disc", new BigDecimal(2), AmountType.FLAT,
-                RandomUtils.nextLong(), DiscountType.COUPON, "cde", null, null));
+                RandomUtils.nextLong(), DiscountType.COUPON, "cde", null, null,
+                null, null, null));
 
         assertEquals(2, cartQuoteContext.getAppliedDiscounts().size());
         assertTrue(CollectionUtils.isEmpty(cartQuoteContext.getUsedUniqueCouponDiscountsIds()));
@@ -105,7 +106,8 @@ public class CartQuoteContextTestCase {
         Long id = RandomUtils.nextLong();
         cartQuoteContext.addAppliedDiscount(new DiscountApplication(
                 "name", "disc", new BigDecimal(2), AmountType.FLAT, id,
-                DiscountType.COUPON, "cde", DiscountAlgorithm.MOST_EXPENSIVE, null));
+                DiscountType.COUPON, "cde", DiscountAlgorithm.MOST_EXPENSIVE, null,
+                null, null, null));
         assertEquals(3, cartQuoteContext.getAppliedDiscounts().size());
 
         assertEquals(1, cartQuoteContext.getUsedUniqueCouponDiscountsIds().size());

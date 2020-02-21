@@ -11,7 +11,7 @@ BEGIN
         [transaction_type]          NVARCHAR(25)        NOT NULL,
         [units]                     BIGINT              NOT NULL,
         [unit_price]                DECIMAL(19, 2)      NOT NULL,
-        [cart_discount_id]          BIGINT              NULL,
+        [related_identifier]        UNIQUEIDENTIFIER    NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -148,6 +148,19 @@ BEGIN
  @level2name = 'unit_price'
 END
 GO
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','related_identifier'))
+BEGIN
+   EXEC sys.sp_addextendedproperty
+ @name = N'MS_Description',
+ @value = N'discount identifier, surcharge identifier',
+ @level0type = 'SCHEMA',
+ @level0name = 'dbo',
+ @level1type = 'TABLE',
+ @level1name = 'cart_item_fees',
+ @level2type = 'Column',
+ @level2name = 'related_identifier'
+END
+GO
 
 IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'name'
@@ -169,6 +182,6 @@ IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_discount_id'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
 BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD cart_discount_id BIGINT NULL;
+    ALTER TABLE dbo.cart_item_fees ADD related_identifier BIGINT NULL;
 	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
 END

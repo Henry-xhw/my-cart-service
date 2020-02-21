@@ -8,10 +8,12 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFeesInCart;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.repository.DiscountRepository;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
@@ -26,12 +28,15 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -46,6 +51,8 @@ public class CartService {
     private final CartItemFeeRepository cartItemFeeRepository;
 
     private final CartPriceEngine cartPriceEngine;
+
+    private final DiscountRepository discountRepository;
 
     private final DataAccess dataAccess;
 
@@ -175,11 +182,21 @@ public class CartService {
 
     private void saveQuoteResult(Cart cart) {
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
+        batchInsertDiscount(cart.getDiscounts());
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
+    }
+
+    private void batchInsertDiscount(List<Discount> discounts) {
+        discountRepository.batchInsertDiscount(discounts.stream()
+                .filter(discount -> !discountRepository.getDiscountByDiscountIdAndType(discount.getDiscountType(),
+                        discount.getCartId()).isPresent())
+                .collect(Collectors.collectingAndThen(Collectors
+                        .toCollection(() -> new TreeSet<>(Comparator
+                                .comparing(d -> d.getDiscountId() + d.getDiscountType().toString()))), ArrayList::new)));
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {

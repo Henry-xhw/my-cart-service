@@ -18,23 +18,24 @@ public class CartItemFeeBuilder {
 
     public static CartItemFee buildOverridePriceItemFee(CartItem cartItem) {
         return buildCartItemFee(cartItem.getProductName(), cartItem.getProductDescription(),
-        cartItem.getUnitPrice(), cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT);
+        cartItem.getUnitPrice(), cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT, null);
     }
 
     public static CartItemFee buildPriceItemFee(Integer quantity, FeeDto feeDto) {
         return buildCartItemFee(feeDto.getName(), feeDto.getDescription(), feeDto.getAmount(),
-                quantity, CartItemFeeType.PRICE, FeeTransactionType.DEBIT);
+                quantity, CartItemFeeType.PRICE, FeeTransactionType.DEBIT, null);
      }
 
     public static CartItemFee buildDiscountItemFee(Discount discount, BigDecimal discAmount, Integer quantity) {
         return buildCartItemFee(discount.getName(), discount.getDescription(), discAmount, quantity,
-                CartItemFeeType.DISCOUNT, FeeTransactionType.CREDIT);
+                CartItemFeeType.DISCOUNT, FeeTransactionType.CREDIT, discount.getIdentifier());
+
     }
 
     public static CartItemFee buildActiveFeeCartItemFee(Integer quantity, FeeAmountResult feeAmountResult) {
         return buildCartItemFee(feeAmountResult.getDescription(), feeAmountResult.getDescription(),
                 feeAmountResult.getAmount(), quantity, getFeeType(feeAmountResult.getFeeType()),
-                getTranactionType(feeAmountResult.getFeeType()));
+                getTranactionType(feeAmountResult.getFeeType()), null);
     }
 
     private static CartItemFeeType getFeeType(FeeType feeType) {
@@ -53,7 +54,8 @@ public class CartItemFeeBuilder {
 
     @NotNull
     private static CartItemFee buildCartItemFee(String name, String desc, BigDecimal amount, Integer units,
-                                                CartItemFeeType cartItemFeeType, FeeTransactionType transactionType) {
+                                                CartItemFeeType cartItemFeeType, FeeTransactionType transactionType,
+                                                UUID identifier) {
         CartItemFee priceFee = CartItemFee.builder()
                 .name(name)
                 .description(desc)
@@ -61,8 +63,8 @@ public class CartItemFeeBuilder {
                 .transactionType(transactionType)
                 .unitPrice(amount)
                 .units(units)
+                .relatedIdentifier(identifier)
                 .build();
-        priceFee.setIdentifier(UUID.randomUUID());
         return priceFee;
     }
 }

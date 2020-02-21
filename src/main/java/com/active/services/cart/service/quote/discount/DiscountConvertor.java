@@ -9,6 +9,7 @@ import com.active.services.domain.DateTime;
 import com.active.services.product.DiscountType;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class DiscountConvertor {
 
@@ -21,6 +22,9 @@ public class DiscountConvertor {
                 .discountId(disc.getId())
                 .discountType(DiscountType.COUPON)
                 .algorithm(disc.getDiscountAlgorithm())
+                .applyToRecurringBilling(disc.getApplyToRecurringBilling())
+                .identifier(UUID.randomUUID())
+                .cartId(context.getCart().getId())
                 .condition(buildDiscountSpecification(context, disc)).build();
     }
 
