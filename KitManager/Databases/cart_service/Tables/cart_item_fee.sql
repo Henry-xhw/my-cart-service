@@ -16,7 +16,8 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL
+        [modified_dt]               DATETIME            NOT NULL,
+        CONSTRAINT [pk_fee_payable_unit] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.cart_item_fees'
 END
