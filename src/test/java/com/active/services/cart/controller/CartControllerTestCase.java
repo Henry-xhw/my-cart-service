@@ -10,6 +10,7 @@ import com.active.services.cart.mock.MockCart;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.req.UpdateCartReq;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +47,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +67,7 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(cartDtoReq.getOwnerId());
         req.setKeyerId(cartDtoReq.getKeyerId());
         req.setCurrencyCode(cartDtoReq.getCurrencyCode());
+        req.setCouponCodes(cartDtoReq.getCouponCodes());
         CreateCartRsp rsp = new CreateCartRsp();
         rsp.setCart(cartDtoReq);
         //req.setIdentifier(cartDtoReq.getIdentifier());
@@ -124,6 +128,23 @@ public class CartControllerTestCase extends BaseControllerTestCase {
                 .content(objectMapper.writeValueAsString(req))).andExpect(status().isOk()).andDo(
             newErrorDocument("Cart", "Create-Cart", "Currency_Code_IS_Null"));
         verify(cartService, never()).create(any());
+    }
+
+    @Test
+    public void updateCartSuccess() throws Exception {
+        UpdateCartReq req = new UpdateCartReq();
+        req.setCouponCodes(Collections.singleton("FDSAFSA"));
+        doNothing().when(cartService).update(any());
+
+        mockMvc.perform(put("/carts/{id}", cartId)
+                .contentType(V1_MEDIA)
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andDo(newSuccessDocument("Cart", "Update-Cart",
+                        autoRequestFieldsDoc(req),
+                        pathParameters(autoPathParameterDoc("id", CartDto.class, "identifier"))));
+        verify(cartService, times(1)).update(any());
     }
 
     @Test

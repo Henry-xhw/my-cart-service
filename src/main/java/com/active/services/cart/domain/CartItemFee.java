@@ -2,16 +2,25 @@ package com.active.services.cart.domain;
 
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.service.quote.discount.Discount;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class CartItemFee extends BaseTree<CartItemFee> {
     private String name;
 
@@ -25,7 +34,9 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private BigDecimal unitPrice;
 
-    private BigDecimal dueAmount = BigDecimal.ZERO;
+    private BigDecimal dueAmount;
+
+    private Long cartDiscountId;
 
     public static CartItemFee buildCartItemFee(CartItem cartItem, CartItemFeeType cartItemFeeType) {
         CartItemFee unitPriceFee = new CartItemFee();
@@ -50,5 +61,21 @@ public class CartItemFee extends BaseTree<CartItemFee> {
         unitPriceFee.setUnitPrice(feeDto.getAmount());
         unitPriceFee.setUnits(cartItem.getQuantity());
         return unitPriceFee;
+    }
+
+    public void applyDiscount(Discount disc, String currency) {
+        if (getSubItems() == null) {
+            setSubItems(new ArrayList<>());
+        }
+        BigDecimal discAmount = disc.apply(unitPrice, Currency.getInstance(currency));
+        getSubItems().add(CartItemFee.builder()
+                .name(disc.getName())
+                .description(disc.getDescription())
+                .type(CartItemFeeType.DISCOUNT)
+                .transactionType(FeeTransactionType.CREDIT)
+                .unitPrice(discAmount)
+                .units(units)
+                .build());
+        unitPrice = unitPrice.subtract(discAmount);
     }
 }

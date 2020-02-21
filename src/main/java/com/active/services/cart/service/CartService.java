@@ -27,10 +27,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +51,16 @@ public class CartService {
 
     @Transactional
     public void create(Cart cart) {
+        cart.setCouponCodes(distinctCouponCodes(cart.getCouponCodes()));
         cartRepository.createCart(cart);
+    }
+
+    @Transactional
+    public void update(Cart cart) {
+        cart.setId(getCartByUuid(cart.getIdentifier()).getId());
+        cart.setCouponCodes(distinctCouponCodes(cart.getCouponCodes()));
+        cartRepository.updateCart(cart);
+        incrementVersion(cart.getIdentifier());
     }
 
     @Transactional
@@ -71,6 +85,7 @@ public class CartService {
         items.forEach(it -> cart.findCartItem(it.getIdentifier())
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                 "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
+        items.forEach(item -> item.setCouponCodes(distinctCouponCodes(item.getCouponCodes())));
         cartRepository.updateCartItems(items);
         incrementVersion(cartIdentifier);
         return items;
@@ -108,6 +123,7 @@ public class CartService {
             } else {
                 it.setIdentifier(UUID.randomUUID());
                 it.setParentId(parentId);
+                it.setCouponCodes(distinctCouponCodes(it.getCouponCodes()));
                 parentId = createCartItem(cartId, it);
             }
             List<CartItem> subItems = it.getSubItems();
@@ -166,11 +182,25 @@ public class CartService {
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
-                cartItemFeeRepository.createCartItemFee(cartItemFee);
-                cartItemFeeRepository.createCartItemCartItemFee(
-                        CartItemFeeRelationship.buildCartItemCartItemFee(item.getId(), cartItemFee.getId()));
+                createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
+    }
+
+    private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {
+        cartItemFeeRepository.createCartItemFee(cartItemFee);
+        cartItemFeeRepository.createCartItemCartItemFee(
+                CartItemFeeRelationship.buildCartItemCartItemFee(itemId, cartItemFee.getId()));
+        createSubFeeAndRelationship(cartItemFee, itemId);
+    }
+
+    private void createSubFeeAndRelationship(CartItemFee itemFee, Long itemId) {
+        emptyIfNull(itemFee.getSubItems()).stream().filter(Objects::nonNull).forEach(
+            itemFee1 -> {
+                itemFee1.setParentId(itemFee.getId());
+                createCartItemFeeAndRelationship(itemFee1, itemId);
+            }
+        );
     }
 
     private Cart getCartWithFullPriceByUuid(UUID cartId) {
@@ -189,5 +219,11 @@ public class CartService {
             TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
             cartItem.setFees(baseTreeTreeBuilder.buildTree());
         });
+    }
+
+    private Set<String> distinctCouponCodes(Set<String> couponCodes) {
+        return Optional.ofNullable(couponCodes)
+                .map(item -> item.stream().map(String::toUpperCase).collect(Collectors.toSet()))
+                .orElse(new HashSet<>());
     }
 }

@@ -1,8 +1,10 @@
-package com.active.services.cart.service.quote;
+package com.active.services.cart.service.quote.price;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.service.quote.CartItemPricer;
+import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import lombok.RequiredArgsConstructor;
@@ -40,13 +42,13 @@ public class CartItemUnitPricePricer implements CartItemPricer {
     private void setGrossAndNetPriceValue(CartItem cartItem) {
         Optional.ofNullable(cartItem.getFees()).ifPresent(
             fees -> fees.stream().filter(cartItemFee -> Objects.equals(cartItemFee.getType(), CartItemFeeType.PRICE))
-            .findAny().map(cartItemFee -> {
-                cartItem.setGrossPrice(cartItemFee.getUnitPrice().multiply(new BigDecimal(cartItemFee.getUnits())));
-                //OMS-10128 Net Price = Gross Price - Price Hikes Amount - Discounts Amount
-                //Since we didn't plan to implement discount and price hike in cart service at this point,
-                //hence the gross price = net price
-                cartItem.setNetPrice(cartItem.getGrossPrice());
-                return cartItemFee;
-            }));
+                .findAny().ifPresent(cartItemFee -> {
+                    cartItem.setGrossPrice(cartItemFee.getUnitPrice().multiply(new BigDecimal(cartItemFee.getUnits())));
+                    //OMS-10128 Net Price = Gross Price - Price Hikes Amount - Discounts Amount
+                    //Since we didn't plan to implement cartDiscount and price hike in cart service at this point,
+                    //hence the gross price = net price
+                    cartItem.setNetPrice(cartItem.getGrossPrice());
+                })
+        );
     }
 }

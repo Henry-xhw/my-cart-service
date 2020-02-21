@@ -8,6 +8,7 @@ import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.CartItemFeeAllocationDTO;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.req.UpdateCartReq;
 import com.active.services.cart.service.checkout.CheckoutContext;
 
 import org.mapstruct.Context;
@@ -40,4 +41,5 @@ public interface CartMapper {
     @InheritInverseConfiguration
     CreateCartReq toCreateCartReq(Cart cart);
 
+    Cart toDomainFromUpdateCartReq(UpdateCartReq req);
 }

@@ -1,8 +1,10 @@
-package com.active.services.cart.service.quote;
+package com.active.services.cart.service.quote.price;
 
 import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.service.quote.CartPricer;
+import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.util.TreeBuilder;
 import com.active.services.product.nextgen.v1.dto.QuoteItemDto;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
@@ -68,7 +70,6 @@ public class CartUnitPricePricer implements CartPricer {
                 .forEach(notUnitPriceItem ->
                         feeDtoHashMap.put(notUnitPriceItem.getProductId(),
                                 sequenceFeedtoMap.get(notUnitPriceItem.getSequence())));
-
         return feeDtoHashMap;
     }
 

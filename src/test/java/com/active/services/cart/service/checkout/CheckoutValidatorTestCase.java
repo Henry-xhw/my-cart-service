@@ -4,53 +4,88 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.domain.CartItemFee;
-import com.active.services.cart.model.CartItemFeeAllocation;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.service.CartStatus;
 
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CheckoutValidatorTestCase {
 
-    @Test(expected = CartException.class)
-    public void testFlattenCartItemsIsEmpty() {
-        Cart cart = CartDataFactory.cart();
-        CheckoutContext checkoutContext = new CheckoutContext();
-        checkoutContext.setCart(cart);
+    @Test
+    public void checkoutWhenCartWithoutCartItem() {
+        Cart cart = getQualifiedCart(UUID.randomUUID());
         cart.setItems(new ArrayList<>());
-        CheckoutValidator validator = new CheckoutValidator();
-        validator.validate(checkoutContext);
-    }
-
-    @Test(expected = CartException.class)
-    public void testPriceVersionIsMatch() {
-        Cart cart = CartDataFactory.cart();
         CheckoutContext checkoutContext = new CheckoutContext();
         checkoutContext.setCart(cart);
-        cart.setVersion(cart.getPriceVersion() + 1);
-        CheckoutValidator validator = new CheckoutValidator();
-        validator.validate(checkoutContext);
+
+        try {
+            CheckoutValidator validator = new CheckoutValidator();
+            validator.validate(checkoutContext);
+            fail("should fail when there is no cart item");
+        } catch (CartException e) {
+            assertEquals(ErrorCode.CART_ITEM_NOT_FOUND, e.getErrorCode());
+        }
     }
 
-    @Test(expected = CartException.class)
-    public void testCartIsFinalized() {
-        Cart cart = CartDataFactory.cart();
+    @Test
+    public void checkoutWhenCartWithUnMatchedPricing() {
+        UUID cartId = UUID.randomUUID();
+        Cart cart = getQualifiedCart(cartId);
+        cart.setVersion(3);
         CheckoutContext checkoutContext = new CheckoutContext();
         checkoutContext.setCart(cart);
+
+        try {
+            CheckoutValidator validator = new CheckoutValidator();
+            validator.validate(checkoutContext);
+            fail("should fail when pricing out of date");
+        } catch (CartException e) {
+            assertEquals(ErrorCode.CART_PRICING_OUT_OF_DATE, e.getErrorCode());
+        }
+    }
+
+    @Test
+    public void checkoutWhenCartFinalized() {
+        UUID cartId = UUID.randomUUID();
+        Cart cart = getQualifiedCart(cartId);
         cart.setCartStatus(CartStatus.FINALIZED);
-        CheckoutValidator validator = new CheckoutValidator();
-        validator.validate(checkoutContext);
+        CheckoutContext checkoutContext = new CheckoutContext();
+        checkoutContext.setCart(cart);
+
+        try {
+            CheckoutValidator validator = new CheckoutValidator();
+            validator.validate(checkoutContext);
+            fail("should fail when cart finalized");
+        } catch (CartException e) {
+            assertEquals(ErrorCode.VALIDATION_ERROR, e.getErrorCode());
+        }
+    }
+
+    @Test
+    public void checkoutPass() {
+        UUID cartId = UUID.randomUUID();
+        Cart cart = getQualifiedCart(cartId);
+        CheckoutContext checkoutContext = new CheckoutContext();
+        checkoutContext.setCart(cart);
+
+        try {
+            CheckoutValidator validator = new CheckoutValidator();
+            validator.validate(checkoutContext);
+        } catch (CartException e) {
+            fail("should pass validation");
+        }
     }
 
     @Test(expected = CartException.class)
-    public void testCartItemFeeIsEmpty() {
+    public void testCartItemWithoutFee() {
         Cart cart = CartDataFactory.cart();
         CheckoutContext checkoutContext = new CheckoutContext();
         checkoutContext.setCart(cart);
@@ -62,6 +97,17 @@ public class CheckoutValidatorTestCase {
 
         CheckoutValidator validator = new CheckoutValidator();
         validator.validate(checkoutContext);
+    }
+
+    private Cart getQualifiedCart(UUID cartId) {
+        Cart cart = CartDataFactory.cart();
+        cart.setIdentifier(cartId);
+        List<CartItem> items = new ArrayList<>();
+        items.add(CartDataFactory.cartItem());
+        cart.setItems(items);
+        cart.setVersion(1);
+        cart.setPriceVersion(1);
+        return cart;
     }
 
 }

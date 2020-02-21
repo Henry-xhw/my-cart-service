@@ -8,6 +8,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.model.AuthorizedStatus;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.PaymentAccountResult;
 import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CheckoutResult;
@@ -19,7 +20,6 @@ import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +41,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -180,6 +182,16 @@ public class CartServiceTestCase extends BaseTestCase {
     }
 
     @Test
+    public void updateCartSuccess() {
+        Cart cart = CartDataFactory.cart();
+        when(cartRepository.getCart(any())).thenReturn(Optional.of(cart));
+        when(cartRepository.incrementVersion(any(), any())).thenReturn(1);
+        cartService.update(cart);
+        Mockito.verify(cartRepository).updateCart(cart);
+        Mockito.verify(cartRepository).incrementVersion(any(), any());
+    }
+
+    @Test
     public void quoteSuccess() {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
@@ -201,6 +213,10 @@ public class CartServiceTestCase extends BaseTestCase {
 
     @Test
     public void insertCartItemSuccess() {
+        PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
+        DataAccess dataAccess = new DataAccess(mock);
+        CartService cartService = spy(new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
+                dataAccess));
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         CartItem childCartItem = CartDataFactory.cartItem();
@@ -252,9 +268,21 @@ public class CartServiceTestCase extends BaseTestCase {
 
         Cart cartWithFullPrice = (Cart) method.invoke(cartService, new Object[]{identifier});
 
-        Assert.assertEquals(1, cartWithFullPrice.getItems().size());
-        Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().size());
-        Assert.assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().get(0).getSubItems().size());
+        assertEquals(1, cartWithFullPrice.getItems().size());
+        assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().size());
+        assertEquals(1, cartWithFullPrice.getItems().get(0).getFees().get(0).getSubItems().size());
+    }
+
+    @Test
+    public void checkoutNullCart() {
+        UUID cartId = UUID.randomUUID();
+        when(cartRepository.getCart(cartId)).thenReturn(Optional.ofNullable(null));
+        try {
+            cartService.checkout(cartId, new CheckoutContext());
+            fail("should fail when there is no cart");
+        } catch (CartException e) {
+            assertEquals(ErrorCode.CART_NOT_FOUND, e.getErrorCode());
+        }
     }
 
     @Test

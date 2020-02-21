@@ -22,3 +22,4 @@ url:
   orderManagementBase: http://order-vip.pint.aw.dev.activenetwork.com
   inventoryServiceBase: http://inventory-pint-awplatform.aw.k8sw.dev.activenetwork.com
   productServiceBase: http://product-pint-awplatform.aw.k8sw.dev.activenetwork.com
+  contractServiceBase: http://contract-pint-awplatform.aw.k8sw.dev.activenetwork.com

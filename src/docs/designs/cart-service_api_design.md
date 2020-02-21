@@ -20,7 +20,7 @@
         return null;
     }
 
-    @PutMapping(value = "/carts/{identifier}/discount")
+    @PutMapping(value = "/carts/{identifier}/cartDiscount")
     public CartResult applyDiscountToCart(@PathVariable UUID identifier, @RequestBody List<String> coupons) {
         return null;
     }

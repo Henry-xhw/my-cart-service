@@ -1,15 +1,9 @@
 package com.active.services.cart.common;
 
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
-import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.ErrorCode;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public class CartExceptionTestCase {
 

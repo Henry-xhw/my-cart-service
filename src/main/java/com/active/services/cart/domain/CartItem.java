@@ -2,7 +2,10 @@ package com.active.services.cart.domain;
 
 import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.model.CouponMode;
+import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
+import com.active.services.cart.service.quote.discount.Discount;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Set;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -47,7 +51,15 @@ public class CartItem extends BaseTree<CartItem> {
 
     private boolean oversold;
 
+    private String personIdentifier;
+
     private List<CartItemFee> fees = new ArrayList<>();
+
+    private Set<String> couponCodes;
+
+    private boolean ignoreMultiDiscounts;
+
+    private CouponMode couponMode;
 
     public CartItem(UpdateCartItemDto updateCartItemDto) {
         this.productId = updateCartItemDto.getProductId();
@@ -61,6 +73,18 @@ public class CartItem extends BaseTree<CartItem> {
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
         this.oversold = updateCartItemDto.isOversold();
+        this.couponCodes = updateCartItemDto.getCouponCodes();
+        this.couponMode = updateCartItemDto.getCouponMode();
+        this.personIdentifier = updateCartItemDto.getPersonIdentifier();
+        this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
+    }
+
+    public CartItem applyDiscount(Discount disc, String currency) {
+        fees.stream()
+                .filter(f -> f.getType() == CartItemFeeType.PRICE)
+                .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT)
+                .forEach(f -> f.applyDiscount(disc, currency));
+        return this;
     }
 
     public List<CartItemFee> getFlattenCartItemFees() {
