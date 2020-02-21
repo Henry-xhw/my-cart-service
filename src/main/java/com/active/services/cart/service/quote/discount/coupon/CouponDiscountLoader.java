@@ -48,7 +48,9 @@ public class CouponDiscountLoader implements DiscountLoader {
     @Override
     public List<CartItemDiscounts> load() {
         // Filter qualified cart items
-        List<CartItem> cartItems = context.getCart().getFlattenCartItems();
+        List<CartItem> cartItems = context.getCart().getFlattenCartItems().stream()
+                .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
+                .collect(Collectors.toList());
         // Group cart item by productId + couponCodes.
         Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey =
                 cartItems.stream().filter(cartItem -> cartItemCouponKey(context, cartItem).isPresent())
@@ -82,9 +84,14 @@ public class CouponDiscountLoader implements DiscountLoader {
             results.addAll((List<CartItemDiscounts>) r)
         );
 
+        // Sort CartItemDiscounts by cartItem net price in reverse order.
         //
+        // For example, given the following 3 cart items and percent MOST_EXPENSIVE discount 20% <br>
+        // cart item 1 = 100 <br>
+        // cart item 2 = 200 <br>
+        // cart item 3 = 80 <br>
+        // the discount will only apply for cart item 2. cart item discount fee amount = 40.
         return CollectionUtils.emptyIfNull(results).stream()
-                .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
                 .sorted(Comparator.comparing(CartItemDiscounts :: getNetPrice).reversed())
                 .collect(Collectors.toList());
     }

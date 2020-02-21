@@ -5,6 +5,8 @@ import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.service.quote.discount.domain.Discount;
+import com.active.services.contract.controller.v1.FeeAmountResult;
+import com.active.services.contract.controller.v1.type.FeeType;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,20 +21,39 @@ public class CartItemFeeBuilder {
         cartItem.getUnitPrice(), cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT);
     }
 
-    public static CartItemFee buildPriceItemFee(CartItem cartItem, FeeDto feeDto) {
+    public static CartItemFee buildPriceItemFee(Integer quantity, FeeDto feeDto) {
         return buildCartItemFee(feeDto.getName(), feeDto.getDescription(), feeDto.getAmount(),
-                cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT);
+                quantity, CartItemFeeType.PRICE, FeeTransactionType.DEBIT);
      }
 
-    public static CartItemFee buildDiscountItemFee(Discount discount, BigDecimal discAmount, Integer units) {
-        return buildCartItemFee(discount.getName(), discount.getDescription(), discAmount, units,
+    public static CartItemFee buildDiscountItemFee(Discount discount, BigDecimal discAmount, Integer quantity) {
+        return buildCartItemFee(discount.getName(), discount.getDescription(), discAmount, quantity,
                 CartItemFeeType.DISCOUNT, FeeTransactionType.CREDIT);
+    }
+
+    public static CartItemFee buildActiveFeeCartItemFee(Integer quantity, FeeAmountResult feeAmountResult) {
+        return buildCartItemFee(feeAmountResult.getDescription(), feeAmountResult.getDescription(),
+                feeAmountResult.getAmount(), quantity, getFeeType(feeAmountResult.getFeeType()),
+                getTranactionType(feeAmountResult.getFeeType()));
+    }
+
+    private static CartItemFeeType getFeeType(FeeType feeType) {
+        if (feeType == FeeType.PERCENT) {
+            return CartItemFeeType.PROCESSING_PERCENT;
+        }
+        return CartItemFeeType.PROCESSING_FLAT;
+    }
+
+    private static FeeTransactionType getTranactionType(FeeType feeType) {
+        if (feeType == FeeType.FLAT_ADJUSTMENT_MAX) {
+            return FeeTransactionType.CREDIT;
+        }
+        return FeeTransactionType.DEBIT;
     }
 
     @NotNull
     private static CartItemFee buildCartItemFee(String name, String desc, BigDecimal amount, Integer units,
-                                                CartItemFeeType cartItemFeeType, FeeTransactionType transactionType
-    ) {
+                                                CartItemFeeType cartItemFeeType, FeeTransactionType transactionType) {
         CartItemFee priceFee = CartItemFee.builder()
                 .name(name)
                 .description(desc)

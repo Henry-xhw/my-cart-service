@@ -38,11 +38,11 @@ public class CartDiscountPricer implements CartPricer {
     @Override
     public void quote(CartQuoteContext context) {
 
-        List<CartItemDiscounts> cartItemCoupons = getDiscountLoader(context).load();
-        if (CollectionUtils.isEmpty(cartItemCoupons)) {
+        List<CartItemDiscounts> cartItemDiscounts = getDiscountLoader(context).load();
+        if (CollectionUtils.isEmpty(cartItemDiscounts)) {
             return;
         }
-        cartItemCoupons.stream()
+        cartItemDiscounts.stream()
                 .forEach(cartItemDisc -> new CartItemDiscountPricer(getDiscountHandler(context, cartItemDisc))
                         .quote(context, cartItemDisc.getCartItem()));
     }

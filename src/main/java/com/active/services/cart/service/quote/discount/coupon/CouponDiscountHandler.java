@@ -24,21 +24,35 @@ public class CouponDiscountHandler implements DiscountHandler {
     @NonNull private final CartQuoteContext context;
     @NonNull private final CartItemDiscounts itemDiscounts;
 
+    /**
+     * Coupon code discounts should match all discounts conditions.
+     * {@link com.active.services.cart.service.quote.discount.condition.NotExpiredSpec}
+     * {@link com.active.services.cart.service.quote.discount.condition.UniqueUsedSpec}
+     *
+     * When discount mode is COMBINABLE_FLAT_FIRST, all discounts are satisfy.
+     * Otherwise, high priority discounts {@link #getHighPriorityDiscounts} will be returned.
+     */
     @Override
     public List<Discount> filterDiscounts() {
         List<Discount> discounts = itemDiscounts.getCouponDiscounts().stream()
                 .filter(Discount::satisfy)
                 .collect(Collectors.toList());
-        return getHighPriorityDiscounts(discounts);
+        return isCombinableDiscountMode()? discounts : getHighPriorityDiscounts(discounts);
     }
 
     @Override
     public DiscountAlgorithm getDiscountAlgorithm() {
-        return context.getDiscountModel(itemDiscounts.getCartItem().getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST ?
+        return isCombinableDiscountMode() ?
                 new StackableFlatFirstDiscountAlgorithm() :
                 new BestDiscountAlgorithm(itemDiscounts.getCartItem(), context.getCurrency());
     }
 
+    /**
+     * Determines which given discounts with high priority.
+     * When cart item with cart item level discount and CouponMode is HIGH_PRIORITY, return cart item level discounts.
+     * Otherwise, return given discounts.
+     *
+     */
     private List<Discount> getHighPriorityDiscounts(List<Discount> discounts) {
         List<Discount> cartItemLevelDiscount = new ArrayList<>();
         if (itemDiscounts.getCartItem().getCouponMode() == CouponMode.HIGH_PRIORITY) {
@@ -48,5 +62,10 @@ public class CouponDiscountHandler implements DiscountHandler {
         }
         return CollectionUtils.isNotEmpty(cartItemLevelDiscount) ?  cartItemLevelDiscount : discounts;
     }
+
+    private boolean isCombinableDiscountMode() {
+        return context.getDiscountModel(itemDiscounts.getCartItem().getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST;
+    }
+
 }
 

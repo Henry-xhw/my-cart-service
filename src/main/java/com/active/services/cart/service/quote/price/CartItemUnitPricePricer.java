@@ -27,7 +27,8 @@ public class CartItemUnitPricePricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
         if (Objects.isNull(cartItem.getUnitPrice())) {
-            cartItem.getFees().add(CartItemFeeBuilder.buildPriceItemFee(cartItem, feeDtoHashMap.get(cartItem.getProductId())));
+            cartItem.getFees().add(CartItemFeeBuilder.buildPriceItemFee(cartItem.getQuantity(),
+                    feeDtoHashMap.get(cartItem.getProductId())));
         } else {
             cartItem.getFees().add(CartItemFeeBuilder.buildOverridePriceItemFee(cartItem));
         }
