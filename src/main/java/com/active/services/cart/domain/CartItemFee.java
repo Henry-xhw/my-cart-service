@@ -34,6 +34,8 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private BigDecimal unitPrice;
 
+    private BigDecimal dueAmount;
+
     private Long cartDiscountId;
 
     public static CartItemFee buildCartItemFee(CartItem cartItem, CartItemFeeType cartItemFeeType) {

@@ -13,7 +13,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = OrderTypeMapper.class)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { OrderTypeMapper.class, UUIDToString.class })
 public interface PlaceCartMapper {
 
     PlaceCartMapper MAPPER = Mappers.getMapper(PlaceCartMapper.class);
@@ -25,7 +25,7 @@ public interface PlaceCartMapper {
             @Mapping(target = "businessDate", expression = "java(java.time.Instant.now())"),
             @Mapping(target = "referenceId", source = "identifier")
     })
-    OrderDTO toOrderDTO(Cart cart);
+    OrderDTO convert(Cart cart);
 
 
     /*    private String groupingIdentifier;
@@ -39,21 +39,15 @@ public interface PlaceCartMapper {
             @Mapping(target = "systemPrice", source = "grossPrice"),
             @Mapping(target = "referenceId", source = "identifier")
     })
-    OrderLineDTO toLineDTO(CartItem cartItem);
+    OrderLineDTO convert(CartItem cartItem);
 
     @Mappings({
             @Mapping(target = "orderLineFees", source = "subItems"),
             @Mapping(target = "amount", source = "unitPrice"),
             @Mapping(target = "feeTransactionType", source = "transactionType"),
-            @Mapping(target = "feeType", source = "type")
+            @Mapping(target = "feeType", source = "type"),
+            @Mapping(target = "referenceId", source = "identifier")
     })
-    OrderLineFeeDTO toFeeDTO(CartItemFee cartItemFee);
+    OrderLineFeeDTO convert(CartItemFee cartItemFee);
 
-    default String map(java.util.UUID value) {
-        if (value == null) {
-            return "";
-        }
-
-        return value.toString();
-    }
 }

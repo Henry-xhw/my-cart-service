@@ -8,9 +8,11 @@ import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.service.checkout.CheckoutBaseProcessor;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutEvent;
+import com.active.services.cart.service.checkout.PaymentMapper;
 import com.active.services.cart.service.checkout.PlaceCartMapper;
 import com.active.services.order.management.api.v3.types.OrderDTO;
 import com.active.services.order.management.api.v3.types.OrderResponseDTO;
+import com.active.services.order.management.api.v3.types.PaymentDTO;
 import com.active.services.order.management.api.v3.types.PlaceOrderReq;
 import com.active.services.order.management.api.v3.types.PlaceOrderRsp;
 
@@ -40,15 +42,20 @@ public class CheckoutCommitOrderProcessor extends CheckoutBaseProcessor {
 
     @Override
     protected void doProcess() {
-        CheckoutContext checkoutContext = getCheckoutContext();
-        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toOrderDTO(checkoutContext.getCart());
-        orderDTO.setOrderUrl(checkoutContext.getOrderUrl());
-        orderDTO.setSendOrderReceipt(checkoutContext.isSendReceipt());
-        String payAccountId = Optional.ofNullable(checkoutContext.getPaymentAccount())
+        CheckoutContext ctx = getCheckoutContext();
+
+        OrderDTO orderDTO = PlaceCartMapper.MAPPER.convert(ctx.getCart());
+        orderDTO.setOrderUrl(ctx.getOrderUrl());
+        orderDTO.setSendOrderReceipt(ctx.isSendReceipt());
+        String payAccountId = Optional.ofNullable(ctx.getPaymentAccount())
                         .map(PaymentAccount::getAmsAccountId).orElse(null);
         orderDTO.setPayAccountId(payAccountId);
+
+        List<PaymentDTO> payments = PaymentMapper.MAPPER.convert(ctx.getPayments());
+
         PlaceOrderReq req = new PlaceOrderReq();
         req.setOrderDTO(orderDTO);
+        req.setPayments(payments);
 
         PlaceOrderRsp rsp = orderService.placeOrder(req);
 
@@ -63,6 +70,6 @@ public class CheckoutCommitOrderProcessor extends CheckoutBaseProcessor {
                 .map(orderId -> new CheckoutResult(orderId, new PaymentAccountResult()))
                 .collect(Collectors.toList());
 
-        checkoutContext.setCheckoutResults(checkoutResults);
+        ctx.setCheckoutResults(checkoutResults);
     }
 }

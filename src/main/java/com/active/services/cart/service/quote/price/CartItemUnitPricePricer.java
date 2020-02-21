@@ -22,16 +22,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartItemUnitPricePricer implements CartItemPricer {
 
-    private final Map<Long, FeeDto> feeDtoHashMap;
+    private final Map<Long, FeeDto> feeDtoMap;
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
+        CartItemFee priceFee;
+
         if (Objects.isNull(cartItem.getUnitPrice())) {
-            cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem,
-                    feeDtoHashMap.get(cartItem.getProductId()), CartItemFeeType.PRICE));
+            priceFee = CartItemFee.buildCartItemFee(cartItem,
+                    feeDtoMap.get(cartItem.getProductId()), CartItemFeeType.PRICE);
         } else {
-            cartItem.getFees().add(CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE));
+            priceFee = CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE);
         }
+        priceFee.setDueAmount(priceFee.getUnitPrice());
+        cartItem.getFees().add(priceFee);
         setGrossAndNetPriceValue(cartItem);
     }
 

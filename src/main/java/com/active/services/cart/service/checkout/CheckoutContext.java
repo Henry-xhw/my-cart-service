@@ -2,6 +2,8 @@ package com.active.services.cart.service.checkout;
 
 import com.active.platform.types.range.Range;
 import com.active.services.cart.domain.Cart;
+import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.Payment;
 import com.active.services.cart.model.BillingContact;
 import com.active.services.cart.model.CartHolder;
 import com.active.services.cart.model.PaymentAccount;
@@ -35,8 +37,12 @@ public class CheckoutContext {
 
     private List<CheckoutResult> checkoutResults = new ArrayList<>();
 
+    private List<Payment> payments = new ArrayList<>();
+
+    private List<CartItemFee> flattenCartItemFees;
+
     public List<ReservationDTO> getReservations() {
-        List<ReservationDTO> reservations = cart.getFlattenCartItems().stream().map(cartItem -> {
+        return cart.getFlattenCartItems().stream().map(cartItem -> {
             ReservationDTO reservationDTO = new ReservationDTO();
             reservationDTO.setAllowOversold(cartItem.isOversold());
             reservationDTO.setProductId(cartItem.getProductId());
@@ -47,7 +53,6 @@ public class CheckoutContext {
             }
             return reservationDTO;
         }).collect(Collectors.toList());
-
-        return reservations;
     }
+
 }

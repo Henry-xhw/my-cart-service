@@ -38,6 +38,8 @@ public class QuoteCartItemFeeDto extends BaseDto {
     @Digits(integer = 17, fraction = 2)
     private BigDecimal unitPrice;
 
+    private BigDecimal dueAmount;
+
     @Valid
     private List<QuoteCartItemFeeDto> subItems = new ArrayList<>();
 }

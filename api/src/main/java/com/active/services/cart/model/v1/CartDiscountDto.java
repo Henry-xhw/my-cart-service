@@ -1,6 +1,5 @@
 package com.active.services.cart.model.v1;
 
-
 import com.active.services.cart.model.AmountType;
 import com.active.services.cart.model.DiscountOrigin;
 import com.active.services.cart.model.DiscountType;
