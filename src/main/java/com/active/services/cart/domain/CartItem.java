@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -75,10 +75,10 @@ public class CartItem extends BaseTree<CartItem> {
         this.couponMode = updateCartItemDto.getCouponMode();
     }
 
-    public List<CartItemFee> getPriceCartItemFee() {
+    public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()
                     .filter(f -> f.getType() == CartItemFeeType.PRICE)
-                    .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT).collect(Collectors.toList());
+                    .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT).findFirst();
     }
 
     public CartItem refreshNetPriceByDiscAmt(BigDecimal amt) {
