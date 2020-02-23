@@ -5,6 +5,8 @@ import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorit
 import java.util.List;
 
 public interface DiscountHandler {
+
     List<DiscountApplication> filterDiscounts();
+
     DiscountAlgorithm getDiscountAlgorithm();
 }

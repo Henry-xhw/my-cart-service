@@ -13,6 +13,9 @@ import java.util.UUID;
 
 public class DiscountConvertor {
 
+    private DiscountConvertor(){
+    }
+
     public static DiscountApplication convert(com.active.services.product.Discount disc, CartQuoteContext context) {
         return DiscountApplication.builder()
                 .name(disc.getName())

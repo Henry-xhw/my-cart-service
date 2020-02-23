@@ -37,7 +37,7 @@ public class CouponDiscountHandler implements DiscountHandler {
         List<DiscountApplication> discounts = itemDiscounts.getDiscounts().stream()
                 .filter(DiscountApplication::satisfy)
                 .collect(Collectors.toList());
-        return isCombinableDiscountMode()? discounts : getHighPriorityDiscounts(discounts);
+        return isCombinableDiscountMode() ? discounts : getHighPriorityDiscounts(discounts);
     }
 
     @Override
@@ -58,7 +58,8 @@ public class CouponDiscountHandler implements DiscountHandler {
         if (itemDiscounts.getCartItem().getCouponMode() == CouponMode.HIGH_PRIORITY) {
             cartItemLevelDiscount =
                     CollectionUtils.emptyIfNull(discounts).stream().filter(discount ->
-                            itemDiscounts.getCartItem().getCouponCodes().contains(discount.getCouponCode())).collect(Collectors.toList());
+                            itemDiscounts.getCartItem().getCouponCodes().contains(discount.getCouponCode()))
+                            .collect(Collectors.toList());
         }
         return CollectionUtils.isNotEmpty(cartItemLevelDiscount) ?  cartItemLevelDiscount : discounts;
     }

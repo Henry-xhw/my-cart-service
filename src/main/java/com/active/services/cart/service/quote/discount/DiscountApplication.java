@@ -26,6 +26,7 @@ public class DiscountApplication extends Discount {
                 applyToRecurringBilling, identifier, cartId);
         this.condition = condition;
     }
+
     public boolean satisfy() {
         return condition.satisfy();
     }

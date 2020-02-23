@@ -16,6 +16,10 @@ import java.util.UUID;
 
 public class CartItemFeeBuilder {
 
+    private CartItemFeeBuilder() {
+
+    }
+
     public static CartItemFee buildOverridePriceItemFee(CartItem cartItem) {
         return buildCartItemFee(cartItem.getProductName(), cartItem.getProductDescription(),
         cartItem.getUnitPrice(), cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT, null);
@@ -24,7 +28,7 @@ public class CartItemFeeBuilder {
     public static CartItemFee buildPriceItemFee(Integer quantity, FeeDto feeDto) {
         return buildCartItemFee(feeDto.getName(), feeDto.getDescription(), feeDto.getAmount(),
                 quantity, CartItemFeeType.PRICE, FeeTransactionType.DEBIT, null);
-     }
+    }
 
     public static CartItemFee buildDiscountItemFee(Discount discount, BigDecimal discAmount, Integer quantity) {
         return buildCartItemFee(discount.getName(), discount.getDescription(), discAmount, quantity,

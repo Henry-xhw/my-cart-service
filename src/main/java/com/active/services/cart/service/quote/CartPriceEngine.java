@@ -32,8 +32,8 @@ public class CartPriceEngine {
     }
 
     private void prepare(CartQuoteContext context) {
-        List<Product> products = soapClient.productServiceSOAPEndPoint().
-                findProductsByProductIdList(ContextWrapper.get(), context.getProductIds());
+        List<Product> products = soapClient.productServiceSOAPEndPoint().findProductsByProductIdList(ContextWrapper.get(),
+                context.getProductIds());
         context.setProducts(products);
     }
 
