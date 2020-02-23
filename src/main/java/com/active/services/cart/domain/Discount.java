@@ -1,7 +1,6 @@
 package com.active.services.cart.domain;
 
 import com.active.services.cart.model.DiscountOrigin;
-import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
@@ -9,14 +8,13 @@ import com.active.services.product.DiscountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class Discount extends BaseDomainObject{
+public class Discount extends BaseDomainObject {
 
     private Long cartId;
     private String name;
