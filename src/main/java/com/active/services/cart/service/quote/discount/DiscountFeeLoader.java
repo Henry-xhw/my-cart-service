@@ -21,6 +21,7 @@ public class DiscountFeeLoader {
     @NonNull private final DiscountApplication disc;
 
     public void apply() {
+
         Optional<CartItemFee> priceFeeItems = item.getPriceCartItemFee();
         if (!priceFeeItems.isPresent()) {
             return;

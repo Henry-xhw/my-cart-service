@@ -27,6 +27,7 @@ import java.util.List;
  * <p>
  */
 public class StackableFlatFirstDiscountAlgorithm implements DiscountAlgorithm {
+
     @Override
     public List<DiscountApplication> apply(List<DiscountApplication> discounts) {
         Collections.sort(discounts, Comparator.comparing(Discount::getAmountType).reversed()

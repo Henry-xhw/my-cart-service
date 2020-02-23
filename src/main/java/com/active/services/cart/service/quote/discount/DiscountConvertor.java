@@ -5,10 +5,10 @@ import com.active.services.cart.service.quote.discount.condition.DiscountSequent
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
 import com.active.services.cart.service.quote.discount.condition.UniqueUsedSpec;
-import com.active.services.domain.DateTime;
 import com.active.services.product.DiscountType;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public class DiscountConvertor {
@@ -21,6 +21,7 @@ public class DiscountConvertor {
                 .amountType(disc.getAmountType())
                 .discountId(disc.getId())
                 .discountType(DiscountType.COUPON)
+                .couponCode(disc.getCouponCode())
                 .algorithm(disc.getDiscountAlgorithm())
                 .applyToRecurringBilling(disc.getApplyToRecurringBilling())
                 .identifier(UUID.randomUUID())
@@ -31,7 +32,9 @@ public class DiscountConvertor {
     private static DiscountSpecification buildDiscountSpecification(CartQuoteContext context,
                                                                     com.active.services.product.Discount disc) {
         return DiscountSequentialSpecs.allOf(
-                new NotExpiredSpec(disc.getStartDate(), disc.getEndDate(), new DateTime(LocalDateTime.now())),
+                new NotExpiredSpec(Optional.ofNullable(disc.getStartDate()).map(dt -> dt.toDate().toInstant()).orElse(null),
+                        Optional.ofNullable(disc.getEndDate()).map(dt -> dt.toDate().toInstant()).orElse(null),
+                        Instant.now()),
                 new UniqueUsedSpec(disc.getId(), context.getUsedUniqueCouponDiscountsIds())
         );
     }

@@ -9,7 +9,6 @@ import com.active.services.product.DiscountType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
