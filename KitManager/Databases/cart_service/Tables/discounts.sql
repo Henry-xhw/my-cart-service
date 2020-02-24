@@ -14,6 +14,7 @@ BEGIN
         [coupon_code]                       NVARCHAR(255)       NULL,
         [algorithm]                         NVARCHAR(25)        NULL,
         [apply_to_recurring_billing]        BIT                 NULL,
+        [discount_group_id]                 BIGINT              NULL,
         [origin]                            NVARCHAR(25)        NULL,
         [created_by]                        NVARCHAR(255)       NOT NULL,
         [created_dt]                        DATETIME            NOT NULL,
@@ -43,6 +44,17 @@ BEGIN
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
     PRINT 'Added index ix_discounts_identifier to dbo.discounts.'
 END
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_group_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.discounts ADD discount_group_id BIGINT NULL
+
+        PRINT 'Added column discount_group_id to dbo.discounts'
+    END
+GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','cart_id'))
 BEGIN

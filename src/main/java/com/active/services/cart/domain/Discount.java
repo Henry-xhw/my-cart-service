@@ -28,6 +28,7 @@ public class Discount extends BaseDomainObject {
 
     private Boolean applyToRecurringBilling;
     private OrderLineDiscountOrigin origin = OrderLineDiscountOrigin.AUTOMATIC;
+    private Long discountGroupId;
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;
