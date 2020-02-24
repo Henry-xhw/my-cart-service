@@ -202,7 +202,7 @@
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
         </collection>
-        <collection property="cartDiscounts" ofType="CartDiscount" notNullColumn="id" columnPrefix="discount_">
+        <collection property="cartDiscounts" ofType="Discount" notNullColumn="id" columnPrefix="discount_">
             <id property="id" column="id"/>
         </collection>
     </resultMap>
