@@ -27,7 +27,7 @@ public class Discount extends BaseDomainObject {
     private DiscountAlgorithm algorithm;
 
     private Boolean applyToRecurringBilling;
-    private DiscountOrigin origin;
+    private DiscountOrigin origin = DiscountOrigin.AUTOMATIC;
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;
