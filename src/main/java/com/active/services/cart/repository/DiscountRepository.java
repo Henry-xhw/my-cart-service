@@ -1,7 +1,7 @@
 package com.active.services.cart.repository;
 
 import com.active.services.cart.domain.Discount;
-import com.active.services.cart.repository.mapper.CartDiscountMapper;
+import com.active.services.cart.repository.mapper.DiscountMapper;
 import com.active.services.product.DiscountType;
 
 import lombok.RequiredArgsConstructor;
@@ -13,14 +13,14 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class DiscountRepository {
-    private final CartDiscountMapper cartDiscountMapper;
+    private final DiscountMapper discountMapper;
 
     public void batchInsertDiscount(List<Discount> discounts) {
-        cartDiscountMapper.batchInsertDiscount(discounts);
+        discountMapper.batchInsertDiscount(discounts);
     }
 
     public Optional<Discount> getDiscountByDiscountIdAndType(DiscountType discountType,
                                                       Long discountId) {
-        return cartDiscountMapper.getDiscountByDiscountIdAndType(discountType, discountId);
+        return discountMapper.getDiscountByDiscountIdAndType(discountType, discountId);
     }
 }

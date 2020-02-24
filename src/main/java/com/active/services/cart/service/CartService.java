@@ -193,7 +193,7 @@ public class CartService {
     private void batchInsertDiscount(List<Discount> discounts) {
         discountRepository.batchInsertDiscount(discounts.stream()
                 .filter(discount -> !discountRepository.getDiscountByDiscountIdAndType(discount.getDiscountType(),
-                        discount.getCartId()).isPresent())
+                        discount.getDiscountId()).isPresent())
                 .collect(Collectors.collectingAndThen(Collectors
                         .toCollection(() -> new TreeSet<>(Comparator
                                 .comparing(d -> d.getDiscountId() + d.getDiscountType().toString()))), ArrayList::new)));

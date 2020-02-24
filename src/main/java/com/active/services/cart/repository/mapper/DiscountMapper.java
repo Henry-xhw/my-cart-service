@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mapper
-public interface CartDiscountMapper {
+public interface DiscountMapper {
     void batchInsertDiscount(List<Discount> discounts);
 
     Optional<Discount> getDiscountByDiscountIdAndType(@Param("discountType") DiscountType discountType,
