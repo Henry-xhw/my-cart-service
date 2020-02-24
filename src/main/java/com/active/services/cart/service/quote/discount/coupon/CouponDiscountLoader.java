@@ -15,6 +15,7 @@ import com.active.services.product.Discount;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -56,6 +57,10 @@ public class CouponDiscountLoader implements DiscountLoader {
                 cartItems.stream().filter(cartItem -> cartItemCouponKey(context, cartItem).isPresent())
                         .collect(groupingBy(cartItem -> cartItemCouponKey(context, cartItem).get()));
 
+        if (MapUtils.isEmpty(couponTargetsByKey)) {
+            return new ArrayList<>();
+        }
+
         Context soapContext = ContextWrapper.get();
         List<Task<List<CartItemDiscounts>>> tasks = new ArrayList<>();
         couponTargetsByKey.forEach((key, items) -> {
@@ -80,7 +85,7 @@ public class CouponDiscountLoader implements DiscountLoader {
         });
 
         List<CartItemDiscounts> results = new ArrayList<>();
-        taskRunner.run(tasks).getResults().forEach(r ->
+        CollectionUtils.emptyIfNull(taskRunner.run(tasks).getResults()).forEach(r ->
             results.addAll((List<CartItemDiscounts>) r)
         );
 
