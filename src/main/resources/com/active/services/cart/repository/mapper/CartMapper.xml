@@ -262,7 +262,7 @@
         discount.modified_dt          AS discount_modifiedDt
         FROM dbo.carts cart
         LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
-        LEFT JOIN dbo.cart_discounts discount ON cart.id = discount.cart_id
+        LEFT JOIN dbo.discounts discount ON cart.id = discount.cart_id
         WHERE cart.identifier = #{cartId} and cart_status != 'FINALIZED'
     </select>
 

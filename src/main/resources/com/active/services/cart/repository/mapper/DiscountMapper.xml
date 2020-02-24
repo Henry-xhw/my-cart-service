@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.active.services.cart.repository.mapper.CartDiscountMapper">
     <insert id="batchInsertDiscount" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO [dbo].[cart_discounts]
+        INSERT INTO [dbo].[discounts]
         (identifier,
         cart_id,
         name,
@@ -61,7 +61,7 @@
         created_dt,
         modified_by,
         modified_dt
-        FROM dbo.cart_discounts
+        FROM dbo.discounts
         WHERE
         discount_type = #{discountType}
         AND discount_id = #{discountId}
