@@ -179,7 +179,7 @@ BEGIN
 END
 
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_discount_id'
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'related_identifier'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
 BEGIN
     ALTER TABLE dbo.cart_item_fees ADD related_identifier BIGINT NULL;
