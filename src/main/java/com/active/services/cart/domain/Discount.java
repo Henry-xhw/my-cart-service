@@ -8,12 +8,14 @@ import com.active.services.product.DiscountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
+@Setter
 public class Discount extends BaseDomainObject {
 
     private Long cartId;
