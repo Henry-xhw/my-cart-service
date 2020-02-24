@@ -1,6 +1,6 @@
 package com.active.services.cart.domain;
 
-import com.active.services.cart.model.DiscountOrigin;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
@@ -27,7 +27,7 @@ public class Discount extends BaseDomainObject {
     private DiscountAlgorithm algorithm;
 
     private Boolean applyToRecurringBilling;
-    private DiscountOrigin origin = DiscountOrigin.AUTOMATIC;
+    private OrderLineDiscountOrigin origin = OrderLineDiscountOrigin.AUTOMATIC;
 
     public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
         this.name = name;

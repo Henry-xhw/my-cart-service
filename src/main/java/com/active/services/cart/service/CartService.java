@@ -24,6 +24,7 @@ import com.active.services.cart.util.TreeBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,12 +192,19 @@ public class CartService {
     }
 
     private void batchInsertDiscount(List<Discount> discounts) {
-        discountRepository.batchInsertDiscount(discounts.stream()
+        ArrayList<Discount> dis = distinctDiscount(discounts);
+        if(CollectionUtils.isNotEmpty(dis)) {
+            discountRepository.batchInsertDiscount(dis);
+        }
+    }
+
+    private ArrayList<Discount> distinctDiscount(List<Discount> discounts) {
+        return discounts.stream()
                 .filter(discount -> !discountRepository.getDiscountByDiscountIdAndType(discount.getDiscountType(),
                         discount.getDiscountId()).isPresent())
                 .collect(Collectors.collectingAndThen(Collectors
                         .toCollection(() -> new TreeSet<>(Comparator
-                                .comparing(d -> d.getDiscountId() + d.getDiscountType().toString()))), ArrayList::new)));
+                                .comparing(d -> d.getDiscountId() + d.getDiscountType().toString()))), ArrayList::new));
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {

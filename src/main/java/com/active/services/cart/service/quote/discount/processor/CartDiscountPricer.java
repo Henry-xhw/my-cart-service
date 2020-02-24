@@ -2,7 +2,6 @@ package com.active.services.cart.service.quote.discount.processor;
 
 import com.active.platform.concurrent.TaskRunner;
 import com.active.services.cart.client.soap.SOAPClient;
-import com.active.services.cart.model.DiscountType;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
@@ -10,6 +9,7 @@ import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
 import com.active.services.cart.service.quote.discount.coupon.CouponDiscountLoader;
+import com.active.services.product.DiscountType;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -48,14 +48,14 @@ public class CartDiscountPricer implements CartPricer {
     }
 
     private DiscountHandler getDiscountHandler(CartQuoteContext context, CartItemDiscounts cartItemDiscounts) {
-        if (DiscountType.COUPON_CODE == type) {
+        if (DiscountType.COUPON == type) {
             return new CouponDiscountHandler(context, cartItemDiscounts);
         }
         throw new NotSupportedException();
     }
 
     private DiscountLoader getDiscountLoader(CartQuoteContext context) {
-        if (DiscountType.COUPON_CODE == type) {
+        if (DiscountType.COUPON == type) {
             return CouponDiscountLoader.builder().context(context)
                     .soapClient(soapClient).taskRunner(taskRunner).build();
         }
