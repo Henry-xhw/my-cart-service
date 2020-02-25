@@ -24,7 +24,8 @@ BEGIN
         [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
         [cart_status]               VARCHAR (255)       NOT NULL,
         [reservation_id]            UNIQUEIDENTIFIER    NULL,
-        [coupon_codes]              NVARCHAR(MAX)       NULL
+        [coupon_codes]              NVARCHAR(MAX)       NULL,
+        CONSTRAINT [pk_cart] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
@@ -179,12 +180,13 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL
+        [modified_dt]               DATETIME            NOT NULL,
+        CONSTRAINT [pk_cart_item] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
 GO
-/* OMS-10202 add column parent_id */
+
 IF NOT EXISTS(SELECT 1
               FROM INFORMATION_SCHEMA.COLUMNS
               WHERE TABLE_NAME = 'cart_items'
@@ -340,7 +342,7 @@ BEGIN
         [transaction_type]          NVARCHAR(25)        NOT NULL,
         [units]                     BIGINT              NOT NULL,
         [unit_price]                DECIMAL(19, 2)      NOT NULL,
-        [cart_discount_id]          BIGINT              NULL,
+        [related_identifier]        BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -559,7 +561,8 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL
+        [modified_dt]               DATETIME            NOT NULL,
+        CONSTRAINT [pk_cart_items_cart_item_fee] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.cart_item_cart_item_fees'
 END
@@ -669,7 +672,8 @@ BEGIN
         [created_by]                        NVARCHAR(255)       NOT NULL,
         [created_dt]                        DATETIME            NOT NULL,
         [modified_by]                       NVARCHAR(255)       NOT NULL,
-        [modified_dt]                       DATETIME            NOT NULL
+        [modified_dt]                       DATETIME            NOT NULL,
+        CONSTRAINT [pk_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.discounts'
 END
@@ -806,7 +810,8 @@ BEGIN
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                NVARCHAR(255)       NOT NULL,
         [type]                      NVARCHAR(255)       NOT NULL,
-        [payload]                   NVARCHAR(MAX)       NULL
+        [payload]                   NVARCHAR(MAX)       NULL,
+        CONSTRAINT [pk_events] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.events'
 END
