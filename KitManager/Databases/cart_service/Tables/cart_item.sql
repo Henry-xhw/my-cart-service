@@ -20,7 +20,8 @@ BEGIN
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
-        [modified_dt]               DATETIME            NOT NULL
+        [modified_dt]               DATETIME            NOT NULL,
+        CONSTRAINT [pk_cart_item] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
