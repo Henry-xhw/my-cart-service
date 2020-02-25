@@ -10,6 +10,7 @@ BEGIN
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL
+        CONSTRAINT [pk_events] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.events'
 END
@@ -18,8 +19,8 @@ GO
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='events' AND t.type = 'U')
 BEGIN
-	 ALTER TABLE dbo.events ADD CONSTRAINT [pk_event]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_event on table dbo.events'
+	 ALTER TABLE dbo.events ADD CONSTRAINT [pk_events]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
+	 PRINT 'Created primary key pk_events on table dbo.events'
 END
 GO
 

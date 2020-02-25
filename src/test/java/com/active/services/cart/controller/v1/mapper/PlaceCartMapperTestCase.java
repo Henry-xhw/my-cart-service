@@ -18,7 +18,9 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,6 +29,7 @@ public class PlaceCartMapperTestCase {
 
     @Test
     public void toOrderDTO() {
+        UUID relatedIdentifier = UUID.randomUUID();
         Cart cart = CartDataFactory.cart();
 
         CartItem subItem = CartDataFactory.getCartItem(3, new BigDecimal(20), "child description");
@@ -35,11 +38,13 @@ public class PlaceCartMapperTestCase {
         List<CartItemFee> fees = new ArrayList<>();
         CartItemFee subCartItemFee = CartDataFactory.getCartItemFee(FeeTransactionType.DEBIT,
                 CartItemFeeType.PROCESSING_FLAT,
-                3, new BigDecimal(10), "sub Description one", "sub name one");
+                3, new BigDecimal(10), "sub Description one", "sub name one", relatedIdentifier);
         CartItemFee subCartItemFee2 = CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PRICE,
-                2, new BigDecimal(15), "sub Description two", "sub name two");
+                2, new BigDecimal(15), "sub Description two", "sub name two", relatedIdentifier);
         fees.add(subCartItemFee);
         fees.add(subCartItemFee2);
+
+        cart.setDiscounts(Arrays.asList(CartDataFactory.getDiscount(relatedIdentifier)));
 
         subItem.getFees().get(0).setSubItems(fees);
         List<CartItem> subItems = new ArrayList<>();
@@ -49,7 +54,7 @@ public class PlaceCartMapperTestCase {
         cart.getItems().get(0).setSubItems(subItems);
         cart.getItems().add(CartDataFactory.cartItem());
 
-        OrderDTO orderDTO = PlaceCartMapper.MAPPER.convert(cart);
+        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toOrderDTO(cart);
 
         checkOrderDTO(cart, orderDTO);
 

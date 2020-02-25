@@ -5,7 +5,6 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
-import com.active.services.cart.service.quote.discount.Discount;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 
@@ -77,13 +77,17 @@ public class CartItem extends BaseTree<CartItem> {
         this.couponMode = updateCartItemDto.getCouponMode();
         this.personIdentifier = updateCartItemDto.getPersonIdentifier();
         this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
+        this.couponMode = updateCartItemDto.getCouponMode();
     }
 
-    public CartItem applyDiscount(Discount disc, String currency) {
-        fees.stream()
-                .filter(f -> f.getType() == CartItemFeeType.PRICE)
-                .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT)
-                .forEach(f -> f.applyDiscount(disc, currency));
+    public Optional<CartItemFee> getPriceCartItemFee() {
+        return getFees().stream()
+                    .filter(f -> f.getType() == CartItemFeeType.PRICE)
+                    .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT).findFirst();
+    }
+
+    public CartItem refreshNetPriceByDiscAmt(BigDecimal amt) {
+        netPrice = netPrice.subtract(amt);
         return this;
     }
 

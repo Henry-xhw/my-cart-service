@@ -16,7 +16,8 @@ BEGIN
         [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
         [cart_status]               VARCHAR (255)       NOT NULL,
         [reservation_id]            UNIQUEIDENTIFIER    NULL,
-        [coupon_codes]              NVARCHAR(MAX)       NULL
+        [coupon_codes]              NVARCHAR(MAX)       NULL,
+        CONSTRAINT [pk_cart] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END

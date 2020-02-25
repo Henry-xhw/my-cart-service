@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.DiscountMapper">
+    <insert id="batchInsertDiscount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[discounts]
+        (identifier,
+        cart_id,
+        name,
+        description,
+        amount,
+        amount_type,
+        discount_id,
+        discount_type,
+        coupon_code,
+        algorithm,
+        apply_to_recurring_billing,
+        origin,
+        discount_group_id,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt)
+        VALUES
+        <foreach item="item" collection="list" separator=",">
+        (#{item.identifier},
+        #{item.cartId},
+        #{item.name},
+        #{item.description},
+        #{item.amount},
+        #{item.amountType},
+        #{item.discountId},
+        #{item.discountType},
+        #{item.couponCode},
+        #{item.algorithm},
+        #{item.applyToRecurringBilling},
+        #{item.origin},
+        #{item.discountGroupId},
+        #{item.createdBy},
+        #{item.createdDt},
+        #{item.modifiedBy},
+        #{item.modifiedDt}
+        )
+        </foreach>
+    </insert>
+
+    <select id="getDiscountByDiscountIdAndType" resultType='com.active.services.cart.domain.Discount'>
+        SELECT
+        identifier,
+        cart_id       as cartId,
+        name,
+        description,
+        amount,
+        amount_type   as amountType,
+        discount_id   as discountId,
+        discount_type as discountType,
+        coupon_code   as couponCode,
+        algorithm,
+        apply_to_recurring_billing as applyToRecurringBilling,
+        origin,
+        discount_group_id as discountGroupId,
+        created_by    as createdBy,
+        created_dt    as createdDt,
+        modified_by   as modifiedBy,
+        modified_dt   as modifieddt
+        FROM dbo.discounts
+        WHERE
+        discount_type = #{discountType}
+        AND discount_id = #{discountId}
+    </select>
+
+</mapper>

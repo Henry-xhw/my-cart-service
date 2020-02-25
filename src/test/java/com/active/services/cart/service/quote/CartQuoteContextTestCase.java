@@ -4,7 +4,7 @@ import com.active.services.DiscountModel;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
@@ -89,22 +89,25 @@ public class CartQuoteContextTestCase {
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
 
-        cartQuoteContext.addAppliedDiscount(new Discount(
+        cartQuoteContext.addAppliedDiscount(new DiscountApplication(
                 "name", "disc", new BigDecimal(2), AmountType.FLAT,
-                RandomUtils.nextLong(), DiscountType.MULTI, "cde", DiscountAlgorithm.MOST_EXPENSIVE));
+                RandomUtils.nextLong(), DiscountType.MULTI, "cde", DiscountAlgorithm.MOST_EXPENSIVE,
+                null, null, null, null));
 
 
-        cartQuoteContext.addAppliedDiscount(new Discount(
+        cartQuoteContext.addAppliedDiscount(new DiscountApplication(
                 "name", "disc", new BigDecimal(2), AmountType.FLAT,
-                RandomUtils.nextLong(), DiscountType.COUPON, "cde", null));
+                RandomUtils.nextLong(), DiscountType.COUPON, "cde", null, null,
+                null, null, null));
 
         assertEquals(2, cartQuoteContext.getAppliedDiscounts().size());
         assertTrue(CollectionUtils.isEmpty(cartQuoteContext.getUsedUniqueCouponDiscountsIds()));
 
         Long id = RandomUtils.nextLong();
-        cartQuoteContext.addAppliedDiscount(new Discount(
+        cartQuoteContext.addAppliedDiscount(new DiscountApplication(
                 "name", "disc", new BigDecimal(2), AmountType.FLAT, id,
-                DiscountType.COUPON, "cde", DiscountAlgorithm.MOST_EXPENSIVE));
+                DiscountType.COUPON, "cde", DiscountAlgorithm.MOST_EXPENSIVE, null,
+                null, null, null));
         assertEquals(3, cartQuoteContext.getAppliedDiscounts().size());
 
         assertEquals(1, cartQuoteContext.getUsedUniqueCouponDiscountsIds().size());

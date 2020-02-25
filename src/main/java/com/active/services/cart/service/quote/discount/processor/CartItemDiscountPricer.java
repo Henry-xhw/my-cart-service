@@ -3,34 +3,33 @@ package com.active.services.cart.service.quote.discount.processor;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.product.DiscountType;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
+import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
+import com.active.services.cart.service.quote.discount.DiscountHandler;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Lookup;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.apache.commons.collections4.CollectionUtils;
 
-@Component
-@Slf4j
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+import java.math.BigDecimal;
+import java.util.List;
+
 @RequiredArgsConstructor
 public class CartItemDiscountPricer implements CartItemPricer {
 
-    @NonNull private final DiscountType type;
+    @NonNull private final DiscountHandler handler;
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
-        if (DiscountType.COUPON == type) {
-            getCouponDiscountPricer().quote(context, cartItem);
+
+        List<DiscountApplication> discounts = handler.filterDiscounts();
+        if (CollectionUtils.isEmpty(discounts)) {
             return;
         }
-    }
-
-    @Lookup
-    public CouponDiscountPricer getCouponDiscountPricer() {
-        return null;
+        if (cartItem.getNetPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+        handler.getDiscountAlgorithm().apply(discounts).forEach(disc ->
+                new DiscountFeeLoader(context, cartItem, disc).apply());
     }
 }
