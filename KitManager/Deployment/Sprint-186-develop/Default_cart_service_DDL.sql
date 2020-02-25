@@ -2,6 +2,23 @@ USE cart_service
 GO
 
 -- 	 KitSection = Tables
+--KitManagerFileID=18112
+--FileName=drop.sql
+--SubmittedBy=evan wei (ACTIVE\ewei)
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_discounts' AND type = 'U')
+BEGIN
+	 drop table dbo.cart_discounts
+	 PRINT 'drop dbo.cart_discounts'
+END
+GO
+GO
+--/KitManagerFileID=18112
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4704,18112,'drop.sql',0
+GO
+
 --KitManagerFileID=17804
 --FileName=cart.sql
 --SubmittedBy=evan wei (ACTIVE\ewei)
