@@ -22,6 +22,7 @@
         transaction_type,
         units,
         unit_price,
+        due_amount,
         created_by,
         created_dt,
         modified_by,
@@ -34,6 +35,7 @@
         #{type},
         #{transactionType},
         #{units},
+        #{dueAmount},
         #{unitPrice},
         #{createdBy},
         #{createdDt},
@@ -74,6 +76,7 @@
         fee.transaction_type AS transaction_type,
         fee.units            AS units,
         fee.unit_price       AS unit_price,
+        fee.due_amount       AS due_amount,
         fee.related_identifier  AS related_identifier,
         i.id                 AS cart_item_id
         FROM dbo.carts c LEFT JOIN
@@ -83,5 +86,7 @@
         LEFT JOIN dbo.cart_item_fees fee ON map.cart_item_fee_id = fee.id
         WHERE c.id = #{id}
     </select>
+
+
 
 </mapper>

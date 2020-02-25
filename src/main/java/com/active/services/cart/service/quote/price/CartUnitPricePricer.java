@@ -40,18 +40,18 @@ public class CartUnitPricePricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-        Map<Long, FeeDto> feeDtoHashMap = new HashMap<>();
+        Map<Long, FeeDto> feeDtoMap = new HashMap<>();
         List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
         List<QuoteItemDto> notUnitPriceItems = getNotUnitPriceItems(flattenCartItems);
         if (CollectionUtils.isNotEmpty(notUnitPriceItems)) {
             QuoteReq quoteReq = new QuoteReq();
             quoteReq.setItems(notUnitPriceItems);
             List<FeeDto> feeDtos = getUnitPriceFromProductService(quoteReq);
-            feeDtoHashMap = buildCartItemFeeResult(notUnitPriceItems, feeDtos);
+            feeDtoMap = buildCartItemFeeResult(notUnitPriceItems, feeDtos);
         }
-        Map<Long, FeeDto> finalFeeDtoHashMap = feeDtoHashMap;
+        Map<Long, FeeDto> finalFeeMap = feeDtoMap;
         flattenCartItems.forEach(cartItem ->
-                getCartItemPricer(finalFeeDtoHashMap).quote(context, cartItem)
+                getCartItemPricer(finalFeeMap).quote(context, cartItem)
         );
         TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(flattenCartItems);
         context.getCart().setItems(baseTreeTreeBuilder.buildTree());
@@ -97,7 +97,7 @@ public class CartUnitPricePricer implements CartPricer {
     }
 
     @Lookup
-    public CartItemUnitPricePricer getCartItemPricer(Map<Long, FeeDto> feeDtoHashMap) {
+    public CartItemUnitPricePricer getCartItemPricer(Map<Long, FeeDto> feeDtoMap) {
         return null;
     }
 }

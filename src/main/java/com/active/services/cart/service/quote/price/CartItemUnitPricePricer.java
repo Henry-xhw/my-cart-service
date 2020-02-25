@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote.price;
 
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.service.quote.CartItemFeeBuilder;
 import com.active.services.cart.service.quote.CartItemPricer;
@@ -22,13 +23,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartItemUnitPricePricer implements CartItemPricer {
 
-    private final Map<Long, FeeDto> feeDtoHashMap;
+    private final Map<Long, FeeDto> feeDtoMap;
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
         if (Objects.isNull(cartItem.getUnitPrice())) {
             cartItem.getFees().add(CartItemFeeBuilder.buildPriceItemFee(cartItem.getQuantity(),
-                    feeDtoHashMap.get(cartItem.getProductId())));
+                    feeDtoMap.get(cartItem.getProductId())));
         } else {
             cartItem.getFees().add(CartItemFeeBuilder.buildOverridePriceItemFee(cartItem));
         }

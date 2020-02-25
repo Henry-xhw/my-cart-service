@@ -15,7 +15,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = OrderTypeMapper.class)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { OrderTypeMapper.class})
 public interface PlaceCartMapper {
 
     PlaceCartMapper MAPPER = Mappers.getMapper(PlaceCartMapper.class);

@@ -4,7 +4,6 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.service.CartStatus;
-
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.UUID;
@@ -28,5 +27,13 @@ public class CheckoutValidator {
         if (cart.getCartStatus() == CartStatus.FINALIZED) {
             throw new CartException(ErrorCode.VALIDATION_ERROR, "Cart already been finalized.");
         }
+
+        boolean notFoundCartItemFees =
+                cart.getItems().stream().anyMatch(item -> CollectionUtils.isEmpty(item.getFlattenCartItemFees()));
+        if (notFoundCartItemFees) {
+            throw new CartException(ErrorCode.VALIDATION_ERROR, "There is no cart item fees for cartItem.");
+        }
+
     }
+
 }

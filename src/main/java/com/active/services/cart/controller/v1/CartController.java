@@ -83,7 +83,6 @@ public class CartController {
     @GetMapping(OWNER_PATH)
     public SearchCartRsp search(@PathVariable(OWNER_ID_PARAM) UUID ownerId) {
         SearchCartRsp rsp = new SearchCartRsp();
-
         List<UUID> cartIds = cartService.search(ownerId);
         rsp.setCartIds(cartIds);
 
@@ -99,12 +98,11 @@ public class CartController {
     }
 
     @PostMapping(CHECKOUT_PATH)
-    public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody CheckoutReq req) {
+    public CheckoutRsp checkout(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody @Validated CheckoutReq req) {
         CheckoutRsp rsp = new CheckoutRsp();
         CheckoutContext context = CartMapper.INSTANCE.toDomain(req);
         List<CheckoutResult> results = cartService.checkout(cartId, context);
         rsp.setCheckoutResults(results);
-
         return rsp;
     }
 }

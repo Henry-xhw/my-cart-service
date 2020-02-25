@@ -9,12 +9,10 @@ import lombok.Data;
 
 @Data
 public class CheckoutReq {
-
     private PaymentAccount paymentAccount;
     private boolean sendReceipt = true;
     private String orderUrl;
     private Address billingAddress;
     private BillingContact billingContact;
     private CartHolder cartHolder;
-
 }

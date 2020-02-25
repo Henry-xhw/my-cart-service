@@ -10,6 +10,7 @@ import com.active.services.cart.service.CartStatus;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,6 +82,21 @@ public class CheckoutValidatorTestCase {
         } catch (CartException e) {
             fail("should pass validation");
         }
+    }
+
+    @Test(expected = CartException.class)
+    public void testCartItemWithoutFee() {
+        Cart cart = CartDataFactory.cart();
+        CheckoutContext checkoutContext = new CheckoutContext();
+        checkoutContext.setCart(cart);
+
+        List<CartItem> cartItems = cart.getFlattenCartItems();
+        for (CartItem cartItem : cartItems) {
+            cartItem.setFees(Collections.emptyList());
+        }
+
+        CheckoutValidator validator = new CheckoutValidator();
+        validator.validate(checkoutContext);
     }
 
     private Cart getQualifiedCart(UUID cartId) {

@@ -32,6 +32,8 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private BigDecimal unitPrice;
 
+    private BigDecimal dueAmount;
+
     private UUID relatedIdentifier;
 
     public CartItemFee refreshUnitPriceByDiscAmt(BigDecimal amt) {
