@@ -11,6 +11,14 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='events' AND t.type = 'U')
+BEGIN
+	 ALTER TABLE dbo.events ADD CONSTRAINT [pk_events]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
+	 PRINT 'Created primary key pk_events on table dbo.events'
+END
+GO
+
 IF NOT EXISTS(
     SELECT TOP 1 1
     FROM
