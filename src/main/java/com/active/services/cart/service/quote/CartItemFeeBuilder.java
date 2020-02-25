@@ -67,6 +67,7 @@ public class CartItemFeeBuilder {
                 .transactionType(transactionType)
                 .unitPrice(amount)
                 .units(units)
+                .dueAmount(amount)
                 .relatedIdentifier(identifier)
                 .build();
         build.setIdentifier(UUID.randomUUID());
