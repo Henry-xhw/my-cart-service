@@ -60,7 +60,7 @@ public class CartItemFeeBuilder {
     private static CartItemFee buildCartItemFee(String name, String desc, BigDecimal amount, Integer units,
                                                 CartItemFeeType cartItemFeeType, FeeTransactionType transactionType,
                                                 UUID identifier) {
-        return CartItemFee.builder()
+        CartItemFee build = CartItemFee.builder()
                 .name(name)
                 .description(desc)
                 .type(cartItemFeeType)
@@ -69,5 +69,7 @@ public class CartItemFeeBuilder {
                 .units(units)
                 .relatedIdentifier(identifier)
                 .build();
+        build.setIdentifier(UUID.randomUUID());
+        return build;
     }
 }
