@@ -26,7 +26,7 @@ BEGIN
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
 GO
-/* OMS-10202 add column parent_id */
+
 IF NOT EXISTS(SELECT 1
               FROM INFORMATION_SCHEMA.COLUMNS
               WHERE TABLE_NAME = 'cart_items'
