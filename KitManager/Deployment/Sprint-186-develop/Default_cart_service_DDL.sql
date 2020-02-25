@@ -386,6 +386,15 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'related_identifier'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_item_fees ADD related_identifier UNIQUEIDENTIFIER NULL;
+	PRINT 'add column related_identifier on dbo.cart_item_fees'
+END
+GO
+
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','parent_id'))
 BEGIN
    EXEC sys.sp_addextendedproperty
@@ -532,14 +541,6 @@ BEGIN
 END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'related_identifier'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD related_identifier UNIQUEIDENTIFIER NULL;
-	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
-END
-GO
 GO
 --/KitManagerFileID=17876
 if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
