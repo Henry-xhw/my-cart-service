@@ -5,7 +5,8 @@ BEGIN
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                NVARCHAR(255)       NOT NULL,
         [type]                      NVARCHAR(255)       NOT NULL,
-        [payload]                   NVARCHAR(MAX)       NULL
+        [payload]                   NVARCHAR(MAX)       NULL,
+        CONSTRAINT [pk_events] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.events'
 END
