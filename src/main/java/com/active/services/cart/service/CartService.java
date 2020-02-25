@@ -198,7 +198,7 @@ public class CartService {
 
     private void batchInsertDiscount(List<Discount> discounts) {
         ArrayList<Discount> dis = distinctDiscount(discounts);
-        if(CollectionUtils.isNotEmpty(dis)) {
+        if (CollectionUtils.isNotEmpty(dis)) {
             discountRepository.batchInsertDiscount(dis);
         }
     }
