@@ -342,7 +342,7 @@ BEGIN
         [transaction_type]          NVARCHAR(25)        NOT NULL,
         [units]                     BIGINT              NOT NULL,
         [unit_price]                DECIMAL(19, 2)      NOT NULL,
-        [related_identifier]        BIGINT              NULL,
+        [related_identifier]        UNIQUEIDENTIFIER    NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -536,7 +536,7 @@ IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'related_identifier'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.[type] = 'U')
 BEGIN
-    ALTER TABLE dbo.cart_item_fees ADD related_identifier BIGINT NULL;
+    ALTER TABLE dbo.cart_item_fees ADD related_identifier UNIQUEIDENTIFIER NULL;
 	PRINT 'add column cart_discount_id on dbo.cart_item_fees'
 END
 GO
