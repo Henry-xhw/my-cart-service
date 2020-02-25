@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote;
 
-import com.active.services.cart.client.soap.ProductServiceSoap;
+import com.active.services.ContextWrapper;
+import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
 import com.active.services.cart.service.quote.discount.processor.CartDiscountPricer;
 import com.active.services.cart.service.quote.price.CartUnitPricePricer;
@@ -17,27 +18,22 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class CartPriceEngine {
-    private final ProductServiceSoap productServiceSoap;
+    private final SOAPClient soapClient;
 
     public void quote(CartQuoteContext context) {
-
         prepare(context);
-
         getCartUnitPricePricer().quote(context);
-        //applyDiscount(context);
-
+        applyDiscount(context);
         getCartProductProcessingFeePricer(FeeOwner.CONSUMER).quote(context);
-        //getCartDiscountPricer(DiscountType.ACTIVE_ADVANTAGE).quote(context);
     }
 
     private void applyDiscount(CartQuoteContext context) {
-        getCartDiscountPricer(DiscountType.MEMBERSHIP).quote(context);
-        getCartDiscountPricer(DiscountType.MULTI).quote(context);
-        getCartDiscountPricer(DiscountType.COUPON).quote(context);
+        getDiscountPricer(DiscountType.COUPON).quote(context);
     }
 
     private void prepare(CartQuoteContext context) {
-        List<Product> products = productServiceSoap.getProductsByIds(context.getProductIds());
+        List<Product> products = soapClient.productServiceSOAPEndPoint().findProductsByProductIdList(ContextWrapper.get(),
+                context.getProductIds());
         context.setProducts(products);
     }
 
@@ -52,7 +48,7 @@ public class CartPriceEngine {
     }
 
     @Lookup
-    public CartDiscountPricer getCartDiscountPricer(DiscountType type) {
+    public CartDiscountPricer getDiscountPricer(DiscountType type)  {
         return null;
     }
 }

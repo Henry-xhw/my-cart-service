@@ -14,6 +14,7 @@ import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
+import com.active.services.cart.repository.DiscountRepository;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
@@ -62,6 +63,9 @@ public class CartServiceTestCase extends BaseTestCase {
 
     @Mock
     private CartPriceEngine cartPriceEngine;
+
+    @Mock
+    private DiscountRepository discountRepository;
 
     @Mock
     private DataAccess dataAccess;
@@ -196,7 +200,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                dataAccess);
+                discountRepository, dataAccess);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);
@@ -205,6 +209,7 @@ public class CartServiceTestCase extends BaseTestCase {
         cart.setItems(Arrays.asList(cartItem));
         UUID identifier = cart.getIdentifier();
         when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
+        doNothing().when(discountRepository).batchInsertDiscount(any());
         Cart quote = cartService.quote(identifier);
         Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
         Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
@@ -216,7 +221,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = spy(new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                dataAccess));
+                discountRepository, dataAccess));
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         CartItem childCartItem = CartDataFactory.cartItem();
@@ -231,6 +236,7 @@ public class CartServiceTestCase extends BaseTestCase {
         CreateCartItemsValidator createCartItemsValidator = spy(new CreateCartItemsValidator(cart, cartItemList));
         doNothing().when(createCartItemsValidator).validate();
         when(cartService.getCartItemsValidator(cart, cartItemList)).thenReturn(createCartItemsValidator);
+        doNothing().when(discountRepository).batchInsertDiscount(any());
         when(cartRepository.getCartItemIdByCartItemUuid(cartItem.getIdentifier())).thenReturn(Optional.ofNullable(cart.getId()));
         when(cartRepository.getCart(cart.getIdentifier())).thenReturn(Optional.of(cart));
         cartService.insertCartItems(cart.getIdentifier(), cartItemList);
@@ -241,7 +247,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                dataAccess);
+                discountRepository, dataAccess);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);
@@ -260,7 +266,7 @@ public class CartServiceTestCase extends BaseTestCase {
         fees.add(cartItemFee1);
         fees.add(cartItemFee2);
         when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(fees);
-
+        doNothing().when(discountRepository).batchInsertDiscount(any());
         Class cl = cartService.getClass();
         Method method = cl.getDeclaredMethod("getCartWithFullPriceByUuid", new Class[]{UUID.class});
 
@@ -290,7 +296,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                dataAccess);
+                discountRepository, dataAccess);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);

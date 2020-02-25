@@ -1,40 +1,65 @@
 package com.active.services.cart.service.quote.discount.processor;
 
-import com.active.services.cart.domain.CartItem;
+import com.active.platform.concurrent.TaskRunner;
+import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.DiscountHandler;
+import com.active.services.cart.service.quote.discount.DiscountLoader;
+import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
+import com.active.services.cart.service.quote.discount.coupon.CouponDiscountLoader;
 import com.active.services.product.DiscountType;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Lookup;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import javax.ws.rs.NotSupportedException;
 
 @Component
-@Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 public class CartDiscountPricer implements CartPricer {
 
+    @NonNull
     private final DiscountType type;
+    @Autowired
+    private SOAPClient soapClient;
+    @Autowired
+    private TaskRunner taskRunner;
 
     @Override
     public void quote(CartQuoteContext context) {
 
-        List<CartItem> cartItems = context.getCart().getFlattenCartItems()
-                .stream().sorted(Comparator.comparing(CartItem::getNetPrice).reversed()).collect(Collectors.toList());
-
-        cartItems.forEach(item -> getCartItemDiscountPricer(type).quote(context, item));
+        List<CartItemDiscounts> cartItemDiscounts = getDiscountLoader(context).load();
+        if (CollectionUtils.isEmpty(cartItemDiscounts)) {
+            return;
+        }
+        cartItemDiscounts.stream()
+                .forEach(cartItemDisc -> new CartItemDiscountPricer(getDiscountHandler(context, cartItemDisc))
+                        .quote(context, cartItemDisc.getCartItem()));
     }
 
-    @Lookup
-    public CartItemDiscountPricer getCartItemDiscountPricer(DiscountType type) {
-        return null;
+    private DiscountHandler getDiscountHandler(CartQuoteContext context, CartItemDiscounts cartItemDiscounts) {
+        if (DiscountType.COUPON == type) {
+            return new CouponDiscountHandler(context, cartItemDiscounts);
+        }
+        throw new NotSupportedException();
     }
+
+    private DiscountLoader getDiscountLoader(CartQuoteContext context) {
+        if (DiscountType.COUPON == type) {
+            return CouponDiscountLoader.builder().context(context)
+                    .soapClient(soapClient).taskRunner(taskRunner).build();
+        }
+        throw new NotSupportedException();
+    }
+
 }

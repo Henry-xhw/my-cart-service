@@ -1,5 +1,6 @@
 package com.active.services.cart.client.soap;
 
+import com.active.services.product.api.omsOnly.soap.ProductOMSEndpoint;
 import com.active.services.product.api.v1.soap.ProductServiceSOAPEndPoint;
 
 import org.apache.cxf.jaxws.spring.JaxWsProxyFactoryBeanDefinitionParser;
@@ -18,15 +19,20 @@ import java.util.Map;
 public class SOAPClient {
     @Value("${url.productServiceSOAPV1}")
     private String productServiceSOAPV1;
+    @Value("${url.productServiceSOAPOMSOnly}")
+    private String productServiceSOAPOMSOnly;
 
     @Autowired
     private ApplicationContext appContext;
 
     @Bean
     public ProductServiceSOAPEndPoint productServiceSOAPEndPoint() {
-        ProductServiceSOAPEndPoint target = buildClientService(productServiceSOAPV1, ProductServiceSOAPEndPoint.class);
+        return buildClientService(productServiceSOAPV1, ProductServiceSOAPEndPoint.class);
+    }
 
-        return target;
+    @Bean
+    public ProductOMSEndpoint getProductOMSEndpoint() {
+        return buildClientService(productServiceSOAPOMSOnly, ProductOMSEndpoint.class);
     }
 
     private <T> T buildClientService(String url, Class<T> serviceClass) {

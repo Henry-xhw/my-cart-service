@@ -3,6 +3,7 @@ package com.active.services.cart.service.quote.price;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
+import com.active.services.cart.service.quote.CartItemFeeBuilder;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
@@ -26,16 +27,12 @@ public class CartItemUnitPricePricer implements CartItemPricer {
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
-        CartItemFee priceFee;
-
         if (Objects.isNull(cartItem.getUnitPrice())) {
-            priceFee = CartItemFee.buildCartItemFee(cartItem,
-                    feeDtoMap.get(cartItem.getProductId()), CartItemFeeType.PRICE);
+            cartItem.getFees().add(CartItemFeeBuilder.buildPriceItemFee(cartItem.getQuantity(),
+                    feeDtoMap.get(cartItem.getProductId())));
         } else {
-            priceFee = CartItemFee.buildCartItemFee(cartItem, CartItemFeeType.PRICE);
+            cartItem.getFees().add(CartItemFeeBuilder.buildOverridePriceItemFee(cartItem));
         }
-        priceFee.setDueAmount(priceFee.getUnitPrice());
-        cartItem.getFees().add(priceFee);
         setGrossAndNetPriceValue(cartItem);
     }
 

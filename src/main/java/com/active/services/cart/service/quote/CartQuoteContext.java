@@ -3,7 +3,8 @@ package com.active.services.cart.service.quote;
 import com.active.services.DiscountModel;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.domain.Discount;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
@@ -23,11 +24,11 @@ import java.util.stream.Collectors;
 
 @Data
 public class CartQuoteContext {
-
     private Cart cart;
+
     private Map<Long, Product> productsMap = new HashMap<>();
 
-    private List<Discount> appliedDiscounts;
+    private List<DiscountApplication> appliedDiscounts;
 
     public CartQuoteContext(Cart cart) {
         this.cart = cart;
@@ -51,7 +52,7 @@ public class CartQuoteContext {
         return cart.getCouponCodes();
     }
 
-    public CartQuoteContext addAppliedDiscount(Discount discount) {
+    public CartQuoteContext addAppliedDiscount(DiscountApplication discount) {
         if (appliedDiscounts == null) {
             appliedDiscounts = new ArrayList<>();
         }

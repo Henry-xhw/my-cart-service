@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -35,5 +36,5 @@ public class CartItemFeeDto extends BaseDto {
     @Digits(integer = 17, fraction = 2)
     private BigDecimal unitPrice;
 
-    private Long cartDiscountId;
+    private UUID relatedIdentifier;
 }

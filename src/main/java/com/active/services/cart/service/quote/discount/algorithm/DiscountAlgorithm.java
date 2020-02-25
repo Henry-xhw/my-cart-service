@@ -1,9 +1,9 @@
 package com.active.services.cart.service.quote.discount.algorithm;
 
-import com.active.services.cart.service.quote.discount.Discount;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 
 import java.util.List;
 
 public interface DiscountAlgorithm {
-    List<Discount> apply(List<Discount> discounts);
+    List<DiscountApplication> apply(List<DiscountApplication> discounts);
 }

@@ -25,15 +25,15 @@ public class CartItemTestCase {
         CartItem cartItem = new CartItem();
         CartItemFee priceFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(priceFee));
-
+        UUID relatedIdentifier = UUID.randomUUID();
         List<CartItemFee> subItems = new ArrayList<>();
         subItems.add(CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PROCESSING_FLAT,
-                1, BigDecimal.TEN, "desc1", "name1"));
+                1, BigDecimal.TEN, "desc1", "name1", relatedIdentifier));
         subItems.add(CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PROCESSING_PERCENT,
-                1, BigDecimal.ONE, "desc2", "name2"));
+                1, BigDecimal.ONE, "desc2", "name2", relatedIdentifier));
         subItems.add(null);
         subItems.add(CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.DISCOUNT,
-                1, BigDecimal.ONE, "desc3", "name3"));
+                1, BigDecimal.ONE, "desc3", "name3", relatedIdentifier));
         priceFee.setSubItems(subItems);
 
         assertThat(cartItem.getFlattenCartItemFees().size()).isEqualTo(3);
