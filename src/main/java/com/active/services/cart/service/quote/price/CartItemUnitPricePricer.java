@@ -1,6 +1,5 @@
 package com.active.services.cart.service.quote.price;
 
-import com.active.services.billing.paymentplans.PaymentPlanInstallment;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.model.CartItemFeeType;
@@ -52,8 +51,7 @@ public class CartItemUnitPricePricer implements CartItemPricer {
     }
 
     private BigDecimal calculateGrossPrice(CartItem cartItem, @NonNull CartItemFee priceFee) {
-        return cartItem.getOverridePrice() != null ? cartItem.getOverridePrice() :
-                priceFee.getUnitPrice().multiply(BigDecimal.valueOf(priceFee.getUnits()));
+        return cartItem.getOverridePrice() != null ? cartItem.getOverridePrice() : priceFee.getUnitPrice();
     }
 
 }
