@@ -47,7 +47,6 @@ public class CartItemUnitPricePricer implements CartItemPricer {
             fees -> fees.stream().filter(cartItemFee -> Objects.equals(cartItemFee.getType(), CartItemFeeType.PRICE))
                 .findAny().ifPresent(cartItemFee -> {
                     cartItem.setGrossPrice(calculateGrossPrice(cartItem, cartItemFee));
-                    cartItem.setNetPrice(calculateNetPrice(cartItem));
                 })
         );
     }
@@ -57,11 +56,4 @@ public class CartItemUnitPricePricer implements CartItemPricer {
                 priceFee.getUnitPrice().multiply(BigDecimal.valueOf(priceFee.getUnits()));
     }
 
-    private BigDecimal calculateNetPrice(CartItem cartItem) {
-        BigDecimal discountAmount = emptyIfNull(cartItem.getFlattenCartItemFees()).stream()
-            .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
-            .map(CartItemFee::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal netPrice = cartItem.getGrossPrice().subtract(discountAmount);
-        return netPrice.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPrice;
-    }
 }

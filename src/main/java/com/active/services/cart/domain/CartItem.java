@@ -89,4 +89,13 @@ public class CartItem extends BaseTree<CartItem> {
         }
         return flatten;
     }
+
+    public BigDecimal getNetPrice() {
+        BigDecimal discountAmount = emptyIfNull(getFlattenCartItemFees()).stream()
+                .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
+                .map(CartItemFee::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal grossPrice = getGrossPrice() == null ? getPriceCartItemFee().get().getUnitPrice() : getGrossPrice();
+        BigDecimal netPrice = grossPrice.subtract(discountAmount);
+        return netPrice.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPrice;
+    }
 }
