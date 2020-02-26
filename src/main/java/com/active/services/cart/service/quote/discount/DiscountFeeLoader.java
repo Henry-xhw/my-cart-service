@@ -30,7 +30,6 @@ public class DiscountFeeLoader {
         BigDecimal discAmount = DiscountAmountCalcUtil.calcFlatAmount(item.getNetPrice(), disc.getAmount(),
                 disc.getAmountType(), cartQuoteContext.getCurrency());
 
-        item.refreshNetPriceByDiscAmt(discAmount); // cart item net price
         applyDiscount(priceFeeItems.get(), disc, discAmount);
     }
 
@@ -38,6 +37,5 @@ public class DiscountFeeLoader {
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(CartItemFeeBuilder.buildDiscountItemFee(disc, discAmount, fee.getUnits()));
         fee.addSubItemFee(cartItemFees);
-        fee.refreshUnitPriceByDiscAmt(discAmount); //do we need to refresh unit price of price item fee.
     }
 }
