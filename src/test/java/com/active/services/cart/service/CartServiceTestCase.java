@@ -209,7 +209,7 @@ public class CartServiceTestCase extends BaseTestCase {
         cart.setItems(Arrays.asList(cartItem));
         UUID identifier = cart.getIdentifier();
         when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
-        doNothing().when(discountRepository).batchInsertDiscount(any());
+        doNothing().when(discountRepository).createDiscount(any());
         Cart quote = cartService.quote(identifier);
         Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
         Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
@@ -236,7 +236,7 @@ public class CartServiceTestCase extends BaseTestCase {
         CreateCartItemsValidator createCartItemsValidator = spy(new CreateCartItemsValidator(cart, cartItemList));
         doNothing().when(createCartItemsValidator).validate();
         when(cartService.getCartItemsValidator(cart, cartItemList)).thenReturn(createCartItemsValidator);
-        doNothing().when(discountRepository).batchInsertDiscount(any());
+        doNothing().when(discountRepository).createDiscount(any());
         when(cartRepository.getCartItemIdByCartItemUuid(cartItem.getIdentifier())).thenReturn(Optional.ofNullable(cart.getId()));
         when(cartRepository.getCart(cart.getIdentifier())).thenReturn(Optional.of(cart));
         cartService.insertCartItems(cart.getIdentifier(), cartItemList);
@@ -266,7 +266,7 @@ public class CartServiceTestCase extends BaseTestCase {
         fees.add(cartItemFee1);
         fees.add(cartItemFee2);
         when(cartItemFeeRepository.getCartItemFeesByCartId(cart.getId())).thenReturn(fees);
-        doNothing().when(discountRepository).batchInsertDiscount(any());
+        doNothing().when(discountRepository).createDiscount(any());
         Class cl = cartService.getClass();
         Method method = cl.getDeclaredMethod("getCartWithFullPriceByUuid", new Class[]{UUID.class});
 
