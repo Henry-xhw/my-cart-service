@@ -44,36 +44,6 @@ public class CartItemDiscountPricerTestCase {
     }
 
     @Test
-    public void quoteWhenNetPriceIsZero() {
-        Cart cart = CartDataFactory.cart();
-        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        cart.getFlattenCartItems().get(0).setNetPrice(new BigDecimal(0));
-
-        UUID cartItemIdentifier = cart.getFlattenCartItems().get(0).getIdentifier();
-        CartItem cartItem = cart.getFlattenCartItems().stream()
-                .filter(item -> item.getIdentifier().equals(cartItemIdentifier)).findFirst().get();
-
-        List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT,
-                new BigDecimal("2.00"), "code",
-                DiscountAlgorithm.MOST_EXPENSIVE,
-                new DateTime(LocalDateTime.now().minusHours(1)), new DateTime(LocalDateTime.now().plusHours(1)),
-                cartQuoteContext));
-
-        CartItemDiscounts cartItemDiscounts = CartItemDiscounts.builder().cartItem(cartItem)
-                .discounts(discountApplicationList).build();
-
-        CouponDiscountHandler handler = new CouponDiscountHandler(cartQuoteContext, cartItemDiscounts);
-        CartItemDiscountPricer cartItemDiscountPricer = new CartItemDiscountPricer(handler);
-
-        cartItemDiscountPricer.quote(cartQuoteContext, cartItem);
-
-        CartItem expectedCartItem = cart.getFlattenCartItems().stream()
-                .filter(item -> item.getIdentifier().equals(cartItemIdentifier)).findFirst().get();
-        checkDiscountAmount(expectedCartItem, null);
-    }
-
-    @Test
     public void quote() {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
