@@ -43,29 +43,10 @@
         )
     </insert>
 
-    <select id="getDiscountByDiscountIdAndType" resultType='com.active.services.cart.domain.Discount'>
-        SELECT
-        identifier,
-        cart_id       as cartId,
-        name,
-        description,
-        amount,
-        amount_type   as amountType,
-        discount_id   as discountId,
-        discount_type as discountType,
-        coupon_code   as couponCode,
-        algorithm,
-        apply_to_recurring_billing as applyToRecurringBilling,
-        origin,
-        discount_group_id as discountGroupId,
-        created_by    as createdBy,
-        created_dt    as createdDt,
-        modified_by   as modifiedBy,
-        modified_dt   as modifieddt
+    <delete id="deletePreviousDiscountByCartId">
+        DELETE
         FROM dbo.discounts
         WHERE
-        discount_type = #{discountType}
-        AND discount_id = #{discountId}
-    </select>
-
+        cart_id = #{cartId}
+    </delete>
 </mapper>

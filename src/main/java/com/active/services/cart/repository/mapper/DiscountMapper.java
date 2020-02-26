@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface DiscountMapper {
     void createDiscount(Discount discount);
 
-    Optional<Discount> getDiscountByDiscountIdAndType(@Param("discountType") DiscountType discountType,
-                                                      @Param("discountId") Long discountId);
+    void deletePreviousDiscountByCartId(@Param("cartId") Long cartId);
 }

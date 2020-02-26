@@ -190,6 +190,7 @@ public class CartService {
     private void saveQuoteResult(CartQuoteContext cartQuoteContext) {
         Cart cart = cartQuoteContext.getCart();
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
+        discountRepository.deletePreviousDiscountByCartId(cart.getId());
         batchInsertDiscount(cartQuoteContext.getAppliedDiscounts());
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {

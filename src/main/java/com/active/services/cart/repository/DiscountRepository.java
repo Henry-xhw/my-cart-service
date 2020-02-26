@@ -18,8 +18,7 @@ public class DiscountRepository {
         discountMapper.createDiscount(discount);
     }
 
-    public Optional<Discount> getDiscountByDiscountIdAndType(DiscountType discountType,
-                                                      Long discountId) {
-        return discountMapper.getDiscountByDiscountIdAndType(discountType, discountId);
+    public void deletePreviousDiscountByCartId(Long cartId) {
+        discountMapper.deletePreviousDiscountByCartId(cartId);
     }
 }
