@@ -7,11 +7,10 @@ import com.active.services.product.DiscountType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.time.Instant;
 
 @Getter
 @NoArgsConstructor
@@ -31,27 +30,7 @@ public class Discount extends BaseDomainObject {
     private Boolean applyToRecurringBilling;
     private OrderLineDiscountOrigin origin = OrderLineDiscountOrigin.AUTOMATIC;
     private Long discountGroupId;
+    private Instant startDate;
+    private Instant endDate;
 
-    public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType) {
-        this.name = name;
-        this.description = description;
-        this.amount = amount;
-        this.amountType = amountType;
-    }
-
-    public Discount(String name, String description, @NonNull BigDecimal amount, @NonNull AmountType amountType,
-                    Long discountId, DiscountType discountType, String couponCode, DiscountAlgorithm algorithm,
-                    Boolean applyToRecurringBilling, UUID identifier, Long cartId) {
-        this.name = name;
-        this.description = description;
-        this.amount = amount;
-        this.amountType = amountType;
-        this.discountId = discountId;
-        this.discountType = discountType;
-        this.couponCode = couponCode;
-        this.algorithm = algorithm;
-        this.applyToRecurringBilling = applyToRecurringBilling;
-        this.cartId = cartId;
-        this.setIdentifier(identifier);
-    }
 }

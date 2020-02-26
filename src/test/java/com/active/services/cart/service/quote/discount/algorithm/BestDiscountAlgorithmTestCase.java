@@ -38,13 +38,13 @@ public class BestDiscountAlgorithmTestCase {
         cartItem.setNetPrice(new BigDecimal("80.00"));
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
-        DiscountApplication discountApplication1 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FLAT, new BigDecimal("20.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication2 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication2 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.PERCENT, new BigDecimal("20.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication3 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication3 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FIXED_AMOUNT, new BigDecimal("70.00"), "code", null, null, null, cartQuoteContext);
 
         BestDiscountAlgorithm discountAlgorithm = new BestDiscountAlgorithm(cartItem, Currency.getInstance("USD"));

@@ -40,16 +40,16 @@ public class StackableFlatFirstDiscountAlgorithmTestCase {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
-        DiscountApplication discountApplication1 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.PERCENT, new BigDecimal("5.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication2 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication2 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FLAT, new BigDecimal("10.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication3 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication3 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.PERCENT, new BigDecimal("10.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication4 = DiscountFactory.getDiscountApplication(
+        DiscountApplication discountApplication4 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FIXED_AMOUNT, new BigDecimal("100.00"), "code", null, null, null, cartQuoteContext);
 
         StackableFlatFirstDiscountAlgorithm discountAlgorithm = new StackableFlatFirstDiscountAlgorithm();

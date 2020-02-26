@@ -23,7 +23,7 @@ public class DiscountFeeLoaderTestCase {
     public void apply() {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        DiscountApplication code = DiscountFactory.getDiscountApplication(AmountType.FLAT,
+        DiscountApplication code = DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT,
                 new BigDecimal("2.00"), "code",
                 DiscountAlgorithm.MOST_EXPENSIVE,
                 new DateTime(LocalDateTime.now().minusDays(1)), new DateTime(LocalDateTime.now().plusDays(1)),

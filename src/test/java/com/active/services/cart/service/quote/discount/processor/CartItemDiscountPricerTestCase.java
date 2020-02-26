@@ -48,7 +48,7 @@ public class CartItemDiscountPricerTestCase {
         cart.getFlattenCartItems().get(0).setNetPrice(new BigDecimal(0));
 
         List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.FLAT,
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT,
                 new BigDecimal("2.00"), "code",
                 DiscountAlgorithm.MOST_EXPENSIVE,
                 new DateTime(LocalDateTime.now().minusHours(1)), new DateTime(LocalDateTime.now().plusHours(1)),
@@ -70,7 +70,7 @@ public class CartItemDiscountPricerTestCase {
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
         List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.FLAT,
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT,
                 new BigDecimal("2.00"), "code",
                 DiscountAlgorithm.MOST_EXPENSIVE,
                 new DateTime(LocalDateTime.now().minusDays(1)), new DateTime(LocalDateTime.now().plusDays(1)),

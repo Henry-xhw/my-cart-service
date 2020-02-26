@@ -9,7 +9,7 @@ import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
-import lombok.Data;
+import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -22,13 +22,11 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
 public class CartQuoteContext {
     private Cart cart;
-
     private Map<Long, Product> productsMap = new HashMap<>();
-
-    private List<DiscountApplication> appliedDiscounts;
+    private List<DiscountApplication> appliedDiscounts = new ArrayList<>();
 
     public CartQuoteContext(Cart cart) {
         this.cart = cart;

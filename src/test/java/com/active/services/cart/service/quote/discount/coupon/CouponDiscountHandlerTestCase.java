@@ -8,8 +8,8 @@ import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountApplication;
-import com.active.services.cart.service.quote.discount.DiscountConvertor;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
+import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
 import com.active.services.domain.DateTime;
@@ -43,10 +43,10 @@ public class CouponDiscountHandlerTestCase {
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
         List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.FLAT, new BigDecimal("10.00"), "code",
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT, new BigDecimal("10.00"), "code",
                 DiscountAlgorithm.MOST_EXPENSIVE, null, null,
                 cartQuoteContext));
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.FIXED_AMOUNT, new BigDecimal("8.00"), "code",
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FIXED_AMOUNT, new BigDecimal("8.00"), "code",
                 null,
                 new DateTime(LocalDateTime.now().plusDays(1)), new DateTime(LocalDateTime.now().plusDays(2)),
                 cartQuoteContext));
@@ -84,10 +84,10 @@ public class CouponDiscountHandlerTestCase {
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
         List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.FLAT, new BigDecimal("10.00"), code1,
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT, new BigDecimal("10.00"), code1,
                 DiscountAlgorithm.MOST_EXPENSIVE, null, null,
                 cartQuoteContext));
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.PERCENT, new BigDecimal("32.00"), code3,
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.PERCENT, new BigDecimal("32.00"), code3,
                 DiscountAlgorithm.MOST_EXPENSIVE,
                 new DateTime(LocalDateTime.now().minusDays(1)), new DateTime(LocalDateTime.now().plusDays(1)),
                 cartQuoteContext));
@@ -146,13 +146,15 @@ public class CouponDiscountHandlerTestCase {
                 DiscountAlgorithm.MOST_EXPENSIVE, null, null);
         Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("10.00"), "code2", null, null, null);
 
-        DiscountApplication discountApplication1 = DiscountConvertor.convert(desc1, cartQuoteContext);
-        DiscountApplication discountApplication2 = DiscountConvertor.convert(desc2, cartQuoteContext);
-        cartQuoteContext.setAppliedDiscounts(Arrays.asList(discountApplication1, discountApplication2));
+        DiscountApplication discountApplication1 = DiscountMapper.MAPPER.toDiscountApplication(desc1, cartQuoteContext);
+        DiscountApplication discountApplication2 = DiscountMapper.MAPPER.toDiscountApplication(desc2, cartQuoteContext);
+
+        cartQuoteContext.addAppliedDiscount(discountApplication1);
+        cartQuoteContext.addAppliedDiscount(discountApplication2);
 
         List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountConvertor.convert(desc1, cartQuoteContext));
-        discountApplicationList.add(DiscountConvertor.convert(desc2, cartQuoteContext));
+        discountApplicationList.add(DiscountMapper.MAPPER.toDiscountApplication(desc1, cartQuoteContext));
+        discountApplicationList.add(DiscountMapper.MAPPER.toDiscountApplication(desc2, cartQuoteContext));
 
         CartItemDiscounts cartItemDiscounts = CartItemDiscounts.builder()
                 .cartItem(cartItem)
@@ -162,7 +164,7 @@ public class CouponDiscountHandlerTestCase {
                 getProduct(cartItem.getProductId(), DiscountModel.COMBINABLE_FLAT_FIRST)));
         CouponDiscountHandler handler = new CouponDiscountHandler(cartQuoteContext, cartItemDiscounts);
 
-        // only return discountApplication2 with null DiscountAlgorithm.
+        // only return discountApplication2
         List<DiscountApplication> result = handler.filterDiscounts();
         assertFalse(result.contains(discountApplicationList.get(0)));
         assertTrue(result.contains(discountApplicationList.get(1)));
@@ -187,7 +189,7 @@ public class CouponDiscountHandlerTestCase {
                 getProduct(cartItem.getProductId(), DiscountModel.NON_COMBINABLE_MINIMIZE_PRICE)));
 
         List<DiscountApplication> discountApplicationList = new ArrayList<>();
-        discountApplicationList.add(DiscountFactory.getDiscountApplication(AmountType.FLAT, new BigDecimal("10.00"), "code",
+        discountApplicationList.add(DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT, new BigDecimal("10.00"), "code",
                 DiscountAlgorithm.MOST_EXPENSIVE,
                 new DateTime(LocalDateTime.now().minusHours(1)), new DateTime(LocalDateTime.now().plusHours(1)),
                 cartQuoteContext));

@@ -5,13 +5,14 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.discount.DiscountApplication;
+import com.active.services.cart.service.quote.discount.DiscountFactory;
+import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.AmountType;
+import com.active.services.product.Discount;
 import com.active.services.product.DiscountAlgorithm;
-import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -88,30 +89,28 @@ public class CartQuoteContextTestCase {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
+        Discount desc1 = DiscountFactory.getDiscount(AmountType.FLAT, new BigDecimal("2.00"), "code1",
+                null, null, null);
+        Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("10.00"), "code2", null, null, null);
 
-        cartQuoteContext.addAppliedDiscount(new DiscountApplication(
-                "name", "disc", new BigDecimal(2), AmountType.FLAT,
-                RandomUtils.nextLong(), DiscountType.MULTI, "cde", DiscountAlgorithm.MOST_EXPENSIVE,
-                null, null, null, null));
+        DiscountApplication discountApplication1 = DiscountMapper.MAPPER.toDiscountApplication(desc1, cartQuoteContext);
+        DiscountApplication discountApplication2 = DiscountMapper.MAPPER.toDiscountApplication(desc2, cartQuoteContext);
 
-
-        cartQuoteContext.addAppliedDiscount(new DiscountApplication(
-                "name", "disc", new BigDecimal(2), AmountType.FLAT,
-                RandomUtils.nextLong(), DiscountType.COUPON, "cde", null, null,
-                null, null, null));
+        cartQuoteContext.addAppliedDiscount(discountApplication1);
+        cartQuoteContext.addAppliedDiscount(discountApplication2);
 
         assertEquals(2, cartQuoteContext.getAppliedDiscounts().size());
         assertTrue(CollectionUtils.isEmpty(cartQuoteContext.getUsedUniqueCouponDiscountsIds()));
 
-        Long id = RandomUtils.nextLong();
-        cartQuoteContext.addAppliedDiscount(new DiscountApplication(
-                "name", "disc", new BigDecimal(2), AmountType.FLAT, id,
-                DiscountType.COUPON, "cde", DiscountAlgorithm.MOST_EXPENSIVE, null,
-                null, null, null));
+        Discount desc3 = DiscountFactory.getDiscount(AmountType.FLAT, new BigDecimal("2.00"), "code1",
+                DiscountAlgorithm.MOST_EXPENSIVE, null, null);
+
+        cartQuoteContext.addAppliedDiscount(DiscountMapper.MAPPER.toDiscountApplication(desc3, cartQuoteContext));
+
         assertEquals(3, cartQuoteContext.getAppliedDiscounts().size());
 
         assertEquals(1, cartQuoteContext.getUsedUniqueCouponDiscountsIds().size());
-        assertEquals(id, cartQuoteContext.getUsedUniqueCouponDiscountsIds().get(0));
+        assertEquals(desc3.getId(), cartQuoteContext.getUsedUniqueCouponDiscountsIds().get(0));
     }
 
     @Test
