@@ -27,9 +27,9 @@ public class DiscountFactory {
         return discount;
     }
 
-    public static DiscountApplication getDiscountApplication(AmountType type, BigDecimal amount, String code,
-                                                             DiscountAlgorithm algorithm, DateTime start, DateTime end,
-                                                             CartQuoteContext context) {
-        return DiscountConvertor.convert(getDiscount(type, amount, code, algorithm, start, end), context);
+    public static DiscountApplication getCouponCodeDiscountApplication(AmountType type, BigDecimal amount, String code,
+                                                                       DiscountAlgorithm algorithm, DateTime start, DateTime end,
+                                                                       CartQuoteContext context) {
+        return DiscountMapper.MAPPER.toDiscountApplication(getDiscount(type, amount, code, algorithm, start, end), context);
     }
 }
