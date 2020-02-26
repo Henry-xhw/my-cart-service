@@ -94,8 +94,9 @@ public class CartItem extends BaseTree<CartItem> {
         BigDecimal discountAmount = emptyIfNull(getFlattenCartItemFees()).stream()
                 .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
                 .map(CartItemFee::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal grossPrice = getGrossPrice() == null ? getPriceCartItemFee().get().getUnitPrice() : getGrossPrice();
-        BigDecimal netPrice = grossPrice.subtract(discountAmount);
-        return netPrice.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPrice;
+        BigDecimal grossPriceAmt = getGrossPrice() == null ? getPriceCartItemFee().get().getUnitPrice() :
+                getGrossPrice();
+        BigDecimal netPriceAmt = grossPriceAmt.subtract(discountAmount);
+        return netPriceAmt.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPriceAmt;
     }
 }
