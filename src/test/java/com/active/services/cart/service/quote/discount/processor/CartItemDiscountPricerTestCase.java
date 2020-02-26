@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CartItemDiscountPricerTestCase {
 
@@ -92,6 +93,10 @@ public class CartItemDiscountPricerTestCase {
                 cartItem.getPriceCartItemFee().get().getSubItems().stream()
                         .filter(cartItemFee -> cartItemFee.getType() == CartItemFeeType.DISCOUNT)
                         .map(CartItemFee::getUnitPrice).findFirst();
-        assertEquals(Optional.ofNullable(amount), discAmount);
+        if (discAmount.isPresent() && amount != null) {
+            assertTrue(discAmount.get().compareTo(amount) == 0);
+        } else {
+            assertTrue(amount == null && !discAmount.isPresent());
+        }
     }
 }
