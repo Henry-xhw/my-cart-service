@@ -62,8 +62,8 @@ public class CouponDiscountLoaderTestCase extends BaseTestCase {
                 .taskRunner(taskRunner).build();
 
         List<CartItemDiscounts> result = loader.load();
-        Assert.assertEquals(cartItem2, result.get(0).getCartItem());
-        Assert.assertEquals(cartItem1, result.get(1).getCartItem());
+        Assert.assertTrue(findMatchItemByAmount(cart.getItems(), result.get(0).getCartItem()));
+        Assert.assertTrue(findMatchItemByAmount(cart.getItems(), result.get(1).getCartItem()));
     }
 
     @Test
@@ -109,5 +109,9 @@ public class CouponDiscountLoaderTestCase extends BaseTestCase {
         discount.setAmount(BigDecimal.ONE);
         discount.setAmountType(AmountType.FLAT);
         return discount;
+    }
+
+    private boolean findMatchItemByAmount(List<CartItem> cartItems, CartItem cartItem) {
+        return cartItems.stream().anyMatch(item -> item.getNetPrice().compareTo(cartItem.getNetPrice()) == 0);
     }
 }

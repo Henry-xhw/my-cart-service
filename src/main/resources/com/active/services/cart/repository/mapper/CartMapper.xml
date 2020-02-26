@@ -52,6 +52,8 @@
             [trimmed_booking_end_dt],
             [quantity],
             [override_price],
+            [gross_price],
+            [net_price],
             [grouping_identifier],
             [oversold],
             [coupon_codes],
@@ -93,6 +95,8 @@
             </choose>
              #{item.quantity},
              #{item.overridePrice},
+             #{item.grossPrice},
+             #{item.netPrice},
              #{item.groupingIdentifier},
              #{item.oversold},
              #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
@@ -161,6 +165,22 @@
             </otherwise>
         </choose>
         <choose>
+            <when test="item.grossPrice!=null">
+                [gross_price] = #{item.grossPrice},
+            </when>
+            <otherwise>
+                [gross_price] = null,
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="item.netPrice!=null">
+                [net_price] = #{item.netPrice},
+            </when>
+            <otherwise>
+                [net_price] = null,
+            </otherwise>
+        </choose>
+        <choose>
             <when test="item.groupingIdentifier!=null">
                 [grouping_identifier] = #{item.groupingIdentifier},
             </when>
@@ -208,7 +228,7 @@
     </resultMap>
 
     <select id="getCart" resultMap="CartResultMap">
-        SELECT cart.id                       as id,
+        SELECT cart.id                as id,
         cart.identifier               as identifier,
         cart.owner_id                 as owner_id,
         cart.keyer_id                 as keyer_id,
@@ -234,6 +254,8 @@
         item.trimmed_booking_end_dt   AS item_trimmed_booking_end_dt,
         item.quantity                 AS item_quantity,
         item.override_price           AS item_override_price,
+        item.gross_price              AS item_gross_price,
+        item.net_price                AS item_net_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.person_identifier        AS item_person_identifier,
         item.fee_volume_index         AS item_fee_volume_index,

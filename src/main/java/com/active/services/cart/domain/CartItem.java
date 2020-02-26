@@ -66,11 +66,6 @@ public class CartItem extends BaseTree<CartItem> {
                     .filter(f -> f.getTransactionType() == FeeTransactionType.DEBIT).findFirst();
     }
 
-    public CartItem refreshNetPriceByDiscAmt(BigDecimal amt) {
-        netPrice = netPrice.subtract(amt);
-        return this;
-    }
-
     public List<CartItemFee> getFlattenCartItemFees() {
         return flattenCartItemFees(fees);
     }
@@ -94,8 +89,10 @@ public class CartItem extends BaseTree<CartItem> {
         BigDecimal discountAmount = emptyIfNull(getFlattenCartItemFees()).stream()
                 .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
                 .map(CartItemFee::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal grossPriceAmt = getGrossPrice() == null ? getPriceCartItemFee().get().getUnitPrice() :
-                getGrossPrice();
+
+        Optional<CartItemFee> priceFee = this.getPriceCartItemFee();
+        BigDecimal priceAmt = priceFee.isPresent() ? priceFee.get().getUnitPrice() : BigDecimal.ZERO;
+        BigDecimal grossPriceAmt = getGrossPrice() == null ? priceAmt : getGrossPrice();
         BigDecimal netPriceAmt = grossPriceAmt.subtract(discountAmount);
         return netPriceAmt.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPriceAmt;
     }
