@@ -3,6 +3,7 @@ package com.active.services.cart.service.checkout;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.domain.Discount;
 import com.active.services.order.management.api.v3.types.DiscountDTO;
 import com.active.services.order.management.api.v3.types.OrderDTO;
@@ -27,7 +28,7 @@ public interface PlaceCartMapper {
             @Mapping(target = "businessDate", expression = "java(java.time.Instant.now())"),
             @Mapping(target = "referenceId", source = "identifier")
     })
-    OrderDTO toOrderDTO(Cart cart);
+    OrderDTO toDto(Cart cart);
 
 
     /*    private String groupingIdentifier;
@@ -41,7 +42,7 @@ public interface PlaceCartMapper {
             @Mapping(target = "systemPrice", source = "grossPrice"),
             @Mapping(target = "referenceId", source = "identifier")
     })
-    OrderLineDTO toLineDTO(CartItem cartItem);
+    OrderLineDTO toDto(CartItem cartItem);
 
     @Mappings({
             @Mapping(target = "orderLineFees", source = "subItems"),
@@ -50,9 +51,18 @@ public interface PlaceCartMapper {
             @Mapping(target = "entityReferenceId", source = "relatedIdentifier"),
             @Mapping(target = "feeType", source = "type")
     })
-    OrderLineFeeDTO toFeeDTO(CartItemFee cartItemFee);
+    OrderLineFeeDTO toDto(CartItemFeesInCart cartItemFee);
 
-    DiscountDTO toDiscountDTO(Discount discount);
+    @Mappings({
+            @Mapping(target = "orderLineFees", source = "subItems"),
+            @Mapping(target = "amount", source = "unitPrice"),
+            @Mapping(target = "feeTransactionType", source = "transactionType"),
+            @Mapping(target = "entityReferenceId", source = "relatedIdentifier"),
+            @Mapping(target = "feeType", source = "type")
+    })
+    OrderLineFeeDTO toDto(CartItemFee cartItemFee);
+
+    DiscountDTO toDto(Discount discount);
 
     default String map(java.util.UUID value) {
         if (value == null) {

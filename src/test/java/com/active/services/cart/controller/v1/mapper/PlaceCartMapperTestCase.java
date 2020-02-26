@@ -54,7 +54,7 @@ public class PlaceCartMapperTestCase {
         cart.getItems().get(0).setSubItems(subItems);
         cart.getItems().add(CartDataFactory.cartItem());
 
-        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toOrderDTO(cart);
+        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toDto(cart);
 
         checkOrderDTO(cart, orderDTO);
 
