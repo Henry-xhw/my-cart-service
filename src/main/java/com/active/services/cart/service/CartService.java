@@ -194,6 +194,7 @@ public class CartService {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
+        cartRepository.updateCartItems(cart.getItems());
     }
 
     private void batchInsertDiscount(List<Discount> discounts) {
