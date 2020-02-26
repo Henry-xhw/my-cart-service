@@ -4,7 +4,6 @@ import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.model.v1.UpdateCartItemDto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -60,25 +59,6 @@ public class CartItem extends BaseTree<CartItem> {
     private boolean ignoreMultiDiscounts;
 
     private CouponMode couponMode;
-
-    public CartItem(UpdateCartItemDto updateCartItemDto) {
-        this.productId = updateCartItemDto.getProductId();
-        this.productName = updateCartItemDto.getProductName();
-        this.productDescription = updateCartItemDto.getProductDescription();
-        this.bookingRange = updateCartItemDto.getBookingRange();
-        this.trimmedBookingRange = updateCartItemDto.getTrimmedBookingRange();
-        this.quantity = updateCartItemDto.getQuantity();
-        this.overridePrice = updateCartItemDto.getOverridePrice();
-        this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
-        this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
-        this.setIdentifier(updateCartItemDto.getIdentifier());
-        this.oversold = updateCartItemDto.isOversold();
-        this.couponCodes = updateCartItemDto.getCouponCodes();
-        this.couponMode = updateCartItemDto.getCouponMode();
-        this.personIdentifier = updateCartItemDto.getPersonIdentifier();
-        this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
-        this.couponMode = updateCartItemDto.getCouponMode();
-    }
 
     public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()

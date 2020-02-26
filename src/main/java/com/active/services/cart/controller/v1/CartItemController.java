@@ -46,7 +46,7 @@ public class CartItemController {
     @PutMapping
     public void update(@PathVariable(CART_ID_PARAM) UUID cartIdentifier,
                                     @RequestBody @Validated UpdateCartItemReq req) {
-        List<CartItem> items = req.getItems().stream().map(CartItem::new).collect(Collectors.toList());
+        List<CartItem> items = CartMapper.INSTANCE.toDomain(req.getItems());
         cartService.updateCartItems(cartIdentifier, items);
     }
 

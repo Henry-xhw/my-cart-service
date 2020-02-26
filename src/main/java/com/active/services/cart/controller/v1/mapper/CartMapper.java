@@ -5,6 +5,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.CreateCartItemDto;
+import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.req.UpdateCartReq;
@@ -16,6 +17,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper {
 
@@ -26,6 +29,10 @@ public interface CartMapper {
     CartItem toDomain(CartItemDto dto, @Context boolean isCreate);
 
     CartItem toDomain(CreateCartItemDto dto, @Context boolean isCreate);
+
+    CartItem toDomain(UpdateCartItemDto dto);
+
+    List<CartItem> toDomain(List<UpdateCartItemDto> dtos);
 
     CheckoutContext toDomain(CheckoutReq req);
 
@@ -41,4 +48,6 @@ public interface CartMapper {
     CreateCartReq toCreateCartReq(Cart cart);
 
     Cart toDomainFromUpdateCartReq(UpdateCartReq req);
+
+
 }
