@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.services.DiscountModel;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
@@ -9,11 +10,16 @@ import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
+import com.active.services.cart.service.quote.discount.condition.DiscountSequentialSpecs;
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
+import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
+import com.active.services.cart.service.quote.discount.condition.UniqueUsedSpec;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,9 +40,14 @@ public class CouponDiscountHandler implements DiscountHandler {
      */
     @Override
     public List<DiscountApplication> filterDiscounts() {
+
+        CollectionUtils.emptyIfNull(itemDiscounts.getDiscounts()).stream().forEach(discountApplication ->
+                discountApplication.setCondition(buildDiscountSpecification(context, discountApplication)));
+
         List<DiscountApplication> discounts = itemDiscounts.getDiscounts().stream()
                 .filter(DiscountApplication::satisfy)
                 .collect(Collectors.toList());
+
         return isCombinableDiscountMode() ? discounts : getHighPriorityDiscounts(discounts);
     }
 
@@ -68,5 +79,12 @@ public class CouponDiscountHandler implements DiscountHandler {
         return context.getDiscountModel(itemDiscounts.getCartItem().getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST;
     }
 
+
+    private static DiscountSpecification buildDiscountSpecification(CartQuoteContext context, Discount disc) {
+        return DiscountSequentialSpecs.allOf(
+                new NotExpiredSpec(disc.getStartDate(), disc.getEndDate(), Instant.now()),
+                new UniqueUsedSpec(disc.getDiscountId(), context.getUsedUniqueCouponDiscountsIds())
+        );
+    }
 }
 
