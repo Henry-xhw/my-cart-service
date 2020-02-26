@@ -68,7 +68,7 @@ public class CartUnitPricePricerTestCase {
     private CartQuoteContext buildCartQuoteContext() {
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.setUnitPrice(null);
+        cartItem.setOverridePrice(null);
         cartItem.setFees(new ArrayList<>());
         ArrayList<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem);

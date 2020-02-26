@@ -38,7 +38,7 @@ public class CartItemUnitPricePricerTestCase {
     public void quoteUnitPriceIsNull() {
         CartQuoteContext cartQuoteContext = buildCartQuoteContext();
         CartItem cartItem = CartDataFactory.cartItem();
-        cartItem.setUnitPrice(null);
+        cartItem.setOverridePrice(null);
         cartItem.setProductId(1L);
         cartItem.setFees(new ArrayList<>());
         cartItemUnitPricePricer.quote(cartQuoteContext, cartItem);
@@ -50,7 +50,7 @@ public class CartItemUnitPricePricerTestCase {
         CartQuoteContext cartQuoteContext = buildCartQuoteContext();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItemUnitPricePricer.quote(cartQuoteContext, cartItem);
-        Assert.assertEquals(cartItem.getUnitPrice(), BigDecimal.valueOf(10));
+        Assert.assertEquals(cartItem.getOverridePrice(), BigDecimal.valueOf(10));
     }
 
     private CartQuoteContext buildCartQuoteContext() {

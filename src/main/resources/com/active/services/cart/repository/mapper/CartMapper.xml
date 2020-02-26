@@ -51,7 +51,7 @@
             [trimmed_booking_start_dt],
             [trimmed_booking_end_dt],
             [quantity],
-            [unit_price],
+            [override_price],
             [grouping_identifier],
             [oversold],
             [coupon_codes],
@@ -92,7 +92,7 @@
                 </otherwise>
             </choose>
              #{item.quantity},
-             #{item.unitPrice},
+             #{item.overridePrice},
              #{item.groupingIdentifier},
              #{item.oversold},
              #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
@@ -153,11 +153,11 @@
             [quantity] = #{item.quantity},
         </if>
         <choose>
-            <when test="item.unitPrice!=null">
-                [unit_price] = #{item.unitPrice},
+            <when test="item.overridePrice!=null">
+                [override_price] = #{item.overridePrice},
             </when>
             <otherwise>
-                [unit_price] = null,
+                [override_price] = null,
             </otherwise>
         </choose>
         <choose>
@@ -233,7 +233,7 @@
         item.trimmed_booking_start_dt AS item_trimmed_booking_start_dt,
         item.trimmed_booking_end_dt   AS item_trimmed_booking_end_dt,
         item.quantity                 AS item_quantity,
-        item.unit_price               AS item_unit_price,
+        item.override_price           AS item_override_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.person_identifier        AS item_person_identifier,
         item.fee_volume_index         AS item_fee_volume_index,

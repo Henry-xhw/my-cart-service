@@ -39,7 +39,7 @@ public class MockCart {
         cartItem.setProductDescription("test");
         cartItem.setQuantity(1);
         cartItem.setProductName("test");
-        cartItem.setUnitPrice(BigDecimal.valueOf(1));
+        cartItem.setOverridePrice(BigDecimal.valueOf(1));
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setId(1L);
@@ -74,7 +74,7 @@ public class MockCart {
         cartItem.setProductDescription("test");
         cartItem.setQuantity(1);
         cartItem.setProductName("test");
-        cartItem.setUnitPrice(BigDecimal.valueOf(1));
+        cartItem.setOverridePrice(BigDecimal.valueOf(1));
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setFeeVolumeIndex(1);
@@ -103,7 +103,7 @@ public class MockCart {
         cartItem.setProductDescription("test");
         cartItem.setQuantity(1);
         cartItem.setProductName("test");
-        cartItem.setUnitPrice(BigDecimal.valueOf(1));
+        cartItem.setOverridePrice(BigDecimal.valueOf(1));
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setGrossPrice(new BigDecimal(0));

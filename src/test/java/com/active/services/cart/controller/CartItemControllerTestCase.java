@@ -212,7 +212,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         cartItem2.setBookingRange(null);
         cartItem2.setTrimmedBookingRange(null);
         cartItem2.setQuantity(2);
-        cartItem2.setUnitPrice(BigDecimal.ONE);
+        cartItem2.setOverridePrice(BigDecimal.ONE);
         cartItem2.setGroupingIdentifier("grouping identifier");
         List<CartItem> items = new ArrayList<>();
         items.add(cartItem2);

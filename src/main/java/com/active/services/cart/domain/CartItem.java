@@ -39,7 +39,7 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer quantity;
 
-    private BigDecimal unitPrice;
+    private BigDecimal overridePrice;
 
     private String groupingIdentifier;
 
@@ -68,7 +68,7 @@ public class CartItem extends BaseTree<CartItem> {
         this.bookingRange = updateCartItemDto.getBookingRange();
         this.trimmedBookingRange = updateCartItemDto.getTrimmedBookingRange();
         this.quantity = updateCartItemDto.getQuantity();
-        this.unitPrice = updateCartItemDto.getUnitPrice();
+        this.overridePrice = updateCartItemDto.getOverridePrice();
         this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
         this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
         this.setIdentifier(updateCartItemDto.getIdentifier());
@@ -100,7 +100,7 @@ public class CartItem extends BaseTree<CartItem> {
         List<CartItemFee> flatten = new LinkedList<>();
         while (!q.isEmpty()) {
             CartItemFee it = q.poll();
-            if (it != null && it.getType() != CartItemFeeType.DISCOUNT) {
+            if (it != null) {
                 flatten.add(it);
                 emptyIfNull(it.getSubItems()).stream()
                         .filter(Objects::nonNull)

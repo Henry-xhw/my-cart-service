@@ -55,7 +55,7 @@ public class CartDataFactory {
         updateCartItemDto.setProductDescription(cartItem.getProductDescription());
         updateCartItemDto.setProductId(cartItem.getProductId());
         updateCartItemDto.setQuantity(cartItem.getQuantity());
-        updateCartItemDto.setUnitPrice(cartItem.getUnitPrice());
+        updateCartItemDto.setOverridePrice(cartItem.getOverridePrice());
         updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
         updateCartItemDto.setProductName(cartItem.getProductName());
         updateCartItemDto.setCouponCodes(cartItem.getCouponCodes());
@@ -103,7 +103,7 @@ public class CartDataFactory {
         trimmedBookingRange.setUpperExclusive(Instant.now());
         cartItem.setTrimmedBookingRange(trimmedBookingRange);
         cartItem.setQuantity(quantity);
-        cartItem.setUnitPrice(price);
+        cartItem.setOverridePrice(price);
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
         cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));

@@ -23,7 +23,7 @@ public class CartItemFeeBuilderTestCase {
     public void buildOverridePriceItemFee() {
         CartItem item = CartDataFactory.cartItem();
         CartItemFee cartItemFee = CartItemFeeBuilder.buildOverridePriceItemFee(item);
-        assertEquals(item.getUnitPrice(), cartItemFee.getUnitPrice());
+        assertEquals(item.getOverridePrice(), cartItemFee.getUnitPrice());
         assertEquals(CartItemFeeType.PRICE, cartItemFee.getType());
     }
 

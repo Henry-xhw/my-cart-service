@@ -136,6 +136,17 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
 GO
 
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'override_price'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items ADD override_price DECIMAL(19, 2) NULL
+
+        PRINT 'Added column override_price to dbo.cart_items'
+    END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'ignore_multi_discounts'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
     BEGIN
@@ -143,6 +154,17 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
         ALTER TABLE dbo.cart_items ADD ignore_multi_discounts BIT DEFAULT ((0)) NOT NULL
 
         PRINT 'Added column ignore_multi_discounts to dbo.cart_items'
+    END
+GO
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'unit_price'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items DROP column unit_price
+
+        PRINT 'Droped column unit_price to dbo.cart_items'
     END
 GO
 
@@ -157,5 +179,19 @@ BEGIN
     @level1name = 'cart_items',
     @level2type = 'Column',
     @level2name = 'coupon_codes'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','override_price'))
+BEGIN
+    EXEC sys.sp_addextendedproperty
+    @name = N'MS_Description',
+    @value = N'override price',
+    @level0type = 'SCHEMA',
+    @level0name = 'dbo',
+    @level1type = 'TABLE',
+    @level1name = 'cart_items',
+    @level2type = 'Column',
+    @level2name = 'override_price'
 END
 GO

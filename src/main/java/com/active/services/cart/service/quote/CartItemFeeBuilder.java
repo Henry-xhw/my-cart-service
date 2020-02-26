@@ -22,7 +22,7 @@ public class CartItemFeeBuilder {
 
     public static CartItemFee buildOverridePriceItemFee(CartItem cartItem) {
         return buildCartItemFee(cartItem.getProductName(), cartItem.getProductDescription(),
-        cartItem.getUnitPrice(), cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT, null);
+        cartItem.getOverridePrice(), cartItem.getQuantity(), CartItemFeeType.PRICE, FeeTransactionType.DEBIT, null);
     }
 
     public static CartItemFee buildPriceItemFee(Integer quantity, FeeDto feeDto) {
