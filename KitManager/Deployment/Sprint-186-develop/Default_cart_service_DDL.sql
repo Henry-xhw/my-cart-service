@@ -2,23 +2,6 @@ USE cart_service
 GO
 
 -- 	 KitSection = Tables
---KitManagerFileID=18112
---FileName=drop.sql
---SubmittedBy=evan wei (ACTIVE\ewei)
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-WHERE SCHEMA_NAME(schema_id) = 'dbo' AND OBJECT_NAME(object_id) ='cart_discounts' AND type = 'U')
-BEGIN
-	 drop table dbo.cart_discounts
-	 PRINT 'drop dbo.cart_discounts'
-END
-GO
-GO
---/KitManagerFileID=18112
-if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
-exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4704,18112,'drop.sql',0
-GO
-
 --KitManagerFileID=17804
 --FileName=cart.sql
 --SubmittedBy=evan wei (ACTIVE\ewei)
@@ -191,7 +174,9 @@ BEGIN
         [trimmed_booking_start_dt]  DATETIME            NULL,
         [trimmed_booking_end_dt]    DATETIME            NULL,
         [quantity]                  BIGINT              NOT NULL,
-        [unit_price]                DECIMAL(19, 2)      NULL,
+        [override_price]            DECIMAL(19, 2)      NULL,
+        [gross_price]               DECIMAL(19, 2)      NULL,
+        [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
@@ -313,6 +298,39 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
 GO
 
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'override_price'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items ADD override_price DECIMAL(19, 2) NULL
+
+        PRINT 'Added column override_price to dbo.cart_items'
+    END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'gross_price'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items ADD gross_price DECIMAL(19, 2) NULL
+
+        PRINT 'Added column gross_price to dbo.cart_items'
+    END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'net_price'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items ADD net_price DECIMAL(19, 2) NULL
+
+        PRINT 'Added column net_price to dbo.cart_items'
+    END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'ignore_multi_discounts'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
     BEGIN
@@ -320,6 +338,17 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
         ALTER TABLE dbo.cart_items ADD ignore_multi_discounts BIT DEFAULT ((0)) NOT NULL
 
         PRINT 'Added column ignore_multi_discounts to dbo.cart_items'
+    END
+GO
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'unit_price'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+    BEGIN
+
+        ALTER TABLE dbo.cart_items DROP column unit_price
+
+        PRINT 'Droped column unit_price to dbo.cart_items'
     END
 GO
 
@@ -334,6 +363,48 @@ BEGIN
     @level1name = 'cart_items',
     @level2type = 'Column',
     @level2name = 'coupon_codes'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','override_price'))
+BEGIN
+    EXEC sys.sp_addextendedproperty
+    @name = N'MS_Description',
+    @value = N'override price',
+    @level0type = 'SCHEMA',
+    @level0name = 'dbo',
+    @level1type = 'TABLE',
+    @level1name = 'cart_items',
+    @level2type = 'Column',
+    @level2name = 'override_price'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','gross_price'))
+BEGIN
+    EXEC sys.sp_addextendedproperty
+    @name = N'MS_Description',
+    @value = N'gross price',
+    @level0type = 'SCHEMA',
+    @level0name = 'dbo',
+    @level1type = 'TABLE',
+    @level1name = 'cart_items',
+    @level2type = 'Column',
+    @level2name = 'gross_price'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','net_price'))
+BEGIN
+    EXEC sys.sp_addextendedproperty
+    @name = N'MS_Description',
+    @value = N'net price',
+    @level0type = 'SCHEMA',
+    @level0name = 'dbo',
+    @level1type = 'TABLE',
+    @level1name = 'cart_items',
+    @level2type = 'Column',
+    @level2name = 'net_price'
 END
 GO
 GO
@@ -829,6 +900,10 @@ BEGIN
         [identifier]                NVARCHAR(255)       NOT NULL,
         [type]                      NVARCHAR(255)       NOT NULL,
         [payload]                   NVARCHAR(MAX)       NULL,
+        [created_by]                NVARCHAR(255)       NOT NULL,
+        [created_dt]                DATETIME            NOT NULL,
+        [modified_by]               NVARCHAR(255)       NOT NULL,
+        [modified_dt]               DATETIME            NOT NULL
         CONSTRAINT [pk_events] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.events'
@@ -855,6 +930,58 @@ BEGIN
     PRINT 'Added index ix_event_identifier_type to dbo.events.'
 END
 GO
+
+IF NOT EXISTS( SELECT 1
+                FROM information_schema.COLUMNS
+                WHERE table_name = 'events'
+                AND column_name = 'created_by'
+                AND TABLE_SCHEMA = 'dbo')
+BEGIN
+    ALTER TABLE dbo.events ADD [created_by] NVARCHAR(255) NOT NULL DEFAULT 'SYSTEM'
+
+    PRINT 'Add created_by to events'
+END
+GO
+
+
+IF NOT EXISTS( SELECT 0
+                FROM information_schema.COLUMNS
+                WHERE table_name = 'events'
+                AND column_name = 'modified_by'
+                AND TABLE_SCHEMA = 'dbo')
+BEGIN
+    ALTER TABLE dbo.events ADD [modified_by] NVARCHAR(255) NOT NULL DEFAULT 'SYSTEM'
+
+    PRINT 'Add modified_by to events'
+END
+GO
+
+
+IF NOT EXISTS( SELECT 0
+                FROM information_schema.COLUMNS
+                WHERE table_name = 'events'
+                AND column_name = 'created_dt'
+                AND TABLE_SCHEMA = 'dbo')
+BEGIN
+    ALTER TABLE dbo.events ADD [created_dt] DATETIME NOT NULL DEFAULT GETUTCDATE()
+
+    PRINT 'Add created_dt to events'
+END
+GO
+
+
+IF NOT EXISTS( SELECT 0
+                FROM information_schema.COLUMNS
+                WHERE table_name = 'events'
+                AND column_name = 'modified_dt'
+                AND TABLE_SCHEMA = 'dbo')
+BEGIN
+    ALTER TABLE dbo.events ADD [modified_dt] DATETIME NOT NULL DEFAULT GETUTCDATE()
+
+    PRINT 'Add modified_dt to events'
+END
+GO
+
 
 GO
 --/KitManagerFileID=17942
