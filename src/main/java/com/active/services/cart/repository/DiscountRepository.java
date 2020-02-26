@@ -7,7 +7,6 @@ import com.active.services.product.DiscountType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,8 +14,8 @@ import java.util.Optional;
 public class DiscountRepository {
     private final DiscountMapper discountMapper;
 
-    public void batchInsertDiscount(List<Discount> discounts) {
-        discountMapper.batchInsertDiscount(discounts);
+    public void createDiscount(Discount discount) {
+        discountMapper.createDiscount(discount);
     }
 
     public Optional<Discount> getDiscountByDiscountIdAndType(DiscountType discountType,

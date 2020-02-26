@@ -18,6 +18,7 @@ import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 import com.active.services.cart.util.TreeBuilder;
@@ -149,11 +150,11 @@ public class CartService {
 
     public Cart quote(UUID cartId) {
         Cart cart = getCartByUuid(cartId);
-        cartPriceEngine.quote(new CartQuoteContext(cart));
-
+        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
+        cartPriceEngine.quote(cartQuoteContext);
         // Manual control the tx
         dataAccess.doInTx(() -> {
-            saveQuoteResult(cart);
+            saveQuoteResult(cartQuoteContext);
             incrementPriceVersion(cartId);
         });
         return cart;
@@ -186,9 +187,10 @@ public class CartService {
         cartRepository.incrementPriceVersion(cartId, ContextWrapper.get().getActorId());
     }
 
-    private void saveQuoteResult(Cart cart) {
+    private void saveQuoteResult(CartQuoteContext cartQuoteContext) {
+        Cart cart = cartQuoteContext.getCart();
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
-        batchInsertDiscount(cart.getDiscounts());
+        batchInsertDiscount(cartQuoteContext.getAppliedDiscounts());
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
@@ -197,15 +199,15 @@ public class CartService {
         cartRepository.updateCartItems(cart.getItems());
     }
 
-    private void batchInsertDiscount(List<Discount> discounts) {
-        ArrayList<Discount> dis = distinctDiscount(discounts);
+    private void batchInsertDiscount(List<DiscountApplication> discountApplications) {
+        ArrayList<Discount> dis = distinctDiscount(discountApplications);
         if (CollectionUtils.isNotEmpty(dis)) {
-            discountRepository.batchInsertDiscount(dis);
+            dis.forEach(discount -> discountRepository.createDiscount(discount));
         }
     }
 
-    private ArrayList<Discount> distinctDiscount(List<Discount> discounts) {
-        return discounts.stream()
+    private ArrayList<Discount> distinctDiscount(List<DiscountApplication> discountApplications) {
+        return discountApplications.stream()
                 .filter(discount -> !discountRepository.getDiscountByDiscountIdAndType(discount.getDiscountType(),
                         discount.getDiscountId()).isPresent())
                 .collect(Collectors.collectingAndThen(Collectors
