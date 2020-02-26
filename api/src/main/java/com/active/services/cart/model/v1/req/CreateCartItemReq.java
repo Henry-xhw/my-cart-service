@@ -1,6 +1,6 @@
 package com.active.services.cart.model.v1.req;
 
-import com.active.services.cart.model.v1.CartItemDto;
+import com.active.services.cart.model.v1.CreateCartItemDto;
 
 import lombok.Data;
 
@@ -14,5 +14,5 @@ import javax.validation.constraints.NotEmpty;
 public class CreateCartItemReq {
     @NotEmpty
     @Valid
-    private List<CartItemDto> items = new ArrayList<>();
+    private List<CreateCartItemDto> items = new ArrayList<>();
 }

@@ -4,6 +4,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
+import com.active.services.cart.model.v1.CreateCartItemDto;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.req.UpdateCartReq;
@@ -23,6 +24,8 @@ public interface CartMapper {
     Cart toDomain(CartDto dto, @Context boolean isCreate);
 
     CartItem toDomain(CartItemDto dto, @Context boolean isCreate);
+
+    CartItem toDomain(CreateCartItemDto dto, @Context boolean isCreate);
 
     CheckoutContext toDomain(CheckoutReq req);
 

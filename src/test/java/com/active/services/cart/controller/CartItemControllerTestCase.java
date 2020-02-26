@@ -67,7 +67,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     public void createCartItemSuccess() throws Exception {
         when(cartService.getCartByUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
         CreateCartItemReq req = new CreateCartItemReq();
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
+        req.setItems(Collections.singletonList(CartDataFactory.getCreateCartItemDto()));
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
@@ -83,7 +83,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
                 "not found"));
         CreateCartItemReq req = new CreateCartItemReq();
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
+        req.setItems(Collections.singletonList(CartDataFactory.getCreateCartItemDto()));
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
