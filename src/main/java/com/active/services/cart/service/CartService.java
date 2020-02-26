@@ -199,19 +199,9 @@ public class CartService {
     }
 
     private void batchInsertDiscount(List<DiscountApplication> discountApplications) {
-        ArrayList<Discount> dis = distinctDiscount(discountApplications);
-        if (CollectionUtils.isNotEmpty(dis)) {
-            dis.forEach(discount -> discountRepository.createDiscount(discount));
+        if (CollectionUtils.isNotEmpty(discountApplications)) {
+            discountApplications.forEach(discount -> discountRepository.createDiscount(discount));
         }
-    }
-
-    private ArrayList<Discount> distinctDiscount(List<DiscountApplication> discountApplications) {
-        return discountApplications.stream()
-                .filter(discount -> !discountRepository.getDiscountByDiscountIdAndType(discount.getDiscountType(),
-                        discount.getDiscountId()).isPresent())
-                .collect(Collectors.collectingAndThen(Collectors
-                        .toCollection(() -> new TreeSet<>(Comparator
-                                .comparing(d -> d.getDiscountId() + d.getDiscountType().toString()))), ArrayList::new));
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {
