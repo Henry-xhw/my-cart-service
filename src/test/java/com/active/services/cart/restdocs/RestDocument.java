@@ -129,9 +129,6 @@ public class RestDocument {
           .filter(field -> field.isAnnotationPresent(Valid.class))
           .map(field -> {
               Object fieldObject = ReflectionTestUtils.getField(object, object.getClass(), field.getName());
-              if (fieldObject == null) {
-                  return new ArrayList<FieldDescriptor>();
-              }
               if (!(fieldObject instanceof Collection)) {
                   return generateAllFieldDescriptors(pathPrefix + field.getName(), fieldObject);
               } else if (!CollectionUtils.isEmpty((Collection) fieldObject)) {

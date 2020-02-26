@@ -4,6 +4,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.CartItemFeesInCart;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.service.checkout.OrderTypeMapper;
@@ -30,16 +31,16 @@ public class PlaceCartMapperTestCase {
     @Test
     public void toOrderDTO() {
         UUID relatedIdentifier = UUID.randomUUID();
-        Cart cart = CartDataFactory.cart();
+        Cart cart = CartDataFactory.placeOrderCart();
 
-        CartItem subItem = CartDataFactory.getCartItem(3, new BigDecimal(20), "child description");
-        CartItem subItem2 = CartDataFactory.getCartItem(4, new BigDecimal(100), "child description two");
+        CartItem subItem = CartDataFactory.getPlaceOrderCartItem(3, new BigDecimal(20), "child description");
+        CartItem subItem2 = CartDataFactory.getPlaceOrderCartItem(4, new BigDecimal(100), "child description two");
 
         List<CartItemFee> fees = new ArrayList<>();
-        CartItemFee subCartItemFee = CartDataFactory.getCartItemFee(FeeTransactionType.DEBIT,
+        CartItemFeesInCart subCartItemFee = CartDataFactory.getCartItemFeesInCart(FeeTransactionType.DEBIT,
                 CartItemFeeType.PROCESSING_FLAT,
                 3, new BigDecimal(10), "sub Description one", "sub name one", relatedIdentifier);
-        CartItemFee subCartItemFee2 = CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.PRICE,
+        CartItemFeesInCart subCartItemFee2 = CartDataFactory.getCartItemFeesInCart(FeeTransactionType.CREDIT, CartItemFeeType.PRICE,
                 2, new BigDecimal(15), "sub Description two", "sub name two", relatedIdentifier);
         fees.add(subCartItemFee);
         fees.add(subCartItemFee2);
@@ -52,7 +53,7 @@ public class PlaceCartMapperTestCase {
         subItems.add(subItem2);
 
         cart.getItems().get(0).setSubItems(subItems);
-        cart.getItems().add(CartDataFactory.cartItem());
+        cart.getItems().add(CartDataFactory.placeOrderCartItem());
 
         OrderDTO orderDTO = PlaceCartMapper.MAPPER.toDto(cart);
 
