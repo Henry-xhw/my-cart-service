@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j

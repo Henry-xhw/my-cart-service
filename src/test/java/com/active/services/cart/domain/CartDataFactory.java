@@ -3,6 +3,7 @@ package com.active.services.cart.domain;
 import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.model.v1.CreateCartItemDto;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.service.CartStatus;
 import com.active.services.product.AmountType;
@@ -55,7 +56,7 @@ public class CartDataFactory {
         updateCartItemDto.setProductDescription(cartItem.getProductDescription());
         updateCartItemDto.setProductId(cartItem.getProductId());
         updateCartItemDto.setQuantity(cartItem.getQuantity());
-        updateCartItemDto.setUnitPrice(cartItem.getUnitPrice());
+        updateCartItemDto.setOverridePrice(cartItem.getOverridePrice());
         updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
         updateCartItemDto.setProductName(cartItem.getProductName());
         updateCartItemDto.setCouponCodes(cartItem.getCouponCodes());
@@ -103,7 +104,7 @@ public class CartDataFactory {
         trimmedBookingRange.setUpperExclusive(Instant.now());
         cartItem.setTrimmedBookingRange(trimmedBookingRange);
         cartItem.setQuantity(quantity);
-        cartItem.setUnitPrice(price);
+        cartItem.setOverridePrice(price);
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
         cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));
@@ -133,5 +134,23 @@ public class CartDataFactory {
         discount.setModifiedDt(Instant.now());
         discount.setDiscountGroupId(66666L);
         return discount;
+    }
+
+    public static CreateCartItemDto getCreateCartItemDto() {
+        CreateCartItemDto createCartItemDto = new CreateCartItemDto();
+        createCartItemDto.setIdentifier(UUID.randomUUID());
+        createCartItemDto.setProductId(RandomUtils.nextLong());
+        createCartItemDto.setProductName("product name");
+        createCartItemDto.setProductDescription("description");
+        Range<Instant> trimmedBookingRange = new Range<>();
+        trimmedBookingRange.setLowerInclusive(Instant.now());
+        trimmedBookingRange.setUpperExclusive(Instant.now());
+        createCartItemDto.setTrimmedBookingRange(trimmedBookingRange);
+        createCartItemDto.setQuantity(1);
+        createCartItemDto.setOverridePrice(BigDecimal.ONE);
+        createCartItemDto.setGroupingIdentifier("grouping identifier");
+        createCartItemDto.setFeeVolumeIndex(0);
+        createCartItemDto.setCouponCodes(Collections.singleton("FDSAFSA"));
+        return createCartItemDto;
     }
 }

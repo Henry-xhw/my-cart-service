@@ -42,7 +42,7 @@ public class QuoteCartItemDto extends BaseDto {
 
     @Min(value = 0)
     @Digits(integer = 17, fraction = 2)
-    private BigDecimal unitPrice;
+    private BigDecimal overridePrice;
 
     @Size(max = 255)
     private String groupingIdentifier;

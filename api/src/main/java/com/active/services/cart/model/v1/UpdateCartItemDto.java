@@ -43,9 +43,9 @@ public class UpdateCartItemDto {
     @Min(value = 1, message = "cartItem's quantity can not less than 1")
     private Integer quantity;
 
-    @Min(value = 0, message = "cartItem's unit price can not less than 0")
+    @Min(value = 0, message = "cartItem's override price can not less than 0")
     @Digits(integer = 17, fraction = 2)
-    private BigDecimal unitPrice;
+    private BigDecimal overridePrice;
 
     @Size(max = 255)
     private String groupingIdentifier;

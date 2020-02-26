@@ -4,7 +4,6 @@ import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
-import com.active.services.cart.model.v1.UpdateCartItemDto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,7 +38,7 @@ public class CartItem extends BaseTree<CartItem> {
 
     private Integer quantity;
 
-    private BigDecimal unitPrice;
+    private BigDecimal overridePrice;
 
     private String groupingIdentifier;
 
@@ -61,25 +60,6 @@ public class CartItem extends BaseTree<CartItem> {
 
     private CouponMode couponMode;
 
-    public CartItem(UpdateCartItemDto updateCartItemDto) {
-        this.productId = updateCartItemDto.getProductId();
-        this.productName = updateCartItemDto.getProductName();
-        this.productDescription = updateCartItemDto.getProductDescription();
-        this.bookingRange = updateCartItemDto.getBookingRange();
-        this.trimmedBookingRange = updateCartItemDto.getTrimmedBookingRange();
-        this.quantity = updateCartItemDto.getQuantity();
-        this.unitPrice = updateCartItemDto.getUnitPrice();
-        this.groupingIdentifier = updateCartItemDto.getGroupingIdentifier();
-        this.feeVolumeIndex = updateCartItemDto.getFeeVolumeIndex();
-        this.setIdentifier(updateCartItemDto.getIdentifier());
-        this.oversold = updateCartItemDto.isOversold();
-        this.couponCodes = updateCartItemDto.getCouponCodes();
-        this.couponMode = updateCartItemDto.getCouponMode();
-        this.personIdentifier = updateCartItemDto.getPersonIdentifier();
-        this.ignoreMultiDiscounts = updateCartItemDto.isIgnoreMultiDiscounts();
-        this.couponMode = updateCartItemDto.getCouponMode();
-    }
-
     public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()
                     .filter(f -> f.getType() == CartItemFeeType.PRICE)
@@ -100,7 +80,7 @@ public class CartItem extends BaseTree<CartItem> {
         List<CartItemFee> flatten = new LinkedList<>();
         while (!q.isEmpty()) {
             CartItemFee it = q.poll();
-            if (it != null && it.getType() != CartItemFeeType.DISCOUNT) {
+            if (it != null) {
                 flatten.add(it);
                 emptyIfNull(it.getSubItems()).stream()
                         .filter(Objects::nonNull)
@@ -108,5 +88,14 @@ public class CartItem extends BaseTree<CartItem> {
             }
         }
         return flatten;
+    }
+
+    public BigDecimal getNetPrice() {
+        BigDecimal discountAmount = emptyIfNull(getFlattenCartItemFees()).stream()
+                .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
+                .map(CartItemFee::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal grossPrice = getGrossPrice() == null ? getPriceCartItemFee().get().getUnitPrice() : getGrossPrice();
+        BigDecimal netPrice = grossPrice.subtract(discountAmount);
+        return netPrice.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPrice;
     }
 }

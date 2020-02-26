@@ -21,8 +21,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class CartItemDto extends BaseDto {
-
+public class CreateCartItemDto extends BaseDto {
     @NotNull
     private Long productId;
 
@@ -49,21 +48,11 @@ public class CartItemDto extends BaseDto {
     @Size(max = 255)
     private String groupingIdentifier;
 
-    @Min(value = 0)
-    @Digits(integer = 17, fraction = 2)
-    private BigDecimal grossPrice;
-
-    /**
-     * Net Price = Gross Price - Price Hikes Amount - Discounts Amount
-     */
-    @Min(value = 0)
-    @Digits(integer = 17, fraction = 2)
-    private BigDecimal netPrice;
-
     private Integer feeVolumeIndex;
 
     @Valid
-    private List<CartItemDto> subItems = new ArrayList<>();
+    private List<CreateCartItemDto> subItems = new ArrayList<>();
+
 
     private boolean oversold;
 
