@@ -86,13 +86,16 @@ public class CartItem extends BaseTree<CartItem> {
     }
 
     public BigDecimal getNetPrice() {
-        BigDecimal discountAmount = emptyIfNull(getFlattenCartItemFees()).stream()
-                .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
-                .map(CartItemFee::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        Optional<CartItemFee> priceFee = this.getPriceCartItemFee();
+        if (!priceFee.isPresent()) {
+            return BigDecimal.ZERO;
+        }
 
-        BigDecimal priceAmt = getPriceCartItemFee().map(CartItemFee::getUnitPrice).orElse(BigDecimal.ZERO);
-        BigDecimal grossPriceAmt = Optional.ofNullable(getGrossPrice()).orElse(priceAmt);
-        BigDecimal netPriceAmt = grossPriceAmt.subtract(discountAmount);
-        return netPriceAmt.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : netPriceAmt;
+        BigDecimal discountAmount = emptyIfNull(priceFee.get().getSubItems()).stream()
+                .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
+                .map(CartItemFee::getUnitPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return priceFee.get().getUnitPrice().subtract(discountAmount);
     }
 }
