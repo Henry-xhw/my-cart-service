@@ -69,7 +69,7 @@ public class CartItemDiscountPricerTestCase {
     private void checkDiscountAmount(CartItem cartItem, BigDecimal amount) {
         Optional<BigDecimal> discAmount =
                 cartItem.getPriceCartItemFee().get().getSubItems().stream()
-                        .filter(cartItemFee -> cartItemFee.getType() == CartItemFeeType.DISCOUNT)
+                        .filter(cartItemFee -> CartItemFeeType.isDiscount(cartItemFee.getType()))
                         .map(CartItemFee::getUnitPrice).findFirst();
         if (discAmount.isPresent() && amount != null) {
             assertTrue(discAmount.get().compareTo(amount) == 0);

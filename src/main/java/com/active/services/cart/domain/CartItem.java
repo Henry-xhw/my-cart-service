@@ -92,7 +92,7 @@ public class CartItem extends BaseTree<CartItem> {
         }
 
         BigDecimal discountAmount = emptyIfNull(priceFee.get().getSubItems()).stream()
-                .filter(cartItemFee -> CartItemFeeType.DISCOUNT == cartItemFee.getType())
+                .filter(cartItemFee -> CartItemFeeType.isDiscount(cartItemFee.getType()))
                 .map(CartItemFee::getUnitPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
