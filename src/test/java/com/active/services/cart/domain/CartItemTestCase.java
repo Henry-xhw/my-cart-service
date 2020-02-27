@@ -27,7 +27,7 @@ public class CartItemTestCase {
         subItems.add(CartDataFactory.getCartItemFee(FeeTransactionType.DEBIT, CartItemFeeType.PROCESSING_PERCENT,
                 1, BigDecimal.ONE, "desc2", "name2", relatedIdentifier));
         subItems.add(null);
-        subItems.add(CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.DISCOUNT,
+        subItems.add(CartDataFactory.getCartItemFee(FeeTransactionType.CREDIT, CartItemFeeType.AA_DISCOUNT,
                 1, BigDecimal.ONE, "desc3", "name3", relatedIdentifier));
         priceFee.setSubItems(subItems);
 
