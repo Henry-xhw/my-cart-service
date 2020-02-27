@@ -36,11 +36,6 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private UUID relatedIdentifier;
 
-    public CartItemFee refreshUnitPriceByDiscAmt(BigDecimal amt) {
-        unitPrice = unitPrice.subtract(amt);
-        return this;
-    }
-
     public CartItemFee addSubItemFee(List<CartItemFee> cartItemFeeList) {
 
         if (getSubItems() == null) {

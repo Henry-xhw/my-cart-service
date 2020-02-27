@@ -44,7 +44,7 @@ public class CheckoutCommitOrderProcessor extends CheckoutBaseProcessor {
     protected void doProcess() {
         CheckoutContext ctx = getCheckoutContext();
 
-        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toOrderDTO(ctx.getCart());
+        OrderDTO orderDTO = PlaceCartMapper.MAPPER.toDto(ctx.getCart());
         orderDTO.setOrderUrl(ctx.getOrderUrl());
         orderDTO.setSendOrderReceipt(ctx.isSendReceipt());
         String payAccountId = Optional.ofNullable(ctx.getPaymentAccount())

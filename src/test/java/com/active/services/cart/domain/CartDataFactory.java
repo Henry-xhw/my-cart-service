@@ -37,6 +37,20 @@ public class CartDataFactory {
         return cart;
     }
 
+    public static Cart placeOrderCart() {
+        Cart cart = new Cart();
+        cart.setId(1L);
+        cart.setCurrencyCode("USD");
+        cart.setKeyerId(UUID.randomUUID());
+        cart.setOwnerId(UUID.randomUUID());
+        cart.setIdentifier(UUID.randomUUID());
+        cart.setItems(placeOrderCartItems());
+        cart.setCartStatus(CartStatus.CREATED);
+        cart.setCouponCodes(Collections.singleton("FDSAFSA"));
+
+        return cart;
+    }
+
     private static List<CartItem> cartItems() {
         List<CartItem> cartItems = new ArrayList<>();
         cartItems.add(cartItem());
@@ -44,8 +58,19 @@ public class CartDataFactory {
         return cartItems;
     }
 
+    private static List<CartItem> placeOrderCartItems() {
+        List<CartItem> cartItems = new ArrayList<>();
+        cartItems.add(placeOrderCartItem());
+        cartItems.add(placeOrderCartItem());
+        return cartItems;
+    }
+
     public static CartItem cartItem() {
         return getCartItem(1, new BigDecimal(10), "description");
+    }
+
+    public static CartItem placeOrderCartItem() {
+        return getPlaceOrderCartItem(1, new BigDecimal(10), "description");
     }
 
     public static UpdateCartItemDto updateCartItemDto(CartItem cartItem) {
@@ -67,6 +92,12 @@ public class CartDataFactory {
         return getCartItemFee(FeeTransactionType.DEBIT, CartItemFeeType.PRICE, 1, price, "description",
                 "name", null);
     }
+
+    public static CartItemFeesInCart cartItemFeesInCart(BigDecimal price) {
+        return getCartItemFeesInCart(FeeTransactionType.DEBIT, CartItemFeeType.PRICE, 1, price, "description",
+                "name", null);
+    }
+
     public static CartItemFee cartItemFee() {
         return cartItemFee(new BigDecimal(1));
     }
@@ -87,6 +118,25 @@ public class CartDataFactory {
         cartItemFee.setName(name);
         cartItemFee.setRelatedIdentifier(relatedIdentifier);
         return cartItemFee;
+    }
+
+    public static CartItemFeesInCart getCartItemFeesInCart(FeeTransactionType transactionType, CartItemFeeType feeType,
+                                                     int unit,
+                                             BigDecimal price,
+                                             String description,
+                                             String name,
+                                             UUID relatedIdentifier) {
+        CartItemFeesInCart cartItemFeesInCart = new CartItemFeesInCart();
+        cartItemFeesInCart.setId(RandomUtils.nextLong());
+        cartItemFeesInCart.setIdentifier(UUID.randomUUID());
+        cartItemFeesInCart.setTransactionType(transactionType);
+        cartItemFeesInCart.setType(feeType);
+        cartItemFeesInCart.setUnits(unit);
+        cartItemFeesInCart.setUnitPrice(price);
+        cartItemFeesInCart.setDescription(description);
+        cartItemFeesInCart.setName(name);
+        cartItemFeesInCart.setRelatedIdentifier(relatedIdentifier);
+        return cartItemFeesInCart;
     }
 
     public static CartItem getCartItem(Integer quantity, BigDecimal price, String description) {
@@ -111,6 +161,32 @@ public class CartDataFactory {
         cartItem.setNetPrice(price);
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(cartItemFee(price));
+        cartItem.setFees(cartItemFees);
+        return cartItem;
+    }
+
+    public static CartItem getPlaceOrderCartItem(Integer quantity, BigDecimal price, String description) {
+        CartItem cartItem = new CartItem();
+        cartItem.setIdentifier(UUID.randomUUID());
+        cartItem.setProductId(RandomUtils.nextLong());
+        cartItem.setProductName("product name");
+        cartItem.setProductDescription(description);
+        Range<Instant> bookingRange = new Range<>();
+        bookingRange.setLowerInclusive(Instant.now());
+        bookingRange.setUpperExclusive(Instant.now());
+        cartItem.setBookingRange(bookingRange);
+        Range<Instant> trimmedBookingRange = new Range<>();
+        trimmedBookingRange.setLowerInclusive(Instant.now());
+        trimmedBookingRange.setUpperExclusive(Instant.now());
+        cartItem.setTrimmedBookingRange(trimmedBookingRange);
+        cartItem.setQuantity(quantity);
+        cartItem.setOverridePrice(price);
+        cartItem.setGroupingIdentifier("grouping identifier");
+        cartItem.setFeeVolumeIndex(0);
+        cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));
+        cartItem.setNetPrice(price);
+        List<CartItemFee> cartItemFees = new ArrayList<>();
+        cartItemFees.add(cartItemFeesInCart(price));
         cartItem.setFees(cartItemFees);
         return cartItem;
     }
@@ -142,6 +218,10 @@ public class CartDataFactory {
         createCartItemDto.setProductId(RandomUtils.nextLong());
         createCartItemDto.setProductName("product name");
         createCartItemDto.setProductDescription("description");
+        Range<Instant> bookingRange = new Range<>();
+        bookingRange.setLowerInclusive(Instant.now());
+        bookingRange.setUpperExclusive(Instant.now());
+        createCartItemDto.setBookingRange(bookingRange);
         Range<Instant> trimmedBookingRange = new Range<>();
         trimmedBookingRange.setLowerInclusive(Instant.now());
         trimmedBookingRange.setUpperExclusive(Instant.now());

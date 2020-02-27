@@ -18,6 +18,7 @@ public class CartItemTestCase {
     @Test
     public void testGetAllCartItemFees() {
         CartItem cartItem = new CartItem();
+        cartItem.getNetPrice();
         CartItemFee priceFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(priceFee));
         UUID relatedIdentifier = UUID.randomUUID();
