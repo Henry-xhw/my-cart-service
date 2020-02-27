@@ -5,7 +5,6 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.util.TreeBuilder;
 import com.active.services.contract.controller.v1.CalculationItem;
 import com.active.services.contract.controller.v1.FeeAmountResult;
 import com.active.services.contract.controller.v1.FeeOwner;
@@ -85,9 +84,7 @@ public class CartProductProcessingFeePricer implements CartPricer {
                         .quote(context, foundCartItemByIdentifier.get(feeResult.getReferenceId()));
             }
         );
-
-        TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(flattenCartItems);
-        context.getCart().setItems(baseTreeTreeBuilder.buildTree());
+        context.getCart().setUnflattenItems(flattenCartItems);
     }
 
     private List<FeeResult> getProcessingFeesFromContractService(CalculateFeeAmountsReq req) {
