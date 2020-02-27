@@ -4,6 +4,7 @@ import com.active.platform.types.range.Range;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
+import com.active.services.cart.util.TreeBuilder;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -68,6 +69,12 @@ public class CartItem extends BaseTree<CartItem> {
 
     public List<CartItemFee> getFlattenCartItemFees() {
         return flattenCartItemFees(fees);
+    }
+
+    public CartItem setUnflattenItemFees(List<CartItemFee> unflattenCartItemFees) {
+        TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(unflattenCartItemFees);
+        fees = baseTreeTreeBuilder.buildTree();
+        return this;
     }
 
     public static List<CartItemFee> flattenCartItemFees(List<CartItemFee> cartItemFees) {

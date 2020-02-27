@@ -6,7 +6,6 @@ import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.repository.mapper.CartMapper;
-import com.active.services.cart.util.TreeBuilder;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -33,12 +32,9 @@ public class CartRepository {
     }
 
     public Optional<Cart> getCart(UUID cartId) {
-        Optional<Cart> cart = cartMapper.getCart(cartId);
-        cart.ifPresent(cart1 -> {
-            TreeBuilder<CartItem> treeBuilder = new TreeBuilder<>(cart1.getItems());
-            cart1.setItems(treeBuilder.buildTree());
-        });
-        return cart;
+        Optional<Cart> cartOptional = cartMapper.getCart(cartId);
+        cartOptional.ifPresent(cart -> cart.unflattenItems());
+        return cartOptional;
     }
 
     public void createCartItems(Long cartId, List<CartItem> items) {

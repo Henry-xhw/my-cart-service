@@ -20,7 +20,6 @@ import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
-import com.active.services.cart.util.TreeBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -227,12 +226,10 @@ public class CartService {
     private void buildCartItemFeeTree(Cart cart) {
         List<CartItemFeesInCart> cartItemFees = cartItemFeeRepository.getCartItemFeesByCartId(cart.getId());
         cart.getFlattenCartItems().forEach(cartItem -> {
-            List<CartItemFeesInCart> collect =
+            List<CartItemFee> collect =
                     cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId() &&
                              Objects.nonNull(itemFee.getId())).collect(Collectors.toList());
-
-            TreeBuilder<CartItemFee> baseTreeTreeBuilder = new TreeBuilder<>(collect);
-            cartItem.setFees(baseTreeTreeBuilder.buildTree());
+            cartItem.setUnflattenItemFees(collect);
         });
     }
 
