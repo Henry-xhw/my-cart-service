@@ -161,14 +161,14 @@ IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount_type'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
 BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [amount_type] NVARCHAR(25) NOT NULL;
-	PRINT 'modify column amount_type not null, dbo.discounts'
+    ALTER TABLE dbo.discounts ALTER COLUMN [amount_type] NVARCHAR(25) NULL;
+	PRINT 'modify column amount_type null, dbo.discounts'
 END
 
 IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
 BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NOT NULL;
-	PRINT 'modify column amount not null, dbo.discounts'
+    ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NULL;
+	PRINT 'modify column amount null, dbo.discounts'
 END
