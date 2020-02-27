@@ -84,7 +84,6 @@ public class CartProductProcessingFeePricer implements CartPricer {
                         .quote(context, foundCartItemByIdentifier.get(feeResult.getReferenceId()));
             }
         );
-        context.getCart().setUnflattenItems(flattenCartItems);
     }
 
     private List<FeeResult> getProcessingFeesFromContractService(CalculateFeeAmountsReq req) {

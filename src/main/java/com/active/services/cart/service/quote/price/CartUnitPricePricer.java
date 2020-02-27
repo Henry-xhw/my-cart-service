@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,33 +42,26 @@ public class CartUnitPricePricer implements CartPricer {
         List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
         Map<Long, FeeDto> feeMap = getProductFeeMap(flattenCartItems);
         flattenCartItems.forEach(cartItem -> getCartItemPricer(feeMap).quote(context, cartItem));
-        context.getCart().setUnflattenItems(flattenCartItems);
     }
 
     private Map<Long, FeeDto> getProductFeeMap(List<CartItem> flattenCartItems) {
-        Map<Integer, Long> seqProdIds = getSequenceProdIdMap(flattenCartItems);
-        List<QuoteItemDto> priceItems = getPriceItems(seqProdIds);
-        if (CollectionUtils.isEmpty(priceItems)) {
+
+        List<Long> quoteProdIds = emptyIfNull(flattenCartItems).stream()
+                        .filter(cartItem -> cartItem.getOverridePrice() == null)
+                        .map(CartItem::getProductId)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(quoteProdIds)) {
             return new HashMap<>();
         }
+
+        List<QuoteItemDto> priceItems = quoteProdIds.stream()
+                .map(id -> getQuoteItemDto(quoteProdIds.indexOf(id), id)).collect(Collectors.toList());
+
         List<FeeDto> feeDtos = getPriceFromProductService(priceItems);
         return feeDtos.stream().filter(Objects::nonNull)
-                .collect(toMap(feeDto -> seqProdIds.get(feeDto.getSequence()), Function.identity()));
-    }
-
-    private Map<Integer, Long> getSequenceProdIdMap(List<CartItem> flattenCartItems) {
-        List<Long> quoteProdIds =
-                emptyIfNull(flattenCartItems).stream()
-                        .filter(cartItem -> cartItem.getOverridePrice() == null)
-                        .map(CartItem::getProductId).distinct().collect(Collectors.toList());
-        return emptyIfNull(quoteProdIds).stream().collect(Collectors.toMap(id -> quoteProdIds.indexOf(id),
-                Function.identity()));
-    }
-
-    private List<QuoteItemDto> getPriceItems(Map<Integer, Long> sequenceProdIdMap) {
-        List<QuoteItemDto> quoteItemDtos = new ArrayList<>();
-        sequenceProdIdMap.forEach((key, value) -> quoteItemDtos.add(getQuoteItemDto(key, value)));
-        return quoteItemDtos;
+                .collect(toMap(feeDto -> quoteProdIds.get(feeDto.getSequence()), Function.identity()));
     }
 
     private QuoteItemDto getQuoteItemDto(int sequence, Long prodId) {
