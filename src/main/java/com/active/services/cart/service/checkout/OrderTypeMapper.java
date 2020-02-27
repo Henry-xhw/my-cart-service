@@ -28,7 +28,7 @@ public final class OrderTypeMapper {
             case AD_HOC:
                 return OrderLineFeeType.AD_HOC;
             default:
-                return OrderLineFeeType.AD_HOC;
+                return null;
         }
     }
 
