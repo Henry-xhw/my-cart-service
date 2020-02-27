@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +116,8 @@ public class CartService {
     public void insertCartItems(UUID cartIdentifier, List<CartItem> cartItems) {
         Cart cart = getCartByUuid(cartIdentifier);
         getCartItemsValidator(cart, cartItems).validate();
+        Instant now = Instant.now();
+        cartItems.forEach(cartItem -> cartItem.setBusinessDate(now));
         dataAccess.doInTx(() -> doInsertCartItems(cart, cartItems, null));
     }
 

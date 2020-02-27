@@ -8,6 +8,7 @@ import com.active.services.cart.model.FeeTransactionType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -52,6 +53,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private String personIdentifier;
 
+    private Instant businessDate;
+
     private List<CartItemFee> fees = new ArrayList<>();
 
     private Set<String> couponCodes;
@@ -83,6 +86,14 @@ public class CartItem extends BaseTree<CartItem> {
             }
         }
         return flatten;
+    }
+
+    public boolean isNetPriceGTZero() {
+        return getNetPrice().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public boolean hasPersonIdentifier() {
+        return StringUtils.isNotEmpty(personIdentifier);
     }
 
     public BigDecimal getNetPrice() {
