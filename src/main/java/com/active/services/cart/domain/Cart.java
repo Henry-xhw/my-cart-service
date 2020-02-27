@@ -53,11 +53,6 @@ public class Cart extends BaseDomainObject {
         return flattenCartItems(items);
     }
 
-    public Cart setUnflattenItems(List<CartItem> flattenCartItems) {
-        TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(flattenCartItems);
-        items = baseTreeTreeBuilder.buildTree();
-        return this;
-    }
 
     public Cart unflattenItems() {
         TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(items);
