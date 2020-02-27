@@ -747,8 +747,8 @@ BEGIN
         [id]                                BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                        UNIQUEIDENTIFIER    NOT NULL,
         [cart_id]                           BIGINT              NOT NULL,
-        [name]                              NVARCHAR(255)       NOT NULL,
-        [description]                       NVARCHAR(255)       NOT NULL,
+        [name]                              NVARCHAR(255)       NULL,
+        [description]                       NVARCHAR(255)       NULL,
         [amount]                            DECIMAL(19, 2)      NULL,
         [amount_type]                       NVARCHAR(25)        NULL,
         [discount_id]                       BIGINT              NOT NULL,
@@ -882,6 +882,38 @@ BEGIN
  @level2name = 'origin'
 END
 GO
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'description'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [description] NVARCHAR(255)  NULL;
+	PRINT 'modify column description null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'name'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [name] NVARCHAR(255)  NULL;
+	PRINT 'modify column name null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount_type'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [amount_type] NVARCHAR(25) NULL;
+	PRINT 'modify column amount_type null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NULL;
+	PRINT 'modify column amount null, dbo.discounts'
+END
 GO
 --/KitManagerFileID=18111
 if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
