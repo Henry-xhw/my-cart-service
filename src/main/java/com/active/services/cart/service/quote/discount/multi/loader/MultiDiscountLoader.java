@@ -5,7 +5,6 @@ import com.active.platform.concurrent.TaskRunner;
 import com.active.services.ContextWrapper;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.multi.MultiDiscountCartItem;
 import com.active.services.domain.DateTime;
 import com.active.services.product.api.omsOnly.soap.ProductOMSEndpoint;
 import com.active.services.product.discount.multi.MultiDiscount;
@@ -83,7 +82,11 @@ public class MultiDiscountLoader {
         );
 
         // Need merge the results.
-        // As
+        // The concurrent load results may be like:
+        // md1: item1, item2
+        // md1: item1, item3
+        // We should return it as:
+        // md1: item1, item2, item3.
         return mergeResults(results);
     }
 

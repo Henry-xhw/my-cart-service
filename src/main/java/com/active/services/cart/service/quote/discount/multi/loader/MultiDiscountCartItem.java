@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.multi;
+package com.active.services.cart.service.quote.discount.multi.loader;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.product.discount.multi.MultiDiscount;
@@ -19,6 +19,6 @@ public class MultiDiscountCartItem {
 
     public void addCartItems(List<CartItem> newItems) {
         cartItems.addAll(newItems.stream().filter(newItem -> cartItems.stream().noneMatch(existingItem ->
-                existingItem.getIdentifier().equals(newItem.getIdentifier()))).collect(Collectors.toList()));
+            existingItem.getIdentifier().equals(newItem.getIdentifier()))).collect(Collectors.toList()));
     }
 }
