@@ -5,6 +5,7 @@ import com.active.services.cart.service.CartStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,10 @@ public class Cart extends BaseDomainObject {
 
     public List<CartItem> getFlattenCartItems() {
         return flattenCartItems(items);
+    }
+
+    public static BigDecimal getNetAmounts(List<CartItem> cartItems) {
+        return cartItems.stream().map(CartItem::getNetAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     public static List<CartItem> flattenCartItems(List<CartItem> items) {

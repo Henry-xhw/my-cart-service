@@ -96,6 +96,10 @@ public class CartItem extends BaseTree<CartItem> {
         return StringUtils.isNotEmpty(personIdentifier);
     }
 
+    public BigDecimal getNetAmount() {
+        return getNetPrice().multiply(BigDecimal.valueOf(quantity));
+    }
+
     public BigDecimal getNetPrice() {
         Optional<CartItemFee> priceFee = this.getPriceCartItemFee();
         if (!priceFee.isPresent()) {

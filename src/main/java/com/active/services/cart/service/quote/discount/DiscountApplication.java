@@ -4,9 +4,13 @@ import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
+@SuperBuilder
+@NoArgsConstructor
 public class DiscountApplication extends Discount {
 
     @Setter

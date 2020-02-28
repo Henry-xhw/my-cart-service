@@ -8,6 +8,7 @@ import com.active.services.product.DiscountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,6 +16,7 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor
 @Setter
+@SuperBuilder
 public class Discount extends BaseDomainObject {
 
     private Long cartId;

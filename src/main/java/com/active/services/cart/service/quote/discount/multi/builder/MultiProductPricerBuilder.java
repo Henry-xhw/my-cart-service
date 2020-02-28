@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.itemsByPersonIdentifier;
+import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.quantityCounts;
 import static com.active.services.cart.service.quote.discount.multi.builder.MultiPersonPricerBuilder.getEffectiveMdThresholdSetting;
-import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 public class MultiProductPricerBuilder implements Builder<List<MultiProductDiscountPricer>> {
@@ -28,14 +29,13 @@ public class MultiProductPricerBuilder implements Builder<List<MultiProductDisco
     public List<MultiProductDiscountPricer> build() {
         List<MultiProductDiscountPricer> pricers = new ArrayList<>();
 
-        Map<String, List<CartItem>> itemsByPersonIdentifier = mdCartItem.getCartItems().stream()
-                .collect(groupingBy(CartItem::getPersonIdentifier));
-        itemsByPersonIdentifier.forEach((personIdentifier, items) -> {
-            Integer productQuantities = items.stream().map(CartItem::getQuantity).reduce(Integer::sum).get();
+        Map<String, List<CartItem>> itemsByIdentifier = itemsByPersonIdentifier(mdCartItem.getCartItems());
+        itemsByIdentifier.forEach((personIdentifier, items) -> {
+            int productQuantities = quantityCounts(items);
             Optional<MultiDiscountThresholdSetting> effectiveMdThresholdSettingOpt =
                     getEffectiveMdThresholdSetting(mdCartItem.getMultiDiscount(), productQuantities);
             if (effectiveMdThresholdSettingOpt.isPresent()) {
-                pricers.add(new MultiProductDiscountPricer(mdCartItem));
+                pricers.add(new MultiProductDiscountPricer(mdCartItem, effectiveMdThresholdSettingOpt.get()));
             } else {
                 LOG.debug("No threshold met for md {} for person {}",
                         mdCartItem.getMultiDiscount().getId(), personIdentifier);

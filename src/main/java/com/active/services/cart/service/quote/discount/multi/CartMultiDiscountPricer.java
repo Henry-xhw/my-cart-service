@@ -10,6 +10,7 @@ import com.active.services.cart.service.quote.discount.multi.pricer.MultiDiscoun
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -23,11 +24,15 @@ public class CartMultiDiscountPricer implements CartPricer {
         // Step1: load multi discounts
         List<MultiDiscountCartItem> mdCartItems = multiDiscountLoader.load(context.getCart());
 
-        // Step2: build pricer
+        // Step2: build pricer by MultiDiscountComparator order.
+        Collections.sort(mdCartItems);
         List<MultiDiscountPricer> pricers = new MultiDiscountPricerBuilder()
                 .multiDiscountCartItems(mdCartItems).build();
 
         // Step3: run pricer
-        pricers.forEach(MultiDiscountPricer::price);
+        pricers.forEach(pricer -> {
+            pricer.setQuoteContext(context);
+            pricer.price();
+        });
     }
 }

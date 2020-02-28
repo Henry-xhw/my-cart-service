@@ -8,6 +8,7 @@ import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.Discount;
@@ -73,7 +74,7 @@ public class CouponDiscountLoader implements DiscountLoader {
                 if (CollectionUtils.isEmpty(discounts)) {
                     return new ArrayList<>();
                 }
-                List<com.active.services.cart.service.quote.discount.DiscountApplication> discountsWithCondition =
+                List<DiscountApplication> discountsWithCondition =
                         discounts.stream()
                                 .map(disc -> DiscountMapper.MAPPER.toDiscountApplication(disc, context))
                                 .collect(Collectors.toList());
