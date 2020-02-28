@@ -19,4 +19,8 @@ public class CartItemDiscounts {
     public BigDecimal getNetPrice() {
         return cartItem.getNetPrice();
     }
+
+    public BigDecimal getTotalNetPrice() {
+        return cartItem.getNetPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+    }
 }
