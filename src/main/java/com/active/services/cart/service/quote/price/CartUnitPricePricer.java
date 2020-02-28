@@ -5,14 +5,13 @@ import com.active.services.cart.common.CartException;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.util.TreeBuilder;
 import com.active.services.product.nextgen.v1.dto.QuoteItemDto;
 import com.active.services.product.nextgen.v1.dto.fee.FeeDto;
 import com.active.services.product.nextgen.v1.req.QuoteReq;
 import com.active.services.product.nextgen.v1.rsp.QuoteRsp;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -20,12 +19,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.active.services.cart.model.ErrorCode.QUOTE_ERROR;
 import static java.util.stream.Collectors.toMap;
@@ -40,54 +39,42 @@ public class CartUnitPricePricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-        Map<Long, FeeDto> feeDtoMap = new HashMap<>();
         List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
-        List<QuoteItemDto> notOverridePriceItems = getNotOverridePriceItems(flattenCartItems);
-        if (CollectionUtils.isNotEmpty(notOverridePriceItems)) {
-            QuoteReq quoteReq = new QuoteReq();
-            quoteReq.setItems(notOverridePriceItems);
-            List<FeeDto> feeDtos = getPriceFromProductService(quoteReq);
-            feeDtoMap = buildCartItemFeeResult(notOverridePriceItems, feeDtos);
+        Map<Long, FeeDto> feeMap = getProductFeeMap(flattenCartItems);
+        flattenCartItems.forEach(cartItem -> getCartItemPricer(feeMap).quote(context, cartItem));
+    }
+
+    private Map<Long, FeeDto> getProductFeeMap(List<CartItem> flattenCartItems) {
+
+        List<Long> quoteProdIds = emptyIfNull(flattenCartItems).stream()
+                        .filter(cartItem -> cartItem.getOverridePrice() == null)
+                        .map(CartItem::getProductId)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(quoteProdIds)) {
+            return new HashMap<>();
         }
-        Map<Long, FeeDto> finalFeeMap = feeDtoMap;
-        flattenCartItems.forEach(cartItem ->
-                getCartItemPricer(finalFeeMap).quote(context, cartItem)
-        );
-        TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(flattenCartItems);
-        context.getCart().setItems(baseTreeTreeBuilder.buildTree());
+
+        List<QuoteItemDto> priceItems = quoteProdIds.stream()
+                .map(id -> getQuoteItemDto(quoteProdIds.indexOf(id), id)).collect(Collectors.toList());
+
+        List<FeeDto> feeDtos = getPriceFromProductService(priceItems);
+        return feeDtos.stream().filter(Objects::nonNull)
+                .collect(toMap(feeDto -> quoteProdIds.get(feeDto.getSequence()), Function.identity()));
     }
 
-    private Map<Long, FeeDto> buildCartItemFeeResult(List<QuoteItemDto> notOverridePriceItems, List<FeeDto> feeDtos) {
-        Map<Long, FeeDto> feeDtoHashMap = new HashMap<>();
-        Map<Integer, FeeDto> sequenceFeeDtoMap = emptyIfNull(feeDtos)
-                .stream()
-                .filter(Objects::nonNull)
-                .collect(toMap(FeeDto::getSequence, Function.identity()));
-
-        emptyIfNull(notOverridePriceItems)
-                .stream()
-                .filter(Objects::nonNull)
-                .forEach(notOverridePriceItem ->
-                        feeDtoHashMap.put(notOverridePriceItem.getProductId(),
-                                sequenceFeeDtoMap.get(notOverridePriceItem.getSequence())));
-        return feeDtoHashMap;
+    private QuoteItemDto getQuoteItemDto(int sequence, Long prodId) {
+        QuoteItemDto quoteItemDto = new QuoteItemDto();
+        quoteItemDto.setSequence(sequence);
+        quoteItemDto.setBusinessDate(Instant.now());
+        quoteItemDto.setProductId(prodId);
+        return quoteItemDto;
     }
 
-    private List<QuoteItemDto> getNotOverridePriceItems(List<CartItem> flattenCartItems) {
-        ArrayList<QuoteItemDto> quoteItemDtos = new ArrayList<>();
-        emptyIfNull(flattenCartItems).forEach(cartItem -> {
-            if (Objects.isNull(cartItem.getOverridePrice())) {
-                QuoteItemDto quoteItemDto = new QuoteItemDto();
-                quoteItemDto.setSequence(quoteItemDtos.size());
-                quoteItemDto.setBusinessDate(Instant.now());
-                quoteItemDto.setProductId(cartItem.getProductId());
-                quoteItemDtos.add(quoteItemDto);
-            }
-        });
-        return quoteItemDtos;
-    }
-
-    private List<FeeDto> getPriceFromProductService(QuoteReq quoteReq) {
+    private List<FeeDto> getPriceFromProductService(List<QuoteItemDto> items) {
+        QuoteReq quoteReq = new QuoteReq();
+        quoteReq.setItems(items);
         QuoteRsp result = productService.quote(quoteReq);
         if (BooleanUtils.isFalse(result.isSuccess()) || CollectionUtils.isEmpty(result.getFeeDtos())) {
             throw new CartException(QUOTE_ERROR, "Failed to quote for cart: {0}, {1}", result.getErrorCode(),

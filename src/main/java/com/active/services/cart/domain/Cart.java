@@ -1,6 +1,7 @@
 package com.active.services.cart.domain;
 
 import com.active.services.cart.service.CartStatus;
+import com.active.services.cart.util.TreeBuilder;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -55,6 +56,12 @@ public class Cart extends BaseDomainObject {
 
     public static BigDecimal getNetAmounts(List<CartItem> cartItems) {
         return cartItems.stream().map(CartItem::getNetAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
+    public Cart unflattenItems() {
+        TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(items);
+        items = baseTreeTreeBuilder.buildTree();
+        return this;
     }
 
     public static List<CartItem> flattenCartItems(List<CartItem> items) {

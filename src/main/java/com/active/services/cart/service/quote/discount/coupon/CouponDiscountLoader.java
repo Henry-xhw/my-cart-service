@@ -100,7 +100,7 @@ public class CouponDiscountLoader implements DiscountLoader {
         // cart item 3 = 80 <br>
         // the discount will only apply for cart item 2. cart item discount fee amount = 40.
         return CollectionUtils.emptyIfNull(results).stream()
-                .sorted(Comparator.comparing(CartItemDiscounts::getNetPrice).reversed())
+                .sorted(Comparator.comparing(CartItemDiscounts::getTotalNetPrice).reversed())
                 .collect(Collectors.toList());
     }
 

@@ -34,6 +34,5 @@ public class CartItemUnitPricePricer implements CartItemPricer {
         cartItem.setGrossPrice(feeDto.getAmount());
         // no override price in CartItem
         cartItem.getFees().add(CartItemFeeBuilder.buildPriceItemFee(cartItem.getQuantity(), feeDto));
-
     }
 }
