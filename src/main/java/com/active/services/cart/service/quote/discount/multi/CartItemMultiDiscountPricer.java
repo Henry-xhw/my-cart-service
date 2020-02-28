@@ -36,10 +36,12 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
         disc.setAmountType(discountTier.getAmountType());
         disc.setDiscountId(multiDiscount.getId());
         disc.setDiscountType(DiscountType.MULTI);
-        disc.setStartDate(multiDiscount.getStartDate() != null ?
-                        multiDiscount.getStartDate().toDate().toInstant() : null);
-        disc.setEndDate(multiDiscount.getEndDate() != null ?
-                        multiDiscount.getEndDate().toDate().toInstant() : null);
+        if (multiDiscount.getStartDate() != null) {
+            disc.setStartDate(multiDiscount.getStartDate().toDate().toInstant());
+        }
+        if (multiDiscount.getEndDate() != null) {
+            disc.setEndDate(multiDiscount.getEndDate().toDate().toInstant());
+        }
         context.addAppliedDiscount(disc);
 
         new DiscountFeeLoader(context, cartItem, disc).apply();
