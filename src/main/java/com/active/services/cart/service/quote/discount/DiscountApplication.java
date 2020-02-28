@@ -6,10 +6,8 @@ import com.active.services.cart.service.quote.discount.condition.DiscountSpecifi
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
 @NoArgsConstructor
 public class DiscountApplication extends Discount {
 

@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Data
-@SuperBuilder
 @NoArgsConstructor
 public class BaseDomainObject {
     private Long id;
