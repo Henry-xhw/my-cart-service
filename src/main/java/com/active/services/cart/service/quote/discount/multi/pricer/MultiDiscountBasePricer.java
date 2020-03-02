@@ -130,4 +130,22 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
      * @return
      */
     protected abstract Comparator<List<CartItem>> getAllProductComparator();
+
+    /**
+     * Sort by total price, then by db id.
+     *
+     * @param cartItems
+     * @return
+     */
+    private List<CartItem>  sortByTotalPrice(List<CartItem> cartItems, boolean asc) {
+        Comparator<CartItem> comparator = Comparator.comparing(CartItem::getNetAmount);
+        if (!asc) {
+            comparator = comparator.reversed();
+        }
+        comparator = comparator.thenComparing(CartItem::getId);
+
+        Collections.sort(cartItems, comparator);
+
+        return cartItems;
+    }
 }
