@@ -1,5 +1,7 @@
 package com.active.services.cart.service.checkout;
 
+import com.active.services.cart.common.CartException;
+import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public abstract class CheckoutBaseProcessor  {
             doProcess();
         } catch (Exception e) {
             publishFailedEvent(e);
+            Throwables.propagateIfPossible(e, CartException.class);
             throw new RuntimeException(e);
         }
     }
