@@ -137,7 +137,7 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
      * @param cartItems
      * @return
      */
-    private List<CartItem>  sortByTotalPrice(List<CartItem> cartItems, boolean asc) {
+    private List<CartItem> sortByTotalPrice(List<CartItem> cartItems, boolean asc) {
         Comparator<CartItem> comparator = Comparator.comparing(CartItem::getNetAmount);
         if (!asc) {
             comparator = comparator.reversed();
