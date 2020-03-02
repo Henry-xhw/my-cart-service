@@ -62,6 +62,9 @@ public interface PlaceCartMapper {
     })
     OrderLineFeeDTO toDto(CartItemFee cartItemFee);
 
+    @Mappings({
+            @Mapping(target = "id", source = "discountId")
+    })
     DiscountDTO toDto(Discount discount);
 
     default String map(java.util.UUID value) {
