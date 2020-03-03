@@ -29,7 +29,6 @@ allprojects {
 dependencies {
     implementation project(':api')
 
-    implementation "com.active.services:active-spring-boot-autoconfigure:0.0.2"
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
     implementation 'org.aspectj:aspectjweaver'
@@ -58,6 +57,7 @@ dependencies {
     implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
+    implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
 
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
