@@ -4,8 +4,8 @@ buildscript {
     }
 }
 plugins {
-    id 'com.active.aw-service' version '2.0.10'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'com.active.aw-service' version '2.0.13'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.3'
 }
 
@@ -57,6 +57,7 @@ dependencies {
     implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
+    implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
 
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
