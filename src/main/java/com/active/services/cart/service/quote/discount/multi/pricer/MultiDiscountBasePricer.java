@@ -37,7 +37,7 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
         }
 
         // Step1: build effective cart items by different algorithm.
-        EffectivePersonBasedMdCartItemBuilder builder = new EffectivePersonBasedMdCartItemBuilder(mdCartItem);
+        PersonBasedEffectiveMdCartItemBuilder builder = new PersonBasedEffectiveMdCartItemBuilder(mdCartItem);
         builder.allProductsComparator(getAllProductComparator());
         List<CartItem> effectiveSortedMdCartItems = builder.build();
 

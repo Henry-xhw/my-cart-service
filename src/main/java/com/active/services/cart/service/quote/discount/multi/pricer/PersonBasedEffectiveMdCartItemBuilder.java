@@ -24,12 +24,12 @@ import static java.util.stream.Collectors.toList;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class EffectivePersonBasedMdCartItemBuilder implements Builder<List<CartItem>> {
+public class PersonBasedEffectiveMdCartItemBuilder implements Builder<List<CartItem>> {
     private final MultiDiscountCartItem mdCartItem;
 
     private Comparator<List<CartItem>> allProductsComparator;
 
-    public EffectivePersonBasedMdCartItemBuilder allProductsComparator(
+    public PersonBasedEffectiveMdCartItemBuilder allProductsComparator(
             Comparator<List<CartItem>> allProductsComparator) {
         this.allProductsComparator = allProductsComparator;
 
