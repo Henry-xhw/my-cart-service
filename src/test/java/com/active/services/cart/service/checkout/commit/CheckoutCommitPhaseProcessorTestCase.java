@@ -3,6 +3,7 @@ package com.active.services.cart.service.checkout.commit;
 import com.active.services.cart.BaseTestCase;
 import com.active.services.cart.service.checkout.CheckoutContext;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -38,18 +39,21 @@ public class CheckoutCommitPhaseProcessorTestCase extends BaseTestCase {
     @Test
     public void getCheckoutPaymentProcessorSuccess() {
         CheckoutContext checkoutContext = new CheckoutContext();
-        new CheckoutCommitPhaseProcessor(checkoutContext).getCheckoutPaymentProcessor(checkoutContext);
+        Assert.assertNull(new CheckoutCommitPhaseProcessor(new CheckoutContext())
+                .getCheckoutPaymentProcessor(checkoutContext));
     }
 
     @Test
     public void getCheckoutInventoryProcessorSuccess() {
         CheckoutContext checkoutContext = new CheckoutContext();
-        new CheckoutCommitPhaseProcessor(checkoutContext).getCheckoutInventoryProcessor(checkoutContext);
+        Assert.assertNull(new CheckoutCommitPhaseProcessor(new CheckoutContext())
+                .getCheckoutInventoryProcessor(checkoutContext));
     }
 
     @Test
     public void getCheckoutOrderProcessorSuccess() {
         CheckoutContext checkoutContext = new CheckoutContext();
-        new CheckoutCommitPhaseProcessor(checkoutContext).getCheckoutOrderProcessor(checkoutContext);
+        Assert.assertNull(new CheckoutCommitPhaseProcessor(new CheckoutContext())
+                .getCheckoutOrderProcessor(checkoutContext));
     }
 }
