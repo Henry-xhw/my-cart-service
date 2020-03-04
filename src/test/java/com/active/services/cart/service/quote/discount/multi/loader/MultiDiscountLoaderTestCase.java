@@ -28,7 +28,6 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -126,7 +125,6 @@ public class MultiDiscountLoaderTestCase {
         cartItem.setPersonIdentifier(UUID.randomUUID().toString());
         cartItem.setBusinessDate(Instant.now());
         cartItem.setProductId(productIdRandom.nextLong());
-        doReturn(true).when(cartItem).isNetPriceNotZero();
 
         return cartItem;
     }
