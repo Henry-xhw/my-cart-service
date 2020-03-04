@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 public class MultiDiscountLoaderTestCase {
 
-    private Random productIdRandom = new Random();
+    private static Random productIdRandom = new Random();
 
     @Spy
     private TaskRunner taskRunner = new CartServiceConfigurator().taskRunner();
@@ -118,10 +118,11 @@ public class MultiDiscountLoaderTestCase {
         return md;
     }
 
-    private CartItem buildCartItem() {
+    public static CartItem buildCartItem() {
         CartItem cartItem = spy(new CartItem());
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setIgnoreMultiDiscounts(false);
+        cartItem.setQuantity(1);
         cartItem.setPersonIdentifier(UUID.randomUUID().toString());
         cartItem.setBusinessDate(Instant.now());
         cartItem.setProductId(productIdRandom.nextLong());
