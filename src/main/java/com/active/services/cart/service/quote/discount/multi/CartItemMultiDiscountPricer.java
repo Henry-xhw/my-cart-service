@@ -1,9 +1,9 @@
 package com.active.services.cart.service.quote.discount.multi;
 
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
 import com.active.services.product.DiscountType;
 import com.active.services.product.discount.multi.DiscountTier;
@@ -29,7 +29,7 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
             return;
         }
 
-        DiscountApplication disc = new DiscountApplication();
+        Discount disc = new Discount();
         disc.setName(multiDiscount.getName());
         disc.setDescription(multiDiscount.getDescription());
         disc.setAmount(discountTier.getAmount());

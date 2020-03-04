@@ -4,7 +4,6 @@ import com.active.services.DiscountModel;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 public class CartQuoteContext {
     private Cart cart;
     private Map<Long, Product> productsMap = new HashMap<>();
-    private List<DiscountApplication> appliedDiscounts = new ArrayList<>();
+    private List<Discount> appliedDiscounts = new ArrayList<>();
 
     public CartQuoteContext(Cart cart) {
         this.cart = cart;
@@ -50,7 +49,7 @@ public class CartQuoteContext {
         return cart.getCouponCodes();
     }
 
-    public CartQuoteContext addAppliedDiscount(DiscountApplication discount) {
+    public CartQuoteContext addAppliedDiscount(Discount discount) {
         if (appliedDiscounts == null) {
             appliedDiscounts = new ArrayList<>();
         }

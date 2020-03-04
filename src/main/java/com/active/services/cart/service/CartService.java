@@ -8,6 +8,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFeesInCart;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
@@ -17,7 +18,6 @@ import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 
@@ -198,9 +198,9 @@ public class CartService {
         cartRepository.updateCartItems(cart.getItems());
     }
 
-    private void batchInsertDiscount(List<DiscountApplication> discountApplications) {
+    private void batchInsertDiscount(List<Discount> discountApplications) {
         if (CollectionUtils.isNotEmpty(discountApplications)) {
-            discountApplications.forEach(discount -> discountRepository.createDiscount(discount));
+            discountApplications.forEach(discountRepository::createDiscount);
         }
     }
 
