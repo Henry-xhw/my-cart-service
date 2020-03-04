@@ -31,7 +31,6 @@ public class CartMultiDiscountPricer implements CartPricer {
 
         // Step3: run pricer
         pricers.forEach(pricer -> {
-            pricer.setQuoteContext(context);
             pricer.price();
         });
     }

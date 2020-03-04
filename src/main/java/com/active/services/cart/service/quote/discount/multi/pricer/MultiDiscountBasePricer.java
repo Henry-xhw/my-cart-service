@@ -27,8 +27,6 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
 
     private final MultiDiscountThresholdSetting effectiveThresholdSetting;
 
-    private CartQuoteContext context;
-
     @Override
     public final void price() {
         // All items does not have net price.
@@ -57,7 +55,7 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
                 currentTier = sortedTiersIterator.next();
             }
             new CartItemMultiDiscountPricer(currentTier, mdCartItem.getMultiDiscount())
-                    .quote(context, effectiveSortedMdCartItem);
+                    .quote(CartQuoteContext.get(), effectiveSortedMdCartItem);
 
             prevItem = effectiveSortedMdCartItem;
         }
@@ -86,11 +84,6 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
 
                 return itemIds.get(0);
             });
-    }
-
-    @Override
-    public void setQuoteContext(CartQuoteContext context) {
-        this.context = context;
     }
 
     /**

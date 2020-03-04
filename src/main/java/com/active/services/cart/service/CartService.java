@@ -149,12 +149,17 @@ public class CartService {
     public Cart quote(UUID cartId) {
         Cart cart = getCartByUuid(cartId);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        cartPriceEngine.quote(cartQuoteContext);
-        // Manual control the tx
-        dataAccess.doInTx(() -> {
-            saveQuoteResult(cartQuoteContext);
-            incrementPriceVersion(cartId);
-        });
+        try {
+            CartQuoteContext.set(cartQuoteContext);
+            cartPriceEngine.quote(cartQuoteContext);
+            // Manual control the tx
+            dataAccess.doInTx(() -> {
+                saveQuoteResult(cartQuoteContext);
+                incrementPriceVersion(cartId);
+            });
+        } finally {
+            CartQuoteContext.destroy();
+        }
         return cart;
     }
 

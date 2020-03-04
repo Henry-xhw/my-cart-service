@@ -27,6 +27,8 @@ public class CartQuoteContext {
     private Map<Long, Product> productsMap = new HashMap<>();
     private List<Discount> appliedDiscounts = new ArrayList<>();
 
+    private static ThreadLocal<CartQuoteContext> threadLocal = new ThreadLocal<>();
+
     public CartQuoteContext(Cart cart) {
         this.cart = cart;
     }
@@ -66,6 +68,27 @@ public class CartQuoteContext {
 
     public Currency getCurrency() {
         return Currency.getInstance(cart.getCurrencyCode());
+    }
+
+    /**
+     * Sets Context in threadlocal
+     *
+     * @param context
+     *            The Context
+     */
+    public static void set(CartQuoteContext context) {
+        threadLocal.set(context);
+    }
+
+    /**
+     * Removed Context from threadlocal
+     */
+    public static void destroy() {
+        threadLocal.remove();
+    }
+
+    public static CartQuoteContext get() {
+        return threadLocal.get();
     }
 
 }
