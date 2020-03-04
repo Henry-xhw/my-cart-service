@@ -19,7 +19,6 @@ BEGIN
         [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
-        [business_dt]               DATETIME            NOT NULL DEFAULT getutcdate(),
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -179,17 +178,6 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
         ALTER TABLE dbo.cart_items ADD ignore_multi_discounts BIT DEFAULT ((0)) NOT NULL
 
         PRINT 'Added column ignore_multi_discounts to dbo.cart_items'
-    END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'business_dt'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items ADD [business_dt] DATETIME NOT NULL DEFAULT getutcdate()
-
-        PRINT 'Added column business_dt to dbo.cart_items'
     END
 GO
 

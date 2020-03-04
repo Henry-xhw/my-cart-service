@@ -17,15 +17,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.unitils.reflectionassert.ReflectionAssert;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.spy;
@@ -58,7 +57,6 @@ public class MultiDiscountLoaderTestCase {
         CartItem cartItem1Product1 = buildCartItem();
         CartItem cartItem2Product1 = buildCartItem();
         // The same product/biz date
-        cartItem2Product1.setBusinessDate(cartItem1Product1.getBusinessDate());
         cartItem2Product1.setProductId(cartItem1Product1.getProductId());
 
         CartItem cartItem3 = buildCartItem();
@@ -73,18 +71,15 @@ public class MultiDiscountLoaderTestCase {
         cart.setItems(Arrays.asList(ignoredCartItem, cartItem1Product1, cartItem2Product1, cartItem3, cartItem4));
 
         Long productId1 = cartItem1Product1.getProductId();
-        DateTime bd1 = new DateTime(Date.from(cartItem1Product1.getBusinessDate()));
-        when(productOMSEndpoint.findEffectiveMultiDiscountsWithDate(isNull(), eq(productId1), eq(bd1)))
+        when(productOMSEndpoint.findEffectiveMultiDiscountsWithDate(isNull(), eq(productId1), any(DateTime.class)))
                 .thenReturn(Arrays.asList(md1, md2, md3));
 
         Long productId3 = cartItem3.getProductId();
-        DateTime bd3 = new DateTime(Date.from(cartItem3.getBusinessDate()));
-        when(productOMSEndpoint.findEffectiveMultiDiscountsWithDate(isNull(), eq(productId3), eq(bd3)))
+        when(productOMSEndpoint.findEffectiveMultiDiscountsWithDate(isNull(), eq(productId3), any(DateTime.class)))
                 .thenReturn(Arrays.asList(md2, md3, md4));
 
         Long productId4 = cartItem4.getProductId();
-        DateTime bd4 = new DateTime(Date.from(cartItem4.getBusinessDate()));
-        when(productOMSEndpoint.findEffectiveMultiDiscountsWithDate(isNull(), eq(productId4), eq(bd4)))
+        when(productOMSEndpoint.findEffectiveMultiDiscountsWithDate(isNull(), eq(productId4), any(DateTime.class)))
                 .thenReturn(Arrays.asList(md4));
 
         List<MultiDiscountCartItem> expectedResults = new ArrayList<>();
@@ -123,7 +118,6 @@ public class MultiDiscountLoaderTestCase {
         cartItem.setIgnoreMultiDiscounts(false);
         cartItem.setQuantity(1);
         cartItem.setPersonIdentifier(UUID.randomUUID().toString());
-        cartItem.setBusinessDate(Instant.now());
         cartItem.setProductId(productIdRandom.nextLong());
 
         return cartItem;

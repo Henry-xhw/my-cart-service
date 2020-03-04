@@ -55,8 +55,6 @@ public class CartItem extends BaseTree<CartItem> {
 
     private String personIdentifier;
 
-    private Instant businessDate;
-
     private List<CartItemFee> fees = new ArrayList<>();
 
     private Set<String> couponCodes;

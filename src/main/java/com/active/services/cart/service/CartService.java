@@ -115,8 +115,6 @@ public class CartService {
     public void insertCartItems(UUID cartIdentifier, List<CartItem> cartItems) {
         Cart cart = getCartByUuid(cartIdentifier);
         getCartItemsValidator(cart, cartItems).validate();
-        Instant now = Instant.now();
-        cartItems.forEach(cartItem -> cartItem.setBusinessDate(now));
         dataAccess.doInTx(() -> doInsertCartItems(cart, cartItems, null));
     }
 

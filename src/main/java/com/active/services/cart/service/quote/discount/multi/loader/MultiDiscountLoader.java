@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,21 +51,23 @@ public class MultiDiscountLoader {
      */
     public List<MultiDiscountCartItem> load(Cart cart) {
         // Group effective cart items by product id/business date
-        Map<MultiDiscountKey, List<CartItem>> itemsMap = cart.getFlattenCartItems().stream().filter(item ->
+        Map<Long, List<CartItem>> itemsMap = cart.getFlattenCartItems().stream().filter(item ->
                 !item.isIgnoreMultiDiscounts() && item.hasPersonIdentifier())
-                .collect(Collectors.groupingBy(item -> new MultiDiscountKey(item.getProductId(), item.getBusinessDate())));
+                .collect(Collectors.groupingBy(CartItem::getProductId));
 
         if (itemsMap.isEmpty()) {
             return new ArrayList<>();
         }
+
+        Instant now = Instant.now();
 
         // Build tasks
         List<Task<List<MultiDiscountCartItem>>> tasks = new ArrayList<>();
         itemsMap.forEach((key, items) -> {
             Task<List<MultiDiscountCartItem>> task = () -> {
                 Set<MultiDiscount> mds = new HashSet<>(emptyIfNull(
-                    productOMSEndpoint.findEffectiveMultiDiscountsWithDate(ContextWrapper.get(), key.getProductId(),
-                    new DateTime(Date.from(key.getBusinessDate())))));
+                    productOMSEndpoint.findEffectiveMultiDiscountsWithDate(ContextWrapper.get(), key,
+                    new DateTime(Date.from(now)))));
                 return mds.stream().map(md -> {
                     MultiDiscountCartItem multiDiscountCartItem = new MultiDiscountCartItem(md);
                     multiDiscountCartItem.addCartItems(items);
