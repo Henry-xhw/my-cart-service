@@ -5,6 +5,7 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.util.TreeBuilder;
+import com.active.services.oms.BdUtil;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -95,8 +96,8 @@ public class CartItem extends BaseTree<CartItem> {
         return flatten;
     }
 
-    public boolean isNetPriceGTZero() {
-        return getNetPrice().compareTo(BigDecimal.ZERO) > 0;
+    public boolean isNetPriceNotZero() {
+        return !BdUtil.comparesToZero(getNetPrice());
     }
 
     public boolean hasPersonIdentifier() {

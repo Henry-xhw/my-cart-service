@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.getEffectiveMdThresholdSetting;
 import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.itemsByPersonIdentifier;
 import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.quantityCounts;
-import static com.active.services.cart.service.quote.discount.multi.builder.MultiPersonPricerBuilder.getEffectiveMdThresholdSetting;
 
 @Slf4j
 public class MultiProductPricerBuilder implements Builder<List<MultiProductDiscountPricer>> {

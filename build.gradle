@@ -58,7 +58,7 @@ dependencies {
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
 
-
+    testImplementation "org.unitils:unitils-core"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
     testImplementation group: 'org.powermock', name: 'powermock-module-junit4'
     testImplementation group: 'org.powermock', name: 'powermock-api-mockito2'
