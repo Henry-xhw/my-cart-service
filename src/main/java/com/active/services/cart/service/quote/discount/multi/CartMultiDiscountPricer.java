@@ -30,8 +30,6 @@ public class CartMultiDiscountPricer implements CartPricer {
                 .multiDiscountCartItems(mdCartItems).build();
 
         // Step3: run pricer
-        pricers.forEach(pricer -> {
-            pricer.price();
-        });
+        pricers.forEach(MultiDiscountPricer::price);
     }
 }
