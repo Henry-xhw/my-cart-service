@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.multi;
+package com.active.services.cart.service.quote.discount.multi.builder;
 
 import com.active.services.product.discount.multi.MultiDiscount;
 import com.active.services.product.discount.multi.MultiDiscountThresholdSetting;
@@ -6,12 +6,11 @@ import com.active.services.product.discount.multi.MultiDiscountThresholdSetting;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Optional;
 
-import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.getEffectiveMdThresholdSetting;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class MultiDiscountUtilTestCase {
-
+public class MultiDiscountThresholdSettingBuilderTestCase {
     @Test
     public void getEffectiveMdThresholdSettingSingleThreshold() {
         MultiDiscount md = new MultiDiscount();
@@ -38,5 +37,11 @@ public class MultiDiscountUtilTestCase {
                 .extracting(MultiDiscountThresholdSetting::getThreshold).isEqualTo(15);
         assertThat(getEffectiveMdThresholdSetting(md, 16)).get()
                 .extracting(MultiDiscountThresholdSetting::getThreshold).isEqualTo(15);
+    }
+
+    private Optional<MultiDiscountThresholdSetting> getEffectiveMdThresholdSetting(MultiDiscount md,
+                                                                                   int requestThreshold) {
+        return new MultiDiscountThresholdSettingBuilder().setMd(md)
+                .setRequestThreshold(requestThreshold).build();
     }
 }

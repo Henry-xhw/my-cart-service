@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.getEffectiveMdThresholdSetting;
 import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.itemsByPersonIdentifier;
 import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.quantityCounts;
 
@@ -32,8 +31,10 @@ public class MultiProductPricerBuilder implements Builder<List<MultiProductDisco
         Map<String, List<CartItem>> itemsByIdentifier = itemsByPersonIdentifier(mdCartItem.getCartItems());
         itemsByIdentifier.forEach((personIdentifier, items) -> {
             int productQuantities = quantityCounts(items);
+
             Optional<MultiDiscountThresholdSetting> effectiveMdThresholdSettingOpt =
-                    getEffectiveMdThresholdSetting(mdCartItem.getMultiDiscount(), productQuantities);
+                new MultiDiscountThresholdSettingBuilder().setMd(mdCartItem.getMultiDiscount())
+                    .setRequestThreshold(productQuantities).build();
             if (effectiveMdThresholdSettingOpt.isPresent()) {
                 pricers.add(new MultiProductDiscountPricer(mdCartItem, effectiveMdThresholdSettingOpt.get()));
             } else {

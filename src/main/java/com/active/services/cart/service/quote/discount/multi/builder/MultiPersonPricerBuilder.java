@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.getEffectiveMdThresholdSetting;
 import static com.active.services.cart.service.quote.discount.multi.MultiDiscountUtil.uniquePerson;
 
 @Slf4j
@@ -27,7 +26,8 @@ public class MultiPersonPricerBuilder implements Builder<List<MultiPersonDiscoun
     public List<MultiPersonDiscountPricer> build() {
         long uniquePersons = uniquePerson(mdCartItem.getCartItems());
         Optional<MultiDiscountThresholdSetting> effectiveMdThresholdSettingOpt =
-                getEffectiveMdThresholdSetting(mdCartItem.getMultiDiscount(), uniquePersons);
+            new MultiDiscountThresholdSettingBuilder().setMd(mdCartItem.getMultiDiscount())
+                    .setRequestThreshold(uniquePersons).build();
         if (effectiveMdThresholdSettingOpt.isPresent()) {
             return Arrays.asList(new MultiPersonDiscountPricer(mdCartItem, effectiveMdThresholdSettingOpt.get()));
         } else {
