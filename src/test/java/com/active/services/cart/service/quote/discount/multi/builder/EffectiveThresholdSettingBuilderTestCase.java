@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MultiDiscountThresholdSettingBuilderTestCase {
+public class EffectiveThresholdSettingBuilderTestCase {
     @Test
     public void getEffectiveMdThresholdSettingSingleThreshold() {
         MultiDiscount md = new MultiDiscount();
@@ -41,7 +41,7 @@ public class MultiDiscountThresholdSettingBuilderTestCase {
 
     private Optional<MultiDiscountThresholdSetting> getEffectiveMdThresholdSetting(MultiDiscount md,
                                                                                    int requestThreshold) {
-        return new MultiDiscountThresholdSettingBuilder().setMd(md)
+        return new EffectiveThresholdSettingBuilder().setMd(md)
                 .setRequestThreshold(requestThreshold).build();
     }
 }

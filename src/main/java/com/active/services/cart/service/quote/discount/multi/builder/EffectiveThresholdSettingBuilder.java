@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class MultiDiscountThresholdSettingBuilder implements Builder<Optional<MultiDiscountThresholdSetting>> {
+public class EffectiveThresholdSettingBuilder implements Builder<Optional<MultiDiscountThresholdSetting>> {
 
     private MultiDiscount md;
 
     private long requestThreshold;
 
-    public MultiDiscountThresholdSettingBuilder setMd(MultiDiscount md) {
+    public EffectiveThresholdSettingBuilder setMd(MultiDiscount md) {
         this.md = md;
 
         return this;
     }
 
-    public MultiDiscountThresholdSettingBuilder setRequestThreshold(long requestThreshold) {
+    public EffectiveThresholdSettingBuilder setRequestThreshold(long requestThreshold) {
         this.requestThreshold = requestThreshold;
 
         return this;

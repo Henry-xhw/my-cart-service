@@ -26,7 +26,7 @@ public class MultiPersonPricerBuilder implements Builder<List<MultiPersonDiscoun
     public List<MultiPersonDiscountPricer> build() {
         long uniquePersons = uniquePerson(mdCartItem.getCartItems());
         Optional<MultiDiscountThresholdSetting> effectiveMdThresholdSettingOpt =
-            new MultiDiscountThresholdSettingBuilder().setMd(mdCartItem.getMultiDiscount())
+            new EffectiveThresholdSettingBuilder().setMd(mdCartItem.getMultiDiscount())
                     .setRequestThreshold(uniquePersons).build();
         if (effectiveMdThresholdSettingOpt.isPresent()) {
             return Arrays.asList(new MultiPersonDiscountPricer(mdCartItem, effectiveMdThresholdSettingOpt.get()));
