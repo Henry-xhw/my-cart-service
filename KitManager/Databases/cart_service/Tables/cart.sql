@@ -17,6 +17,7 @@ BEGIN
         [cart_status]               VARCHAR (255)       NOT NULL,
         [reservation_id]            UNIQUEIDENTIFIER    NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
+        [sales_channel]             VARCHAR (255)       NULL,
         CONSTRAINT [pk_cart] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
     )
 	 PRINT 'CREATE TABLE dbo.carts'
@@ -127,6 +128,17 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'sales_channel'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
+BEGIN
+
+  ALTER TABLE dbo.carts ADD sales_channel VARCHAR (255) NULL
+
+  PRINT 'Added column sales_channel to dbo.carts'
+END
+GO
+
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','coupon_codes'))
 BEGIN
   EXEC sys.sp_addextendedproperty
@@ -138,5 +150,19 @@ BEGIN
   @level1name = 'carts',
   @level2type = 'Column',
   @level2name = 'coupon_codes'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','sales_channel'))
+BEGIN
+  EXEC sys.sp_addextendedproperty
+  @name = N'MS_Description',
+  @value = N'sales channel',
+  @level0type = 'SCHEMA',
+  @level0name = 'dbo',
+  @level1type = 'TABLE',
+  @level1name = 'carts',
+  @level2type = 'Column',
+  @level2name = 'sales_channel'
 END
 GO

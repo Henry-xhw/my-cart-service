@@ -27,6 +27,8 @@ public class MockCart {
         cart.setOwnerId(UUID.randomUUID());
         cart.setIdentifier(UUID.randomUUID());
         cart.setCouponCodes(Collections.singleton("FDSAFSA"));
+        cart.setAgencyId(UUID.randomUUID());
+        cart.setSalesChannel("Channel");
         Instant lower = Instant.parse("2019-11-11T00:00:00Z");
         Instant upper = Instant.parse("2019-11-21T00:00:00Z");
         Range range = new Range();
@@ -62,6 +64,8 @@ public class MockCart {
         cartDto.setOwnerId(UUID.randomUUID());
         cartDto.setIdentifier(UUID.randomUUID());
         cartDto.setCouponCodes(Collections.singleton("FDSAFSA"));
+        cartDto.setAgencyId(UUID.randomUUID());
+        cartDto.setSalesChannel("Channel");
         Instant lower = Instant.parse("2019-11-11T00:00:00Z");
         Instant upper = Instant.parse("2019-11-21T00:00:00Z");
         Range range = new Range();

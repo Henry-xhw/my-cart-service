@@ -19,7 +19,8 @@
             is_lock,
             cart_status,
             reservation_id,
-            coupon_codes)
+            coupon_codes,
+            sales_channel)
         VALUES
             (#{identifier},
             #{ownerId},
@@ -34,7 +35,8 @@
             #{lock},
             #{cartStatus},
             #{reservationId},
-            #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler})
+            #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
+            #{salesChannel})
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
@@ -114,6 +116,7 @@
         UPDATE [dbo].[carts]
         SET
             coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
+            sales_channel = #{salesChannel},
             [modified_by] = #{modifiedBy},
             [modified_dt] = #{modifiedDt}
         WHERE id = #{id}
@@ -242,6 +245,7 @@
         cart.is_lock                  as lock,
         cart.cart_status              as cart_status,
         cart.coupon_codes             as coupon_codes,
+        cart.sales_channel            as sales_channel,
         item.id                       AS item_id,
         item.parent_id                AS item_parent_id,
         item.identifier               AS item_identifier,

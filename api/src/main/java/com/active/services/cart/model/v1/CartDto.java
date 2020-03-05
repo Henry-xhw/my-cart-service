@@ -28,6 +28,8 @@ public class CartDto extends BaseDto {
 
     private Set<String> couponCodes;
 
+    private String salesChannel;
+
     @Valid
     private List<CartItemDto> items = new ArrayList<>();
 }
