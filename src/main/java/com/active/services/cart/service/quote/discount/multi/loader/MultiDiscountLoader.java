@@ -50,7 +50,7 @@ public class MultiDiscountLoader {
      * @return
      */
     public List<MultiDiscountCartItem> load(Cart cart) {
-        // Group effective cart items by product id/business date
+        // Group effective cart items by product id
         Map<Long, List<CartItem>> itemsMap = cart.getFlattenCartItems().stream().filter(item ->
                 !item.isIgnoreMultiDiscounts() && item.hasPersonIdentifier())
                 .collect(Collectors.groupingBy(CartItem::getProductId));
