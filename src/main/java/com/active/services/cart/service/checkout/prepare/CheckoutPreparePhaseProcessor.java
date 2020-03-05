@@ -35,18 +35,18 @@ public class CheckoutPreparePhaseProcessor {
 
     public void process() {
         Cart cart = checkoutContext.getCart();
-        UUID reservationId = cart.getReservationId();
-        if (reservationId == null) {
+        UUID reservationGroupId = cart.getReservationGroupId();
+        if (reservationGroupId == null) {
             reserveInventory();
         } else {
-            reservationService.edit(reservationId, checkoutContext.getReservations());
+            reservationService.edit(reservationGroupId, checkoutContext.getReservations());
         }
     }
 
     private void reserveInventory() {
         Cart cart = checkoutContext.getCart();
         ReservationResultDTO reservationResult = reservationService.reserve(checkoutContext.getReservations());
-        cart.setReservationId(reservationResult.getReservationId());
-        cartRepository.updateCartReservationId(cart.getIdentifier(), cart.getReservationId());
+        cart.setReservationGroupId(reservationResult.getReservationGroupId());
+        cartRepository.updateCartReservationId(cart.getIdentifier(), cart.getReservationGroupId());
     }
 }

@@ -24,7 +24,7 @@ public class CartDto extends BaseDto {
     @NotNull
     private String currencyCode;
 
-    private UUID reservationId;
+    private UUID reservationGroupId;
 
     private Set<String> couponCodes;
 

@@ -21,5 +21,5 @@ public class CreateCartReq {
 
     private Set<String> couponCodes;
 
-    private UUID reservationId;
+    private UUID reservationGroupId;
 }
