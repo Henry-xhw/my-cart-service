@@ -8,6 +8,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFeesInCart;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
@@ -17,7 +18,6 @@ import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 
@@ -143,15 +143,17 @@ public class CartService {
         return null;
     }
 
-    public Cart quote(UUID cartId) {
+    public Cart quote(UUID cartId, boolean isAaMember) {
         Cart cart = getCartByUuid(cartId);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
+        cartQuoteContext.setAaMember(isAaMember);
         cartPriceEngine.quote(cartQuoteContext);
         // Manual control the tx
         dataAccess.doInTx(() -> {
             saveQuoteResult(cartQuoteContext);
             incrementPriceVersion(cartId);
         });
+
         return cart;
     }
 
@@ -195,9 +197,9 @@ public class CartService {
         cartRepository.updateCartItems(cart.getItems());
     }
 
-    private void batchInsertDiscount(List<DiscountApplication> discountApplications) {
-        if (CollectionUtils.isNotEmpty(discountApplications)) {
-            discountApplications.forEach(discount -> discountRepository.createDiscount(discount));
+    private void batchInsertDiscount(List<Discount> discounts) {
+        if (CollectionUtils.isNotEmpty(discounts)) {
+            discounts.forEach(discount -> discountRepository.createDiscount(discount));
         }
     }
 

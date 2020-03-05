@@ -1,15 +1,17 @@
 package com.active.services.cart.service.quote;
 
 import com.active.services.DiscountModel;
+import com.active.services.ProductType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -23,14 +25,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
+@RequiredArgsConstructor
 public class CartQuoteContext {
-    private Cart cart;
-    private Map<Long, Product> productsMap = new HashMap<>();
-    private List<DiscountApplication> appliedDiscounts = new ArrayList<>();
+    private final Cart cart;
 
-    public CartQuoteContext(Cart cart) {
-        this.cart = cart;
-    }
+    private Map<Long, Product> productsMap = new HashMap<>();
+
+    private List<Discount> appliedDiscounts = new ArrayList<>();
+
+    @Setter
+    private boolean isAaMember;
 
     public List<Long> getProductIds() {
         return cart.getFlattenCartItems().stream().map(CartItem::getProductId).distinct().collect(Collectors.toList());
@@ -50,7 +54,7 @@ public class CartQuoteContext {
         return cart.getCouponCodes();
     }
 
-    public CartQuoteContext addAppliedDiscount(DiscountApplication discount) {
+    public CartQuoteContext addAppliedDiscount(Discount discount) {
         if (appliedDiscounts == null) {
             appliedDiscounts = new ArrayList<>();
         }
@@ -67,6 +71,10 @@ public class CartQuoteContext {
 
     public Currency getCurrency() {
         return Currency.getInstance(cart.getCurrencyCode());
+    }
+
+    public boolean hasCartItemWithType(ProductType type) {
+        return getProductsMap().values().stream().anyMatch(product -> product.getProductType() == type);
     }
 
 }

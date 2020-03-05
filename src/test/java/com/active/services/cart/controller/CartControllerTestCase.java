@@ -10,6 +10,7 @@ import com.active.services.cart.mock.MockCart;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.req.QuoteReq;
 import com.active.services.cart.model.v1.req.UpdateCartReq;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
@@ -215,6 +216,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void quoteCartSuccess() throws Exception {
+        QuoteReq req = new QuoteReq();
+        req.setCartId(UUID.randomUUID());
+        req.setAaMember(false);
         QuoteRsp rsp = new QuoteRsp();
         rsp.setCartDto(MockCart.mockQuoteCartDto());
         Cart cart = CartDataFactory.cart();
@@ -224,17 +228,17 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
         cart.setItems(Arrays.asList(cartItem));
-        when(cartService.quote(cartId)).thenReturn(cart);
-        String result = mockMvc.perform(post("/carts/{cart-id}/quote", cartId)
+        when(cartService.quote(req.getCartId(), req.isAaMember())).thenReturn(cart);
+        String result = mockMvc.perform(post("/carts/quote")
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
-                .headers(actorIdHeader()))
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andDo(newSuccessDocument("Cart", "Quote-Process",
-                        pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
+                        autoRequestFieldsDoc(req),
                         autoRelaxedResponseFieldsDoc(rsp)))
                 .andReturn().getResponse().getContentAsString();
         QuoteRsp resultRsp = objectMapper.readValue(result, QuoteRsp.class);
-        verify(cartService, times(1)).quote(any());
         Assert.assertNotNull(resultRsp);
     }
 }
