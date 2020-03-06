@@ -11,8 +11,6 @@ import com.active.services.product.discount.multi.MultiDiscount;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
-
 import static com.active.services.oms.BdUtil.comparesToZero;
 
 @RequiredArgsConstructor
@@ -23,16 +21,19 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
 
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
-        if (comparesToZero(discountTier.getAmount())) {
+        if (checkAmountComparesToZero(cartItem)) {
             return;
         }
 
-        if (comparesToZero(cartItem.getNetAmount())) {
-            return;
-        }
+        new DiscountFeeLoader(context, cartItem, buildDiscount(context)).load();
+    }
 
+    private boolean checkAmountComparesToZero(CartItem cartItem) {
+        return comparesToZero(discountTier.getAmount()) || comparesToZero(cartItem.getNetAmount());
+    }
+
+    private Discount buildDiscount(CartQuoteContext context) {
         Discount disc = new Discount();
-        disc.setIdentifier(UUID.randomUUID());
         disc.setName(multiDiscount.getName());
         disc.setDescription(multiDiscount.getDescription());
         disc.setAmount(discountTier.getAmount());
@@ -47,6 +48,6 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
         }
         disc.setCartId(context.getCart().getId());
 
-        new DiscountFeeLoader(context, cartItem, disc).load();
+        return disc;
     }
 }
