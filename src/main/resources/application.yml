@@ -39,6 +39,8 @@ management:
   endpoint:
     shutdown:
       enabled: false
+  server:
+    port: 9090
 
 ok-http:
   connect-timeout: 10
