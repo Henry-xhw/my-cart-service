@@ -57,3 +57,5 @@ url:
   productServiceSOAPOMSOnly: ${url.productServiceBase}/product-service/services/soap/omsOnly/internal
   orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
   contractServiceRest: ${url.contractServiceBase}/contract-service
+  accountServiceSOAPV1: ${url.accountServiceBase}/foundation-user-service/account/v1/internal/soap
+  memberShipServiceSOAPV1: ${url.memberShipServiceBase}/membership-management-service/membership/v1/internal/soap

@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote;
 
 import com.active.services.DiscountModel;
+import com.active.services.ProductType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
@@ -9,6 +10,8 @@ import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -22,16 +25,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
+@RequiredArgsConstructor
 public class CartQuoteContext {
-    private Cart cart;
+    private final Cart cart;
+
     private Map<Long, Product> productsMap = new HashMap<>();
-    private List<Discount> appliedDiscounts = new ArrayList<>();
 
     private static ThreadLocal<CartQuoteContext> threadLocal = new ThreadLocal<>();
 
-    public CartQuoteContext(Cart cart) {
-        this.cart = cart;
-    }
+    private List<Discount> appliedDiscounts = new ArrayList<>();
+
+    @Setter
+    private boolean isAaMember;
 
     public List<Long> getProductIds() {
         return cart.getFlattenCartItems().stream().map(CartItem::getProductId).distinct().collect(Collectors.toList());
@@ -66,10 +71,13 @@ public class CartQuoteContext {
                 .map(Discount::getDiscountId).collect(Collectors.toList());
     }
 
+    public boolean hasCartItemWithType(ProductType type) {
+        return getProductsMap().values().stream().anyMatch(product -> product.getProductType() == type);
+    }
+
     public Currency getCurrency() {
         return Currency.getInstance(cart.getCurrencyCode());
     }
-
     /**
      * Sets Context in threadlocal
      *
@@ -90,5 +98,4 @@ public class CartQuoteContext {
     public static CartQuoteContext get() {
         return threadLocal.get();
     }
-
 }

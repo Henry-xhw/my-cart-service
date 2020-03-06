@@ -8,7 +8,6 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFeesInCart;
-import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
@@ -23,14 +22,12 @@ import com.active.services.cart.util.DataAccess;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -144,9 +141,10 @@ public class CartService {
         return null;
     }
 
-    public Cart quote(UUID cartId) {
+    public Cart quote(UUID cartId, boolean isAaMember) {
         Cart cart = getCartByUuid(cartId);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
+        cartQuoteContext.setAaMember(isAaMember);
         try {
             CartQuoteContext.set(cartQuoteContext);
             cartPriceEngine.quote(cartQuoteContext);
@@ -158,6 +156,7 @@ public class CartService {
         } finally {
             CartQuoteContext.destroy();
         }
+
         return cart;
     }
 
@@ -192,19 +191,13 @@ public class CartService {
         Cart cart = cartQuoteContext.getCart();
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         discountRepository.deletePreviousDiscountByCartId(cart.getId());
-        batchInsertDiscount(cartQuoteContext.getAppliedDiscounts());
+        cartQuoteContext.getAppliedDiscounts().forEach(discountRepository::createDiscount);
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
         cartRepository.updateCartItems(cart.getItems());
-    }
-
-    private void batchInsertDiscount(List<Discount> discountApplications) {
-        if (CollectionUtils.isNotEmpty(discountApplications)) {
-            discountApplications.forEach(discountRepository::createDiscount);
-        }
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {

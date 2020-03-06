@@ -5,6 +5,8 @@ import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
+@Builder
 public class Discount extends BaseDomainObject {
 
     private Long cartId;
@@ -30,5 +33,4 @@ public class Discount extends BaseDomainObject {
     private Long discountGroupId;
     private Instant startDate;
     private Instant endDate;
-
 }

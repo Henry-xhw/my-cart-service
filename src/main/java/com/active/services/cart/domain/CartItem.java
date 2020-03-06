@@ -113,10 +113,22 @@ public class CartItem extends BaseTree<CartItem> {
         }
 
         BigDecimal discountAmount = emptyIfNull(priceFee.get().getSubItems()).stream()
-                .filter(cartItemFee -> CartItemFeeType.isDiscount(cartItemFee.getType()))
+                .filter(cartItemFee -> CartItemFeeType.isPriceDiscount(cartItemFee.getType()))
                 .map(CartItemFee::getUnitPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return priceFee.get().getUnitPrice().subtract(discountAmount);
+    }
+
+    public BigDecimal getActiveProcessingFeeTotal() {
+        Optional<CartItemFee> priceFee = this.getPriceCartItemFee();
+        if (!priceFee.isPresent()) {
+            return BigDecimal.ZERO;
+        }
+        return emptyIfNull(priceFee.get().getSubItems()).stream()
+                .filter(cartItemFee -> CartItemFeeType.isActiveProcessingFee(cartItemFee.getType()))
+                .map(cartItemFee -> cartItemFee.getTransactionType() == FeeTransactionType.DEBIT ?
+                        cartItemFee.getUnitPrice() : cartItemFee.getUnitPrice().negate())
+                .reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(quantity));
     }
 }
