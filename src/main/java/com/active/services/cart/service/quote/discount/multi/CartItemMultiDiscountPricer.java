@@ -45,7 +45,6 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
         if (multiDiscount.getEndDate() != null) {
             disc.setEndDate(multiDiscount.getEndDate().toDate().toInstant());
         }
-
         disc.setCartId(context.getCart().getId());
 
         new DiscountFeeLoader(context, cartItem, disc).load();
