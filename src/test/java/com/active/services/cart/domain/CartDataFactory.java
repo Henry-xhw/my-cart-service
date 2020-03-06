@@ -33,6 +33,7 @@ public class CartDataFactory {
         cart.setItems(cartItems());
         cart.setCartStatus(CartStatus.CREATED);
         cart.setCouponCodes(Collections.singleton("FDSAFSA"));
+        cart.setReservationGroupId(UUID.randomUUID());
 
         return cart;
     }
@@ -85,6 +86,7 @@ public class CartDataFactory {
         updateCartItemDto.setTrimmedBookingRange(cartItem.getTrimmedBookingRange());
         updateCartItemDto.setProductName(cartItem.getProductName());
         updateCartItemDto.setCouponCodes(cartItem.getCouponCodes());
+        updateCartItemDto.setReservationId(UUID.randomUUID());
         return updateCartItemDto;
     }
 
@@ -158,6 +160,7 @@ public class CartDataFactory {
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
         cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));
+        cartItem.setReservationId(UUID.randomUUID());
         cartItem.setNetPrice(price);
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(cartItemFee(price));
@@ -231,6 +234,7 @@ public class CartDataFactory {
         createCartItemDto.setGroupingIdentifier("grouping identifier");
         createCartItemDto.setFeeVolumeIndex(0);
         createCartItemDto.setCouponCodes(Collections.singleton("FDSAFSA"));
+        createCartItemDto.setReservationId(UUID.randomUUID());
         return createCartItemDto;
     }
 }
