@@ -2,18 +2,20 @@ package com.active.services.cart.service.quote.discount.aa;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.cart.service.quote.CartItemFeeBuilder;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.oms.BdUtil;
 import com.active.services.product.DiscountType;
 import com.active.services.product.discount.aa.AaDiscount;
 
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil.calcFlatAmount;
-import static com.active.services.cart.service.quote.discount.DiscountFeeLoader.applyDiscount;
 
 @RequiredArgsConstructor
 public class CartItemAaDiscountPricer implements CartItemPricer {
@@ -33,6 +35,10 @@ public class CartItemAaDiscountPricer implements CartItemPricer {
                 aaDiscount.getAmountType(), context.getCurrency())
                 .min(aaDiscountContext.getRemainingDiscAmt());
 
+        if (BdUtil.comparesToZero(discountAmt)) {
+            return;
+        }
+
         aaDiscountContext.subtractDiscountAmt(discountAmt);
 
         Discount disc = new Discount();
@@ -45,6 +51,8 @@ public class CartItemAaDiscountPricer implements CartItemPricer {
         disc.setDiscountType(DiscountType.ACTIVE_ADVANTAGE);
         disc.setCartId(context.getCart().getId());
 
-        applyDiscount(context, cartItem.getPriceCartItemFee().get(), disc, discountAmt, 1);
+        context.addAppliedDiscount(disc);
+        cartItem.getPriceCartItemFee().get().addSubItemFee(
+                Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(disc, discountAmt, 1)));
     }
 }

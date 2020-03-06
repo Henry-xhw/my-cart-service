@@ -12,36 +12,35 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Data
 @RequiredArgsConstructor
 public class DiscountFeeLoader {
-    @NonNull private final CartQuoteContext cartQuoteContext;
-    @NonNull private final CartItem item;
-    @NonNull private final Discount disc;
+    @NonNull
+    private final CartQuoteContext cartQuoteContext;
+    @NonNull
+    private final CartItem item;
+    @NonNull
+    private final Discount disc;
 
-    public void apply() {
-
+    public void load() {
         Optional<CartItemFee> priceFeeItems = item.getPriceCartItemFee();
         if (!priceFeeItems.isPresent()) {
             return;
         }
+
         BigDecimal discAmount = DiscountAmountCalcUtil.calcFlatAmount(item.getNetPrice(), disc.getAmount(),
                 disc.getAmountType(), cartQuoteContext.getCurrency());
-        applyDiscount(cartQuoteContext, priceFeeItems.get(), disc, discAmount, priceFeeItems.get().getUnits());
-    }
 
-    public static void applyDiscount(CartQuoteContext cartQuoteContext, CartItemFee fee, Discount disc,
-                                     BigDecimal discAmount, Integer units) {
-        if (!BdUtil.isGreaterThanZero(discAmount)) {
+        if (BdUtil.comparesToZero(discAmount)) {
             return;
         }
+
         cartQuoteContext.addAppliedDiscount(disc);
-        List<CartItemFee> cartItemFees = new ArrayList<>();
-        cartItemFees.add(CartItemFeeBuilder.buildDiscountItemFee(disc, discAmount, units));
-        fee.addSubItemFee(cartItemFees);
+        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(disc, discAmount,
+                priceFeeItems.get().getUnits());
+        priceFeeItems.get().addSubItemFee(Arrays.asList(discountFee));
     }
 }

@@ -48,6 +48,6 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
 
         disc.setCartId(context.getCart().getId());
 
-        new DiscountFeeLoader(context, cartItem, disc).apply();
+        new DiscountFeeLoader(context, cartItem, disc).load();
     }
 }
