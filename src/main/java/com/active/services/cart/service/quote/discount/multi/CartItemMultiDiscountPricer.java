@@ -11,6 +11,8 @@ import com.active.services.product.discount.multi.MultiDiscount;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 import static com.active.services.oms.BdUtil.comparesToZero;
 
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class CartItemMultiDiscountPricer implements CartItemPricer {
 
     private Discount buildDiscount(CartQuoteContext context) {
         Discount disc = new Discount();
+        disc.setIdentifier(UUID.randomUUID());
         disc.setName(multiDiscount.getName());
         disc.setDescription(multiDiscount.getDescription());
         disc.setAmount(discountTier.getAmount());
