@@ -57,7 +57,7 @@ dependencies {
     implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
-    implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
+//    implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
     implementation group: 'com.active.services', name:'membership-management-service', version: '2.38.8.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'waiver-service', version: '4.2.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'api-lib', version: '1.0.0.7', configuration: 'runtime-published', ext: 'jar'
