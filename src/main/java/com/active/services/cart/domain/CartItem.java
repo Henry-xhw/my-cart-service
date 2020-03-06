@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -61,6 +62,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private CouponMode couponMode;
 
+    private UUID reservationId;
+
     public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()
                     .filter(f -> f.getType() == CartItemFeeType.PRICE)
@@ -99,10 +102,22 @@ public class CartItem extends BaseTree<CartItem> {
         }
 
         BigDecimal discountAmount = emptyIfNull(priceFee.get().getSubItems()).stream()
-                .filter(cartItemFee -> CartItemFeeType.isDiscount(cartItemFee.getType()))
+                .filter(cartItemFee -> CartItemFeeType.isPriceDiscount(cartItemFee.getType()))
                 .map(CartItemFee::getUnitPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return priceFee.get().getUnitPrice().subtract(discountAmount);
+    }
+
+    public BigDecimal getActiveProcessingFeeTotal() {
+        Optional<CartItemFee> priceFee = this.getPriceCartItemFee();
+        if (!priceFee.isPresent()) {
+            return BigDecimal.ZERO;
+        }
+        return emptyIfNull(priceFee.get().getSubItems()).stream()
+                .filter(cartItemFee -> CartItemFeeType.isActiveProcessingFee(cartItemFee.getType()))
+                .map(cartItemFee -> cartItemFee.getTransactionType() == FeeTransactionType.DEBIT ?
+                        cartItemFee.getUnitPrice() : cartItemFee.getUnitPrice().negate())
+                .reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(quantity));
     }
 }

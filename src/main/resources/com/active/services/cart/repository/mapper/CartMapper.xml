@@ -18,7 +18,7 @@
             price_version,
             is_lock,
             cart_status,
-            reservation_id,
+            reservation_group_id,
             coupon_codes,
             sales_channel)
         VALUES
@@ -34,7 +34,7 @@
             #{priceVersion},
             #{lock},
             #{cartStatus},
-            #{reservationId},
+            #{reservationGroupId},
             #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
             #{salesChannel})
     </insert>
@@ -62,6 +62,7 @@
             [person_identifier],
             [coupon_mode],
             [ignore_multi_discounts],
+            [reservation_id],
             [created_by],
             [created_dt],
             [modified_by],
@@ -105,6 +106,7 @@
              #{item.personIdentifier},
              #{item.couponMode},
              #{item.ignoreMultiDiscounts},
+             #{item.reservationId},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -115,6 +117,7 @@
     <update id="updateCart">
         UPDATE [dbo].[carts]
         SET
+            reservation_group_id = #{reservationGroupId},
             coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
             sales_channel = #{salesChannel},
             [modified_by] = #{modifiedBy},
@@ -203,6 +206,7 @@
         [coupon_codes] = #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
         [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
         [coupon_mode] = #{item.couponMode},
+        [reservation_id] = #{item.reservationId},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -244,6 +248,7 @@
         cart.price_version            as price_version,
         cart.is_lock                  as lock,
         cart.cart_status              as cart_status,
+        cart.reservation_group_id     as reservation_group_id,
         cart.coupon_codes             as coupon_codes,
         cart.sales_channel            as sales_channel,
         item.id                       AS item_id,
@@ -267,6 +272,7 @@
         item.coupon_mode              AS item_coupon_mode,
         item.ignore_multi_discounts   AS item_ignore_multi_discounts,
         item.coupon_codes             AS item_coupon_codes,
+        item.reservation_id           AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
@@ -368,7 +374,7 @@
     <update id="updateCartReservationGroupId">
         UPDATE [dbo].[carts]
         SET
-        [reservation_id] = #{reservationId},
+        [reservation_group_id] = #{reservationGroupId},
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier}

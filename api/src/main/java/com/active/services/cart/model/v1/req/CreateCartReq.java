@@ -20,9 +20,9 @@ public class CreateCartReq {
     @NotNull
     private String currencyCode;
 
-    private Set<String> couponCodes;
+    private UUID reservationGroupId;
 
-    private UUID reservationId;
+    private Set<String> couponCodes;
 
     @Size(max = 255)
     private String salesChannel;

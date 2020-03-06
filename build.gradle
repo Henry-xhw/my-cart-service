@@ -16,7 +16,7 @@ allprojects {
 
     dependencyManagement {
         imports {
-            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE'
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.13.RELEASE'
             mavenBom 'com.active.platform:platform-dependencies:0.0.21'
         }
     }
@@ -49,16 +49,18 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp'
     implementation group: 'com.squareup.okio', name: 'okio'
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
-    implementation group: 'com.active.platform', name: 'platform-lib', version: '1.0.20'
+    implementation group: 'com.active.platform', name: 'platform-lib', version: '1.0.21'
     implementation group: 'com.active.springboot', name: 'active-spring-boot-starter', version: '0.0.2'
 
     implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
-    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.59'
+    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.76'
     implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
     implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
-
+    implementation group: 'com.active.services', name:'membership-management-service', version: '2.38.8.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'waiver-service', version: '4.2.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'api-lib', version: '1.0.0.7', configuration: 'runtime-published', ext: 'jar'
 
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
     testImplementation group: 'org.powermock', name: 'powermock-module-junit4'

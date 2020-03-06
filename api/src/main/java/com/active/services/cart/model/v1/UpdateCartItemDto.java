@@ -62,4 +62,6 @@ public class UpdateCartItemDto {
     private boolean ignoreMultiDiscounts;
 
     private CouponMode couponMode;
+
+    private UUID reservationId;
 }

@@ -26,6 +26,7 @@ public class MockCart {
         cart.setKeyerId(UUID.randomUUID());
         cart.setOwnerId(UUID.randomUUID());
         cart.setIdentifier(UUID.randomUUID());
+        cart.setReservationGroupId(UUID.randomUUID());
         cart.setCouponCodes(Collections.singleton("FDSAFSA"));
         cart.setSalesChannel("Channel");
         Instant lower = Instant.parse("2019-11-11T00:00:00Z");
@@ -45,6 +46,7 @@ public class MockCart {
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setId(1L);
         cartItem.setFeeVolumeIndex(1);
+        cartItem.setReservationId(UUID.randomUUID());
 
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItemFee.setDueAmount(cartItemFee.getUnitPrice());
@@ -62,6 +64,7 @@ public class MockCart {
         cartDto.setKeyerId(UUID.randomUUID());
         cartDto.setOwnerId(UUID.randomUUID());
         cartDto.setIdentifier(UUID.randomUUID());
+        cartDto.setReservationGroupId(UUID.randomUUID());
         cartDto.setCouponCodes(Collections.singleton("FDSAFSA"));
         cartDto.setSalesChannel("Channel");
         Instant lower = Instant.parse("2019-11-11T00:00:00Z");
@@ -80,6 +83,7 @@ public class MockCart {
         cartItem.setTrimmedBookingRange(range);
         cartItem.setIdentifier(UUID.randomUUID());
         cartItem.setFeeVolumeIndex(1);
+        cartItem.setReservationId(UUID.randomUUID());
 
         List<CartItemDto> list = new ArrayList<>();
         list.add(cartItem);

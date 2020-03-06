@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -69,7 +68,7 @@ public class CartItemDiscountPricerTestCase {
     private void checkDiscountAmount(CartItem cartItem, BigDecimal amount) {
         Optional<BigDecimal> discAmount =
                 cartItem.getPriceCartItemFee().get().getSubItems().stream()
-                        .filter(cartItemFee -> CartItemFeeType.isDiscount(cartItemFee.getType()))
+                        .filter(cartItemFee -> CartItemFeeType.isPriceDiscount(cartItemFee.getType()))
                         .map(CartItemFee::getUnitPrice).findFirst();
         if (discAmount.isPresent() && amount != null) {
             assertTrue(discAmount.get().compareTo(amount) == 0);

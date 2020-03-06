@@ -19,6 +19,7 @@ BEGIN
         [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
+        [reservation_id]            UNIQUEIDENTIFIER    NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -192,6 +193,17 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_i
     END
 GO
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+BEGIN
+
+    ALTER TABLE dbo.cart_items ADD reservation_id UNIQUEIDENTIFIER NULL
+
+    PRINT 'Added column reservation_id to dbo.cart_items'
+END
+GO
+
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','coupon_codes'))
 BEGIN
     EXEC sys.sp_addextendedproperty
@@ -245,5 +257,19 @@ BEGIN
     @level1name = 'cart_items',
     @level2type = 'Column',
     @level2name = 'net_price'
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','reservation_id'))
+BEGIN
+    EXEC sys.sp_addextendedproperty
+    @name = N'MS_Description',
+    @value = N'reservation id',
+    @level0type = 'SCHEMA',
+    @level0name = 'dbo',
+    @level1type = 'TABLE',
+    @level1name = 'cart_items',
+    @level2type = 'Column',
+    @level2name = 'reservation_id'
 END
 GO

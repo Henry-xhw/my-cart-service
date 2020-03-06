@@ -3,6 +3,7 @@ package com.active.services.cart.service.quote;
 import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
+import com.active.services.cart.service.quote.discount.aa.CartAaDiscountPricer;
 import com.active.services.cart.service.quote.discount.processor.CartDiscountPricer;
 import com.active.services.cart.service.quote.price.CartUnitPricePricer;
 import com.active.services.contract.controller.v1.FeeOwner;
@@ -20,11 +21,17 @@ import java.util.List;
 public class CartPriceEngine {
     private final SOAPClient soapClient;
 
+    private final CartAaDiscountPricer cartAaDiscountPricer;
+
+    private final CartUnitPricePricer cartUnitPricePricer;
+
     public void quote(CartQuoteContext context) {
         prepare(context);
-        getCartUnitPricePricer().quote(context);
+        cartUnitPricePricer.quote(context);
         applyDiscount(context);
         getCartProductProcessingFeePricer(FeeOwner.CONSUMER).quote(context);
+        //ensure aa discount is the last step.
+        cartAaDiscountPricer.quote(context);
     }
 
     private void applyDiscount(CartQuoteContext context) {
@@ -35,11 +42,6 @@ public class CartPriceEngine {
         List<Product> products = soapClient.productServiceSOAPEndPoint().findProductsByProductIdList(ContextWrapper.get(),
                 context.getProductIds());
         context.setProducts(products);
-    }
-
-    @Lookup
-    public CartUnitPricePricer getCartUnitPricePricer() {
-        return null;
     }
 
     @Lookup
