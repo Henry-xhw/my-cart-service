@@ -43,9 +43,13 @@ public class DiscountFeeLoader {
         if (!BdUtil.isGreaterThanZero(discAmount)) {
             return;
         }
-        cartQuoteContext.addAppliedDiscount(disc);
+        Discount appliedDiscount = cartQuoteContext.getAppliedDiscount(disc.getDiscountId(), disc.getDiscountType());
+        if (appliedDiscount == null) {
+            cartQuoteContext.addAppliedDiscount(disc);
+            appliedDiscount = disc;
+        }
         List<CartItemFee> cartItemFees = new ArrayList<>();
-        cartItemFees.add(CartItemFeeBuilder.buildDiscountItemFee(disc, discAmount, units));
+        cartItemFees.add(CartItemFeeBuilder.buildDiscountItemFee(appliedDiscount, discAmount, units));
         fee.addSubItemFee(cartItemFees);
     }
 }
