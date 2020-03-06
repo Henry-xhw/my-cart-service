@@ -20,10 +20,10 @@ import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Lookup;
@@ -198,9 +198,12 @@ public class CartService {
     }
 
     private void batchInsertDiscount(List<Discount> discounts) {
-        if (CollectionUtils.isNotEmpty(discounts)) {
-            discounts.forEach(discount -> discountRepository.createDiscount(discount));
-        }
+        emptyIfNull(discounts).stream().filter(Objects::nonNull)
+                .map(discount -> {
+                    discount.setOrigin(OrderLineDiscountOrigin.AUTOMATIC);
+                    return discount;
+                })
+                .forEach(discount -> discountRepository.createDiscount(discount));
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {
