@@ -12,8 +12,12 @@ public enum CartItemFeeType {
     AD_HOC,
     SURCHARGE;
 
-    public static boolean isDiscount(CartItemFeeType feeType) {
-        return feeType == COUPON_DISCOUNT || feeType == MULTI_DISCOUNT || feeType == AA_DISCOUNT
-            || feeType == MEMBERSHIP_DISCOUNT || feeType == AD_HOC;
+    public static boolean isPriceDiscount(CartItemFeeType feeType) {
+        return feeType == COUPON_DISCOUNT || feeType == MULTI_DISCOUNT ||
+                feeType == MEMBERSHIP_DISCOUNT || feeType == AD_HOC;
+    }
+
+    public static boolean isActiveProcessingFee(CartItemFeeType feeType) {
+        return feeType == PROCESSING_FLAT || feeType == PROCESSING_PERCENT || feeType == AA_DISCOUNT;
     }
 }

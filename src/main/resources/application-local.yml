@@ -23,3 +23,5 @@ url:
   inventoryServiceBase: http://inventory-pint-awplatform.aw.k8sw.dev.activenetwork.com
   productServiceBase: http://product-pint-awplatform.aw.k8sw.dev.activenetwork.com
   contractServiceBase: http://contract-pint-awplatform.aw.k8sw.dev.activenetwork.com
+  accountServiceBase: http://user-vip.pint.aw.dev.activenetwork.com
+  memberShipServiceBase: http://member-vip.int.aw.dev.activenetwork.com

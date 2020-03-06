@@ -29,6 +29,7 @@ public class CartItemDiscountPricer implements CartItemPricer {
         if (cartItem.getNetPrice().compareTo(BigDecimal.ZERO) <= 0) {
             return;
         }
+
         handler.getDiscountAlgorithm().apply(discounts).forEach(disc ->
                 new DiscountFeeLoader(context, cartItem, disc).apply());
     }

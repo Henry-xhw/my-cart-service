@@ -211,7 +211,7 @@ public class CartServiceTestCase extends BaseTestCase {
         when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
         doNothing().when(discountRepository).createDiscount(any());
         doNothing().when(discountRepository).deletePreviousDiscountByCartId(any());
-        Cart quote = cartService.quote(identifier);
+        Cart quote = cartService.quote(identifier, false);
         Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
         Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
         Mockito.verify(cartItemFeeRepository).createCartItemCartItemFee(any());
