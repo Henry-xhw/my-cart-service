@@ -5,10 +5,15 @@ import lombok.Data;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.validation.constraints.Size;
+
 @Data
 public class UpdateCartReq {
 
+    private UUID reservationGroupId;
+
     private Set<String> couponCodes;
 
-    private UUID reservationGroupId;
+    @Size(max = 255)
+    private String salesChannel;
 }

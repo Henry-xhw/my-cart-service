@@ -43,6 +43,8 @@ public class Cart extends BaseDomainObject {
 
     private Set<String> couponCodes;
 
+    private String salesChannel;
+
     public Optional<CartItem> findCartItem(UUID cartItemId) {
         return getFlattenCartItems().stream()
             .filter(it -> Objects.equals(it.getIdentifier(), cartItemId))

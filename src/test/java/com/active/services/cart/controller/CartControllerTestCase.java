@@ -68,8 +68,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(cartDtoReq.getOwnerId());
         req.setKeyerId(cartDtoReq.getKeyerId());
         req.setCurrencyCode(cartDtoReq.getCurrencyCode());
-        req.setCouponCodes(cartDtoReq.getCouponCodes());
         req.setReservationGroupId(UUID.randomUUID());
+        req.setCouponCodes(cartDtoReq.getCouponCodes());
+        req.setSalesChannel("Channel");
         CreateCartRsp rsp = new CreateCartRsp();
         rsp.setCart(cartDtoReq);
         //req.setIdentifier(cartDtoReq.getIdentifier());
@@ -135,8 +136,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartSuccess() throws Exception {
         UpdateCartReq req = new UpdateCartReq();
-        req.setCouponCodes(Collections.singleton("FDSAFSA"));
         req.setReservationGroupId(UUID.randomUUID());
+        req.setCouponCodes(Collections.singleton("FDSAFSA"));
+        req.setSalesChannel("Channel");
         doNothing().when(cartService).update(any());
 
         mockMvc.perform(put("/carts/{id}", cartId)

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 public class CreateCartReq {
@@ -19,7 +20,10 @@ public class CreateCartReq {
     @NotNull
     private String currencyCode;
 
+    private UUID reservationGroupId;
+
     private Set<String> couponCodes;
 
-    private UUID reservationGroupId;
+    @Size(max = 255)
+    private String salesChannel;
 }
