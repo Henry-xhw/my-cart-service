@@ -35,16 +35,16 @@ public class CartItemAaDiscountPricer implements CartItemPricer {
 
         aaDiscountContext.subtractDiscountAmt(discountAmt);
 
-        Discount discount = Discount.builder()
-                .name(AA_ORDER_LINE_DISC_NAME)
-                .description(AA_ORDER_LINE_DISC_DESC)
-                .discountId(aaDiscount.getId())
-                .discountType(DiscountType.ACTIVE_ADVANTAGE)
-                .cartId(context.getCart().getId())
-                .amount(discountAmt)
-                .amountType(aaDiscount.getAmountType())
-                .build();
-        discount.setIdentifier(UUID.randomUUID());
-        applyDiscount(context, cartItem.getPriceCartItemFee().get(), discount, discountAmt, 1);
+        Discount disc = new Discount();
+        disc.setIdentifier(UUID.randomUUID());
+        disc.setName(AA_ORDER_LINE_DISC_NAME);
+        disc.setDescription(AA_ORDER_LINE_DISC_DESC);
+        disc.setAmount(discountAmt);
+        disc.setAmountType(aaDiscount.getAmountType());
+        disc.setDiscountId(aaDiscount.getId());
+        disc.setDiscountType(DiscountType.ACTIVE_ADVANTAGE);
+        disc.setCartId(context.getCart().getId());
+
+        applyDiscount(context, cartItem.getPriceCartItemFee().get(), disc, discountAmt, 1);
     }
 }

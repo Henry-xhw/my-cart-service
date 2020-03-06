@@ -33,6 +33,7 @@ public class DiscountFeeLoader {
                 disc.getAmountType(), cartQuoteContext.getCurrency());
         applyDiscount(cartQuoteContext, priceFeeItems.get(), disc, discAmount, priceFeeItems.get().getUnits());
     }
+
     public static void applyDiscount(CartQuoteContext cartQuoteContext, CartItemFee fee, Discount disc,
                                      BigDecimal discAmount, Integer units) {
         if (!BdUtil.isGreaterThanZero(discAmount)) {
