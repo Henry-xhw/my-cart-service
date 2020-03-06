@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -62,6 +63,8 @@ public class CartItem extends BaseTree<CartItem> {
     private boolean ignoreMultiDiscounts;
 
     private CouponMode couponMode;
+
+    private UUID reservationId;
 
     public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()

@@ -10,6 +10,7 @@ import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,13 +28,13 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class CartQuoteContext {
+    private static ThreadLocal<CartQuoteContext> threadLocal = new ThreadLocal<>();
+
     private final Cart cart;
 
     private Map<Long, Product> productsMap = new HashMap<>();
 
-    private static ThreadLocal<CartQuoteContext> threadLocal = new ThreadLocal<>();
-
-    private List<Discount> appliedDiscounts = new ArrayList<>();
+    private Map<String, Discount> appliedDiscountsMap = new HashMap<>();
 
     @Setter
     private boolean isAaMember;
@@ -57,15 +58,15 @@ public class CartQuoteContext {
     }
 
     public CartQuoteContext addAppliedDiscount(Discount discount) {
-        if (appliedDiscounts == null) {
-            appliedDiscounts = new ArrayList<>();
+        if (appliedDiscountsMap == null) {
+            appliedDiscountsMap = new HashMap<>();
         }
-        appliedDiscounts.add(discount);
+        appliedDiscountsMap.put(getDiscountKey(discount.getDiscountId(), discount.getDiscountType()), discount);
         return this;
     }
 
     public List<Long> getUsedUniqueCouponDiscountsIds() {
-        return CollectionUtils.emptyIfNull(appliedDiscounts).stream()
+        return CollectionUtils.emptyIfNull(getAppliedDiscounts()).stream()
                 .filter(discount -> discount.getDiscountType() ==
                         DiscountType.COUPON && discount.getAlgorithm() == DiscountAlgorithm.MOST_EXPENSIVE)
                 .map(Discount::getDiscountId).collect(Collectors.toList());
@@ -88,9 +89,22 @@ public class CartQuoteContext {
         threadLocal.set(context);
     }
 
-    /**
-     * Removed Context from threadlocal
-     */
+
+    public Discount getAppliedDiscount(Long discountId, DiscountType type) {
+       return appliedDiscountsMap.get(getDiscountKey(discountId, type));
+    }
+
+    private String getDiscountKey(@NonNull Long discountId, @NonNull DiscountType type) {
+        return type.toString() + discountId;
+    }
+
+    public List<Discount> getAppliedDiscounts() {
+        if (appliedDiscountsMap == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(appliedDiscountsMap.values());
+    }
+
     public static void destroy() {
         threadLocal.remove();
     }

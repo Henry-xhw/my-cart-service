@@ -28,7 +28,7 @@ public class Discount extends BaseDomainObject {
     private DiscountAlgorithm algorithm;
 
     private Boolean applyToRecurringBilling;
-    private OrderLineDiscountOrigin origin = OrderLineDiscountOrigin.AUTOMATIC;
+    private OrderLineDiscountOrigin origin;
     private Long discountGroupId;
     private Instant startDate;
     private Instant endDate;

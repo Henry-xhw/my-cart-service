@@ -6,6 +6,7 @@ import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartItemFeeBuilder;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.oms.BdUtil;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -38,8 +39,13 @@ public class DiscountFeeLoader {
             return;
         }
 
-        cartQuoteContext.addAppliedDiscount(disc);
-        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(disc, discAmount,
+        Discount appliedDiscount = cartQuoteContext.getAppliedDiscount(disc.getDiscountId(), disc.getDiscountType());
+        if (appliedDiscount == null) {
+            disc.setOrigin(OrderLineDiscountOrigin.AUTOMATIC);
+            cartQuoteContext.addAppliedDiscount(disc);
+            appliedDiscount = disc;
+        }
+        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(appliedDiscount, discAmount,
                 priceFeeItems.get().getUnits());
         priceFeeItems.get().addSubItemFee(Arrays.asList(discountFee));
     }

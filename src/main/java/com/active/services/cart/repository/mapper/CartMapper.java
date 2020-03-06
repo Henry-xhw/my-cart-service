@@ -45,7 +45,7 @@ public interface CartMapper {
     int releaseLock(@Param("identifier") UUID cartId, @Param("modifiedBy") String modifiedBy);
 
     void updateCartReservationGroupId(@Param("identifier") UUID cartId,
-                                      @Param("reservationId") UUID reservationId,
+                                      @Param("reservationGroupId") UUID reservationGroupId,
                                       @Param("modifiedBy") String modifiedBy);
 
     void createEvents(List<Event> events);
