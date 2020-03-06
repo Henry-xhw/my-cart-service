@@ -36,7 +36,9 @@ public class MultiProductPricerBuilder implements Builder<List<MultiProductDisco
                 new EffectiveThresholdSettingBuilder().setMd(mdCartItem.getMultiDiscount())
                     .setRequestThreshold(productQuantities).build();
             if (effectiveMdThresholdSettingOpt.isPresent()) {
-                pricers.add(new MultiProductDiscountPricer(mdCartItem, effectiveMdThresholdSettingOpt.get()));
+                MultiDiscountCartItem targetMdCartItem = new MultiDiscountCartItem(mdCartItem.getMultiDiscount());
+                targetMdCartItem.addCartItems(items);
+                pricers.add(new MultiProductDiscountPricer(targetMdCartItem, effectiveMdThresholdSettingOpt.get()));
             } else {
                 LOG.debug("No threshold met for md {} for person {}",
                         mdCartItem.getMultiDiscount().getId(), personIdentifier);
