@@ -8,10 +8,15 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.mock.MockCart;
 import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.PaymentAccount;
+import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.CheckoutResult;
+import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
 import com.active.services.cart.model.v1.req.QuoteReq;
 import com.active.services.cart.model.v1.req.UpdateCartReq;
+import com.active.services.cart.model.v1.rsp.CheckoutRsp;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
@@ -240,5 +245,29 @@ public class CartControllerTestCase extends BaseControllerTestCase {
                 .andReturn().getResponse().getContentAsString();
         QuoteRsp resultRsp = objectMapper.readValue(result, QuoteRsp.class);
         Assert.assertNotNull(resultRsp);
+    }
+
+    @Test
+    public void checkOutSuccess() throws Exception {
+        CheckoutReq req = new CheckoutReq();
+        PaymentAccount paymentAccount = new PaymentAccount();
+        paymentAccount.setAmsAccountId("test");
+        paymentAccount.setPaymentType(PaymentType.CREDIT_CARD);
+        req.setPaymentAccount(paymentAccount);
+        req.setSendReceipt(false);
+        Cart cart = CartDataFactory.cart();
+        CheckoutRsp rsp = new CheckoutRsp();
+        CheckoutResult result = new CheckoutResult();
+        rsp.setCheckoutResults(Arrays.asList(result));
+        when(cartService.checkout(any(), any())).thenReturn(Arrays.asList(result));
+        String response = mockMvc.perform(post("/carts/{cart-id}/checkout", cart.getIdentifier())
+                .contentType(V1_MEDIA).accept(V1_MEDIA)
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andDo(newSuccessDocument("Cart", "CheckOut-Process"))
+                .andReturn().getResponse().getContentAsString();
+        rsp = objectMapper.readValue(response, CheckoutRsp.class);
+        Assert.assertNotNull(rsp);
     }
 }
