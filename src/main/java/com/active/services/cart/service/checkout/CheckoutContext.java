@@ -44,12 +44,13 @@ public class CheckoutContext {
     public List<ReservationDTO> getReservations() {
         return cart.getFlattenCartItems().stream().map(cartItem -> {
             ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.setReservationId(cartItem.getReservationId());
             reservationDTO.setAllowOversold(cartItem.isOversold());
             reservationDTO.setProductId(cartItem.getProductId());
             reservationDTO.setQuantity(cartItem.getQuantity());
             Range<Instant> br = cartItem.getBookingRange();
             if (br != null && (br.getLowerInclusive() != null || br.getUpperExclusive() != null)) {
-                reservationDTO.setDateTimeRanges(Arrays.asList(br));
+                reservationDTO.setDateTimeRange(br);
             }
             return reservationDTO;
         }).collect(Collectors.toList());

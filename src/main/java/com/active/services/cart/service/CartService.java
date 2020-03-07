@@ -20,7 +20,6 @@ import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
-import com.active.services.order.discount.OrderLineDiscountOrigin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -199,10 +198,6 @@ public class CartService {
 
     private void batchInsertDiscount(List<Discount> discounts) {
         emptyIfNull(discounts).stream().filter(Objects::nonNull)
-                .map(discount -> {
-                    discount.setOrigin(OrderLineDiscountOrigin.AUTOMATIC);
-                    return discount;
-                })
                 .forEach(discount -> discountRepository.createDiscount(discount));
     }
 
