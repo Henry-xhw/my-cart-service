@@ -29,10 +29,6 @@ public class CartAaDiscountPricer implements CartPricer {
     @Override
     public void quote(CartQuoteContext context) {
 
-        if (context == null || context.getCart() == null) {
-            return;
-        }
-
         boolean isAaMember = context.isAaMember() || context.hasCartItemWithType(ProductType.AA_MEMBERSHIP);
         if (!isAaMember) {
             return;
