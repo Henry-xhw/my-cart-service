@@ -13,237 +13,437 @@ BEGIN
         [booking_end_dt]            DATETIME            NULL,
         [trimmed_booking_start_dt]  DATETIME            NULL,
         [trimmed_booking_end_dt]    DATETIME            NULL,
-        [quantity]                  BIGINT              NOT NULL,
+        [quantity]                  INT                 NOT NULL,
         [override_price]            DECIMAL(19, 2)      NULL,
         [gross_price]               DECIMAL(19, 2)      NULL,
         [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
+        [parent_id]                 BIGINT              NULL,
+        [oversold]                  BIT                 CONSTRAINT df_cart_items_oversold DEFAULT ((0)) NOT NULL,
+        [person_identifier]         NVARCHAR(50)        NULL,
+        [coupon_mode]               NVARCHAR(255)       NULL,
+        [ignore_multi_discounts]    BIT                 CONSTRAINT df_cart_items_ignore_multi_discounts DEFAULT ((0)) NOT NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL,
-        CONSTRAINT [pk_cart_item] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_cart_items] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_cart_items_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
 GO
 
-IF NOT EXISTS(SELECT 1
-              FROM INFORMATION_SCHEMA.COLUMNS
-              WHERE TABLE_NAME = 'cart_items'
-                AND COLUMN_NAME = 'parent_id')
-    BEGIN
-        ALTER TABLE dbo.cart_items
-            ADD parent_id BIGINT NULL;
-        PRINT 'Added new column parent_id into table cart_items.';
-    END
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_items' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.cart_items ADD CONSTRAINT [pk_cart_item]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_cart_item on table dbo.cart_items'
-END
-GO
-
 IF NOT EXISTS(
     SELECT TOP 1 1
     FROM
         sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_identifier'
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_cart_id'
     WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
 BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_item_identifier] ON [dbo].[cart_items] ([identifier])
+    CREATE NONCLUSTERED INDEX [ix_cart_items_cart_id] ON [dbo].[cart_items] ([cart_id])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_item_identifier to dbo.cart.'
+    PRINT 'Added index ix_cart_items_cart_id to dbo.cart_items.'
 END
+GO
 
 IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_cart_id'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
+        SELECT TOP 1 1
+        FROM
+            sys.tables t WITH(NOLOCK)
+                JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_product_id'
+        WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
+    BEGIN
+        CREATE NONCLUSTERED INDEX [ix_cart_items_product_id] ON [dbo].[cart_items] ([product_id])
+            WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+        PRINT 'Added index ix_cart_items_product_id to dbo.cart_items.'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items', NULL, NULL))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'cart item',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','id'))
 BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_item_cart_id] ON [dbo].[cart_items] ([cart_id])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_item_cart_id to dbo.cart_items.'
+    EXEC sys.sp_addextendedproperty
+    @name = N'MS_Description',
+    @value = N'id',
+    @level0type = 'SCHEMA',
+    @level0name = 'dbo',
+    @level1type = 'TABLE',
+    @level1name = 'cart_items',
+    @level2type = 'Column',
+    @level2name = 'id'
 END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'fee_volume_index'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.cart_items ADD fee_volume_index BIGINT NULL
-
-	PRINT 'Added column fee_volume_index to dbo.cart_items'
-END
-GO
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.cart_items DROP COLUMN reservation_id
-
-	PRINT 'Drop column reservation_id from dbo.cart_items'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'oversold'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','cart_id'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD oversold BIT DEFAULT ((0)) NOT NULL
-
-        PRINT 'Added column oversold to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'cart id',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'cart_id'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_codes'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
 
-    ALTER TABLE dbo.cart_items ADD coupon_codes NVARCHAR(MAX) NULL
-
-    PRINT 'Added column coupon_codes to dbo.cart_items'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'person_identifier'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','fee_volume_index'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD person_identifier NVARCHAR(50) NULL
-
-        PRINT 'Added column person_identifier to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'fee volume index',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'fee_volume_index'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_mode'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','identifier'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD coupon_mode NVARCHAR(255) NULL
-
-        PRINT 'Added column coupon_mode to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'The identifier is a unique identification, and is a reference id for external service',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'identifier'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'override_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','product_id'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD override_price DECIMAL(19, 2) NULL
-
-        PRINT 'Added column override_price to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'product id',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'product_id'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'gross_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','product_name'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD gross_price DECIMAL(19, 2) NULL
-
-        PRINT 'Added column gross_price to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'product name',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'product_name'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'net_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','product_description'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD net_price DECIMAL(19, 2) NULL
-
-        PRINT 'Added column net_price to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'product description',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'product_description'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'ignore_multi_discounts'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','booking_start_dt'))
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD ignore_multi_discounts BIT DEFAULT ((0)) NOT NULL
-
-        PRINT 'Added column ignore_multi_discounts to dbo.cart_items'
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'booking start date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'booking_start_dt'
     END
 GO
 
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'unit_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','booking_end_dt'))
     BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'booking end date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'booking_end_dt'
+    END
+GO
 
-        ALTER TABLE dbo.cart_items DROP column unit_price
 
-        PRINT 'Droped column unit_price to dbo.cart_items'
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','trimmed_booking_start_dt'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'trimmed booking start date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'trimmed_booking_start_dt'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','trimmed_booking_end_dt'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'trimmed booking end date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'trimmed_booking_end_dt'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','quantity'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'quantity',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'quantity'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','override_price'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'override price',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'override_price'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','gross_price'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'gross price',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'gross_price'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','net_price'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'net price',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'net_price'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','grouping_identifier'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'grouping identifier',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'grouping_identifier'
     END
 GO
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','coupon_codes'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'coupon codes',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'coupon_codes'
-END
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'coupon codes',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'coupon_codes'
+    END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','override_price'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'override price',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'override_price'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','parent_id'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'parent id',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'parent_id'
+    END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','gross_price'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'gross price',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'gross_price'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','oversold'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'oversold',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'oversold'
+    END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','net_price'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'net price',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'net_price'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','person_identifier'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'person identifier',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'person_identifier'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','coupon_mode'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'coupon mode',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'coupon_mode'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','ignore_multi_discounts'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'ignore multi discounts',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'ignore_multi_discounts'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','created_by'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'created by',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'created_by'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','created_dt'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'created date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'created_dt'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','modified_by'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'modified by',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'modified_by'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','modified_dt'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'modified date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'modified_dt'
+    END
 GO

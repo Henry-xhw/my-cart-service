@@ -4,139 +4,253 @@ BEGIN
 	 CREATE TABLE [dbo].[carts] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                UNIQUEIDENTIFIER    NOT NULL,
-        [owner_id]                  UNIQUEIDENTIFIER    NULL,
-        [keyer_id]                  UNIQUEIDENTIFIER    NULL,
+        [owner_guid]                UNIQUEIDENTIFIER    NULL,
+        [keyer_guid]                UNIQUEIDENTIFIER    NULL,
         [currency_code]             CHAR(3)             NOT NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL,
-        [version]                   INT                 DEFAULT ((0)) NOT NULL,
-        [price_version]             INT                 DEFAULT ((0)) NOT NULL,
-        [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
+        [version]                   INT                 CONSTRAINT df_carts_version DEFAULT ((0)) NOT NULL,
+        [price_version]             INT                 CONSTRAINT df_carts_price_version DEFAULT ((0)) NOT NULL,
+        [is_lock]                   BIT                 CONSTRAINT df_carts_is_lock DEFAULT ((0)) NOT NULL,
         [cart_status]               VARCHAR (255)       NOT NULL,
-        [reservation_id]            UNIQUEIDENTIFIER    NULL,
+        [reservation_guid]          UNIQUEIDENTIFIER    NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
-        CONSTRAINT [pk_cart] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_carts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_carts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_carts_owner_guid] UNIQUE ([owner_guid]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_status'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts', NULL, NULL))
 BEGIN
-
-	ALTER TABLE dbo.carts ADD cart_status NVARCHAR(255) NOT NULL
-
-	PRINT 'Added column cart_status to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'version'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD version INT DEFAULT ((0)) NOT NULL
-
-	PRINT 'Added column version to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'price_version'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD price_version INT DEFAULT ((0)) NOT NULL
-
-	PRINT 'Added column price_version to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'is_lock'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD is_lock BIT DEFAULT ((0)) NOT NULL
-
-	PRINT 'Added column lock to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='carts' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.carts ADD CONSTRAINT [pk_cart]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_cart on table dbo.carts'
+    EXEC sys.sp_addextendedproperty
+         @name = N'MS_Description',
+         @value = N'cart',
+         @level0type = 'SCHEMA',
+         @level0name = 'dbo',
+         @level1type = 'TABLE',
+         @level1name = 'carts'
 END
 GO
 
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_identifier'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_identifier] ON [dbo].[carts] ([identifier])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_identifier to dbo.carts.'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','id'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'id',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'id'
+    END
 GO
 
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_owner_id'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_owner_id] ON [dbo].[carts] ([owner_id])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_owner_id to dbo.carts.'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','identifier'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'The identifier is a unique identification, and is a reference id for external service',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'identifier'
+    END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD reservation_id UNIQUEIDENTIFIER NULL
-
-	PRINT 'Added column reservation_id to dbo.carts'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','owner_guid'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'owner guid, also called epid',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'owner_guid'
+    END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_codes'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
 
-  ALTER TABLE dbo.carts ADD coupon_codes NVARCHAR(MAX) NULL
-
-  PRINT 'Added column coupon_codes to dbo.carts'
-END
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','keyer_guid'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'keyer guid, also called keyer epid',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'keyer_guid'
+    END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','coupon_codes'))
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','currency_code'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'currency code',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'currency_code'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','created_by'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'created by',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'created_by'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','created_dt'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'created date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'created_dt'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','modified_by'))
 BEGIN
   EXEC sys.sp_addextendedproperty
   @name = N'MS_Description',
-  @value = N'coupon codes',
+  @value = N'modified by',
   @level0type = 'SCHEMA',
   @level0name = 'dbo',
   @level1type = 'TABLE',
   @level1name = 'carts',
   @level2type = 'Column',
-  @level2name = 'coupon_codes'
+  @level2name = 'modified_by'
 END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','modified_dt'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'modified date time',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'modified_dt'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','version'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'version',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'version'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','price_version'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'price version',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'price_version'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','is_lock'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'lock or not lock',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'is_lock'
+    END
+GO
+
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','cart_status'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'cart status, as CREATED or FINALIZED',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'cart_status'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','reservation_guid'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'reservation guid',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'reservation_guid'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','coupon_codes'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'coupon codes',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'coupon_codes'
+    END
 GO
