@@ -42,9 +42,6 @@ public class MultiDiscountBasePricerTestCase {
 
     @Before
     public void setUp() {
-        // four cartItems belong to the same person
-        loadCartItems(false, false);
-
         // prepare multi discount
         multiDiscount = new MultiDiscount();
         multiDiscount.setId(1L);
@@ -76,44 +73,192 @@ public class MultiDiscountBasePricerTestCase {
     }
 
     @Test
-    public void priceWithMultiPersonDiscountPricer() {
-
-        // All items does not have net price
+    public void priceByMultiPersonPricerWhenNoPriceOnItem() {
+        // case 1: All items does not have net price
+        loadCartItems(false, false);
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
         multiDiscountBasePricer.price();
         boolean allMatch = multiDiscountBasePricer.getMdCartItem()
                 .getCartItems()
                 .stream()
                 .allMatch(cartItem -> cartItem.getPriceCartItemFee().isPresent());
         Assert.assertFalse(allMatch);
+    }
 
-        // add item net price, multiDiscountThresholdSetting type:Flat, all items belong to the same preson
+    @Test
+    public void priceByMultiPersonPricerWhenTierTypeFlatSamePersonLeastExpen() {
+        // case 2: add item net price, multiDiscountThresholdSetting type:Flat, all items belong to the same preson
         loadCartItems(true, true);
+        loadCartQuoteContext();
         multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
         multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
         multiDiscountBasePricer.price();
-        CartItemFee fee = toPriceCartItems
+        CartItemFee checkFee = toPriceCartItems
                 .stream()
                 .filter(cartItem -> cartItem.getId() == 2)
                 .collect(Collectors.toList()).get(0).getFees().get(0);
-        Assert.assertNotNull(fee.getSubItems());
-        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, fee.getSubItems().get(0).getType());
-        Assert.assertEquals(10, fee.getSubItems().get(0).getUnitPrice().intValue());
-        Assert.assertEquals(1, fee.getSubItems().get(0).getUnits().intValue());
+        Assert.assertTrue(checkFee.getSubItems().size() != 0);
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, checkFee.getSubItems().get(0).getType());
+        Assert.assertEquals(10, checkFee.getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, checkFee.getSubItems().get(0).getUnits().intValue());
+    }
 
-        // multiDiscountThresholdSetting type:PERCENT, most expensive, all items belong to the same preson
+    @Test
+    public void priceByMultiPersonPricerWhenTierTypePercentSamePersonMostExpen() {
+        // case 3: multiDiscountThresholdSetting type:PERCENT, most expensive, all items belong to the same preson
+        loadCartItems(true, true);
+        loadCartQuoteContext();
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
         multiDiscount.setAlgorithm(MultiDiscountAlgorithm.MOST_EXPENSIVE);
         multiDiscountThresholdSetting.getTiers().forEach(tire -> tire.setAmountType(AmountType.PERCENT));
-        loadCartQuoteContext();
         multiDiscountBasePricer.price();
-        CartItemFee fee1 = toPriceCartItems
+        CartItemFee checkFee = toPriceCartItems
                 .stream()
                 .filter(cartItem -> cartItem.getId() == 1)
                 .collect(Collectors.toList()).get(0).getFees().get(0);
-        Assert.assertNotNull(fee1.getSubItems());
-        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, fee1.getSubItems().get(0).getType());
-        Assert.assertEquals(3, fee1.getSubItems().get(0).getUnitPrice().intValue());
-        Assert.assertEquals(1, fee1.getSubItems().get(0).getUnits().intValue());
+        Assert.assertTrue(checkFee.getSubItems().size() != 0);
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, checkFee.getSubItems().get(0).getType());
+        Assert.assertEquals(3, checkFee.getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, checkFee.getSubItems().get(0).getUnits().intValue());
     }
+
+    @Test
+    public void priceByMultiPersonPricerWhenTierTypeFixedSamePersonMostExpen() {
+        // case 4: multiDiscountThresholdSetting type:FIXED_AMOUNT, most expensive, all items belong to the same preson
+        loadCartItems(true, true);
+        loadCartQuoteContext();
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.MOST_EXPENSIVE);
+        multiDiscountThresholdSetting.getTiers().forEach(tire -> tire.setAmountType(AmountType.FIXED_AMOUNT));
+        multiDiscountBasePricer.price();
+        CartItemFee checkFee = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getId() == 1)
+                .collect(Collectors.toList()).get(0).getFees().get(0);
+        Assert.assertTrue(checkFee.getSubItems().size() != 0);
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, checkFee.getSubItems().get(0).getType());
+        Assert.assertEquals(20, checkFee.getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, checkFee.getSubItems().get(0).getUnits().intValue());
+    }
+
+    @Test
+    public void priceByMultiPersonPricerWhenTierTypeFlatMultiPersonMostExpen() {
+        // case 5: multiDiscountThresholdSetting type:FLAT, most expensive, all items belong to multi preson
+        loadCartQuoteContext();
+        loadCartItems(true, false);
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscountThresholdSetting.getTiers().forEach(tire -> tire.setAmountType(AmountType.FLAT));
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.MOST_EXPENSIVE);
+        multiDiscountBasePricer.price();
+        Assert.assertEquals(4, toPriceCartItems
+                .stream().filter(cartItem -> cartItem.getFees().get(0).getSubItems().size() != 0).count());
+
+        // check one of the cart item is ok
+        CartItemFee checkFee = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getId() == 1)
+                .collect(Collectors.toList()).get(0).getFees().get(0);
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, checkFee.getSubItems().get(0).getType());
+        Assert.assertEquals(10, checkFee.getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, checkFee.getSubItems().get(0).getUnits().intValue());
+    }
+
+
+    @Test
+    public void priceByMultiPersonPricerWhenTierTypeFlatMultiPersonMostExpenNotReachTierLevel() {
+        // case 6: add item net price,
+        // multiDiscountThresholdSetting type:Flat,
+        // all items belong to the same preson， tire level set 5
+        loadCartItems(true, true);
+        loadCartQuoteContext();
+        multiDiscountThresholdSetting.getTiers().forEach(tire -> tire.setTierLevel(5));
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.MOST_EXPENSIVE);
+        multiDiscountBasePricer.price();
+        long count = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getFees().get(0).getSubItems().size() != 0).count();
+        Assert.assertEquals(0, count);
+    }
+
+    @Test
+    public void priceByMultiProductPricerWhenTierTypeFlatSamePersonLeastExpen() {
+        // case 7: add item net price, multiDiscountThresholdSetting type:Flat, all items belong to the same preson
+        loadCartItems(true, true);
+        loadCartQuoteContext();
+        multiDiscountBasePricer = new MultiProductDiscountPricer(mdCartItem, multiDiscountThresholdSetting);
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscountBasePricer.price();
+        CartItemFee checkFee = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getId() == 2)
+                .collect(Collectors.toList()).get(0).getFees().get(0);
+        Assert.assertTrue(checkFee.getSubItems().size() != 0);
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, checkFee.getSubItems().get(0).getType());
+        Assert.assertEquals(10, checkFee.getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, checkFee.getSubItems().get(0).getUnits().intValue());
+    }
+
+    @Test
+    public void priceByMultiProductPricerWhenTierTypeFlatSamePersonMostExpenNotReachTierLevel() {
+        // case 8: add item net price,
+        // multiDiscountThresholdSetting type:Flat,
+        // all items belong to the same preson， tire level set 5
+        loadCartItems(true, true);
+        loadCartQuoteContext();
+        multiDiscountThresholdSetting.getTiers().forEach(tire -> tire.setTierLevel(5));
+        multiDiscountBasePricer = new MultiProductDiscountPricer(mdCartItem, multiDiscountThresholdSetting);
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.MOST_EXPENSIVE);
+        multiDiscountBasePricer.price();
+        long count = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getFees().get(0).getSubItems().size() != 0).count();
+
+        Assert.assertEquals(0, count);
+    }
+
+    @Test
+    public void priceByMultiProductPricerWhenTierTypeFlatMultiPersonMostExpen() {
+        // case 9: add item net price,
+        // multiDiscountThresholdSetting type:Flat,
+        // all items belong to the same preson， tire level set 3
+        loadCartItems(true, false);
+        loadCartQuoteContext();
+        multiDiscountThresholdSetting.getTiers().forEach(tire -> tire.setTierLevel(3));
+        multiDiscountBasePricer = new MultiProductDiscountPricer(mdCartItem, multiDiscountThresholdSetting);
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.MOST_EXPENSIVE);
+        multiDiscountBasePricer.price();
+        long discountNum = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getFees().get(0).getSubItems().size() != 0).count();
+        Assert.assertEquals(2, discountNum);
+        List<CartItem> collect = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getFees().get(0).getSubItems().size() != 0)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT,
+                collect.get(0).getFees().get(0).getSubItems().get(0).getType());
+        Assert.assertEquals(10, collect.get(0).getFees().get(0).getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, collect.get(0).getFees().get(0).getSubItems().get(0).getUnits().intValue());
+
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT,
+                collect.get(1).getFees().get(0).getSubItems().get(0).getType());
+        Assert.assertEquals(10, collect.get(1).getFees().get(0).getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, collect.get(1).getFees().get(0).getSubItems().get(0).getUnits().intValue());
+
+    }
+
 
     private void loadCartItems(boolean fillFee, boolean isSamePerson) {
         toPriceCartItems.clear();
@@ -151,6 +296,4 @@ public class MultiDiscountBasePricerTestCase {
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         CartQuoteContext.set(cartQuoteContext);
     }
-
-
 }
