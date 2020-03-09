@@ -226,7 +226,6 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     @Test
     public void quoteCartSuccess() throws Exception {
         QuoteReq req = new QuoteReq();
-        req.setCartId(UUID.randomUUID());
         req.setAaMember(false);
         QuoteRsp rsp = new QuoteRsp();
         rsp.setCartDto(MockCart.mockQuoteCartDto());
@@ -237,8 +236,8 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
         cart.setItems(Arrays.asList(cartItem));
-        when(cartService.quote(req.getCartId(), req.isAaMember())).thenReturn(cart);
-        String result = mockMvc.perform(post("/carts/quote")
+        when(cartService.quote(cartId, req.isAaMember())).thenReturn(cart);
+        String result = mockMvc.perform(post("/carts/{cart-id}/quote", cartId)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))

@@ -91,9 +91,9 @@ public class CartController {
     }
 
     @PostMapping(QUOTE_PATH)
-    public QuoteRsp quote(@RequestBody @Validated QuoteReq req) {
+    public QuoteRsp quote(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody @Validated QuoteReq req) {
         QuoteRsp rsp = new QuoteRsp();
-        Cart cart = cartService.quote(req.getCartId(), req.isAaMember());
+        Cart cart = cartService.quote(cartId, req.isAaMember());
         rsp.setCartDto(QuoteCartMapper.INSTANCE.toDto(cart));
         return rsp;
     }
