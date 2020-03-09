@@ -59,6 +59,7 @@ public class MultiDiscountBasePricerTestCase {
         // prepare DiscountThresholdSetting
         multiDiscountThresholdSetting = new MultiDiscountThresholdSetting();
         DiscountTier discountTier = new DiscountTier();
+        discountTier.setId(1L);
         discountTier.setAmountType(AmountType.FLAT);
         discountTier.setAmount(BigDecimal.TEN);
         discountTier.setTierLevel(1);
@@ -290,7 +291,7 @@ public class MultiDiscountBasePricerTestCase {
         toPriceCartItems.addAll(Arrays.asList(item1, item2, item3, item4));
     }
 
-    private void loadCartQuoteContext() {
+    public static void loadCartQuoteContext() {
         CartQuoteContext.destroy();
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
