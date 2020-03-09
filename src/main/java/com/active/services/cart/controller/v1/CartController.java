@@ -7,6 +7,7 @@ import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.req.QuoteReq;
 import com.active.services.cart.model.v1.req.UpdateCartReq;
 import com.active.services.cart.model.v1.rsp.CheckoutRsp;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
@@ -90,9 +91,9 @@ public class CartController {
     }
 
     @PostMapping(QUOTE_PATH)
-    public QuoteRsp quote(@PathVariable(CART_ID_PARAM)UUID cartId) {
+    public QuoteRsp quote(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody @Validated QuoteReq req) {
         QuoteRsp rsp = new QuoteRsp();
-        Cart cart = cartService.quote(cartId);
+        Cart cart = cartService.quote(cartId, req.isAaMember());
         rsp.setCartDto(QuoteCartMapper.INSTANCE.toDto(cart));
         return rsp;
     }

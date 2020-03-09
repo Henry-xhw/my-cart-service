@@ -37,11 +37,13 @@ public class Cart extends BaseDomainObject {
 
     private List<CartItem> items = new ArrayList<>();
 
-    private UUID reservationId;
+    private UUID reservationGroupId;
 
     private List<Discount> discounts = new ArrayList<>();
 
     private Set<String> couponCodes;
+
+    private String salesChannel;
 
     public Optional<CartItem> findCartItem(UUID cartItemId) {
         return getFlattenCartItems().stream()

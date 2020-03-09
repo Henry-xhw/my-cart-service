@@ -24,6 +24,7 @@ BEGIN
         [person_identifier]         NVARCHAR(50)        NULL,
         [coupon_mode]               NVARCHAR(255)       NULL,
         [ignore_multi_discounts]    BIT                 CONSTRAINT df_cart_items_ignore_multi_discounts DEFAULT ((0)) NOT NULL,
+        [reservation_id]            UNIQUEIDENTIFIER    NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -390,6 +391,7 @@ IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo
     END
 GO
 
+
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','created_by'))
     BEGIN
         EXEC sys.sp_addextendedproperty
@@ -445,5 +447,19 @@ IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo
              @level1name = 'cart_items',
              @level2type = 'Column',
              @level2name = 'modified_dt'
+    END
+GO
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','reservation_id'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'reservation id',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'cart_items',
+             @level2type = 'Column',
+             @level2name = 'reservation_id'
     END
 GO

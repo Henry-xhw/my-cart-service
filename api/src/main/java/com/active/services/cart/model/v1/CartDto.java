@@ -24,9 +24,11 @@ public class CartDto extends BaseDto {
     @NotNull
     private String currencyCode;
 
-    private UUID reservationId;
+    private UUID reservationGroupId;
 
     private Set<String> couponCodes;
+
+    private String salesChannel;
 
     @Valid
     private List<CartItemDto> items = new ArrayList<>();

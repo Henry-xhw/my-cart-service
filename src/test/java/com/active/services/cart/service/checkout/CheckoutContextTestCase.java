@@ -36,8 +36,8 @@ public class CheckoutContextTestCase {
         List<ReservationDTO> reservationDTOS = checkoutContext.getReservations();
 
         assertEquals(cart.getFlattenCartItems().size(), reservationDTOS.size());
-        assertTrue(reservationDTOS.get(0).getAllowOversold());
-        assertFalse(reservationDTOS.get(1).getAllowOversold());
+        assertTrue(reservationDTOS.get(0).isAllowOversold());
+        assertFalse(reservationDTOS.get(1).isAllowOversold());
 
         checkReservationDTO(reservationDTOS, 2,
                 tuple(cartItem.getProductId(), cartItem.getQuantity(), cartItem.isOversold()),

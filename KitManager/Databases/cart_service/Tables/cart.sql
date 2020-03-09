@@ -17,6 +17,8 @@ BEGIN
         [cart_status]               VARCHAR (255)       NOT NULL,
         [reservation_guid]          UNIQUEIDENTIFIER    NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
+        [reservation_group_id]      UNIQUEIDENTIFIER    NULL,
+        [sales_channel]             VARCHAR (255)       NULL,
         CONSTRAINT [pk_carts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
         CONSTRAINT [uq_carts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE),
         CONSTRAINT [uq_carts_owner_guid] UNIQUE ([owner_guid]) WITH (DATA_COMPRESSION= PAGE)
@@ -182,7 +184,6 @@ IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo
     END
 GO
 
-
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','price_version'))
     BEGIN
         EXEC sys.sp_addextendedproperty
@@ -253,4 +254,31 @@ IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo
              @level2type = 'Column',
              @level2name = 'coupon_codes'
     END
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','sales_channel'))
+BEGIN
+  EXEC sys.sp_addextendedproperty
+  @name = N'MS_Description',
+  @value = N'sales channel',
+  @level0type = 'SCHEMA',
+  @level0name = 'dbo',
+  @level1type = 'TABLE',
+  @level1name = 'carts',
+  @level2type = 'Column',
+  @level2name = 'sales_channel'
+END
+
+IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','reservation_group_id'))
+    BEGIN
+        EXEC sys.sp_addextendedproperty
+             @name = N'MS_Description',
+             @value = N'reservation group id',
+             @level0type = 'SCHEMA',
+             @level0name = 'dbo',
+             @level1type = 'TABLE',
+             @level1name = 'carts',
+             @level2type = 'Column',
+             @level2name = 'reservation_group_id'
+    END
+
 GO

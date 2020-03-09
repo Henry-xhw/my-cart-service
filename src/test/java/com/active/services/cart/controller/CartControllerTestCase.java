@@ -8,9 +8,15 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.mock.MockCart;
 import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.PaymentAccount;
+import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CartDto;
+import com.active.services.cart.model.v1.CheckoutResult;
+import com.active.services.cart.model.v1.req.CheckoutReq;
 import com.active.services.cart.model.v1.req.CreateCartReq;
+import com.active.services.cart.model.v1.req.QuoteReq;
 import com.active.services.cart.model.v1.req.UpdateCartReq;
+import com.active.services.cart.model.v1.rsp.CheckoutRsp;
 import com.active.services.cart.model.v1.rsp.CreateCartRsp;
 import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
@@ -67,7 +73,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         req.setOwnerId(cartDtoReq.getOwnerId());
         req.setKeyerId(cartDtoReq.getKeyerId());
         req.setCurrencyCode(cartDtoReq.getCurrencyCode());
+        req.setReservationGroupId(UUID.randomUUID());
         req.setCouponCodes(cartDtoReq.getCouponCodes());
+        req.setSalesChannel("Channel");
         CreateCartRsp rsp = new CreateCartRsp();
         rsp.setCart(cartDtoReq);
         //req.setIdentifier(cartDtoReq.getIdentifier());
@@ -133,7 +141,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartSuccess() throws Exception {
         UpdateCartReq req = new UpdateCartReq();
+        req.setReservationGroupId(UUID.randomUUID());
         req.setCouponCodes(Collections.singleton("FDSAFSA"));
+        req.setSalesChannel("Channel");
         doNothing().when(cartService).update(any());
 
         mockMvc.perform(put("/carts/{id}", cartId)
@@ -215,6 +225,8 @@ public class CartControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void quoteCartSuccess() throws Exception {
+        QuoteReq req = new QuoteReq();
+        req.setAaMember(false);
         QuoteRsp rsp = new QuoteRsp();
         rsp.setCartDto(MockCart.mockQuoteCartDto());
         Cart cart = CartDataFactory.cart();
@@ -224,17 +236,41 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
         cart.setItems(Arrays.asList(cartItem));
-        when(cartService.quote(cartId)).thenReturn(cart);
+        when(cartService.quote(cartId, req.isAaMember())).thenReturn(cart);
         String result = mockMvc.perform(post("/carts/{cart-id}/quote", cartId)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
-                .headers(actorIdHeader()))
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andDo(newSuccessDocument("Cart", "Quote-Process",
-                        pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
+                        autoRequestFieldsDoc(req),
                         autoRelaxedResponseFieldsDoc(rsp)))
                 .andReturn().getResponse().getContentAsString();
         QuoteRsp resultRsp = objectMapper.readValue(result, QuoteRsp.class);
-        verify(cartService, times(1)).quote(any());
         Assert.assertNotNull(resultRsp);
+    }
+
+    @Test
+    public void checkOutSuccess() throws Exception {
+        CheckoutReq req = new CheckoutReq();
+        PaymentAccount paymentAccount = new PaymentAccount();
+        paymentAccount.setAmsAccountId("test");
+        paymentAccount.setPaymentType(PaymentType.CREDIT_CARD);
+        req.setPaymentAccount(paymentAccount);
+        req.setSendReceipt(false);
+        Cart cart = CartDataFactory.cart();
+        CheckoutRsp rsp = new CheckoutRsp();
+        CheckoutResult result = new CheckoutResult();
+        rsp.setCheckoutResults(Arrays.asList(result));
+        when(cartService.checkout(any(), any())).thenReturn(Arrays.asList(result));
+        String response = mockMvc.perform(post("/carts/{cart-id}/checkout", cart.getIdentifier())
+                .contentType(V1_MEDIA).accept(V1_MEDIA)
+                .headers(actorIdHeader())
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andDo(newSuccessDocument("Cart", "CheckOut-Process"))
+                .andReturn().getResponse().getContentAsString();
+        rsp = objectMapper.readValue(response, CheckoutRsp.class);
+        Assert.assertNotNull(rsp);
     }
 }
