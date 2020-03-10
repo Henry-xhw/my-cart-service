@@ -65,7 +65,7 @@ public abstract class MultiDiscountBasePricer implements MultiDiscountPricer {
 
     /**
      * How tiers current items have
-     * 
+     *
      * @param effectiveSortedMdCartItems
      * @return
      */
