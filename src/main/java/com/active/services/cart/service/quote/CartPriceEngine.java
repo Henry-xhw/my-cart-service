@@ -33,32 +33,15 @@ public class CartPriceEngine {
 
     public void quote(CartQuoteContext context) {
         prepare(context);
-        // price
         cartUnitPricePricer.quote(context);
-        // membership
-        applyMembershipDiscount(context);
-        // coupon
         applyDiscount(context);
-        // processing fee
         getCartProductProcessingFeePricer(FeeOwner.CONSUMER).quote(context);
-
         //ensure aa discount is the last step.
-        applyAADiscount(context);
-    }
-
-    private void applyAADiscount(CartQuoteContext context) {
-        if (isQualifying(context)) {
-            cartAaDiscountPricer.quote(context);
-        }
-    }
-
-    private void applyMembershipDiscount(CartQuoteContext context) {
-        if (isQualifying(context)) {
-            membershipDiscountPricer.quote(context);
-        }
+        cartAaDiscountPricer.quote(context);
     }
 
     private void applyDiscount(CartQuoteContext context) {
+        membershipDiscountPricer.quote(context);
         //
         getDiscountPricer(DiscountType.COUPON).quote(context);
     }
@@ -69,9 +52,7 @@ public class CartPriceEngine {
         context.setProducts(products);
     }
 
-    private boolean isQualifying(CartQuoteContext context) {
-        return context != null && context.getCart() != null && isNotEmpty(context.getCart().getItems());
-    }
+
 
     @Lookup
     public CartProductProcessingFeePricer getCartProductProcessingFeePricer(FeeOwner feeOwner) {

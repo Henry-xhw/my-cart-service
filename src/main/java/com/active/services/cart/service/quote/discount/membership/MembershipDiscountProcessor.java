@@ -98,15 +98,9 @@ public class MembershipDiscountProcessor {
             if (calculatedAmount.compareTo(discountAmt) < 0 || calculatedAmount.compareTo(BigDecimal.ZERO) <= 0) {
                 continue;
             }
-
             discountAmt = calculatedAmount;
 
-            MembershipDiscountsHistory highestDiscountGiven = selectHighestDiscount(discount, discountToUse);
-            if (discountToUse != null && !Objects.equals(discountToUse.getId(), highestDiscountGiven.getId())) {
-                // Add active but lower-amount-given discounts to the non-applied set in results
-            }
-
-            discountToUse = highestDiscountGiven;
+            discountToUse = selectHighestDiscount(discount, discountToUse);
             discountToUse.setAmount(calculatedAmount);
         }
 

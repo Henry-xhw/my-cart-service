@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import static com.active.services.cart.service.quote.discount.DiscountFeeLoader.applyDiscount;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.union;
 
 @Slf4j
@@ -45,6 +46,11 @@ public class MembershipDiscountPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
+        if (!isQualifying(context)) {
+            LOG.info("Invalid arguments for CartQuoteContext, then return.");
+            return;
+        }
+
         this.context = context;
 
         Set<Long> nonMembershipProductIds = context.getProductsMap().values().stream()
@@ -127,6 +133,10 @@ public class MembershipDiscountPricer implements CartPricer {
 
         return membershipDiscounts.stream().collect(toMap(FindLatestMembershipDiscountsByProductIdsRsp::getProductId,
                 FindLatestMembershipDiscountsByProductIdsRsp::getHistories));
+    }
+
+    private boolean isQualifying(CartQuoteContext context) {
+        return context != null && context.getCart() != null && isNotEmpty(context.getCart().getItems());
     }
 
 }
