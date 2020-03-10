@@ -79,19 +79,18 @@ public class CartQuoteContext {
     public Currency getCurrency() {
         return Currency.getInstance(cart.getCurrencyCode());
     }
+
     /**
      * Sets Context in threadlocal
      *
-     * @param context
-     *            The Context
+     * @param context The Context
      */
     public static void set(CartQuoteContext context) {
         threadLocal.set(context);
     }
 
-
     public Discount getAppliedDiscount(Long discountId, DiscountType type) {
-       return appliedDiscountsMap.get(getDiscountKey(discountId, type));
+        return appliedDiscountsMap.get(getDiscountKey(discountId, type));
     }
 
     private String getDiscountKey(@NonNull Long discountId, @NonNull DiscountType type) {

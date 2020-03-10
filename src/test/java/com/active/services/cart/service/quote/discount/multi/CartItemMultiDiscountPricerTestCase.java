@@ -43,11 +43,13 @@ public class CartItemMultiDiscountPricerTestCase {
         multiDiscount.setStartDate(new DateTime(LocalDateTime.now().minusDays(1)));
         multiDiscount.setEndDate(new DateTime(LocalDateTime.now().plusDays(1)));
 
+        // prepare DiscountTier
         discountTier = new DiscountTier();
         discountTier.setAmountType(AmountType.FLAT);
         discountTier.setAmount(BigDecimal.TEN);
         discountTier.setTierLevel(1);
         itemMultiDiscountPricer = new CartItemMultiDiscountPricer(discountTier, multiDiscount);
+
         // prepare CartQuoteContext
         loadCartQuoteContext();
     }
