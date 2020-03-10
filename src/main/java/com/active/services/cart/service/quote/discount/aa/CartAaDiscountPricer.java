@@ -28,6 +28,7 @@ public class CartAaDiscountPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
+
         if (context == null || context.getCart() == null) {
             return;
         }
