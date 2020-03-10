@@ -9,7 +9,7 @@ BEGIN
         [description]                       NVARCHAR(255)       NULL,
         [amount]                            DECIMAL(19, 2)      NULL,
         [amount_type]                       NVARCHAR(25)        NULL,
-        [discount_id]                       BIGINT              NOT NULL,
+        [discount_id]                       BIGINT              NULL,
         [discount_type]                     NVARCHAR(25)        NOT NULL,
         [coupon_code]                       NVARCHAR(255)       NULL,
         [algorithm]                         NVARCHAR(25)        NULL,
@@ -171,4 +171,12 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discou
 BEGIN
     ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NULL;
 	PRINT 'modify column amount null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [discount_id] BIGINT NULL;
+	PRINT 'modify column discount_id null, dbo.discounts'
 END

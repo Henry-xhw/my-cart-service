@@ -78,4 +78,6 @@ public class CartItemDto extends BaseDto {
     private CouponMode couponMode;
 
     private UUID reservationId;
+
+    private Long membershipId;
 }

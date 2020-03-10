@@ -20,6 +20,7 @@ BEGIN
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
         [reservation_id]            UNIQUEIDENTIFIER    NULL,
+        [membership_id]             BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -201,6 +202,17 @@ BEGIN
     ALTER TABLE dbo.cart_items ADD reservation_id UNIQUEIDENTIFIER NULL
 
     PRINT 'Added column reservation_id to dbo.cart_items'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'membership_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+BEGIN
+
+    ALTER TABLE dbo.cart_items ADD membership_id BIGINT NULL
+
+    PRINT 'Added column membership_id to dbo.cart_items'
 END
 GO
 

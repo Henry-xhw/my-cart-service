@@ -64,4 +64,6 @@ public class UpdateCartItemDto {
     private CouponMode couponMode;
 
     private UUID reservationId;
+
+    private Long membershipId;
 }

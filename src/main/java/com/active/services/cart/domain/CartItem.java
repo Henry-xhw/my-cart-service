@@ -64,6 +64,8 @@ public class CartItem extends BaseTree<CartItem> {
 
     private UUID reservationId;
 
+    private Long membershipId;
+
     public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()
                     .filter(f -> f.getType() == CartItemFeeType.PRICE)
