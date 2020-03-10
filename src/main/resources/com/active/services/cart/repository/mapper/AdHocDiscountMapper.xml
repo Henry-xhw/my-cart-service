@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.AdHocDiscountMapper">
+
+    <insert id="createAdHocDiscounts">
+        INSERT INTO [dbo].[ad_hoc_discounts]
+        (
+        [identifier],
+        [cart_item_id],
+        [adhoc_discount_name],
+        [adhoc_discount_keyer_id],
+        [adhoc_discount_amount],
+        [adhoc_discount_coupon_code],
+        [adhoc_discount_group_id],
+        [created_by],
+        [created_dt],
+        [modified_by],
+        [modified_dt]
+        )
+        VALUES
+        <foreach item="item" collection="list" separator=",">
+            (
+              #{item.identifier},
+              #{item.cartItemId},
+              #{item.adHocDiscountName},
+              #{item.adHocDiscountKeyerId},
+              #{item.adHocDiscountAmount},
+              #{item.adHocDiscountCouponCode},
+              #{item.adHocDiscountGroupId},
+              #{item.createdBy},
+              #{item.createdDt},
+              #{item.modifiedBy},
+              #{item.modifiedDt}
+            )
+        </foreach>
+    </insert>
+</mapper>
