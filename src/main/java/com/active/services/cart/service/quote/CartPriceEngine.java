@@ -12,13 +12,10 @@ import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Component
 @RequiredArgsConstructor
