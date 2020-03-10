@@ -5,10 +5,12 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.util.TreeBuilder;
+import com.active.services.oms.BdUtil;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -93,6 +95,18 @@ public class CartItem extends BaseTree<CartItem> {
             }
         }
         return flatten;
+    }
+
+    public boolean isNetPriceNotZero() {
+        return !BdUtil.comparesToZero(getNetPrice());
+    }
+
+    public boolean hasPersonIdentifier() {
+        return StringUtils.isNotEmpty(personIdentifier);
+    }
+
+    public BigDecimal getNetAmount() {
+        return getNetPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public BigDecimal getNetPrice() {

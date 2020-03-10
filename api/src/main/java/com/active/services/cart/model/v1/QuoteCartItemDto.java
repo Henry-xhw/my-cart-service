@@ -51,6 +51,8 @@ public class QuoteCartItemDto extends BaseDto {
     @Digits(integer = 17, fraction = 2)
     private BigDecimal grossPrice;
 
+    private String personIdentifier;
+
     /**
      * Net Price = Gross Price - Price Hikes Amount - Discounts Amount
      */

@@ -31,6 +31,6 @@ public class CartItemDiscountPricer implements CartItemPricer {
         }
 
         handler.getDiscountAlgorithm().apply(discounts).forEach(disc ->
-                new DiscountFeeLoader(context, cartItem, disc).apply());
+                new DiscountFeeLoader(context, cartItem, disc).load());
     }
 }
