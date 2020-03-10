@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class CartQuoteContext {
+    private static ThreadLocal<CartQuoteContext> threadLocal = new ThreadLocal<>();
+
     private final Cart cart;
 
     private Map<Long, Product> productsMap = new HashMap<>();
@@ -70,16 +72,25 @@ public class CartQuoteContext {
                 .map(Discount::getDiscountId).collect(Collectors.toList());
     }
 
-    public Currency getCurrency() {
-        return Currency.getInstance(cart.getCurrencyCode());
-    }
-
     public boolean hasCartItemWithType(ProductType type) {
         return getProductsMap().values().stream().anyMatch(product -> product.getProductType() == type);
     }
 
+    public Currency getCurrency() {
+        return Currency.getInstance(cart.getCurrencyCode());
+    }
+
+    /**
+     * Sets Context in threadlocal
+     *
+     * @param context The Context
+     */
+    public static void set(CartQuoteContext context) {
+        threadLocal.set(context);
+    }
+
     public Discount getAppliedDiscount(Long discountId, DiscountType type) {
-       return appliedDiscountsMap.get(getDiscountKey(discountId, type));
+        return appliedDiscountsMap.get(getDiscountKey(discountId, type));
     }
 
     private String getDiscountKey(@NonNull Long discountId, @NonNull DiscountType type) {
@@ -91,5 +102,13 @@ public class CartQuoteContext {
             return new ArrayList<>();
         }
         return new ArrayList<>(appliedDiscountsMap.values());
+    }
+
+    public static void destroy() {
+        threadLocal.remove();
+    }
+
+    public static CartQuoteContext get() {
+        return threadLocal.get();
     }
 }

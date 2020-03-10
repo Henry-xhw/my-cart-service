@@ -62,8 +62,6 @@ public class CartItemFeeBuilder {
         Preconditions.checkNotNull(discount.getDiscountType());
 
         switch(discount.getDiscountType()) {
-            case COUPON:
-                return CartItemFeeType.COUPON_DISCOUNT;
             case MULTI:
                 return CartItemFeeType.MULTI_DISCOUNT;
             case ACTIVE_ADVANTAGE:

@@ -6,6 +6,7 @@ import com.active.services.cart.util.TreeBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +56,9 @@ public class Cart extends BaseDomainObject {
         return flattenCartItems(items);
     }
 
+    public static BigDecimal getNetAmounts(List<CartItem> cartItems) {
+        return cartItems.stream().map(CartItem::getNetAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
 
     public Cart unflattenItems() {
         TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(items);
