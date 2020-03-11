@@ -10,6 +10,7 @@ import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.DiscountType;
+import com.active.services.product.Product;
 import com.active.services.product.ProductMembership;
 import com.active.services.product.api.omsOnly.types.FindLatestMembershipDiscountsByProductIdsRsp;
 
@@ -54,7 +55,7 @@ public class MembershipDiscountPricer implements CartPricer {
         this.context = context;
 
         Set<Long> nonMembershipProductIds = context.getProductsMap().values().stream()
-            .filter(p -> p.getProductType() != ProductType.MEMBERSHIP).map(p -> p.getId()).collect(Collectors.toSet());
+            .filter(p -> p.getProductType() != ProductType.MEMBERSHIP).map(Product::getId).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(nonMembershipProductIds)) {
             return;
         }
