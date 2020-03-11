@@ -3,16 +3,11 @@ package com.active.services.cart.service.quote.discount.membership;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
-import com.active.services.product.AmountType;
-
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.list.SetUniqueList;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -23,7 +18,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil.calcFlatAmount;
-import static com.active.services.oms.OmsUtil.isOnOrBeforeBizDate;
 
 public class MembershipDiscountProcessor {
 
@@ -47,7 +41,6 @@ public class MembershipDiscountProcessor {
     public MembershipDiscountsHistory apply() {
         List<MembershipDiscountsHistory> membershipDiscountsHistories = new ArrayList<>();
         membershipDiscountsHistories.addAll(filterMembershipDiscountByMetaData());
-        membershipDiscountsHistories.addAll(filterMembershipDiscountByCartItem());
         membershipDiscountsHistories = SetUniqueList.setUniqueList(membershipDiscountsHistories);
         if (CollectionUtils.isEmpty(membershipDiscountsHistories)) {
             return null;
@@ -63,17 +56,6 @@ public class MembershipDiscountProcessor {
 
         return productMembershipDiscountMap.get(cartItem.getProductId()).stream()
                 .filter(md -> md.getMembershipId().equals(cartItem.getMembershipId())).collect(Collectors.toList());
-    }
-
-    private List<MembershipDiscountsHistory> filterMembershipDiscountByCartItem() {
-        List<MembershipDiscountsHistory> discountsHistories = productMembershipDiscountMap.get(cartItem.getProductId());
-        if (CollectionUtils.isEmpty(discountsHistories)) {
-            return Collections.emptyList();
-        }
-
-        return discountsHistories.stream().filter(md -> membershipIdCartItemMap.containsKey(md.getMembershipId()))
-                .filter(md -> filterMembershipDiscountByCartItem(cartItem.getPersonIdentifier(), md))
-                .collect(Collectors.toList());
     }
 
     private boolean filterMembershipDiscountByCartItem(String personKey, MembershipDiscountsHistory md) {
