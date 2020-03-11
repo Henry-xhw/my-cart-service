@@ -40,7 +40,8 @@ public interface PlaceCartMapper {
             @Mapping(target = "orderLineType", expression = "java(com.active.services.order.OrderLineType.SALE)"),
             @Mapping(target = "orderLineFees", source = "fees"),
             @Mapping(target = "systemPrice", source = "grossPrice"),
-            @Mapping(target = "referenceId", source = "identifier")
+            @Mapping(target = "referenceId", source = "identifier"),
+            @Mapping(target = "personKey", source = "personIdentifier")
     })
     OrderLineDTO toDto(CartItem cartItem);
 
