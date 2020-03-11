@@ -22,18 +22,24 @@
         VALUES
         <foreach item="item" collection="list" separator=",">
             (
-              #{item.identifier},
-              #{item.cartItemId},
-              #{item.adHocDiscountName},
-              #{item.adHocDiscountKeyerId},
-              #{item.adHocDiscountAmount},
-              #{item.adHocDiscountCouponCode},
-              #{item.adHocDiscountGroupId},
-              #{item.createdBy},
-              #{item.createdDt},
-              #{item.modifiedBy},
-              #{item.modifiedDt}
+            #{item.identifier},
+            #{item.cartItemId},
+            #{item.adHocDiscountName},
+            #{item.adHocDiscountKeyerId},
+            #{item.adHocDiscountAmount},
+            #{item.adHocDiscountCouponCode},
+            #{item.adHocDiscountGroupId},
+            #{item.createdBy},
+            #{item.createdDt},
+            #{item.modifiedBy},
+            #{item.modifiedDt}
             )
         </foreach>
     </insert>
+    <delete id="deleteAdHocDiscountByCartItemId">
+        DELETE FROM [dbo].[ad_hoc_discounts] WHERE cart_item_id IN
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

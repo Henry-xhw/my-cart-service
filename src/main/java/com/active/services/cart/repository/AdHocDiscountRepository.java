@@ -17,4 +17,8 @@ public class AdHocDiscountRepository {
     public void createAdHocDiscounts(List<AdHocDiscount> adHocDiscounts) {
         adHocDiscountMapper.createAdHocDiscounts(adHocDiscounts);
     }
+
+    public void deleteAdHocDiscountByCartItemId(List<Long> cartItemIds) {
+        adHocDiscountMapper.deleteAdHocDiscountByCartItemId(cartItemIds);
+    }
 }

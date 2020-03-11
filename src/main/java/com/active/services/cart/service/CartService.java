@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -92,7 +93,17 @@ public class CartService {
         items.forEach(it -> cart.findCartItem(it.getIdentifier())
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                         "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
-        items.forEach(item -> item.setCouponCodes(distinctCouponCodes(item.getCouponCodes())));
+        //create relative between cart item identifier and cart item id
+        Map<UUID, Long> identifierMap = cart.getFlattenCartItems().stream()
+                .collect(Collectors.toMap(CartItem::getIdentifier, CartItem::getId));
+        List<Long> cartItemIds = items.stream()
+                .map(cartItem -> identifierMap.get(cartItem.getIdentifier()))
+                .collect(Collectors.toList());
+        deleteAdHocDiscountByCartItemId(cartItemIds);
+        items.forEach(item -> {
+            item.setCouponCodes(distinctCouponCodes(item.getCouponCodes()));
+            createAdHocDiscounts(identifierMap.get(item.getIdentifier()), item.getAdHocDiscounts());
+        });
         cartRepository.updateCartItems(items);
         incrementVersion(cartIdentifier);
         return items;
@@ -252,5 +263,10 @@ public class CartService {
             });
             adHocDiscountRepository.createAdHocDiscounts(adHocDiscounts);
         }
+    }
+
+    @Transactional
+    public void deleteAdHocDiscountByCartItemId(List<Long> cartItemIds) {
+        adHocDiscountRepository.deleteAdHocDiscountByCartItemId(cartItemIds);
     }
 }

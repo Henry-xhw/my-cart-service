@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface AdHocDiscountMapper {
     void createAdHocDiscounts(List<AdHocDiscount> adHocDiscounts);
+
+    void deleteAdHocDiscountByCartItemId(List<Long> cartItemIds);
 }
