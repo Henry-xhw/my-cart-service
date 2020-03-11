@@ -225,8 +225,9 @@ public class CartService {
     }
 
     private void createSubFeeAndRelationship(CartItemFee itemFee, Long itemId) {
-        emptyIfNull(itemFee.getSubItems()).stream().filter(Objects::nonNull).forEach(
-                itemFee1 -> {
+        emptyIfNull(itemFee.getSubItems()).stream()
+                .filter(Objects::nonNull)
+                .forEach(itemFee1 -> {
                     itemFee1.setParentId(itemFee.getId());
                     createCartItemFeeAndRelationship(itemFee1, itemId);
                 }
