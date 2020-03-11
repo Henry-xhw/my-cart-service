@@ -5,6 +5,7 @@ import com.active.services.TenderType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Payment;
+import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.service.checkout.CheckoutBaseProcessor;
 import com.active.services.cart.service.checkout.CheckoutContext;
@@ -39,7 +40,10 @@ public class CheckoutCommitPaymentProcessor extends CheckoutBaseProcessor {
         Payment payment = new Payment();
         BigDecimal totalAmount = cart.getFlattenCartItems().stream()
                 .filter(item -> Objects.nonNull(item.getFees())).map(CartItem::getFlattenCartItemFees)
-                .flatMap(List::stream).map(f -> f.getDueAmount().multiply(BigDecimal.valueOf(f.getUnits())))
+                .flatMap(List::stream)
+                .map(f -> f.getDueAmount().multiply(BigDecimal.valueOf(f.getUnits()))
+                        .multiply(f.getTransactionType() == FeeTransactionType.DEBIT ?
+                                BigDecimal.valueOf(1) : BigDecimal.valueOf(-1)))
                 .reduce(BigDecimal::add).get();
         payment.setIdentifier(UUID.randomUUID());
         payment.setAmount(totalAmount);
