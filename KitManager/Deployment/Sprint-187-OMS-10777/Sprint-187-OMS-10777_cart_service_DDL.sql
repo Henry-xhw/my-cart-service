@@ -2,6 +2,76 @@ USE cart_service
 GO
 
 -- 	 KitSection = Tables
+--KitManagerFileID=18157
+--FileName=drop_tables.sql
+--SubmittedBy=  (ACTIVE\hxu)
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'events' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE events
+        PRINT 'table events is dropped.'
+    END
+
+GO
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'discounts' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE discounts
+        PRINT 'table discounts is dropped.'
+    END
+
+GO
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'cart_item_cart_item_fees' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE cart_item_cart_item_fees
+        PRINT 'table cart_item_cart_item_fees is dropped.'
+    END
+
+GO
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'cart_items' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE cart_items
+        PRINT 'table cart_items is dropped.'
+    END
+
+GO
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'cart_item_fees' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE cart_item_fees
+        PRINT 'table cart_item_fees is dropped.'
+    END
+
+GO
+
+
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'carts' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE carts
+        PRINT 'table carts is dropped.'
+    END
+
+GO
+
+
+
+
+
+GO
+--/KitManagerFileID=18157
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4750,18157,'drop_tables.sql',0
+GO
+
 --KitManagerFileID=17805
 --FileName=cart_item.sql
 --SubmittedBy=  (ACTIVE\hxu)
@@ -525,5 +595,90 @@ GO
 --/KitManagerFileID=18156
 if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
 exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4750,18156,'transaction_log.sql',0
+GO
+
+--/ 	 KitSection = Tables
+-- 	 KitSection = ForeignKeys
+--KitManagerFileID=17803
+--FileName=cart_item_fk.sql
+--SubmittedBy=  (ACTIVE\hxu)
+
+IF NOT EXISTS(
+    SELECT TOP 1 *
+    FROM sys.foreign_keys
+    WHERE name = 'fk_cart_item_cart_id'
+          AND OBJECT_NAME(parent_object_id) = 'cart_items' AND OBJECT_NAME(referenced_object_id) = 'carts'
+)
+BEGIN
+     ALTER TABLE [dbo].[cart_items] ADD CONSTRAINT [fk_cart_item_cart_id]
+     FOREIGN KEY ([cart_id]) REFERENCES [dbo].[carts]([id]) ON DELETE CASCADE
+     PRINT 'Added "fk_cart_item_cart_id" Foreign Key to cart_items table';
+END
+GO
+
+GO
+--/KitManagerFileID=17803
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4750,17803,'cart_item_fk.sql',0
+GO
+
+--KitManagerFileID=18110
+--FileName=discount_fk.sql
+--SubmittedBy=  (ACTIVE\hxu)
+
+IF NOT EXISTS(
+    SELECT TOP 1 *
+    FROM sys.foreign_keys
+    WHERE name = 'fk_cart_discount_cart_id'
+          AND OBJECT_NAME(parent_object_id) = 'discounts' AND OBJECT_NAME(referenced_object_id) = 'carts'
+)
+BEGIN
+     ALTER TABLE [dbo].[discounts] ADD CONSTRAINT [fk_cart_discount_cart_id]
+     FOREIGN KEY ([cart_id]) REFERENCES [dbo].[carts]([id]) ON DELETE CASCADE
+     PRINT 'Added "fk_cart_discount_cart_id" Foreign Key to discounts table';
+END
+GO
+
+GO
+--/KitManagerFileID=18110
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4750,18110,'discount_fk.sql',0
+GO
+
+--KitManagerFileID=17875
+--FileName=fk_cart_items_cart_item_fee.sql
+--SubmittedBy=  (ACTIVE\hxu)
+
+IF NOT EXISTS(
+    SELECT TOP 1 1
+    FROM sys.foreign_key_columns fk WITH(NOLOCK)
+        JOIN sys.tables t WITH(NOLOCK) ON fk.parent_object_id = t.object_id 
+        JOIN sys.columns c WITH(NOLOCK) ON fk.parent_object_id = c.object_id AND fk.parent_column_id = c.column_id
+        JOIN sys.tables t2 WITH(NOLOCK) ON fk.referenced_object_id = t2.object_id
+             AND SCHEMA_NAME(t2.schema_id) ='dbo' AND OBJECT_NAME(t2.object_id) ='cart_items' AND t2.[type] = 'U'
+    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_item_cart_item_fees' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE [dbo].[cart_item_cart_item_fees] ADD CONSTRAINT [fk_cart_item_id]
+        FOREIGN KEY ([cart_item_id]) REFERENCES [dbo].[cart_items]([id]) ON DELETE CASCADE
+END
+
+IF NOT EXISTS(
+    SELECT TOP 1 1
+    FROM sys.foreign_key_columns fk WITH(NOLOCK)
+        JOIN sys.tables t WITH(NOLOCK) ON fk.parent_object_id = t.object_id 
+        JOIN sys.columns c WITH(NOLOCK) ON fk.parent_object_id = c.object_id AND fk.parent_column_id = c.column_id
+        JOIN sys.tables t2 WITH(NOLOCK) ON fk.referenced_object_id = t2.object_id
+             AND SCHEMA_NAME(t2.schema_id) ='dbo' AND OBJECT_NAME(t2.object_id) ='cart_item_fees' AND t2.[type] = 'U'
+WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_item_cart_item_fees' AND t.[type] = 'U')
+BEGIN
+     ALTER TABLE [dbo].[cart_item_cart_item_fees] ADD CONSTRAINT [fk_cart_item_fee_id]
+         FOREIGN KEY ([cart_item_fee_id]) REFERENCES [dbo].[cart_item_fees]([id]) ON DELETE CASCADE
+END
+
+
+GO
+--/KitManagerFileID=17875
+if exists(select top 1 1  from msdb.INFORMATION_SCHEMA.ROUTINES where routine_name='p_KitFileApplicationHistory_ins_Info')
+exec msdb.dbo.p_KitFileApplicationHistory_ins_Info 4750,17875,'fk_cart_items_cart_item_fee.sql',0
 GO
 
