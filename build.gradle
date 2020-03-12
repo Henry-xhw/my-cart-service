@@ -54,7 +54,7 @@ dependencies {
 
     implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.76'
-    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.22', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
     implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
@@ -62,18 +62,10 @@ dependencies {
     implementation group: 'com.active.services', name:'waiver-service', version: '4.2.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
     implementation group: 'com.active.services', name:'api-lib', version: '1.0.0.7', configuration: 'runtime-published', ext: 'jar'
 
+    testImplementation "org.unitils:unitils-core"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
     testImplementation group: 'org.powermock', name: 'powermock-module-junit4'
     testImplementation group: 'org.powermock', name: 'powermock-api-mockito2'
-//    testImplementation group: 'org.powermock', name: 'powermock-core', version: '2.0.4'
-//    testImplementation group: 'org.powermock', name: 'powermock-reflect', version: '2.0.4'
-
-//            <dependency org="org.powermock" name="powermock-core" rev="1.6.4" conf="test->default"/>
-//            <dependency org="org.powermock" name="powermock-api-mockito" rev="1.6.4" conf="test->default"/>
-//            <dependency org="org.powermock" name="powermock-api-support" rev="1.6.4" conf="test->default"/>
-//            <dependency org="org.powermock" name="powermock-reflect" rev="1.6.4" conf="test->default"/>
-//            <dependency org="org.powermock" name="powermock-module-junit4" transitive="false" rev="1.6.4" conf="test->default"/>
-//            <dependency org="org.powermock" name="powermock-module-junit4-common" rev="1.6.4" conf="test->default"/>
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

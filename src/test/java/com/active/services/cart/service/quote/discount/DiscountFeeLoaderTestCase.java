@@ -31,7 +31,7 @@ public class DiscountFeeLoaderTestCase {
 
         CartItem item = CartDataFactory.cartItem();
         DiscountFeeLoader discountFeeLoader = new DiscountFeeLoader(cartQuoteContext, item, code);
-        discountFeeLoader.apply();
+        discountFeeLoader.load();
         assertEquals(cartQuoteContext.getAppliedDiscounts().size(), 1);
         CartItemFee cartItemFee = item.getPriceCartItemFee().get();
         CartItemFee cartItemFee1 = cartItemFee.getSubItems().stream()
