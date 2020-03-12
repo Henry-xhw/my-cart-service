@@ -118,7 +118,7 @@ public class CartDataFactory {
         cartItemFee.setUnitPrice(price);
         cartItemFee.setDescription(description);
         cartItemFee.setName(name);
-        cartItemFee.setRelatedIdentifier(relatedIdentifier);
+        cartItemFee.setDiscountIdentifier(relatedIdentifier);
         return cartItemFee;
     }
 
@@ -137,7 +137,7 @@ public class CartDataFactory {
         cartItemFeesInCart.setUnitPrice(price);
         cartItemFeesInCart.setDescription(description);
         cartItemFeesInCart.setName(name);
-        cartItemFeesInCart.setRelatedIdentifier(relatedIdentifier);
+        cartItemFeesInCart.setDiscountIdentifier(relatedIdentifier);
         return cartItemFeesInCart;
     }
 
