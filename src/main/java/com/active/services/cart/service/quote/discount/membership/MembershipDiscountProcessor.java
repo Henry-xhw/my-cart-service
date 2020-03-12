@@ -14,7 +14,6 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil.calcFlatAmount;
@@ -41,12 +40,13 @@ public class MembershipDiscountProcessor {
     public MembershipDiscountsHistory apply() {
         List<MembershipDiscountsHistory> membershipDiscountsHistories = new ArrayList<>();
         membershipDiscountsHistories.addAll(filterMembershipDiscountByMetaData());
+        membershipDiscountsHistories.addAll(filterMembershipDiscountByCartItem());
         membershipDiscountsHistories = SetUniqueList.setUniqueList(membershipDiscountsHistories);
         if (CollectionUtils.isEmpty(membershipDiscountsHistories)) {
             return null;
         }
 
-       return determineWhichDiscount(membershipDiscountsHistories);
+        return determineWhichDiscount(membershipDiscountsHistories);
     }
 
     private List<MembershipDiscountsHistory> filterMembershipDiscountByMetaData() {
@@ -58,13 +58,14 @@ public class MembershipDiscountProcessor {
                 .filter(md -> md.getMembershipId().equals(cartItem.getMembershipId())).collect(Collectors.toList());
     }
 
-    private boolean filterMembershipDiscountByCartItem(String personKey, MembershipDiscountsHistory md) {
-        List<CartItem> cartItems = membershipIdCartItemMap.get(md.getMembershipId());
-        if (CollectionUtils.isEmpty(cartItems)) {
-            return false;
+    private List<MembershipDiscountsHistory> filterMembershipDiscountByCartItem() {
+        List<MembershipDiscountsHistory> discountsHistories = productMembershipDiscountMap.get(cartItem.getProductId());
+        if (CollectionUtils.isEmpty(discountsHistories)) {
+            return Collections.emptyList();
         }
 
-        return cartItems.stream().anyMatch(cartItem -> Objects.equals(cartItem.getPersonIdentifier(), personKey));
+        return discountsHistories.stream().filter(md -> membershipIdCartItemMap.containsKey(md.getMembershipId()))
+                .collect(Collectors.toList());
     }
 
     private MembershipDiscountsHistory determineWhichDiscount(List<MembershipDiscountsHistory> membershipDiscounts) {

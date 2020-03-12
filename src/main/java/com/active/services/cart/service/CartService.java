@@ -8,7 +8,6 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFeesInCart;
-import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
 import com.active.services.cart.repository.CartItemFeeRepository;
@@ -36,6 +35,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
@@ -146,12 +146,22 @@ public class CartService {
         Cart cart = getCartByUuid(cartId);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         cartQuoteContext.setAaMember(isAaMember);
-        cartPriceEngine.quote(cartQuoteContext);
-        // Manual control the tx
-        dataAccess.doInTx(() -> {
-            saveQuoteResult(cartQuoteContext);
-            incrementPriceVersion(cartId);
-        });
+        try {
+            CartQuoteContext.set(cartQuoteContext);
+
+            if (isQualifying(cartQuoteContext)) {
+                cartPriceEngine.quote(cartQuoteContext);
+            }
+
+            // Manual control the tx
+            dataAccess.doInTx(() -> {
+                saveQuoteResult(cartQuoteContext);
+                incrementPriceVersion(cartId);
+            });
+
+        } finally {
+            CartQuoteContext.destroy();
+        }
 
         return cart;
     }
@@ -187,18 +197,13 @@ public class CartService {
         Cart cart = cartQuoteContext.getCart();
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         discountRepository.deletePreviousDiscountByCartId(cart.getId());
-        batchInsertDiscount(cartQuoteContext.getAppliedDiscounts());
+        cartQuoteContext.getAppliedDiscounts().forEach(discountRepository::createDiscount);
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
         cartRepository.updateCartItems(cart.getItems());
-    }
-
-    private void batchInsertDiscount(List<Discount> discounts) {
-        emptyIfNull(discounts).stream().filter(Objects::nonNull)
-                .forEach(discount -> discountRepository.createDiscount(discount));
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {
@@ -236,5 +241,9 @@ public class CartService {
     private Set<String> distinctCouponCodes(Set<String> couponCodes) {
         return SetUtils.emptyIfNull(couponCodes).stream().filter(StringUtils::isNotBlank).map(String::toUpperCase)
                 .collect(Collectors.toSet());
+    }
+
+    private boolean isQualifying(CartQuoteContext context) {
+        return context.getCart() != null && isNotEmpty(context.getCart().getItems());
     }
 }
