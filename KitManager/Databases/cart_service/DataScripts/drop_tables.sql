@@ -2,10 +2,10 @@ USE cart_service
 GO
 
 IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
-           WHERE TABLE_NAME = 'transaction_log' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+           WHERE TABLE_NAME = 'events' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
     BEGIN
-        DROP TABLE transaction_log
-        PRINT 'table transaction_log is dropped.'
+        DROP TABLE events
+        PRINT 'table events is dropped.'
     END
 
 GO
