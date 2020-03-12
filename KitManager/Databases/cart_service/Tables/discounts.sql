@@ -27,7 +27,6 @@ BEGIN
 END
 GO
 
-
 IF NOT EXISTS(
         SELECT TOP 1 1
         FROM
@@ -41,269 +40,40 @@ IF NOT EXISTS(
     END
 GO
 
+exec sp_add_table_column_comment 'dbo', 'discounts', NULL, 'DC2', 'discount is mapping to com.active.services.cart.domain.Discount';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts', NULL, NULL))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'discount',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'id', 'DC2', 'primary key';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','id'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'id',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'id'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'identifier', 'DC2', 'global unique id, represent a discount';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','identifier'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'identifier',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'identifier'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'cart_id', 'DC2', 'cart id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','cart_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'carts table id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'cart_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'name', 'DC2', 'name';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','name'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'name',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'name'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'description', 'DC2', 'description';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','description'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'description',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'description'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'amount', 'DC2', 'amount';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','amount'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'amount',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'amount'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'discount_type', 'DC2', 'discount type';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_type'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ACTIVE_ADVANTAGE, COUPON, MULTI, AD_HOC, MEMBERSHIP',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'discount_type'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'coupon_code', 'DC2', 'coupon code';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','coupon_code'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'coupon code',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'coupon_code'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'algorithm', 'DC2', 'algorithm';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','algorithm'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'algorithm',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'algorithm'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'apply_to_recurring_billing', 'DC2', 'whether apply to recurring_billing';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','apply_to_recurring_billing'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'is apply to recurring billing',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'apply_to_recurring_billing'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'discount_group_id', 'DC2', 'discount group id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_group_id'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'discount group id',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'discount_group_id'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'discount_id', 'DC2', 'discount id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'discounts table id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'discount_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'amount_type', 'DC2', 'amount type';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','amount_type'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'PERCENT, FLAT, FIXED_AMOUNT',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'amount_type'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'origin', 'DC2', 'origin';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','origin'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'AUTOMATIC, OVERRIDE, AUTOMATIC_OVERRIDE, AD_HOC,ORDER_LINE_LEVEL_OVERRIDE, CARRY_OVER',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'origin'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'created_by', 'DC2', 'created by';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','created_by'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'created by',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'created_by'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'created_dt', 'DC2', 'created date time';
 
+exec sp_add_table_column_comment 'dbo', 'discounts', 'modified_by', 'DC2', 'modified by';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','created_dt'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'created date time',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'created_dt'
-    END
-GO
-
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','modified_by'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'modified by',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'modified_by'
-    END
-GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','modified_dt'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'modified date time',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'discounts',
-             @level2type = 'Column',
-             @level2name = 'modified_dt'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'modified_dt', 'DC2', 'modified date time';

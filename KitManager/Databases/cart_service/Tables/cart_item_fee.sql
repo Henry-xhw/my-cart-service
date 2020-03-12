@@ -38,241 +38,37 @@ BEGIN
 END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees', NULL, NULL))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'cart item fee',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', NULL, 'DC2', 'cart item fee is received according to some contracts, and is mapping to com.active.services.cart.domain.CartItemFee';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','id'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'id',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'id'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'id', 'DC2', 'primary key';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','identifier'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'identifier',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'identifier'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'identifier', 'DC2', 'global unique id, represent a cart item fee';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','parent_id'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'parent id',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'parent_id'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'parent_id', 'DC2', 'parent id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','name'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'name',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'name'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'name', 'DC2', 'name';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','description'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'description',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'description'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'description', 'DC2', 'description';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','type'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'type',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'type'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'type', 'DC2', 'type';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','transaction_type'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'transaction_type',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'transaction_type'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'transaction_type', 'DC2', 'transaction type';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','units'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'units',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'units'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'units', 'DC2', 'units';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','unit_price'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'unit price',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'unit_price'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'unit_price', 'DC2', 'unit price';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','discount_identifier'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'discount identifier',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'discount_identifier'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'discount_identifier', 'DC2', 'discount identifier';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','surcharge_identifier'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'surcharge identifier',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'surcharge_identifier'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'surcharge_identifier', 'DC2', 'surcharge identifier';
 
+exec sp_add_table_column_comment 'dbo', 'cart_item_fees', 'due_amount', 'DC2', 'due amount';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','due_amount'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'due amount',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'due_amount'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'created_by', 'DC2', 'created by';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','created_by'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'created by',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'created_by'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'created_dt', 'DC2', 'created date time';
 
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'modified_by', 'DC2', 'modified by';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','created_dt'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'created date time',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'created_dt'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'modified_dt', 'DC2', 'modified date time';
 
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','modified_by'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'modified by',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'modified_by'
-    END
-GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_fees','column','modified_dt'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'modified date time',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'cart_item_fees',
-             @level2type = 'Column',
-             @level2name = 'modified_dt'
-    END
-GO

@@ -20,137 +20,29 @@ IF NOT EXISTS(
     SELECT TOP 1 1
     FROM
         sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_event_identifier_type'
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_transaction_log_identifier_type'
     WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'transaction_log' AND t.type = 'U')
 BEGIN
-    CREATE NONCLUSTERED INDEX [ix_event_identifier_type] ON [dbo].[transaction_log] ([identifier], [type])
+    CREATE NONCLUSTERED INDEX [ix_transaction_log_identifier_type] ON [dbo].[transaction_log] ([identifier], [type])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_event_identifier_type to dbo.transaction_log.'
+    PRINT 'Added index ix_transaction_log_identifier_type to dbo.transaction_log.'
 END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log', NULL, NULL))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'event',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', NULL, 'DC2', 'transaction log is used to track the history, the table is mapping to com.active.services.cart.common.Event';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','id'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'id',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'id'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'id', 'DC2', 'primary key';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','identifier'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'identifier',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'identifier'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'identifier', 'DC2', 'global unique id, represent a log';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','type'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'type',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'type'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'type', 'DC2', 'type';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','payload'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'payload',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'payload'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'payload', 'DC2', 'payload';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','created_by'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'created by',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'created_by'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'created_by', 'DC2', 'created by';
 
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'created_dt', 'DC2', 'created date time';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','created_dt'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'created date time',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'created_dt'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'modified_by', 'DC2', 'modified by';
 
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','modified_by'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'modified by',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'modified_by'
-    END
-GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'transaction_log','column','modified_dt'))
-    BEGIN
-        EXEC sys.sp_addextendedproperty
-             @name = N'MS_Description',
-             @value = N'modified date time',
-             @level0type = 'SCHEMA',
-             @level0name = 'dbo',
-             @level1type = 'TABLE',
-             @level1name = 'transaction_log',
-             @level2type = 'Column',
-             @level2name = 'modified_dt'
-    END
-GO
+exec sp_add_table_column_comment 'dbo', 'transaction_log', 'modified_dt', 'DC2', 'modified date time';
