@@ -17,15 +17,18 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -62,6 +65,31 @@ public class CouponDiscountLoader implements DiscountLoader {
             return new ArrayList<>();
         }
 
+        List<CartItemDiscounts> results = loadCartItemDiscounts(couponTargetsByKey);
+        if (CollectionUtils.isEmpty(results)) {
+            return new ArrayList<>();
+        }
+
+        List<Long> discountIds = results.stream().map(cid -> cid.getAllDiscountIds())
+                .flatMap(Collection::stream).distinct().collect(Collectors.toList());
+        List<Long> qualifiedIds = filterQualifiedDiscountIds(discountIds);
+
+        // Sort CartItemDiscounts by cartItem net price in reverse order.
+        //
+        // For example, given the following 3 cart items and percent MOST_EXPENSIVE discount 20% <br>
+        // cart item 1 = 100 <br>
+        // cart item 2 = 200 <br>
+        // cart item 3 = 80 <br>
+        // the discount will only apply for cart item 2. cart item discount fee amount = 40.
+        return results.stream()
+                .map(cid -> cid.filterDiscounts(qualifiedIds))
+                .sorted(Comparator.comparing(CartItemDiscounts::getTotalNetPrice).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<CartItemDiscounts> loadCartItemDiscounts(
+            Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey) {
         Context soapContext = ContextWrapper.get();
         List<Task<List<CartItemDiscounts>>> tasks = new ArrayList<>();
         couponTargetsByKey.forEach((key, items) -> {
@@ -89,19 +117,22 @@ public class CouponDiscountLoader implements DiscountLoader {
 
         List<CartItemDiscounts> results = new ArrayList<>();
         CollectionUtils.emptyIfNull(taskRunner.run(tasks).getResults()).forEach(r ->
-            results.addAll((List<CartItemDiscounts>) r)
+                results.addAll((List<CartItemDiscounts>) r)
         );
+        return results;
+    }
 
-        // Sort CartItemDiscounts by cartItem net price in reverse order.
-        //
-        // For example, given the following 3 cart items and percent MOST_EXPENSIVE discount 20% <br>
-        // cart item 1 = 100 <br>
-        // cart item 2 = 200 <br>
-        // cart item 3 = 80 <br>
-        // the discount will only apply for cart item 2. cart item discount fee amount = 40.
-        return CollectionUtils.emptyIfNull(results).stream()
-                .sorted(Comparator.comparing(CartItemDiscounts::getTotalNetPrice).reversed())
-                .collect(Collectors.toList());
+    private List<Long> filterQualifiedDiscountIds(List<Long> discountIds) {
+        Map<Long, DiscountUsage> discountUsageMap =
+                getDiscountUsage(discountIds).stream().collect(Collectors.toMap(DiscountUsage::getDiscountId,
+                        Function.identity()));
+        return discountIds.stream().filter(id -> discountUsageMap.get(id).getLimit() == -1 ||
+                discountUsageMap.get(id).getUsage() < discountUsageMap.get(id).getLimit()).collect(Collectors.toList());
+
+    }
+
+    private List<DiscountUsage> getDiscountUsage(List<Long> discountIds) {
+        return new ArrayList<>();
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,
