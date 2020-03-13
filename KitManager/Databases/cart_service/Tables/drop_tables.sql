@@ -8,6 +8,15 @@ IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
 GO
 
 IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'transaction_log' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE transaction_log
+        PRINT 'table transaction_log is dropped.'
+    END
+
+GO
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
            WHERE TABLE_NAME = 'discounts' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
     BEGIN
         DROP TABLE discounts
