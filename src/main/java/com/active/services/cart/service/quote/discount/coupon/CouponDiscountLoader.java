@@ -6,6 +6,7 @@ import com.active.services.Context;
 import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.service.common.DiscountUsageHandler;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountApplication;
@@ -18,6 +19,7 @@ import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Lookup;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 /**
  *
@@ -132,7 +135,12 @@ public class CouponDiscountLoader implements DiscountLoader {
     }
 
     private List<DiscountUsage> getDiscountUsage(List<Long> discountIds) {
-        return new ArrayList<>();
+        return getDiscountUsageHandler().getDisCountUsageByDiscountIds(discountIds);
+    }
+
+    @Lookup
+    private DiscountUsageHandler getDiscountUsageHandler() {
+        return null;
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,
