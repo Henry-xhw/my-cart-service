@@ -16,6 +16,15 @@ IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
 GO
 
 IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'transaction_log' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE transaction_log
+        PRINT 'table transaction_log is dropped.'
+    END
+
+GO
+
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
            WHERE TABLE_NAME = 'discounts' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
     BEGIN
         DROP TABLE discounts
@@ -241,11 +250,23 @@ BEGIN
         [reservation_group_id]      UNIQUEIDENTIFIER    NULL,
         [sales_channel]             VARCHAR (255)       NULL,
         CONSTRAINT [pk_carts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
-        CONSTRAINT [uq_carts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE),
-        CONSTRAINT [uq_carts_owner_guid] UNIQUE ([owner_guid]) WITH (DATA_COMPRESSION= PAGE)
+        CONSTRAINT [uq_carts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
+GO
+
+IF NOT EXISTS(
+        SELECT TOP 1 1
+        FROM
+            sys.tables t WITH(NOLOCK)
+                JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_owner_guid'
+        WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.type = 'U')
+    BEGIN
+        CREATE NONCLUSTERED INDEX [ix_cart_owner_guid] ON [dbo].[carts] ([owner_guid])
+            WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+        PRINT 'Added index ix_cart_owner_guid to dbo.carts.'
+    END
 GO
 
 exec sp_add_table_column_comment 'dbo', 'carts', NULL, 'DC2', 'cart is a shopping behavior, the table is mapping to com.active.services.cart.domain.Cart';
