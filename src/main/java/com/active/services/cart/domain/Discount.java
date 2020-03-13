@@ -27,7 +27,7 @@ public class Discount extends BaseDomainObject {
     private String couponCode;
     private DiscountAlgorithm algorithm;
 
-    private Boolean applyToRecurringBilling;
+    private boolean applyToRecurringBilling;
     private OrderLineDiscountOrigin origin;
     private Long discountGroupId;
     private Instant startDate;
