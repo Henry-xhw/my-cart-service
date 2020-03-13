@@ -237,8 +237,8 @@
     <select id="getCart" resultMap="CartResultMap">
         SELECT cart.id                as id,
         cart.identifier               as identifier,
-        cart.owner_id                 as owner_id,
-        cart.keyer_id                 as keyer_id,
+        cart.owner_guid               as owner_id,
+        cart.keyer_guid               as keyer_id,
         cart.currency_code            as currency_code,
         cart.created_by               as created_by,
         cart.created_dt               as created_dt,
@@ -316,7 +316,7 @@
     </delete>
 
     <select id="search" resultType="java.util.UUID">
-        SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != 'FINALIZED'
+        SELECT identifier FROM carts WHERE owner_guid = #{ownerId} and cart_status != 'FINALIZED'
     </select>
 
     <select id="getCartItemIdByCartItemUuid" resultType="Long">
