@@ -4,6 +4,7 @@ import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
 import com.active.services.cart.service.quote.discount.aa.CartAaDiscountPricer;
+import com.active.services.cart.service.quote.discount.membership.MembershipDiscountPricer;
 import com.active.services.cart.service.quote.discount.multi.CartMultiDiscountPricer;
 import com.active.services.cart.service.quote.discount.processor.CartDiscountPricer;
 import com.active.services.cart.service.quote.price.CartUnitPricePricer;
@@ -28,6 +29,8 @@ public class CartPriceEngine {
 
     private final CartUnitPricePricer cartUnitPricePricer;
 
+    private final MembershipDiscountPricer membershipDiscountPricer;
+
     public void quote(CartQuoteContext context) {
         prepare(context);
         cartUnitPricePricer.quote(context);
@@ -38,6 +41,7 @@ public class CartPriceEngine {
     }
 
     private void applyDiscount(CartQuoteContext context) {
+        membershipDiscountPricer.quote(context);
         cartMultiDiscountPricer.quote(context);
         getDiscountPricer(DiscountType.COUPON).quote(context);
     }

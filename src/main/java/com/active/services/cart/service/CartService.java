@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
@@ -147,12 +148,17 @@ public class CartService {
         cartQuoteContext.setAaMember(isAaMember);
         try {
             CartQuoteContext.set(cartQuoteContext);
-            cartPriceEngine.quote(cartQuoteContext);
+
+            if (isQualifying(cartQuoteContext)) {
+                cartPriceEngine.quote(cartQuoteContext);
+            }
+
             // Manual control the tx
             dataAccess.doInTx(() -> {
                 saveQuoteResult(cartQuoteContext);
                 incrementPriceVersion(cartId);
             });
+
         } finally {
             CartQuoteContext.destroy();
         }
@@ -235,5 +241,9 @@ public class CartService {
     private Set<String> distinctCouponCodes(Set<String> couponCodes) {
         return SetUtils.emptyIfNull(couponCodes).stream().filter(StringUtils::isNotBlank).map(String::toUpperCase)
                 .collect(Collectors.toSet());
+    }
+
+    private boolean isQualifying(CartQuoteContext context) {
+        return context.getCart() != null && isNotEmpty(context.getCart().getItems());
     }
 }
