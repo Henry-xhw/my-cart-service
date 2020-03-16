@@ -5,6 +5,7 @@ import com.active.services.ProductType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
@@ -57,12 +58,18 @@ public class CartQuoteContext {
         return cart.getCouponCodes();
     }
 
-    public CartQuoteContext addAppliedDiscount(Discount discount) {
-        if (appliedDiscountsMap == null) {
-            appliedDiscountsMap = new HashMap<>();
+    public Discount addAppliedDiscount(Discount discount) {
+        Discount appliedDiscount = getAppliedDiscount(discount.getDiscountId(), discount.getDiscountType());
+        if (appliedDiscount == null) {
+            if (appliedDiscountsMap == null) {
+                appliedDiscountsMap = new HashMap<>();
+            }
+            appliedDiscountsMap.put(getDiscountKey(discount.getDiscountId(), discount.getDiscountType()), discount);
+            discount.setOrigin(OrderLineDiscountOrigin.AUTOMATIC);
+            return discount;
+        } else {
+            return appliedDiscount;
         }
-        appliedDiscountsMap.put(getDiscountKey(discount.getDiscountId(), discount.getDiscountType()), discount);
-        return this;
     }
 
     public List<Long> getUsedUniqueCouponDiscountsIds() {

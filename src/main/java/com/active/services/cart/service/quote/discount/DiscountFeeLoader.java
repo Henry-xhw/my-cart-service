@@ -39,13 +39,8 @@ public class DiscountFeeLoader {
             return;
         }
 
-        Discount appliedDiscount = cartQuoteContext.getAppliedDiscount(disc.getDiscountId(), disc.getDiscountType());
-        if (appliedDiscount == null) {
-            disc.setOrigin(OrderLineDiscountOrigin.AUTOMATIC);
-            cartQuoteContext.addAppliedDiscount(disc);
-            appliedDiscount = disc;
-        }
-        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(appliedDiscount, discAmount,
+        Discount discount = cartQuoteContext.addAppliedDiscount(disc);
+        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(discount, discAmount,
                 priceFeeItems.get().getUnits());
         priceFeeItems.get().addSubItemFee(Arrays.asList(discountFee));
     }
