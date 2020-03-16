@@ -15,7 +15,7 @@ import java.util.UUID;
         "Content-Type: application/vnd.active.inventory-service.v1+json"})
 public interface ReservationService {
     @RequestLine("PUT /temp-reservations/{id}")
-    void edit(@Param("id") UUID id, List<ReservationDTO> reservations);
+    ReservationResultDTO edit(@Param("id") UUID id, List<ReservationDTO> reservations);
 
     @RequestLine("POST /temp-reservations")
     ReservationResultDTO reserve(List<ReservationDTO> reservations);
