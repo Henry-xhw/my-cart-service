@@ -234,6 +234,7 @@
         </collection>
         <collection property="discounts" ofType="Discount" notNullColumn="id" columnPrefix="discount_">
             <id property="id" column="id"/>
+            <result column="keyer_uuid" property="keyerUUID" />
         </collection>
     </resultMap>
 
@@ -293,6 +294,7 @@
         discount.algorithm            AS discount_algorithm,
         discount.apply_to_recurring_billing  AS discount_apply_to_recurring_billing,
         discount.origin               AS discount_origin,
+        discount.keyer_uuid           AS discount_keyer_uuid,
         discount.created_by           AS discount_createdBy,
         discount.created_dt           AS discount_createdDt,
         discount.modified_by          AS discount_modifiedBy,
