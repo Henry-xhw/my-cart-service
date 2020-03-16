@@ -11,4 +11,6 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AdHocDiscountMapper {
     List<AdHocDiscount> toDomain(List<AdHocDiscountDto> adHocDiscounts);
+
+    List<AdHocDiscountDto> toDto(List<AdHocDiscount> adHocDiscounts);
 }
