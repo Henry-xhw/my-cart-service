@@ -4,6 +4,7 @@ import com.active.platform.concurrent.Task;
 import com.active.platform.concurrent.TaskRunner;
 import com.active.services.Context;
 import com.active.services.ContextWrapper;
+import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.common.DiscountUsageHandler;
@@ -13,6 +14,9 @@ import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.Discount;
+import com.active.services.product.nextgen.v1.dto.DiscountUsage;
+import com.active.services.product.nextgen.v1.req.GetDiscountUsageReq;
+import com.active.services.product.nextgen.v1.rsp.GetDiscountUsageRsp;
 
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +38,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
-import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 /**
  *
@@ -47,6 +50,7 @@ public class CouponDiscountLoader implements DiscountLoader {
     private CartQuoteContext context;
     private SOAPClient soapClient;
     private TaskRunner taskRunner;
+    private ProductService productService;
 
     /**
      * Get product service available discounts builder for future filter.
@@ -54,7 +58,7 @@ public class CouponDiscountLoader implements DiscountLoader {
      * @return CartItemDiscounts
      */
     @Override
-    public List<CartItemDiscounts> load() {
+    public List<CartItemDiscounts>  load() {
         // Filter qualified cart items
         List<CartItem> cartItems = context.getCart().getFlattenCartItems().stream()
                 .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
@@ -86,6 +90,7 @@ public class CouponDiscountLoader implements DiscountLoader {
         // the discount will only apply for cart item 2. cart item discount fee amount = 40.
         return results.stream()
                 .map(cid -> cid.filterDiscounts(qualifiedIds))
+                .filter(cartItemDiscounts -> CollectionUtils.isNotEmpty(cartItemDiscounts.getDiscounts()))
                 .sorted(Comparator.comparing(CartItemDiscounts::getTotalNetPrice).reversed())
                 .collect(Collectors.toList());
     }
@@ -127,15 +132,18 @@ public class CouponDiscountLoader implements DiscountLoader {
 
     private List<Long> filterQualifiedDiscountIds(List<Long> discountIds) {
         Map<Long, DiscountUsage> discountUsageMap =
-                getDiscountUsage(discountIds).stream().collect(Collectors.toMap(DiscountUsage::getDiscountId,
-                        Function.identity()));
-        return discountIds.stream().filter(id -> discountUsageMap.get(id).getLimit() == -1 ||
-                discountUsageMap.get(id).getUsage() < discountUsageMap.get(id).getLimit()).collect(Collectors.toList());
+                CollectionUtils.emptyIfNull(getDiscountUsage(discountIds)).stream()
+                        .collect(Collectors.toMap(DiscountUsage::getDiscountId, Function.identity()));
+        return discountIds.stream().filter(id -> discountUsageMap.get(id) != null && (discountUsageMap.get(id).getLimit() == -1 ||
+                discountUsageMap.get(id).getUsage() < discountUsageMap.get(id).getLimit())).collect(Collectors.toList());
 
     }
 
     private List<DiscountUsage> getDiscountUsage(List<Long> discountIds) {
-        return getDiscountUsageHandler().getDisCountUsageByDiscountIds(discountIds);
+        GetDiscountUsageReq getDiscountUsageReq = new GetDiscountUsageReq();
+        getDiscountUsageReq.setDiscountIds(discountIds);
+        GetDiscountUsageRsp rsp = productService.getDiscountUsages(getDiscountUsageReq);
+        return rsp.getDiscountUsages();
     }
 
     @Lookup

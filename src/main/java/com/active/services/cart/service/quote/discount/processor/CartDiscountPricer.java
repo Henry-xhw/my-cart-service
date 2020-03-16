@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote.discount.processor;
 
 import com.active.platform.concurrent.TaskRunner;
+import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.CartPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
@@ -34,6 +35,9 @@ public class CartDiscountPricer implements CartPricer {
     private SOAPClient soapClient;
     @Autowired
     private TaskRunner taskRunner;
+    @Autowired
+    private ProductService productService;
+
 
     @Override
     public void quote(CartQuoteContext context) {
@@ -57,7 +61,7 @@ public class CartDiscountPricer implements CartPricer {
     private DiscountLoader getDiscountLoader(CartQuoteContext context) {
         if (DiscountType.COUPON == type) {
             return CouponDiscountLoader.builder().context(context)
-                    .soapClient(soapClient).taskRunner(taskRunner).build();
+                    .soapClient(soapClient).taskRunner(taskRunner).productService(productService).build();
         }
         throw new NotSupportedException();
     }
