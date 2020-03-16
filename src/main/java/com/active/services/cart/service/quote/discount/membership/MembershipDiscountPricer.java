@@ -44,6 +44,8 @@ public class MembershipDiscountPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
+
+
         Set<Long> nonMembershipProductIds = context.getProductsMap().values().stream()
             .filter(p -> p.getProductType() != ProductType.MEMBERSHIP).map(Product::getId).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(nonMembershipProductIds)) {
@@ -58,22 +60,28 @@ public class MembershipDiscountPricer implements CartPricer {
         }
 
         List<CartItem> cartItems = context.getCart().getFlattenCartItems();
+
+
         Map<Long, List<CartItem>> productCartItemMap =  cartItems.stream().collect(groupingBy(CartItem::getProductId));
         List<ProductMembership> productMemberships = getProductMemberships(productCartItemMap.keySet());
+
         Map<Long, List<CartItem>> membershipIdCartItemMap =
                 createMembershipIdCartItemMap(productMemberships, productCartItemMap);
 
-        cartItems.stream().filter(cartItem -> isQualifyProduct(context, cartItem.getProductId(),
-            productMembershipDiscountMap)).forEach(cartItem -> {
-                applyMembershipDiscount(productMembershipDiscountMap, membershipIdCartItemMap, cartItem, context);
-            });
+
+        cartItems.stream().filter(cartItem ->
+                isQualifyProduct(context, cartItem.getProductId(), productMembershipDiscountMap.get(cartItem.getProductId())))
+                .forEach(cartItem ->
+                        applyMembershipDiscount(productMembershipDiscountMap.get(cartItem.getProductId()), membershipIdCartItemMap,
+                                cartItem,
+                                context));
     }
 
-    private void applyMembershipDiscount(Map<Long, List<MembershipDiscountsHistory>> productMembershipDiscountMap,
+    private void applyMembershipDiscount(List<MembershipDiscountsHistory> membershipDiscountsHistories,
                                          Map<Long, List<CartItem>> membershipIdCartItemMap,
                                          CartItem cartItem, CartQuoteContext context) {
 
-        MembershipDiscountsHistory membershipDiscount = new MembershipDiscountProcessor(productMembershipDiscountMap,
+        MembershipDiscountsHistory membershipDiscount = new MembershipDiscountProcessor(membershipDiscountsHistories,
                 membershipIdCartItemMap, cartItem, context.getCurrency()).apply();
         if (membershipDiscount == null) {
             return;
@@ -92,12 +100,13 @@ public class MembershipDiscountPricer implements CartPricer {
         discount.setAmount(membershipDiscount.getAmount());
         discount.setAmountType(membershipDiscount.getAmountType());
         discount.setIdentifier(UUID.randomUUID());
+        discount.setMembershipId(membershipDiscount.getMembershipId());
         return discount;
     }
 
     private boolean isQualifyProduct(CartQuoteContext context, Long productId,
-                                     Map<Long, List<MembershipDiscountsHistory>> productDiscountMap) {
-        return CollectionUtils.isNotEmpty(productDiscountMap.get(productId)) &&
+                                     List<MembershipDiscountsHistory> productDiscounts) {
+        return CollectionUtils.isNotEmpty(productDiscounts) &&
                 context.getProductsMap().get(productId).getProductType() != ProductType.MEMBERSHIP;
     }
 

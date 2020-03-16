@@ -4,7 +4,6 @@ import com.active.services.DiscountModel;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
 import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.AmountType;
@@ -93,8 +92,8 @@ public class CartQuoteContextTestCase {
                 null, null, null);
         Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("10.00"), "code2", null, null, null);
 
-        DiscountApplication discountApplication1 = DiscountMapper.MAPPER.toDiscountApplication(desc1, cartQuoteContext);
-        DiscountApplication discountApplication2 = DiscountMapper.MAPPER.toDiscountApplication(desc2, cartQuoteContext);
+        com.active.services.cart.domain.Discount discountApplication1 = DiscountMapper.MAPPER.toDiscount(desc1, cartQuoteContext);
+        com.active.services.cart.domain.Discount discountApplication2 = DiscountMapper.MAPPER.toDiscount(desc2, cartQuoteContext);
 
         cartQuoteContext.addAppliedDiscount(discountApplication1);
         cartQuoteContext.addAppliedDiscount(discountApplication2);
@@ -105,7 +104,7 @@ public class CartQuoteContextTestCase {
         Discount desc3 = DiscountFactory.getDiscount(AmountType.FLAT, new BigDecimal("2.00"), "code1",
                 DiscountAlgorithm.MOST_EXPENSIVE, null, null);
 
-        cartQuoteContext.addAppliedDiscount(DiscountMapper.MAPPER.toDiscountApplication(desc3, cartQuoteContext));
+        cartQuoteContext.addAppliedDiscount(DiscountMapper.MAPPER.toDiscount(desc3, cartQuoteContext));
 
         assertEquals(3, cartQuoteContext.getAppliedDiscounts().size());
 

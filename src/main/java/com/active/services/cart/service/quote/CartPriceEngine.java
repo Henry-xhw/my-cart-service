@@ -41,7 +41,7 @@ public class CartPriceEngine {
     }
 
     private void applyDiscount(CartQuoteContext context) {
-        membershipDiscountPricer.quote(context);
+        getDiscountPricer(DiscountType.MEMBERSHIP).quote(context);
         cartMultiDiscountPricer.quote(context);
         getDiscountPricer(DiscountType.COUPON).quote(context);
     }

@@ -1,7 +1,6 @@
 package com.active.services.cart.service.quote.discount.algorithm;
 
 import com.active.services.cart.domain.Discount;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.product.AmountType;
 
 import java.util.Collections;
@@ -29,7 +28,7 @@ import java.util.List;
 public class StackableFlatFirstDiscountAlgorithm implements DiscountAlgorithm {
 
     @Override
-    public List<DiscountApplication> apply(List<DiscountApplication> discounts) {
+    public List<Discount> apply(List<Discount> discounts) {
         Collections.sort(discounts, Comparator.comparing(Discount::getAmountType).reversed()
                 .thenComparing(Discount::getAmount));
         return discounts;

@@ -30,7 +30,7 @@ public class DiscountMapperTestCase {
                 new DateTime(LocalDateTime.now().minusDays(1)),
                 new DateTime(LocalDateTime.now().plusDays(1)));
 
-        DiscountApplication application = DiscountMapper.MAPPER.toDiscountApplication(discount, cartQuoteContext);
+        com.active.services.cart.domain.Discount application = DiscountMapper.MAPPER.toDiscount(discount, cartQuoteContext);
 
         assertThat(Collections.singleton(application)).extracting("name", "description", "algorithm", "amount", "amountType",
                 "couponCode", "discountId", "applyToRecurringBilling", "discountType")

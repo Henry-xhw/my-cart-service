@@ -5,7 +5,6 @@ import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
@@ -14,6 +13,8 @@ import com.active.services.cart.service.quote.discount.condition.DiscountSequent
 import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
 import com.active.services.cart.service.quote.discount.condition.UniqueUsedSpec;
+import com.active.services.cart.service.quote.discount.condition.UsageLimitSpec;
+import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class CouponDiscountHandler implements DiscountHandler {
 
     @NonNull private final CartQuoteContext context;
     @NonNull private final CartItemDiscounts itemDiscounts;
+    @NonNull private final List<DiscountUsage> discountUsages;
 
     /**
      * Coupon code discounts should match all discounts conditions.
@@ -39,15 +41,10 @@ public class CouponDiscountHandler implements DiscountHandler {
      * Otherwise, high priority discounts {@link #getHighPriorityDiscounts} will be returned.
      */
     @Override
-    public List<DiscountApplication> filterDiscounts() {
+    public List<Discount> filterDiscounts() {
 
-        CollectionUtils.emptyIfNull(itemDiscounts.getDiscounts()).stream().forEach(discountApplication ->
-                discountApplication.setCondition(buildDiscountSpecification(context, discountApplication)));
-
-        List<DiscountApplication> discounts = itemDiscounts.getDiscounts().stream()
-                .filter(DiscountApplication::satisfy)
-                .collect(Collectors.toList());
-
+        List<Discount> discounts = CollectionUtils.emptyIfNull(itemDiscounts.getDiscounts()).stream()
+                .filter(discount -> satisfy(discount)).collect(Collectors.toList());
         return isCombinableDiscountMode() ? discounts : getHighPriorityDiscounts(discounts);
     }
 
@@ -64,8 +61,8 @@ public class CouponDiscountHandler implements DiscountHandler {
      * Otherwise, return given discounts.
      *
      */
-    private List<DiscountApplication> getHighPriorityDiscounts(List<DiscountApplication> discounts) {
-        List<DiscountApplication> cartItemLevelDiscount = new ArrayList<>();
+    private List<Discount> getHighPriorityDiscounts(List<Discount> discounts) {
+        List<Discount> cartItemLevelDiscount = new ArrayList<>();
         if (itemDiscounts.getCartItem().getCouponMode() == CouponMode.HIGH_PRIORITY) {
             cartItemLevelDiscount =
                     CollectionUtils.emptyIfNull(discounts).stream().filter(discount ->
@@ -79,11 +76,16 @@ public class CouponDiscountHandler implements DiscountHandler {
         return context.getDiscountModel(itemDiscounts.getCartItem().getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST;
     }
 
+    private boolean satisfy(Discount discount) {
+        DiscountSpecification specification = buildDiscountSpecification(context, discount);
+        return specification.satisfy();
+    }
 
-    private static DiscountSpecification buildDiscountSpecification(CartQuoteContext context, Discount disc) {
+    private DiscountSpecification buildDiscountSpecification(CartQuoteContext context, Discount disc) {
         return DiscountSequentialSpecs.allOf(
                 new NotExpiredSpec(disc.getStartDate(), disc.getEndDate(), Instant.now()),
-                new UniqueUsedSpec(disc.getDiscountId(), context.getUsedUniqueCouponDiscountsIds())
+                new UniqueUsedSpec(disc.getDiscountId(), context.getUsedUniqueCouponDiscountsIds()),
+                new UsageLimitSpec(discountUsages, disc.getDiscountId())
         );
     }
 }

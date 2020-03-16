@@ -9,7 +9,6 @@ import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.Discount;
@@ -93,6 +92,7 @@ public class CouponDiscountLoader implements DiscountLoader {
                 .collect(Collectors.toList());
     }
 
+
     @NotNull
     private List<CartItemDiscounts> loadCartItemDiscounts(
             Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey) {
@@ -108,13 +108,13 @@ public class CouponDiscountLoader implements DiscountLoader {
                 if (CollectionUtils.isEmpty(discounts)) {
                     return new ArrayList<>();
                 }
-                List<DiscountApplication> discountsWithCondition =
+                List<com.active.services.cart.domain.Discount> discount =
                         discounts.stream()
-                                .map(disc -> DiscountMapper.MAPPER.toDiscountApplication(disc, context))
+                                .map(disc -> DiscountMapper.MAPPER.toDiscount(disc, context))
                                 .collect(Collectors.toList());
 
                 return items.stream().map(item ->
-                    CartItemDiscounts.builder().cartItem(item).discounts(discountsWithCondition).build())
+                    CartItemDiscounts.builder().cartItem(item).discounts(discount).build())
                     .collect(Collectors.toList());
             };
 
@@ -141,6 +141,13 @@ public class CouponDiscountLoader implements DiscountLoader {
         getDiscountUsageReq.setDiscountIds(discountIds);
         GetDiscountUsageRsp rsp = productService.getDiscountUsages(getDiscountUsageReq);
         return rsp.getDiscountUsages();
+    }
+
+    public List<DiscountUsage> loadDiscountUsage(List<CartItemDiscounts> cartItemDiscounts){
+        List<Long> discountIds = CollectionUtils.emptyIfNull(cartItemDiscounts).stream()
+                .map(cid -> cid.getAllDiscountIds())
+                .flatMap(Collection::stream).distinct().collect(Collectors.toList());
+        return getDiscountUsage(discountIds);
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,

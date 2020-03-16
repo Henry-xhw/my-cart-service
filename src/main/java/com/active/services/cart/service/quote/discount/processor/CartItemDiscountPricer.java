@@ -1,9 +1,9 @@
 package com.active.services.cart.service.quote.discount.processor;
 
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
 import com.active.services.cart.service.quote.discount.DiscountHandler;
 
@@ -22,7 +22,7 @@ public class CartItemDiscountPricer implements CartItemPricer {
     @Override
     public void quote(CartQuoteContext context, CartItem cartItem) {
 
-        List<DiscountApplication> discounts = handler.filterDiscounts();
+        List<Discount> discounts = handler.filterDiscounts();
         if (CollectionUtils.isEmpty(discounts)) {
             return;
         }
