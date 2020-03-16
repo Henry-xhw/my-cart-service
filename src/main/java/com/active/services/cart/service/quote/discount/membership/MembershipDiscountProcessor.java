@@ -3,6 +3,7 @@ package com.active.services.cart.service.quote.discount.membership;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.list.SetUniqueList;
 
@@ -26,12 +27,12 @@ public class MembershipDiscountProcessor {
 
     private Map<Long, List<CartItem>> membershipIdCartItemMap;
 
-    private Map<Long, List<MembershipDiscountsHistory>> productMembershipDiscountMap;
+    private List<MembershipDiscountsHistory> membershipDiscountsHistories;
 
-    public MembershipDiscountProcessor(Map<Long, List<MembershipDiscountsHistory>> productMembershipDiscountMap,
+    public MembershipDiscountProcessor(List<MembershipDiscountsHistory> productMembershipDiscountMap,
                                        Map<Long, List<CartItem>> membershipIdCartItemMap,
                                        CartItem cartItem, Currency currency) {
-        this.productMembershipDiscountMap = productMembershipDiscountMap;
+        this.membershipDiscountsHistories = productMembershipDiscountMap;
         this.membershipIdCartItemMap = membershipIdCartItemMap;
         this.cartItem = cartItem;
         this.currency = currency;
@@ -50,21 +51,20 @@ public class MembershipDiscountProcessor {
     }
 
     private List<MembershipDiscountsHistory> filterMembershipDiscountByMetaData() {
-        if (cartItem.getMembershipId() == null || !productMembershipDiscountMap.containsKey(cartItem.getProductId())) {
+        if (cartItem.getMembershipId() == null || CollectionUtils.isEmpty(membershipDiscountsHistories)) {
             return Collections.emptyList();
         }
 
-        return productMembershipDiscountMap.get(cartItem.getProductId()).stream()
+        return membershipDiscountsHistories.stream()
                 .filter(md -> md.getMembershipId().equals(cartItem.getMembershipId())).collect(Collectors.toList());
     }
 
     private List<MembershipDiscountsHistory> filterMembershipDiscountByCartItem() {
-        List<MembershipDiscountsHistory> discountsHistories = productMembershipDiscountMap.get(cartItem.getProductId());
-        if (CollectionUtils.isEmpty(discountsHistories)) {
+        if (CollectionUtils.isEmpty(membershipDiscountsHistories)) {
             return Collections.emptyList();
         }
 
-        return discountsHistories.stream().filter(md -> membershipIdCartItemMap.containsKey(md.getMembershipId()))
+        return membershipDiscountsHistories.stream().filter(md -> membershipIdCartItemMap.containsKey(md.getMembershipId()))
                 .collect(Collectors.toList());
     }
 

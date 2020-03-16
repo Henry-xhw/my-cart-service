@@ -10,7 +10,10 @@ import com.active.services.cart.service.quote.discount.DiscountHandler;
 import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
 import com.active.services.cart.service.quote.discount.coupon.CouponDiscountLoader;
+import com.active.services.cart.service.quote.discount.membership.MemberShipDiscountHandler;
+import com.active.services.cart.service.quote.discount.membership.MembershipDiscountLoader;
 import com.active.services.product.DiscountType;
+import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -41,27 +44,56 @@ public class CartDiscountPricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-
-        List<CartItemDiscounts> cartItemDiscounts = getDiscountLoader(context).load();
+        DiscountLoader loader = getDiscountLoader(context);
+        List<CartItemDiscounts> cartItemDiscounts = loader.load();
         if (CollectionUtils.isEmpty(cartItemDiscounts)) {
             return;
         }
-        cartItemDiscounts.stream()
-                .forEach(cartItemDisc -> new CartItemDiscountPricer(getDiscountHandler(context, cartItemDisc))
-                        .quote(context, cartItemDisc.getCartItem()));
+        if (DiscountType.MEMBERSHIP == type) {
+            List<Long> newAddedMembershipIds = loadNewAddMembershipIds(loader);
+            cartItemDiscounts.stream()
+                    .forEach(cartItemDisc -> new CartItemDiscountPricer(getMembershipHandler(context, cartItemDisc,
+                            newAddedMembershipIds))
+                            .quote(context, cartItemDisc.getCartItem()));
+            return;
+        }
+        if (DiscountType.COUPON == type) {
+            List<DiscountUsage> discountUsages = loadDiscountUsage(loader, cartItemDiscounts);
+            cartItemDiscounts.stream()
+                    .forEach(cartItemDisc -> new CartItemDiscountPricer(getCouponCodeHandler(context, cartItemDisc,
+                            discountUsages))
+                            .quote(context, cartItemDisc.getCartItem()));
+            return;
+        }
     }
 
-    private DiscountHandler getDiscountHandler(CartQuoteContext context, CartItemDiscounts cartItemDiscounts) {
-        if (DiscountType.COUPON == type) {
-            return new CouponDiscountHandler(context, cartItemDiscounts);
-        }
-        throw new NotSupportedException();
+    private DiscountHandler getCouponCodeHandler(CartQuoteContext context, CartItemDiscounts cartItemDisc, List<DiscountUsage> discountUsages) {
+        return new CouponDiscountHandler(context, cartItemDisc, discountUsages);
     }
+
+    private DiscountHandler getMembershipHandler(CartQuoteContext context,
+                                                 CartItemDiscounts cartItemDisc, List<Long> loadNewAddMembershipIds) {
+        return new MemberShipDiscountHandler(context, cartItemDisc, loadNewAddMembershipIds);
+    }
+
+
+    private List<DiscountUsage> loadDiscountUsage(DiscountLoader loader, List<CartItemDiscounts> cartItemDiscounts) {
+        return ((CouponDiscountLoader) loader).loadDiscountUsage(cartItemDiscounts);
+    }
+
+    private List<Long> loadNewAddMembershipIds(DiscountLoader loader) {
+        return ((MembershipDiscountLoader) loader).loadNewItemMembershipIds();
+    }
+
 
     private DiscountLoader getDiscountLoader(CartQuoteContext context) {
         if (DiscountType.COUPON == type) {
             return CouponDiscountLoader.builder().context(context)
                     .soapClient(soapClient).taskRunner(taskRunner).productService(productService).build();
+        }
+        if (DiscountType.MEMBERSHIP == type) {
+            return MembershipDiscountLoader.builder().context(context)
+                    .soapClient(soapClient).build();
         }
         throw new NotSupportedException();
     }

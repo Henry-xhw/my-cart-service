@@ -5,9 +5,7 @@ import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -32,4 +30,5 @@ public class Discount extends BaseDomainObject {
     private Long discountGroupId;
     private Instant startDate;
     private Instant endDate;
+    private Long membershipId;
 }
