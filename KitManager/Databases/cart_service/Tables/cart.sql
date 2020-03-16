@@ -15,9 +15,8 @@ BEGIN
         [price_version]             INT                 CONSTRAINT df_carts_price_version DEFAULT ((0)) NOT NULL,
         [is_lock]                   BIT                 CONSTRAINT df_carts_is_lock DEFAULT ((0)) NOT NULL,
         [cart_status]               VARCHAR (255)       NOT NULL,
-        [reservation_guid]          UNIQUEIDENTIFIER    NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
-        [reservation_group_id]      UNIQUEIDENTIFIER    NULL,
+        [reservation_group_guid]    UNIQUEIDENTIFIER    NULL,
         [sales_channel]             VARCHAR (255)       NULL,
         CONSTRAINT [pk_carts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
         CONSTRAINT [uq_carts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
@@ -67,10 +66,8 @@ exec sp_add_table_column_comment 'dbo', 'carts', 'is_lock', 'DC2', 'lock or not 
 
 exec sp_add_table_column_comment 'dbo', 'carts', 'cart_status', 'DC2', 'cart status, as CREATED or FINALIZED';
 
-exec sp_add_table_column_comment 'dbo', 'carts', 'reservation_guid', 'DC2', 'reservation guid';
-
 exec sp_add_table_column_comment 'dbo', 'carts', 'coupon_codes', 'DC2', 'coupon codes';
 
 exec sp_add_table_column_comment 'dbo', 'carts', 'sales_channel', 'DC2', 'sales channel';
 
-exec sp_add_table_column_comment 'dbo', 'carts', 'reservation_group_id', 'DC2', 'reservation group id';
+exec sp_add_table_column_comment 'dbo', 'carts', 'reservation_group_guid', 'DC2', 'reservation group guid';
