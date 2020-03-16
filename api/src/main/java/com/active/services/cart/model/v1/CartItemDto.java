@@ -1,6 +1,7 @@
 package com.active.services.cart.model.v1;
 
 import com.active.platform.types.range.Range;
+import com.active.services.cart.model.AdHocDiscountDto;
 import com.active.services.cart.model.CouponMode;
 
 import lombok.Data;
@@ -78,4 +79,6 @@ public class CartItemDto extends BaseDto {
     private CouponMode couponMode;
 
     private UUID reservationId;
+
+    private List<AdHocDiscountDto> adHocDiscounts;
 }
