@@ -12,12 +12,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsageLimitSpec implements DiscountSpecification {
     private final List<DiscountUsage> discountUsages;
-    @NonNull private final Long discountId;
+
+    private final Long discountId;
 
     @Override
     public boolean satisfy() {
-        return CollectionUtils.isEmpty(discountUsages) && discountUsages.stream().filter(discountUsage -> discountId ==
-                discountUsage.getDiscountId()).filter(discountUsage -> discountUsage.getLimit() == -1 ||
-                discountUsage.getLimit() > discountUsage.getUsage()).findAny().isPresent();
+        return CollectionUtils.isEmpty(discountUsages) && discountUsages.stream()
+                .anyMatch(discountUsage ->
+                        discountId.equals(discountUsage.getDiscountId())
+                        && (discountUsage.getLimit() == -1 ||
+                            discountUsage.getLimit() > discountUsage.getUsage()));
     }
 }
