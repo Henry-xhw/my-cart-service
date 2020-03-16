@@ -245,11 +245,11 @@ public class CartDataFactory {
 
     public static AdHocDiscountDto getAdHocDiscountDto() {
         AdHocDiscountDto adHocDiscountDto = new AdHocDiscountDto();
-        adHocDiscountDto.setAdHocDiscountAmount(BigDecimal.valueOf(10));
-        adHocDiscountDto.setAdHocDiscountCouponCode("test ad-hoc coupon code");
-        adHocDiscountDto.setAdHocDiscountGroupId(1L);
-        adHocDiscountDto.setAdHocDiscountKeyerId(UUID.randomUUID());
-        adHocDiscountDto.setAdHocDiscountName("test ad-hoc");
+        adHocDiscountDto.setDiscountAmount(BigDecimal.valueOf(10));
+        adHocDiscountDto.setDiscountCouponCode("test ad-hoc coupon code");
+        adHocDiscountDto.setDiscountGroupId(1L);
+        adHocDiscountDto.setDiscountKeyerId(UUID.randomUUID());
+        adHocDiscountDto.setDiscountName("test ad-hoc");
         return adHocDiscountDto;
     }
 }

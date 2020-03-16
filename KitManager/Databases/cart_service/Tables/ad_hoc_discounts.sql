@@ -5,11 +5,11 @@ BEGIN
         [id]                          BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                  UNIQUEIDENTIFIER    NOT NULL,
         [cart_item_id]                BIGINT              NOT NULL,
-        [adhoc_discount_name]         NVARCHAR(500)       NULL,
-        [adhoc_discount_keyer_id]     UNIQUEIDENTIFIER    NULL,
-        [adhoc_discount_amount]       DECIMAL(19, 2)      NOT NULL,
-        [adhoc_discount_coupon_code]  NVARCHAR(255)       NULL,
-        [adhoc_discount_group_id]     BIGINT              NULL,
+        [discount_name]               NVARCHAR(500)       NULL,
+        [discount_keyer_id]           UNIQUEIDENTIFIER    NULL,
+        [discount_amount]             DECIMAL(19, 2)      NOT NULL,
+        [discount_coupon_code]        NVARCHAR(255)       NULL,
+        [discount_group_id]           BIGINT              NULL,
         [created_by]                  NVARCHAR(255)       NOT NULL,
         [created_dt]                  DATETIME            NOT NULL,
         [modified_by]                 NVARCHAR(255)       NOT NULL,
@@ -40,87 +40,24 @@ BEGIN
     PRINT 'Added index ix_ad_hoc_discounts_identifier to dbo.ad_hoc_discounts.'
 END
 GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'ad_hoc_discounts','column','cart_item_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'cart_items table id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'ad_hoc_discounts',
- @level2type = 'Column',
- @level2name = 'cart_item_id'
-END
+-- Column comment for id
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'id', 'DC2', 'primary key';
 GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'ad_hoc_discounts','column','adhoc_discount_name'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ad-hoc discount name',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'ad_hoc_discounts',
- @level2type = 'Column',
- @level2name = 'adhoc_discount_name'
-END
+-- Column comment for cart_item_id
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'cart_item_id', 'DC2', 'cart_items table id';
 GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'ad_hoc_discounts','column','adhoc_discount_keyer_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ad-hoc discount keyer id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'ad_hoc_discounts',
- @level2type = 'Column',
- @level2name = 'adhoc_discount_keyer_id'
-END
+-- Column comment for discount_name
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'discount_name', 'DC2', 'ad-hoc discount name';
 GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'ad_hoc_discounts','column','adhoc_discount_amount'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ad-hoc discount amount',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'ad_hoc_discounts',
- @level2type = 'Column',
- @level2name = 'adhoc_discount_amount'
-END
+-- Column comment for discount_keyer_id
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'discount_keyer_id', 'DC2', 'ad-hoc discount keyer id';
 GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'ad_hoc_discounts','column','adhoc_discount_coupon_code'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ad-hoc discount coupon code',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'ad_hoc_discounts',
- @level2type = 'Column',
- @level2name = 'adhoc_discount_coupon_code'
-END
+-- Column comment for discount_amount
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'discount_amount', 'DC2', 'ad-hoc discount amount';
 GO
-
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'ad_hoc_discounts','column','adhoc_discount_group_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ad-hoc discount group id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'ad_hoc_discounts',
- @level2type = 'Column',
- @level2name = 'adhoc_discount_group_id'
-END
+-- Column comment for discount_coupon_code
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'discount_coupon_code', 'DC2', 'ad-hoc discount coupon code';
+GO
+-- Column comment for discount_group_id
+exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', 'discount_group_id', 'DC2', 'ad-hoc discount group id';
 GO

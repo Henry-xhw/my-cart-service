@@ -300,11 +300,11 @@
         adhoc.id                      AS item_adhoc_id,
         adhoc.identifier              AS item_adhoc_identifier,
         adhoc.cart_item_id            AS item_adhoc_cart_item_id,
-        adhoc.adhoc_discount_name     AS item_adhoc_adhoc_discount_name,
-        adhoc.adhoc_discount_keyer_id AS item_adhoc_adhoc_discount_keyer_id,
-        adhoc.adhoc_discount_amount   AS item_adhoc_adhoc_discount_amount,
-        adhoc.adhoc_discount_coupon_code AS item_adhoc_adhoc_discount_coupon_code,
-        adhoc.adhoc_discount_group_id AS item_adhoc_adhoc_discount_group_id
+        adhoc.discount_name           AS item_adhoc_discount_name,
+        adhoc.discount_keyer_id       AS item_adhoc_discount_keyer_id,
+        adhoc.discount_amount         AS item_adhoc_discount_amount,
+        adhoc.discount_coupon_code    AS item_adhoc_discount_coupon_code,
+        adhoc.discount_group_id       AS item_adhoc_discount_group_id
         FROM dbo.carts cart
         LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
         LEFT JOIN dbo.ad_hoc_discounts adhoc ON item.id = adhoc.cart_item_id

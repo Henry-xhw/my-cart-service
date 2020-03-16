@@ -12,9 +12,9 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 public class AdHocDiscount extends BaseDomainObject {
     private Long cartItemId;
-    private String adHocDiscountName;
-    private UUID adHocDiscountKeyerId;
-    private BigDecimal adHocDiscountAmount;
-    private String adHocDiscountCouponCode;
-    private Long adHocDiscountGroupId;
+    private String discountName;
+    private UUID discountKeyerId;
+    private BigDecimal discountAmount;
+    private String discountCouponCode;
+    private Long discountGroupId;
 }

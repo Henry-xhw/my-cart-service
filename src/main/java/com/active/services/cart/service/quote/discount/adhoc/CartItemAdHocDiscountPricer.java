@@ -6,6 +6,8 @@ import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartItemFeeBuilder;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil;
+import com.active.services.oms.BdUtil;
 import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountType;
@@ -32,21 +34,28 @@ public class CartItemAdHocDiscountPricer implements CartItemPricer {
                     .forEach(adHocDiscount -> {
                         Discount disc = new Discount();
                         disc.setIdentifier(UUID.randomUUID());
-                        disc.setName(adHocDiscount.getAdHocDiscountName());
+                        disc.setName(adHocDiscount.getDiscountName());
                         disc.setDescription(null);
-                        disc.setAmount(adHocDiscount.getAdHocDiscountAmount());
+                        disc.setAmount(adHocDiscount.getDiscountAmount());
                         disc.setAmountType(AmountType.FLAT);
                         disc.setDiscountType(DiscountType.AD_HOC);
                         disc.setDiscountId(adHocDiscount.getId());
                         disc.setCartId(context.getCart().getId());
                         disc.setDescription("Ad-Hoc discount");
                         disc.setOrigin(OrderLineDiscountOrigin.AD_HOC);
-                        disc.setDiscountGroupId(adHocDiscount.getAdHocDiscountGroupId());
+                        disc.setDiscountGroupId(adHocDiscount.getDiscountGroupId());
+
+                        BigDecimal discAmount = DiscountAmountCalcUtil.calcFlatAmount(cartItem.getNetPrice(), disc.getAmount(),
+                                disc.getAmountType(), context.getCurrency());
+
+                        if (BdUtil.comparesToZero(discAmount)) {
+                            return;
+                        }
 
                         context.addAppliedDiscount(disc);
                         cartItem.getPriceCartItemFee().get()
                                 .addSubItemFee(Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(disc,
-                                        adHocDiscount.getAdHocDiscountAmount(), 1)));
+                                        adHocDiscount.getDiscountAmount(), 1)));
                     });
         }
     }

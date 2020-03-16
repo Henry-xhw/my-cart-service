@@ -15,10 +15,10 @@ import javax.validation.constraints.NotNull;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class AdHocDiscountDto extends BaseDto {
-    private String adHocDiscountName;
-    private UUID adHocDiscountKeyerId;
+    private String discountName;
+    private UUID discountKeyerId;
     @NotNull
-    private BigDecimal adHocDiscountAmount;
-    private String adHocDiscountCouponCode;
-    private Long adHocDiscountGroupId;
+    private BigDecimal discountAmount;
+    private String discountCouponCode;
+    private Long discountGroupId;
 }
