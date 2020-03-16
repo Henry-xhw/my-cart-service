@@ -228,6 +228,9 @@
                 <result property="upperExclusive" column="trimmed_booking_end_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
+            <collection property="adHocDiscounts" ofType="AdHocDiscount" notNullColumn="id" columnPrefix="adhoc_">
+                <id property="id" column="id"/>
+            </collection>
         </collection>
         <collection property="discounts" ofType="Discount" notNullColumn="id" columnPrefix="discount_">
             <id property="id" column="id"/>
@@ -295,9 +298,18 @@
         discount.created_by           AS discount_createdBy,
         discount.created_dt           AS discount_createdDt,
         discount.modified_by          AS discount_modifiedBy,
-        discount.modified_dt          AS discount_modifiedDt
+        discount.modified_dt          AS discount_modifiedDt,
+        adhoc.id                      AS item_adhoc_id,
+        adhoc.identifier              AS item_adhoc_identifier,
+        adhoc.cart_item_id            AS item_adhoc_cart_item_id,
+        adhoc.discount_name           AS item_adhoc_discount_name,
+        adhoc.discount_keyer_id       AS item_adhoc_discount_keyer_id,
+        adhoc.discount_amount         AS item_adhoc_discount_amount,
+        adhoc.discount_coupon_code    AS item_adhoc_discount_coupon_code,
+        adhoc.discount_group_id       AS item_adhoc_discount_group_id
         FROM dbo.carts cart
         LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
+        LEFT JOIN dbo.ad_hoc_discounts adhoc ON item.id = adhoc.cart_item_id
         LEFT JOIN dbo.discounts discount ON cart.id = discount.cart_id
         WHERE cart.identifier = #{cartId} and cart_status != 'FINALIZED'
     </select>

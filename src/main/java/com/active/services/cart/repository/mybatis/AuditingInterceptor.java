@@ -12,9 +12,11 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Properties;
 
 @Component
@@ -37,19 +39,16 @@ public class AuditingInterceptor implements Interceptor {
 
     private void setAuditingInfo(Object parameter, SqlCommandType sqlCommandType) {
         if (parameter instanceof BaseDomainObject) {
-            BaseDomainObject baseDomain = (BaseDomainObject) parameter;
-            String actorId = ContextWrapper.get().getActorId();
-            Instant nowInstant = Instant.now();
-
-            if (SqlCommandType.INSERT.equals(sqlCommandType)) {
-                baseDomain.setCreatedBy(actorId);
-                baseDomain.setCreatedDt(nowInstant);
-                baseDomain.setModifiedBy(actorId);
-                baseDomain.setModifiedDt(nowInstant);
-            }
-            if (SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                baseDomain.setModifiedBy(actorId);
-                baseDomain.setModifiedDt(nowInstant);
+            execute((BaseDomainObject) parameter, sqlCommandType);
+        } else if (parameter instanceof DefaultSqlSession.StrictMap) {
+            DefaultSqlSession.StrictMap paramMap = (DefaultSqlSession.StrictMap) parameter;
+            if (paramMap.get("collection") instanceof List) {
+                List list = (List) paramMap.get("collection");
+                list.stream().forEach(obj -> {
+                    if (obj instanceof BaseDomainObject) {
+                        execute((BaseDomainObject) obj, sqlCommandType);
+                    }
+                });
             }
         }
     }
@@ -66,5 +65,21 @@ public class AuditingInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
 
+    }
+
+    private void execute(BaseDomainObject baseDomain, SqlCommandType sqlCommandType) {
+        String actorId = ContextWrapper.get().getActorId();
+        Instant nowInstant = Instant.now();
+
+        if (SqlCommandType.INSERT.equals(sqlCommandType)) {
+            baseDomain.setCreatedBy(actorId);
+            baseDomain.setCreatedDt(nowInstant);
+            baseDomain.setModifiedBy(actorId);
+            baseDomain.setModifiedDt(nowInstant);
+        }
+        if (SqlCommandType.UPDATE.equals(sqlCommandType)) {
+            baseDomain.setModifiedBy(actorId);
+            baseDomain.setModifiedDt(nowInstant);
+        }
     }
 }

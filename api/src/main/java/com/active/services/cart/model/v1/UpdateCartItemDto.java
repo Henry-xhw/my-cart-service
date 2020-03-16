@@ -1,12 +1,14 @@
 package com.active.services.cart.model.v1;
 
 import com.active.platform.types.range.Range;
+import com.active.services.cart.model.AdHocDiscountDto;
 import com.active.services.cart.model.CouponMode;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,4 +66,7 @@ public class UpdateCartItemDto {
     private CouponMode couponMode;
 
     private UUID reservationId;
+
+    @Valid
+    private List<AdHocDiscountDto> adHocDiscounts;
 }

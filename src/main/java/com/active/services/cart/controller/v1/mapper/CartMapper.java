@@ -19,7 +19,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = AdHocDiscountMapper.class)
 public interface CartMapper {
 
     CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
