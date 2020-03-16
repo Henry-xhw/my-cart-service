@@ -14,8 +14,8 @@ import java.util.UUID;
 @Headers({"Accept: application/vnd.active.inventory-service.v1+json",
         "Content-Type: application/vnd.active.inventory-service.v1+json"})
 public interface ReservationService {
-    @RequestLine("PUT /temp-reservations/{id}")
-    ReservationResultDTO edit(@Param("id") UUID id, List<ReservationDTO> reservations);
+    @RequestLine("PUT /temp-reservations/{reservationGroupId}")
+    ReservationResultDTO edit(@Param("reservationGroupId") UUID reservationGroupId, List<ReservationDTO> reservations);
 
     @RequestLine("POST /temp-reservations")
     ReservationResultDTO reserve(List<ReservationDTO> reservations);
