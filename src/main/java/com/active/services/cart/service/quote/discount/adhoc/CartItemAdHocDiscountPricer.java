@@ -34,7 +34,7 @@ public class CartItemAdHocDiscountPricer implements CartItemPricer {
                     .forEach(adHocDiscount -> {
                         Discount disc = new Discount();
                         disc.setIdentifier(UUID.randomUUID());
-                        disc.setName(adHocDiscount.getDiscountName());
+                        disc.setName(adHocDiscount.getDiscountName() == null ? "Ad-Hoc discount" : adHocDiscount.getDiscountName());
                         disc.setDescription(null);
                         disc.setAmount(adHocDiscount.getDiscountAmount());
                         disc.setAmountType(AmountType.FLAT);

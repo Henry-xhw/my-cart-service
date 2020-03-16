@@ -93,9 +93,7 @@ public class CartService {
         items.forEach(it -> cart.findCartItem(it.getIdentifier())
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                         "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
-        //create relative between cart item identifier and cart item id
-        Map<UUID, Long> identifierMap = cart.getFlattenCartItems().stream()
-                .collect(Collectors.toMap(CartItem::getIdentifier, CartItem::getId));
+        Map<UUID, Long> identifierMap = cart.getCartItemIdentifierMap();
         List<Long> cartItemIds = items.stream()
                 .map(cartItem -> identifierMap.get(cartItem.getIdentifier()))
                 .collect(Collectors.toList());
