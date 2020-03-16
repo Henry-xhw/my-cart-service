@@ -7,7 +7,6 @@ import com.active.services.ContextWrapper;
 import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.common.DiscountUsageHandler;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountApplication;
@@ -23,7 +22,6 @@ import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Lookup;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class CouponDiscountLoader implements DiscountLoader {
      * @return CartItemDiscounts
      */
     @Override
-    public List<CartItemDiscounts>  load() {
+    public List<CartItemDiscounts> load() {
         // Filter qualified cart items
         List<CartItem> cartItems = context.getCart().getFlattenCartItems().stream()
                 .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
@@ -136,7 +134,6 @@ public class CouponDiscountLoader implements DiscountLoader {
                         .collect(Collectors.toMap(DiscountUsage::getDiscountId, Function.identity()));
         return discountIds.stream().filter(id -> discountUsageMap.get(id) != null && (discountUsageMap.get(id).getLimit() == -1 ||
                 discountUsageMap.get(id).getUsage() < discountUsageMap.get(id).getLimit())).collect(Collectors.toList());
-
     }
 
     private List<DiscountUsage> getDiscountUsage(List<Long> discountIds) {
@@ -144,11 +141,6 @@ public class CouponDiscountLoader implements DiscountLoader {
         getDiscountUsageReq.setDiscountIds(discountIds);
         GetDiscountUsageRsp rsp = productService.getDiscountUsages(getDiscountUsageReq);
         return rsp.getDiscountUsages();
-    }
-
-    @Lookup
-    private DiscountUsageHandler getDiscountUsageHandler() {
-        return null;
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,
