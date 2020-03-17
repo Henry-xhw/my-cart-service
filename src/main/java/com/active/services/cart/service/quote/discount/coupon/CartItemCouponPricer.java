@@ -90,7 +90,8 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
 
         Optional<DiscountUsage> usageOpt = couponDiscountContext.findDiscountUsageByDiscountId(discount.getId());
         if (usageOpt.isPresent()) {
-            specification.addSpecification(new UsageLimitSpec(usageOpt.get()));
+            DiscountUsage discountUsage = usageOpt.get();
+            specification.addSpecification(() -> discountUsage.getLimit() > discountUsage.getUsage());
         }
 
         if (discount.getDiscountAlgorithm() == com.active.services.product.DiscountAlgorithm.MOST_EXPENSIVE) {
