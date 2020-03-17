@@ -10,81 +10,28 @@ BEGIN
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL,
-        CONSTRAINT [pk_cart_items_cart_item_fee] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_cart_item_cart_item_fees] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_cart_item_cart_item_fees_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_cart_item_id_cart_item_fee_id] UNIQUE ([cart_item_id], [cart_item_fee_id]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.cart_item_cart_item_fees'
 END
 GO
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_item_cart_item_fees' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.cart_item_cart_item_fees ADD CONSTRAINT [pk_cart_item_cart_item_fee]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_cart_items_cart_item_fee on table dbo.cart_item_cart_item_fees'
-END
-GO
 
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_cart_item_fee_identifier'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_fees' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_items_cart_item_fee_identifier] ON [dbo].[cart_item_fees] ([identifier])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_items_cart_item_fee_identifier to dbo.cart_item_cart_item_fees.'
-END
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', NULL, 'DC2', 'The relationship table between cart_items and cart_item_fees tables';
 
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_id'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_cart_item_fees' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_item_id] ON [dbo].[cart_item_cart_item_fees] ([cart_item_id])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_item_id to dbo.cart_item_cart_item_fees.'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'id', 'DC2', 'primary key';
 
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_fee_id'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_item_cart_item_fees' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_item_fee_id] ON [dbo].[cart_item_cart_item_fees] ([cart_item_fee_id])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_item_fee_id to dbo.cart_item_cart_item_fees.'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'identifier', 'DC2', 'global unique id, represent a relationship between cart_item and cart_item_fees';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_cart_item_fees','column','cart_item_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'cart item id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'cart_item_cart_item_fees',
- @level2type = 'Column',
- @level2name = 'cart_item_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'cart_item_id', 'DC2', 'cart item id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_item_cart_item_fees','column','cart_item_fee_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'cart item fee id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'cart_item_cart_item_fees',
- @level2type = 'Column',
- @level2name = 'cart_item_fee_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'cart_item_fee_id', 'DC2', 'cart item fee id';
+
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'created_by', 'DC2', 'created by';
+
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'created_dt', 'DC2', 'created date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'modified_by', 'DC2', 'modified by';
+
+exec sp_add_table_column_comment 'dbo', 'cart_item_cart_item_fees', 'modified_dt', 'DC2', 'modified date time';

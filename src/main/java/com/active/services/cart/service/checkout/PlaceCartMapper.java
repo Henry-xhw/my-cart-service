@@ -49,7 +49,7 @@ public interface PlaceCartMapper {
             @Mapping(target = "orderLineFees", source = "subItems"),
             @Mapping(target = "amount", source = "unitPrice"),
             @Mapping(target = "feeTransactionType", source = "transactionType"),
-            @Mapping(target = "entityReferenceId", source = "relatedIdentifier"),
+            @Mapping(target = "entityReferenceId", source = "discountIdentifier"),
             @Mapping(target = "feeType", source = "type")
     })
     OrderLineFeeDTO toDto(CartItemFeesInCart cartItemFee);
@@ -58,7 +58,7 @@ public interface PlaceCartMapper {
             @Mapping(target = "orderLineFees", source = "subItems"),
             @Mapping(target = "amount", source = "unitPrice"),
             @Mapping(target = "feeTransactionType", source = "transactionType"),
-            @Mapping(target = "entityReferenceId", source = "relatedIdentifier"),
+            @Mapping(target = "entityReferenceId", source = "discountIdentifier"),
             @Mapping(target = "feeType", source = "type")
     })
     OrderLineFeeDTO toDto(CartItemFee cartItemFee);

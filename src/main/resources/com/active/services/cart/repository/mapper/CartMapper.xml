@@ -7,8 +7,8 @@
     <insert id="createCart" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO [dbo].[carts]
             (identifier,
-            owner_id,
-            keyer_id,
+            owner_guid,
+            keyer_guid,
             currency_code,
             created_by,
             created_dt,
@@ -62,7 +62,7 @@
             [person_identifier],
             [coupon_mode],
             [ignore_multi_discounts],
-            [reservation_id],
+            [reservation_guid],
             [created_by],
             [created_dt],
             [modified_by],
@@ -206,7 +206,7 @@
         [coupon_codes] = #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
         [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
         [coupon_mode] = #{item.couponMode},
-        [reservation_id] = #{item.reservationId},
+        [reservation_guid] = #{item.reservationId},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -241,8 +241,8 @@
     <select id="getCart" resultMap="CartResultMap">
         SELECT cart.id                as id,
         cart.identifier               as identifier,
-        cart.owner_id                 as owner_id,
-        cart.keyer_id                 as keyer_id,
+        cart.owner_guid               as owner_id,
+        cart.keyer_guid               as keyer_id,
         cart.currency_code            as currency_code,
         cart.created_by               as created_by,
         cart.created_dt               as created_dt,
@@ -276,7 +276,7 @@
         item.coupon_mode              AS item_coupon_mode,
         item.ignore_multi_discounts   AS item_ignore_multi_discounts,
         item.coupon_codes             AS item_coupon_codes,
-        item.reservation_id           AS item_reservation_id,
+        item.reservation_guid           AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
         item.modified_by              AS item_modifiedBy,
@@ -330,7 +330,7 @@
     </delete>
 
     <select id="search" resultType="java.util.UUID">
-        SELECT identifier FROM carts WHERE owner_id = #{ownerId} and cart_status != 'FINALIZED'
+        SELECT identifier FROM carts WHERE owner_guid = #{ownerId} and cart_status != 'FINALIZED'
     </select>
 
     <select id="getCartItemIdByCartItemUuid" resultType="Long">
@@ -395,7 +395,7 @@
     </update>
 
     <insert id="createEvents">
-        INSERT INTO [dbo].[events]
+        INSERT INTO [dbo].[transaction_log]
             (
                 [identifier],
                 [type],
