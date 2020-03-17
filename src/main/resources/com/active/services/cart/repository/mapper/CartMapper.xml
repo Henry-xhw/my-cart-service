@@ -18,7 +18,7 @@
             price_version,
             is_lock,
             cart_status,
-            reservation_group_id,
+            reservation_group_guid,
             coupon_codes,
             sales_channel)
         VALUES
@@ -117,7 +117,7 @@
     <update id="updateCart">
         UPDATE [dbo].[carts]
         SET
-            reservation_group_id = #{reservationGroupId},
+            reservation_group_guid = #{reservationGroupId},
             coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
             sales_channel = #{salesChannel},
             [modified_by] = #{modifiedBy},
@@ -252,7 +252,7 @@
         cart.price_version            as price_version,
         cart.is_lock                  as lock,
         cart.cart_status              as cart_status,
-        cart.reservation_group_id     as reservation_group_id,
+        cart.reservation_group_guid     as reservation_group_id,
         cart.coupon_codes             as coupon_codes,
         cart.sales_channel            as sales_channel,
         item.id                       AS item_id,
@@ -388,7 +388,7 @@
     <update id="updateCartReservationGroupId">
         UPDATE [dbo].[carts]
         SET
-        [reservation_group_id] = #{reservationGroupId},
+        [reservation_group_guid] = #{reservationGroupId},
         [modified_dt] = getutcdate(),
         [modified_by] = #{modifiedBy}
         WHERE identifier = #{identifier}
