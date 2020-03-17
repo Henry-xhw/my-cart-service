@@ -19,7 +19,7 @@ public class MemberShipSpec implements DiscountSpecification {
 
     @Override
     public boolean satisfy() {
-        return cartItem.getMembershipId() == requiredMembershipId || (CollectionUtils.isEmpty(newItemMembershipIds) &&
+        return requiredMembershipId.equals(cartItem.getMembershipId()) || (CollectionUtils.isNotEmpty(newItemMembershipIds) &&
                 newItemMembershipIds.contains(requiredMembershipId));
     }
 }
