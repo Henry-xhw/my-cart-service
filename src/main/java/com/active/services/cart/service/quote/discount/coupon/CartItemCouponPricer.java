@@ -6,7 +6,6 @@ import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscountBasePricer;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
-import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;

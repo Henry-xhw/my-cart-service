@@ -5,7 +5,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
-import com.active.services.cart.service.quote.discount.DiscountMapper;
+import com.active.services.cart.service.quote.discount.coupon.DiscountMapper;
 import com.active.services.product.AmountType;
 import com.active.services.product.Discount;
 import com.active.services.product.DiscountAlgorithm;

@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount;
+package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartQuoteContext;

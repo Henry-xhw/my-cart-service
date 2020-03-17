@@ -1,6 +1,7 @@
 package com.active.services.cart.service.quote.discount;
 
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.coupon.DiscountMapper;
 import com.active.services.domain.DateTime;
 import com.active.services.product.AmountType;
 import com.active.services.product.Discount;
