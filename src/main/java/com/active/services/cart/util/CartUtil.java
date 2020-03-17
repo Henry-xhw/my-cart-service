@@ -7,6 +7,10 @@ import com.active.services.cart.domain.BaseDomainObject;
 import java.time.Instant;
 
 public class CartUtil {
+
+    private CartUtil() {
+    }
+
     public static <T extends BaseDomainObject> T addAuditableAttributes(T target) {
         Context context = ContextWrapper.getValidContext();
         addAuditableAttributes(context, target);
