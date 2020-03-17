@@ -7,15 +7,16 @@ BEGIN
         [cart_id]                           BIGINT              NOT NULL,
         [name]                              NVARCHAR(255)       NULL,
         [description]                       NVARCHAR(255)       NULL,
-        [amount]                            DECIMAL(19, 2)      NULL,
+        [amount]                            DECIMAL(19, 2)      NOT NULL,
         [amount_type]                       NVARCHAR(25)        NULL,
-        [discount_id]                       BIGINT              NOT NULL,
+        [discount_id]                       BIGINT              NULL,
         [discount_type]                     NVARCHAR(25)        NOT NULL,
         [coupon_code]                       NVARCHAR(255)       NULL,
         [algorithm]                         NVARCHAR(25)        NULL,
         [apply_to_recurring_billing]        BIT                 CONSTRAINT df_discounts_apply_to_recurring_billing DEFAULT ((0)) NOT NULL,
         [discount_group_id]                 BIGINT              NULL,
         [origin]                            NVARCHAR(25)        NULL,
+        [keyer_uuid]                        UNIQUEIDENTIFIER    NULL,
         [created_by]                        NVARCHAR(255)       NOT NULL,
         [created_dt]                        DATETIME            NOT NULL,
         [modified_by]                       NVARCHAR(255)       NOT NULL,
@@ -48,6 +49,7 @@ exec sp_add_table_column_comment 'dbo', 'discounts', 'identifier', 'DC2', 'globa
 
 exec sp_add_table_column_comment 'dbo', 'discounts', 'cart_id', 'DC2', 'cart id';
 
+
 exec sp_add_table_column_comment 'dbo', 'discounts', 'name', 'DC2', 'name';
 
 exec sp_add_table_column_comment 'dbo', 'discounts', 'description', 'DC2', 'description';
@@ -77,3 +79,4 @@ exec sp_add_table_column_comment 'dbo', 'discounts', 'created_dt', 'DC2', 'creat
 exec sp_add_table_column_comment 'dbo', 'discounts', 'modified_by', 'DC2', 'modified by';
 
 exec sp_add_table_column_comment 'dbo', 'discounts', 'modified_dt', 'DC2', 'modified date time';
+
