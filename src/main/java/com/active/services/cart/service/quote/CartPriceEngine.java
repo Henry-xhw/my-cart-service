@@ -3,13 +3,16 @@ package com.active.services.cart.service.quote;
 import com.active.services.ContextWrapper;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.service.quote.contract.CartProductProcessingFeePricer;
-import com.active.services.cart.service.quote.discount.CartDiscountPricer;
 import com.active.services.cart.service.quote.discount.aa.CartAaDiscountPricer;
+import com.active.services.cart.service.quote.discount.coupon.CartCouponPricer;
+import com.active.services.cart.service.quote.discount.membership.CartMembershipPricer;
+import com.active.services.cart.service.quote.discount.multi.CartMultiDiscountPricer;
 import com.active.services.cart.service.quote.price.CartUnitPricePricer;
 import com.active.services.contract.controller.v1.FeeOwner;
 import com.active.services.product.Product;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +22,29 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class CartPriceEngine {
-    private final SOAPClient soapClient;
+    @Autowired
+    private SOAPClient soapClient;
 
-    private final CartAaDiscountPricer cartAaDiscountPricer;
+    @Autowired
+    private CartUnitPricePricer cartUnitPricePricer;
 
-    private final CartUnitPricePricer cartUnitPricePricer;
+    @Autowired
+    private CartMultiDiscountPricer cartMultiDiscountPricer;
 
-    private final CartDiscountPricer cartDiscountPricer;
+    @Autowired
+    private CartCouponPricer cartCouponPricer;
+
+    @Autowired
+    private CartMembershipPricer cartMembershipPricer;
+
+    @Autowired
+    private CartAaDiscountPricer cartAaDiscountPricer;
 
     public void quote(CartQuoteContext context) {
         prepare(context);
-        Arrays.asList(cartUnitPricePricer, cartDiscountPricer, getCartProductProcessingFeePricer(FeeOwner.CONSUMER),
-                cartAaDiscountPricer).forEach(cartPricer -> cartPricer.quote(context));
+        Arrays.asList(cartUnitPricePricer, cartMembershipPricer, cartMultiDiscountPricer, cartCouponPricer,
+            getCartProductProcessingFeePricer(FeeOwner.CONSUMER), cartAaDiscountPricer)
+            .forEach(cartPricer -> cartPricer.quote(context));
     }
 
     private void prepare(CartQuoteContext context) {

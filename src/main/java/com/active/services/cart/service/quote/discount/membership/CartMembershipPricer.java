@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CartMembershipPricer extends CartDiscountBasePricer {
 
     @Autowired
