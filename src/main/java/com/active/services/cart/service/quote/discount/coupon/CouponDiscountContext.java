@@ -23,8 +23,6 @@ class CouponDiscountContext {
 
     private Map<CartItem, List<com.active.services.product.Discount>> cartItemDiscountMap;
 
-    private List<CartItemDiscounts> cartItemDiscounts;
-
     public Optional<DiscountUsage> findDiscountUsageByDiscountId(long discountId) {
         return emptyIfNull(discountUsages).stream().filter(du -> du.getDiscountId().equals(discountId)).findAny();
     }
