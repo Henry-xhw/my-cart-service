@@ -21,7 +21,7 @@ class CouponDiscountContext {
     public Set<Long> getDiscountIds() {
         return CollectionUtils.emptyIfNull(cartItemDiscounts).stream()
                 .map(cid -> cid.getAllDiscountIds())
-                .flatMap(Collection::stream).distinct().collect(Collectors.toSet());
+                .flatMap(Collection::stream).collect(Collectors.toSet());
     }
 
     public List<Long> getUsedUniqueCouponDiscountsIds(List<Discount> appliedDiscount) {
