@@ -28,19 +28,6 @@ BEGIN
 	 PRINT 'CREATE TABLE dbo.ad_hoc_discounts'
 END
 GO
-
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_ad_hoc_discounts_identifier'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'ad_hoc_discounts' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_ad_hoc_discounts_identifier] ON [dbo].[ad_hoc_discounts] ([identifier])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_ad_hoc_discounts_identifier to dbo.ad_hoc_discounts.'
-END
-GO
 -- Table description
 exec sp_add_table_column_comment 'dbo', 'ad_hoc_discounts', NULL, 'DC1', 'Store ad-hoc discount information';
 -- Column comment for id
