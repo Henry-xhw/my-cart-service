@@ -1,40 +1,12 @@
 package com.active.services.cart.service.quote.discount.coupon;
 
-import com.active.platform.concurrent.ExecutorServiceTaskRunner;
 import com.active.platform.concurrent.TaskRunner;
 import com.active.services.cart.BaseTestCase;
 import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.product.AmountType;
-import com.active.services.product.Discount;
 import com.active.services.product.api.omsOnly.soap.ProductOMSEndpoint;
-import com.active.services.product.nextgen.v1.dto.DiscountUsage;
-import com.active.services.product.nextgen.v1.rsp.GetDiscountUsageRsp;
 
-import io.micrometer.core.instrument.util.NamedThreadFactory;
-import org.apache.commons.lang.math.RandomUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 public class CouponDiscountLoaderTestCase extends BaseTestCase {
 
@@ -47,7 +19,7 @@ public class CouponDiscountLoaderTestCase extends BaseTestCase {
     @Mock
     private ProductService productService;
 
-    @Before
+/*    @Before
     public void setUp() {
         super.setUp();
         MockitoAnnotations.initMocks(this);
@@ -167,5 +139,5 @@ public class CouponDiscountLoaderTestCase extends BaseTestCase {
         discountUsage.setLimit(limit);
         discountUsage.setUsage(usage);
         return discountUsage;
-    }
+    }*/
 }

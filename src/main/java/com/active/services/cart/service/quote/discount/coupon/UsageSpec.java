@@ -11,6 +11,6 @@ public class UsageSpec implements DiscountSpecification {
 
     @Override
     public boolean satisfy() {
-        return discountUsage.getLimit() > discountUsage.getUsage();
+        return discountUsage == null || discountUsage.getLimit() > discountUsage.getUsage();
     }
 }

@@ -1,40 +1,13 @@
 package com.active.services.cart.service.quote.discount.coupon;
 
-import com.active.services.DiscountModel;
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
-import com.active.services.cart.domain.CartItem;
-import com.active.services.cart.model.CouponMode;
-import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountFactory;
-import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
-import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
-import com.active.services.domain.DateTime;
-import com.active.services.product.AmountType;
-import com.active.services.product.Discount;
-import com.active.services.product.DiscountAlgorithm;
-import com.active.services.product.Product;
-import com.active.services.product.nextgen.v1.dto.DiscountUsage;
-
-import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class CouponDiscountHandlerTestCase {
 
-    /**
+/*
+    */
+/**
      * filterDiscounts only return not expired discounts.
-     */
+     *//*
+
     @Test
     public void filterDiscountsWithExpiredCheck() {
 
@@ -75,12 +48,14 @@ public class CouponDiscountHandlerTestCase {
         discountUsage.setUsage(usage);
         return discountUsage;
     }
-    /**
+    */
+/**
      * filterDiscounts will return cart level discounts when
      * a. cart item CouponMode is HIGH_PRIORITY
      * b. cart item product with DiscountModel.NON_COMBINABLE_MINIMIZE_PRICE
      * c. cart item with effective discounts.
-     */
+     *//*
+
     @Test
     public void filterDiscounts() {
 
@@ -147,9 +122,11 @@ public class CouponDiscountHandlerTestCase {
         assertTrue(result.contains(discountApplicationList.get(0)));
     }
 
-    /**
+    */
+/**
      * filterDiscounts will check unique used when DiscountAlgorithm is MOST_EXPENSIVE.
-     */
+     *//*
+
     @Test
     public void filterDiscountsCheckUniqueUsed() {
 
@@ -190,12 +167,14 @@ public class CouponDiscountHandlerTestCase {
     }
 
 
-    /**
+    */
+/**
      *
      * getDiscountAlgorithm return StackableFlatFirstDiscountAlgorithm when DiscountModel is COMBINABLE_FLAT_FIRST,
      * else, return BestDiscountAlgorithm.
      *
-     */
+     *//*
+
     @Test
     public void getDiscountAlgorithm() {
 
@@ -236,5 +215,6 @@ public class CouponDiscountHandlerTestCase {
         product.setDiscountModel(model);
         return product;
     }
+*/
 
 }

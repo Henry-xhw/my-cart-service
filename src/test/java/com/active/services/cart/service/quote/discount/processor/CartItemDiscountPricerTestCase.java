@@ -1,33 +1,19 @@
 package com.active.services.cart.service.quote.discount.processor;
 
-import com.active.services.cart.domain.Cart;
-import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
-import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.CartItemFeeType;
-import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.coupon.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.DiscountFactory;
-import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
-import com.active.services.domain.DateTime;
-import com.active.services.product.AmountType;
-import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
-import org.junit.Test;
-
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CartItemDiscountPricerTestCase {
+/*
 
     @Test
     public void quoteWithoutDiscount() {
@@ -67,6 +53,7 @@ public class CartItemDiscountPricerTestCase {
         checkDiscountAmount(cart.getFlattenCartItems().get(0), new BigDecimal("2.00"));
         assertEquals(new BigDecimal("8.00"), cart.getFlattenCartItems().get(0).getNetPrice());
     }
+*/
 
 
 

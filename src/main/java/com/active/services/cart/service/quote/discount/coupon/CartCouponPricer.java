@@ -25,14 +25,13 @@ public class CartCouponPricer extends CartDiscountBasePricer {
 
     @Override
     protected void doQuote(CartQuoteContext context, List<CartItem> noneZeroItems) {
+
         CouponDiscountLoader loader = getCouponDiscountLoader(context, noneZeroItems);
-
         Map<CartItem, List<Discount>> cartItemCoupons = loader.loadDiscounts();
-
         if (cartItemCoupons.isEmpty()) {
             return;
         }
-        
+
         CouponDiscountContext couponDiscountContext = new CouponDiscountContext();
         couponDiscountContext.setCartItemDiscountMap(cartItemCoupons);
 
@@ -44,8 +43,8 @@ public class CartCouponPricer extends CartDiscountBasePricer {
             couponDiscountContext.setDiscountUsages(rsp.getDiscountUsages());
         }
 
-        cartItemCoupons.forEach((cartItem, cartItemCoupon) -> getCartItemCouponPricer(couponDiscountContext,
-                cartItemCoupon).quote(context, cartItem));
+        cartItemCoupons.forEach((cartItem, cartItemDiscounts) -> getCartItemCouponPricer(couponDiscountContext,
+                cartItemDiscounts).quote(context, cartItem));
     }
 
     @Lookup

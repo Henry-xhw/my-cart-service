@@ -6,6 +6,7 @@ import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscountBasePricer;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
+import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
@@ -13,7 +14,6 @@ import com.active.services.cart.service.quote.discount.condition.DiscountSequent
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
 import com.active.services.cart.service.quote.discount.condition.UniqueSpec;
 import com.active.services.product.Discount;
-import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,10 +46,10 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
         couponDiscounts = isCombinableDiscountMode(cartItem, context) ? couponDiscounts :
                 getHighPriorityDiscounts(cartItem, couponDiscounts);
 
-        getDiscountAlgorithm(cartItem, context).apply(couponDiscounts.stream().map(discount ->
-                DiscountMapper.MAPPER.toDiscount(discount, context))
-                .collect(Collectors.toList())).forEach(disc ->
-                new DiscountFeeLoader(context, cartItem, disc).load());
+        getDiscountAlgorithm(cartItem, context).apply(
+                couponDiscounts.stream().map(discount -> DiscountMapper.MAPPER.toDiscount(discount, context))
+                        .collect(Collectors.toList()))
+                .forEach(disc -> new DiscountFeeLoader(context, cartItem, disc).load());
     }
 
     private DiscountAlgorithm getDiscountAlgorithm(CartItem cartItem, CartQuoteContext context) {
@@ -86,18 +85,12 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
         DiscountSequentialSpecs specification = DiscountSequentialSpecs.allOf(
                 new NotExpiredSpec(discount.getStartDate() == null ? null : discount.getStartDate().toDate().toInstant(),
                         discount.getEndDate() == null ? null : discount.getEndDate().toDate().toInstant(),
-                        Instant.now()));
-
-        Optional<DiscountUsage> usageOpt = couponDiscountContext.findDiscountUsageByDiscountId(discount.getId());
-        if (usageOpt.isPresent()) {
-            specification.addSpecification(new UsageSpec(usageOpt.get()));
-        }
-
-        if (discount.getDiscountAlgorithm() == com.active.services.product.DiscountAlgorithm.MOST_EXPENSIVE) {
-            List<Long> appliedDiscountIds = couponDiscountContext
-                    .getUsedUniqueCouponDiscountsIds(context.getAppliedDiscounts());
-            specification.addSpecification(new UniqueSpec(appliedDiscountIds, discount.getId()));
-        }
+                        Instant.now()),
+                new UniqueSpec(couponDiscountContext
+                                .getUsedDiscountIds(context.getAppliedDiscounts()), discount.getId(),
+                        discount.getDiscountAlgorithm()),
+                new UsageSpec(couponDiscountContext.findDiscountUsageByDiscountId(discount.getId()).orElse(null))
+        );
 
         return specification.satisfy();
     }
