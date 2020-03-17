@@ -1,7 +1,6 @@
 project: Cart Service
 max_kit: 1
-replace_from: /OMS-10777/
+replace_from: /develop/
 replace_to: /PROMOTE_VERSION/
 extra_kits:
-- 4749
-- 4750
+- 4760
