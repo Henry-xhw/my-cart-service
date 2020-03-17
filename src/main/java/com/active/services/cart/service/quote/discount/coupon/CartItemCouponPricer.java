@@ -11,6 +11,7 @@ import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorit
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.condition.DiscountSequentialSpecs;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
+import com.active.services.cart.service.quote.discount.condition.UniqueSpec;
 import com.active.services.product.Discount;
 import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
@@ -89,15 +90,13 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
 
         Optional<DiscountUsage> usageOpt = couponDiscountContext.findDiscountUsageByDiscountId(discount.getId());
         if (usageOpt.isPresent()) {
-            DiscountUsage discountUsage = usageOpt.get();
-            specification.addSpecification(() -> discountUsage.getLimit() > discountUsage.getUsage());
+            specification.addSpecification(new UsageSpec(usageOpt.get()));
         }
 
         if (discount.getDiscountAlgorithm() == com.active.services.product.DiscountAlgorithm.MOST_EXPENSIVE) {
             List<Long> appliedDiscountIds = couponDiscountContext
                     .getUsedUniqueCouponDiscountsIds(context.getAppliedDiscounts());
-            specification.addSpecification(() -> 
-                    !appliedDiscountIds.contains(discount.getId()));
+            specification.addSpecification(new UniqueSpec(appliedDiscountIds, discount.getId()));
         }
 
         return specification.satisfy();

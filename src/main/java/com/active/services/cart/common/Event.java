@@ -13,7 +13,7 @@ public class Event extends BaseDomainObject {
 
     private static ObjectMapper objectMapper;
 
-    private String identifier;
+    private String bizIdentifier;
 
     private String type;
 

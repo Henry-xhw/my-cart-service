@@ -35,7 +35,7 @@ public abstract class CheckoutBaseProcessor  {
 
     protected void publishFailedEvent(Exception e) {
         CheckoutEvent event = new CheckoutEvent();
-        event.setIdentifier(checkoutContext.getCart().getIdentifier().toString());
+        event.setBizIdentifier(checkoutContext.getCart().getIdentifier().toString());
         event.setType(checkoutPhase + "_FAILED");
         event.setPayload(e == null ? null : e.getMessage());
         CartUtil.addAuditableAttributes(event);
