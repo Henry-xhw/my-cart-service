@@ -18,7 +18,7 @@ public class UsageLimitSpec implements DiscountSpecification {
 
     @Override
     public boolean satisfy() {
-        return CollectionUtils.isEmpty(discountUsages) && discountUsages.stream()
+        return CollectionUtils.isNotEmpty(discountUsages) && discountUsages.stream()
                 .anyMatch(discountUsage ->
                         discountId.equals(discountUsage.getDiscountId())
                         && (discountUsage.getLimit() == -1 ||
