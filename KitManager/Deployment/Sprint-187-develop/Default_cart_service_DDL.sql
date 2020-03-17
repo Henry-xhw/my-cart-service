@@ -611,8 +611,8 @@ BEGIN
         [created_by]                  NVARCHAR(255)       NOT NULL,
         [created_dt]                  DATETIME            NOT NULL,
         [modified_by]                 NVARCHAR(255)       NOT NULL,
-        [modified_dt]                 DATETIME            NOT NULL
-        CONSTRAINT [pk_ad_hoc_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
+        [modified_dt]                 DATETIME            NOT NULL,
+        CONSTRAINT [pk_ad_hoc_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
         CONSTRAINT [uq_ad_hoc_discounts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.ad_hoc_discounts'
