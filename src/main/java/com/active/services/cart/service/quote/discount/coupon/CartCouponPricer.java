@@ -4,16 +4,18 @@ import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartDiscountBasePricer;
+import com.active.services.product.Discount;
 import com.active.services.product.nextgen.v1.req.GetDiscountUsageReq;
 import com.active.services.product.nextgen.v1.rsp.GetDiscountUsageRsp;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class CartCouponPricer extends CartDiscountBasePricer {
@@ -25,28 +27,30 @@ public class CartCouponPricer extends CartDiscountBasePricer {
     protected void doQuote(CartQuoteContext context, List<CartItem> noneZeroItems) {
         CouponDiscountLoader loader = getCouponDiscountLoader(context, noneZeroItems);
 
-        List<CartItemDiscounts> cartItemDiscounts = loader.loadDiscounts();
+        Map<CartItem, List<Discount>> cartItemCoupons = loader.loadDiscounts();
 
-        if (CollectionUtils.isEmpty(cartItemDiscounts)) {
+        if (cartItemCoupons.isEmpty()) {
             return;
         }
-
+        
         CouponDiscountContext couponDiscountContext = new CouponDiscountContext();
-        couponDiscountContext.setCartItemDiscounts(cartItemDiscounts);
+        couponDiscountContext.setCartItemDiscountMap(cartItemCoupons);
 
-        GetDiscountUsageReq getDiscountUsageReq = new GetDiscountUsageReq();
-        getDiscountUsageReq.setDiscountIds(new ArrayList<>(couponDiscountContext.getDiscountIds()));
-        GetDiscountUsageRsp rsp = productService.getDiscountUsages(getDiscountUsageReq);
-        couponDiscountContext.setDiscountUsages(rsp.getDiscountUsages());
+        Set<Long> limitedDiscountIds = couponDiscountContext.getLimitedDiscountIds();
+        if (!limitedDiscountIds.isEmpty()) {
+            GetDiscountUsageReq getDiscountUsageReq = new GetDiscountUsageReq();
+            getDiscountUsageReq.setDiscountIds(new ArrayList<>(limitedDiscountIds));
+            GetDiscountUsageRsp rsp = productService.getDiscountUsages(getDiscountUsageReq);
+            couponDiscountContext.setDiscountUsages(rsp.getDiscountUsages());
+        }
 
-        cartItemDiscounts.stream()
-                .forEach(cartItemDisc -> getCartItemCouponPricer(couponDiscountContext, cartItemDisc)
-                        .quote(context, cartItemDisc.getCartItem()));
+        cartItemCoupons.forEach((cartItem, cartItemCoupon) -> getCartItemCouponPricer(couponDiscountContext,
+                cartItemCoupon).quote(context, cartItem));
     }
 
     @Lookup
     public CartItemCouponPricer getCartItemCouponPricer(CouponDiscountContext context,
-                                                        CartItemDiscounts cartItemDiscount) {
+                                                        List<Discount> cartItemDiscounts) {
         return null;
     }
 

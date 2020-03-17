@@ -7,11 +7,13 @@ import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscountBasePricer;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
+import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.condition.DiscountSequentialSpecs;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
+import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,10 +21,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,29 +34,30 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
 
     private final CouponDiscountContext couponDiscountContext;
 
-    private final CartItemDiscounts itemDiscounts;
+    private final List<com.active.services.product.Discount> itemDiscounts;
 
     @Override
     protected void doQuote(CartQuoteContext context, CartItem cartItem) {
-        List<Discount> discounts = CollectionUtils.emptyIfNull(itemDiscounts.getDiscounts()).stream()
-                .filter(discount -> satisfy(discount, context)).collect(Collectors.toList());
-        discounts = isCombinableDiscountMode(context) ? discounts : getHighPriorityDiscounts(discounts);
-
-        if (CollectionUtils.isEmpty(discounts)) {
-            return;
-        }
-        if (cartItem.getNetPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        List<com.active.services.product.Discount> couponDiscounts = itemDiscounts.stream()
+                .filter(discount -> satisfy(discount, context))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(couponDiscounts)) {
             return;
         }
 
-        getDiscountAlgorithm(context).apply(discounts).forEach(disc ->
+        List<Discount> discounts = couponDiscounts.stream().map(discount ->
+                DiscountMapper.MAPPER.toDiscount(discount, context)).collect(Collectors.toList());
+        discounts = isCombinableDiscountMode(cartItem, context) ? discounts :
+                getHighPriorityDiscounts(cartItem, discounts);
+
+        getDiscountAlgorithm(cartItem, context).apply(discounts).forEach(disc ->
                 new DiscountFeeLoader(context, cartItem, disc).load());
     }
 
-    private DiscountAlgorithm getDiscountAlgorithm(CartQuoteContext context) {
-        return isCombinableDiscountMode(context) ?
+    private DiscountAlgorithm getDiscountAlgorithm(CartItem cartItem, CartQuoteContext context) {
+        return isCombinableDiscountMode(cartItem, context) ?
                 new StackableFlatFirstDiscountAlgorithm() :
-                new BestDiscountAlgorithm(itemDiscounts.getCartItem(), context.getCurrency());
+                new BestDiscountAlgorithm(cartItem, context.getCurrency());
     }
 
     /**
@@ -63,29 +66,35 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
      * Otherwise, return given discounts.
      *
      */
-    private List<Discount> getHighPriorityDiscounts(List<Discount> discounts) {
+    private List<Discount> getHighPriorityDiscounts(CartItem cartItem, List<Discount> discounts) {
         List<Discount> cartItemLevelDiscount = new ArrayList<>();
-        if (itemDiscounts.getCartItem().getCouponMode() == CouponMode.HIGH_PRIORITY) {
+        if (cartItem.getCouponMode() == CouponMode.HIGH_PRIORITY) {
             cartItemLevelDiscount =
                     CollectionUtils.emptyIfNull(discounts).stream().filter(discount ->
-                            itemDiscounts.getCartItem().getCouponCodes().contains(discount.getCouponCode()))
+                            cartItem.getCouponCodes().contains(discount.getCouponCode()))
                             .collect(Collectors.toList());
         }
         return CollectionUtils.isNotEmpty(cartItemLevelDiscount) ?  cartItemLevelDiscount : discounts;
     }
 
-    private boolean isCombinableDiscountMode(CartQuoteContext context) {
+    private boolean isCombinableDiscountMode(CartItem cartItem, CartQuoteContext context) {
         return context.getDiscountModel(
-                itemDiscounts.getCartItem().getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST;
+                cartItem.getProductId()) == DiscountModel.COMBINABLE_FLAT_FIRST;
     }
 
-    private boolean satisfy(Discount discount, CartQuoteContext context) {
+    private boolean satisfy(com.active.services.product.Discount discount, CartQuoteContext context) {
         DiscountSequentialSpecs specification = DiscountSequentialSpecs.allOf(
-                new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), Instant.now()),
-                new UsageLimitSpec(couponDiscountContext.getDiscountUsages(), discount.getDiscountId()));
+                new NotExpiredSpec(discount.getStartDate() == null ? null : discount.getStartDate().toDate().toInstant(),
+                        discount.getEndDate() == null ? null : discount.getEndDate().toDate().toInstant(),
+                        Instant.now()));
 
-        if (discount.getAlgorithm() == com.active.services.product.DiscountAlgorithm.MOST_EXPENSIVE) {
-            specification.addSpecification(new UniqueUsedSpec(discount.getDiscountId(),
+        Optional<DiscountUsage> usageOpt = couponDiscountContext.findDiscountUsageByDiscountId(discount.getId());
+        if (usageOpt.isPresent()) {
+            specification.addSpecification(new UsageLimitSpec(usageOpt.get()));
+        }
+
+        if (discount.getDiscountAlgorithm() == com.active.services.product.DiscountAlgorithm.MOST_EXPENSIVE) {
+            specification.addSpecification(new UniqueUsedSpec(discount.getId(),
                     couponDiscountContext.getUsedUniqueCouponDiscountsIds(context.getAppliedDiscounts())));
         }
 

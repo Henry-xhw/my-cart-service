@@ -6,23 +6,13 @@ import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
-import static org.apache.commons.collections4.ListUtils.emptyIfNull;
-
 @NonNull
 @RequiredArgsConstructor
 public class UsageLimitSpec implements DiscountSpecification {
-    private final List<DiscountUsage> discountUsages;
-
-    private final Long discountId;
+    private final DiscountUsage discountUsage;
 
     @Override
     public boolean satisfy() {
-        return emptyIfNull(discountUsages).stream()
-                .anyMatch(discountUsage ->
-                        discountId.equals(discountUsage.getDiscountId())
-                        && (discountUsage.getLimit() == -1 ||
-                            discountUsage.getLimit() > discountUsage.getUsage()));
+        return discountUsage.getLimit() > discountUsage.getUsage();
     }
 }
