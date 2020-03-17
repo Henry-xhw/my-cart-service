@@ -95,8 +95,10 @@ public class CartItemCouponPricer extends CartItemDiscountBasePricer {
         }
 
         if (discount.getDiscountAlgorithm() == com.active.services.product.DiscountAlgorithm.MOST_EXPENSIVE) {
-            specification.addSpecification(new UniqueUsedSpec(discount.getId(),
-                    couponDiscountContext.getUsedUniqueCouponDiscountsIds(context.getAppliedDiscounts())));
+            List<Long> appliedDiscountIds = couponDiscountContext
+                    .getUsedUniqueCouponDiscountsIds(context.getAppliedDiscounts());
+            specification.addSpecification(() -> 
+                    !appliedDiscountIds.contains(discount.getId()));
         }
 
         return specification.satisfy();
