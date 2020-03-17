@@ -5,9 +5,10 @@ import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @NonNull
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class UsageLimitSpec implements DiscountSpecification {
 
     @Override
     public boolean satisfy() {
-        return CollectionUtils.isNotEmpty(discountUsages) && discountUsages.stream()
+        return emptyIfNull(discountUsages).stream()
                 .anyMatch(discountUsage ->
                         discountId.equals(discountUsage.getDiscountId())
                         && (discountUsage.getLimit() == -1 ||
