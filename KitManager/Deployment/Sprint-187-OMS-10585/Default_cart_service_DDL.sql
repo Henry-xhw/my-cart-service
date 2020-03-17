@@ -22,17 +22,10 @@ BEGIN
         [created_dt]                  DATETIME            NOT NULL,
         [modified_by]                 NVARCHAR(255)       NOT NULL,
         [modified_dt]                 DATETIME            NOT NULL
-        CONSTRAINT [pk_ad_hoc_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_ad_hoc_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
+        CONSTRAINT [uq_ad_hoc_discounts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.ad_hoc_discounts'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='ad_hoc_discounts' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.ad_hoc_discounts ADD CONSTRAINT [pk_ad_hoc_discounts]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_ad_hoc_discounts on table dbo.ad_hoc_discounts'
 END
 GO
 
