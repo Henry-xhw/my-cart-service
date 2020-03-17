@@ -9,7 +9,7 @@ import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.coupon.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
-import com.active.services.cart.service.quote.discount.coupon3.CouponDiscountHandler;
+import com.active.services.cart.service.quote.discount.coupon.CouponDiscountHandler;
 import com.active.services.domain.DateTime;
 import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;

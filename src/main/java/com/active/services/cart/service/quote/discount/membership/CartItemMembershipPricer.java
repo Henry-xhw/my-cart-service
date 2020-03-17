@@ -41,9 +41,9 @@ public class CartItemMembershipPricer extends CartItemDiscountBasePricer {
         Instant now = Instant.now();
         List<Discount> discounts = histories.stream().map(history -> buildDiscount(context, history)).filter(discount -> {
             DiscountSequentialSpecs spec = DiscountSequentialSpecs.allOf(
-                    new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), now));
-            new MemberShipSpec(membershipDiscountContext.getNewItemMembershipIds(), cartItem,
-                    discount.getMembershipId());
+                new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), now),
+                new MemberShipSpec(membershipDiscountContext.getNewItemMembershipIds(), cartItem,
+                    discount.getMembershipId()));
 
             return spec.satisfy();
         }).collect(toList());

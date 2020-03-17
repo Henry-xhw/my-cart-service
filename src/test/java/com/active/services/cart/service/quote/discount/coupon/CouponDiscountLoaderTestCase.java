@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.coupon3;
+package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.platform.concurrent.ExecutorServiceTaskRunner;
 import com.active.platform.concurrent.TaskRunner;
@@ -9,7 +9,6 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.coupon.CartItemDiscounts;
 import com.active.services.product.AmountType;
 import com.active.services.product.Discount;
 import com.active.services.product.api.omsOnly.soap.ProductOMSEndpoint;
