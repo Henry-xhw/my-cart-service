@@ -52,10 +52,9 @@ public class CartItemAdHocDiscountPricer implements CartItemPricer {
                         if (BdUtil.comparesToZero(discAmount)) {
                             return;
                         }
-
-                        context.addAppliedDiscount(disc);
+                        Discount discount = context.addAppliedDiscount(disc);
                         cartItem.getPriceCartItemFee().get()
-                                .addSubItemFee(Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(disc,
+                                .addSubItemFee(Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(discount,
                                         adHocDiscount.getDiscountAmount(), 1)));
                     });
         }
