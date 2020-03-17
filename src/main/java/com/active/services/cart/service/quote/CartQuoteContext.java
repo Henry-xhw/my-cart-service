@@ -5,6 +5,7 @@ import com.active.services.ProductType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.order.discount.OrderLineDiscountOrigin;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class CartQuoteContext {
+    private static ThreadLocal<CartQuoteContext> threadLocal = new ThreadLocal<>();
+
     private final Cart cart;
 
     private Map<Long, Product> productsMap = new HashMap<>();
@@ -55,12 +58,18 @@ public class CartQuoteContext {
         return cart.getCouponCodes();
     }
 
-    public CartQuoteContext addAppliedDiscount(Discount discount) {
-        if (appliedDiscountsMap == null) {
-            appliedDiscountsMap = new HashMap<>();
+    public Discount addAppliedDiscount(Discount discount) {
+        Discount appliedDiscount = getAppliedDiscount(discount.getDiscountId(), discount.getDiscountType());
+        if (appliedDiscount == null) {
+            if (appliedDiscountsMap == null) {
+                appliedDiscountsMap = new HashMap<>();
+            }
+            appliedDiscountsMap.put(getDiscountKey(discount.getDiscountId(), discount.getDiscountType()), discount);
+            discount.setOrigin(OrderLineDiscountOrigin.AUTOMATIC);
+            return discount;
+        } else {
+            return appliedDiscount;
         }
-        appliedDiscountsMap.put(getDiscountKey(discount.getDiscountId(), discount.getDiscountType()), discount);
-        return this;
     }
 
     public List<Long> getUsedUniqueCouponDiscountsIds() {
@@ -70,16 +79,25 @@ public class CartQuoteContext {
                 .map(Discount::getDiscountId).collect(Collectors.toList());
     }
 
-    public Currency getCurrency() {
-        return Currency.getInstance(cart.getCurrencyCode());
-    }
-
     public boolean hasCartItemWithType(ProductType type) {
         return getProductsMap().values().stream().anyMatch(product -> product.getProductType() == type);
     }
 
+    public Currency getCurrency() {
+        return Currency.getInstance(cart.getCurrencyCode());
+    }
+
+    /**
+     * Sets Context in threadlocal
+     *
+     * @param context The Context
+     */
+    public static void set(CartQuoteContext context) {
+        threadLocal.set(context);
+    }
+
     public Discount getAppliedDiscount(Long discountId, DiscountType type) {
-       return appliedDiscountsMap.get(getDiscountKey(discountId, type));
+        return appliedDiscountsMap.get(getDiscountKey(discountId, type));
     }
 
     private String getDiscountKey(@NonNull Long discountId, @NonNull DiscountType type) {
@@ -91,5 +109,13 @@ public class CartQuoteContext {
             return new ArrayList<>();
         }
         return new ArrayList<>(appliedDiscountsMap.values());
+    }
+
+    public static void destroy() {
+        threadLocal.remove();
+    }
+
+    public static CartQuoteContext get() {
+        return threadLocal.get();
     }
 }

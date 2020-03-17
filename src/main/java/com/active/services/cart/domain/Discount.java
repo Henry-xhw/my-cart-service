@@ -5,20 +5,15 @@ import com.active.services.product.AmountType;
 import com.active.services.product.DiscountAlgorithm;
 import com.active.services.product.DiscountType;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Setter
-@Builder
 public class Discount extends BaseDomainObject {
 
     private Long cartId;
@@ -34,6 +29,7 @@ public class Discount extends BaseDomainObject {
     private Boolean applyToRecurringBilling;
     private OrderLineDiscountOrigin origin;
     private Long discountGroupId;
+    private UUID keyerUUID;
     private Instant startDate;
     private Instant endDate;
 }

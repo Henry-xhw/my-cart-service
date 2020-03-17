@@ -6,14 +6,17 @@ import com.active.services.cart.util.TreeBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
@@ -55,6 +58,9 @@ public class Cart extends BaseDomainObject {
         return flattenCartItems(items);
     }
 
+    public static BigDecimal getNetAmounts(List<CartItem> cartItems) {
+        return cartItems.stream().map(CartItem::getNetAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
 
     public Cart unflattenItems() {
         TreeBuilder<CartItem> baseTreeTreeBuilder = new TreeBuilder<>(items);
@@ -75,5 +81,15 @@ public class Cart extends BaseDomainObject {
             }
         }
         return flatten;
+    }
+
+    /**
+     * create relative between cart item identifier and cart item id
+     *
+     * @return
+     */
+    public Map getCartItemIdentifierMap() {
+        return getFlattenCartItems().stream()
+                .collect(Collectors.toMap(CartItem::getIdentifier, CartItem::getId));
     }
 }

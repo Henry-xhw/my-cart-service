@@ -7,15 +7,16 @@ BEGIN
         [cart_id]                           BIGINT              NOT NULL,
         [name]                              NVARCHAR(255)       NULL,
         [description]                       NVARCHAR(255)       NULL,
-        [amount]                            DECIMAL(19, 2)      NULL,
+        [amount]                            DECIMAL(19, 2)      NOT NULL,
         [amount_type]                       NVARCHAR(25)        NULL,
         [discount_id]                       BIGINT              NULL,
         [discount_type]                     NVARCHAR(25)        NOT NULL,
         [coupon_code]                       NVARCHAR(255)       NULL,
         [algorithm]                         NVARCHAR(25)        NULL,
-        [apply_to_recurring_billing]        BIT                 NULL,
+        [apply_to_recurring_billing]        BIT                 NOT NULL,
         [discount_group_id]                 BIGINT              NULL,
         [origin]                            NVARCHAR(25)        NULL,
+        [keyer_uuid]                        UNIQUEIDENTIFIER    NULL,
         [created_by]                        NVARCHAR(255)       NOT NULL,
         [created_dt]                        DATETIME            NOT NULL,
         [modified_by]                       NVARCHAR(255)       NOT NULL,
@@ -56,6 +57,62 @@ WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discou
         PRINT 'Added column discount_group_id to dbo.discounts'
     END
 GO
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'description'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [description] NVARCHAR(255)  NULL;
+	PRINT 'modify column description null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'name'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [name] NVARCHAR(255)  NULL;
+	PRINT 'modify column name null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount_type'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [amount_type] NVARCHAR(25) NULL;
+	PRINT 'modify column amount_type null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NOT NULL;
+	PRINT 'modify column amount not null, dbo.discounts'
+END
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'keyer_uuid'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ADD keyer_uuid UNIQUEIDENTIFIER NULL
+	PRINT 'add column keyer_uuid, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'apply_to_recurring_billing'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [apply_to_recurring_billing] BIT NOT NULL;
+	PRINT 'modify column apply_to_recurring_billing not null, dbo.discounts'
+END
+
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.discounts ALTER COLUMN [discount_id] BIGINT NULL;
+	PRINT 'modify column discount_id null, dbo.discounts'
+END
 
 IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','cart_id'))
 BEGIN
@@ -140,43 +197,3 @@ BEGIN
  @level2name = 'origin'
 END
 GO
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'description'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [description] NVARCHAR(255)  NULL;
-	PRINT 'modify column description null, dbo.discounts'
-END
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'name'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [name] NVARCHAR(255)  NULL;
-	PRINT 'modify column name null, dbo.discounts'
-END
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount_type'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [amount_type] NVARCHAR(25) NULL;
-	PRINT 'modify column amount_type null, dbo.discounts'
-END
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NULL;
-	PRINT 'modify column amount null, dbo.discounts'
-END
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [discount_id] BIGINT NULL;
-	PRINT 'modify column discount_id null, dbo.discounts'
-END

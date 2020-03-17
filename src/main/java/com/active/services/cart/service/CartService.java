@@ -2,15 +2,16 @@ package com.active.services.cart.service;
 
 import com.active.services.ContextWrapper;
 import com.active.services.cart.common.CartException;
+import com.active.services.cart.domain.AdHocDiscount;
 import com.active.services.cart.domain.BaseTree;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.domain.CartItemFeeRelationship;
 import com.active.services.cart.domain.CartItemFeesInCart;
-import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CheckoutResult;
+import com.active.services.cart.repository.AdHocDiscountRepository;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.repository.DiscountRepository;
@@ -23,6 +24,7 @@ import com.active.services.cart.util.DataAccess;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Lookup;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -51,6 +54,8 @@ public class CartService {
     private final DiscountRepository discountRepository;
 
     private final DataAccess dataAccess;
+
+    private final AdHocDiscountRepository adHocDiscountRepository;
 
     @Transactional
     public void create(Cart cart) {
@@ -87,8 +92,16 @@ public class CartService {
         Cart cart = getCartByUuid(cartIdentifier);
         items.forEach(it -> cart.findCartItem(it.getIdentifier())
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
-                "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
-        items.forEach(item -> item.setCouponCodes(distinctCouponCodes(item.getCouponCodes())));
+                        "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
+        Map<UUID, Long> identifierMap = cart.getCartItemIdentifierMap();
+        List<Long> cartItemIds = items.stream()
+                .map(cartItem -> identifierMap.get(cartItem.getIdentifier()))
+                .collect(Collectors.toList());
+        deleteAdHocDiscountByCartItemId(cartItemIds);
+        items.forEach(item -> {
+            item.setCouponCodes(distinctCouponCodes(item.getCouponCodes()));
+            createAdHocDiscounts(identifierMap.get(item.getIdentifier()), item.getAdHocDiscounts());
+        });
         cartRepository.updateCartItems(items);
         incrementVersion(cartIdentifier);
         return items;
@@ -100,7 +113,7 @@ public class CartService {
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                         "cart item id: {0} is not belong cart id: {1}", cartItemUuid, cart.getIdentifier()));
         List<UUID> idsToDelete = Cart.flattenCartItems(Arrays.asList(cartItem)).stream()
-                        .map(CartItem::getIdentifier).collect(Collectors.toList());
+                .map(CartItem::getIdentifier).collect(Collectors.toList());
 
         cartRepository.batchDeleteCartItems(idsToDelete);
         incrementVersion(cart.getIdentifier());
@@ -128,6 +141,7 @@ public class CartService {
                 it.setParentId(parentId);
                 it.setCouponCodes(distinctCouponCodes(it.getCouponCodes()));
                 parentId = createCartItem(cartId, it);
+                createAdHocDiscounts(parentId, it.getAdHocDiscounts());
             }
             List<CartItem> subItems = it.getSubItems();
             if (subItems.size() > 0) {
@@ -146,12 +160,17 @@ public class CartService {
         Cart cart = getCartByUuid(cartId);
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
         cartQuoteContext.setAaMember(isAaMember);
-        cartPriceEngine.quote(cartQuoteContext);
-        // Manual control the tx
-        dataAccess.doInTx(() -> {
-            saveQuoteResult(cartQuoteContext);
-            incrementPriceVersion(cartId);
-        });
+        try {
+            CartQuoteContext.set(cartQuoteContext);
+            cartPriceEngine.quote(cartQuoteContext);
+            // Manual control the tx
+            dataAccess.doInTx(() -> {
+                saveQuoteResult(cartQuoteContext);
+                incrementPriceVersion(cartId);
+            });
+        } finally {
+            CartQuoteContext.destroy();
+        }
 
         return cart;
     }
@@ -187,18 +206,13 @@ public class CartService {
         Cart cart = cartQuoteContext.getCart();
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         discountRepository.deletePreviousDiscountByCartId(cart.getId());
-        batchInsertDiscount(cartQuoteContext.getAppliedDiscounts());
+        cartQuoteContext.getAppliedDiscounts().forEach(discountRepository::createDiscount);
         cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });
         });
         cartRepository.updateCartItems(cart.getItems());
-    }
-
-    private void batchInsertDiscount(List<Discount> discounts) {
-        emptyIfNull(discounts).stream().filter(Objects::nonNull)
-                .forEach(discount -> discountRepository.createDiscount(discount));
     }
 
     private void createCartItemFeeAndRelationship(CartItemFee cartItemFee, Long itemId) {
@@ -209,11 +223,12 @@ public class CartService {
     }
 
     private void createSubFeeAndRelationship(CartItemFee itemFee, Long itemId) {
-        emptyIfNull(itemFee.getSubItems()).stream().filter(Objects::nonNull).forEach(
-            itemFee1 -> {
-                itemFee1.setParentId(itemFee.getId());
-                createCartItemFeeAndRelationship(itemFee1, itemId);
-            }
+        emptyIfNull(itemFee.getSubItems()).stream()
+                .filter(Objects::nonNull)
+                .forEach(itemFee1 -> {
+                    itemFee1.setParentId(itemFee.getId());
+                    createCartItemFeeAndRelationship(itemFee1, itemId);
+                }
         );
     }
 
@@ -228,7 +243,7 @@ public class CartService {
         cart.getFlattenCartItems().forEach(cartItem -> {
             List<CartItemFee> collect =
                     cartItemFees.stream().filter(itemFee -> itemFee.getCartItemId() == cartItem.getId() &&
-                             Objects.nonNull(itemFee.getId())).collect(Collectors.toList());
+                            Objects.nonNull(itemFee.getId())).collect(Collectors.toList());
             cartItem.setUnflattenItemFees(collect);
         });
     }
@@ -236,5 +251,21 @@ public class CartService {
     private Set<String> distinctCouponCodes(Set<String> couponCodes) {
         return SetUtils.emptyIfNull(couponCodes).stream().filter(StringUtils::isNotBlank).map(String::toUpperCase)
                 .collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public void createAdHocDiscounts(Long cartItemId, List<AdHocDiscount> adHocDiscounts) {
+        if (CollectionUtils.isNotEmpty(adHocDiscounts)) {
+            adHocDiscounts.stream().forEach(adHocDiscount -> {
+                adHocDiscount.setIdentifier(UUID.randomUUID());
+                adHocDiscount.setCartItemId(cartItemId);
+            });
+            adHocDiscountRepository.createAdHocDiscounts(adHocDiscounts);
+        }
+    }
+
+    @Transactional
+    public void deleteAdHocDiscountByCartItemId(List<Long> cartItemIds) {
+        adHocDiscountRepository.deleteAdHocDiscountByCartItemId(cartItemIds);
     }
 }

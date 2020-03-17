@@ -2,18 +2,20 @@ package com.active.services.cart.service.quote.discount.aa;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.cart.service.quote.CartItemFeeBuilder;
 import com.active.services.cart.service.quote.CartItemPricer;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.oms.BdUtil;
 import com.active.services.product.DiscountType;
 import com.active.services.product.discount.aa.AaDiscount;
 
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil.calcFlatAmount;
-import static com.active.services.cart.service.quote.discount.DiscountFeeLoader.applyDiscount;
 
 @RequiredArgsConstructor
 public class CartItemAaDiscountPricer implements CartItemPricer {
@@ -33,18 +35,23 @@ public class CartItemAaDiscountPricer implements CartItemPricer {
                 aaDiscount.getAmountType(), context.getCurrency())
                 .min(aaDiscountContext.getRemainingDiscAmt());
 
+        if (BdUtil.comparesToZero(discountAmt)) {
+            return;
+        }
+
         aaDiscountContext.subtractDiscountAmt(discountAmt);
 
-        Discount discount = Discount.builder()
-                .name(AA_ORDER_LINE_DISC_NAME)
-                .description(AA_ORDER_LINE_DISC_DESC)
-                .discountId(aaDiscount.getId())
-                .discountType(DiscountType.ACTIVE_ADVANTAGE)
-                .cartId(context.getCart().getId())
-                .amount(discountAmt)
-                .amountType(aaDiscount.getAmountType())
-                .build();
-        discount.setIdentifier(UUID.randomUUID());
-        applyDiscount(context, cartItem.getPriceCartItemFee().get(), discount, discountAmt, 1);
+        Discount disc = new Discount();
+        disc.setIdentifier(UUID.randomUUID());
+        disc.setName(AA_ORDER_LINE_DISC_NAME);
+        disc.setDescription(AA_ORDER_LINE_DISC_DESC);
+        disc.setAmount(discountAmt);
+        disc.setAmountType(aaDiscount.getAmountType());
+        disc.setDiscountId(aaDiscount.getId());
+        disc.setDiscountType(DiscountType.ACTIVE_ADVANTAGE);
+        disc.setCartId(context.getCart().getId());
+        Discount discount = context.addAppliedDiscount(disc);
+        cartItem.getPriceCartItemFee().get().addSubItemFee(
+                Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(discount, discountAmt, 1)));
     }
 }
