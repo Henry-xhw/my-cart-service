@@ -141,25 +141,25 @@ public class PlaceCartMapperTestCase {
     @Test
     public void cartItemFeesInCartToOrderLineFeeDTOSuccess() {
         CartItemFeesInCart cartItemFeesInCart = CartDataFactory.cartItemFeesInCart(BigDecimal.TEN);
-        cartItemFeesInCart.setRelatedIdentifier(UUID.randomUUID());
+        cartItemFeesInCart.setDiscountIdentifier(UUID.randomUUID());
         OrderLineFeeDTO orderLineFeeDTO = PlaceCartMapper.MAPPER.toDto(cartItemFeesInCart);
         assertEquals(cartItemFeesInCart.getSubItems(), orderLineFeeDTO.getOrderLineFees());
         assertEquals(cartItemFeesInCart.getUnitPrice(), orderLineFeeDTO.getAmount());
         assertEquals(cartItemFeesInCart.getTransactionType().toString(), orderLineFeeDTO.getFeeTransactionType()
                 .toString());
-        assertEquals(cartItemFeesInCart.getRelatedIdentifier().toString(), orderLineFeeDTO.getEntityReferenceId());
+        assertEquals(cartItemFeesInCart.getDiscountIdentifier().toString(), orderLineFeeDTO.getEntityReferenceId());
         assertEquals(cartItemFeesInCart.getType().toString(), orderLineFeeDTO.getFeeType().toString());
     }
 
     @Test
     public void cartItemFeeToOrderLineFeeDTOSuccess() {
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
-        cartItemFee.setRelatedIdentifier(UUID.randomUUID());
+        cartItemFee.setDiscountIdentifier(UUID.randomUUID());
         OrderLineFeeDTO orderLineFeeDTO = PlaceCartMapper.MAPPER.toDto(cartItemFee);
         assertEquals(cartItemFee.getSubItems(), orderLineFeeDTO.getOrderLineFees());
         assertEquals(cartItemFee.getUnitPrice(), orderLineFeeDTO.getAmount());
         assertEquals(cartItemFee.getTransactionType().toString(), orderLineFeeDTO.getFeeTransactionType().toString());
-        assertEquals(cartItemFee.getRelatedIdentifier().toString(), orderLineFeeDTO.getEntityReferenceId());
+        assertEquals(cartItemFee.getDiscountIdentifier().toString(), orderLineFeeDTO.getEntityReferenceId());
         assertEquals(cartItemFee.getType().toString(), orderLineFeeDTO.getFeeType().toString());
     }
 
