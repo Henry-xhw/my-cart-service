@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -28,11 +29,8 @@ public class CartPriceEngine {
 
     public void quote(CartQuoteContext context) {
         prepare(context);
-        cartUnitPricePricer.quote(context);
-        cartDiscountPricer.quote(context);
-        getCartProductProcessingFeePricer(FeeOwner.CONSUMER).quote(context);
-        //ensure aa discount is the last step.
-        cartAaDiscountPricer.quote(context);
+        Arrays.asList(cartUnitPricePricer, cartDiscountPricer, getCartProductProcessingFeePricer(FeeOwner.CONSUMER),
+                cartAaDiscountPricer).forEach(cartPricer -> cartPricer.quote(context));
     }
 
     private void prepare(CartQuoteContext context) {
