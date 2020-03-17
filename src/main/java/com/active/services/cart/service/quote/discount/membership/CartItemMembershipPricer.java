@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.membership2;
+package com.active.services.cart.service.quote.discount.membership;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
@@ -7,7 +7,6 @@ import com.active.services.cart.service.quote.discount.CartItemDiscountBasePrice
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.condition.DiscountSequentialSpecs;
-import com.active.services.cart.service.quote.discount.condition.MemberShipSpec;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
 import com.active.services.domain.DateTime;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;

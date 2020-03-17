@@ -1,10 +1,9 @@
-package com.active.services.cart.service.quote.discount.coupon2;
+package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartDiscountBasePricer;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.product.nextgen.v1.req.GetDiscountUsageReq;
 import com.active.services.product.nextgen.v1.rsp.GetDiscountUsageRsp;
 

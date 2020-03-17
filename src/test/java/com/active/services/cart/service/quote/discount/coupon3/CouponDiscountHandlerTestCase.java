@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.coupon;
+package com.active.services.cart.service.quote.discount.coupon3;
 
 import com.active.services.DiscountModel;
 import com.active.services.cart.domain.Cart;
@@ -6,7 +6,7 @@ import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
+import com.active.services.cart.service.quote.discount.coupon.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
 import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;

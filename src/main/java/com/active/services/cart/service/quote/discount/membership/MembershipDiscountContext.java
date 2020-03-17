@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.membership2;
+package com.active.services.cart.service.quote.discount.membership;
 
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.ProductMembership;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Data
-public class MembershipDiscountContext {
+class MembershipDiscountContext {
     private List<FindLatestMembershipDiscountsByProductIdsRsp> membershipDiscounts;
 
     private List<ProductMembership> productMemberships;

@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount;
+package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-public class CartItemDiscounts {
+class CartItemDiscounts {
 
     private CartItem cartItem;
 

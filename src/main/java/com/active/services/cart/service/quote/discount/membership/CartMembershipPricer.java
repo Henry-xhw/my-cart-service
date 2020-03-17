@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.membership2;
+package com.active.services.cart.service.quote.discount.membership;
 
 import com.active.services.ActiveEntityNotFoundException;
 import com.active.services.ContextWrapper;

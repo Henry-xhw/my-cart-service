@@ -1,6 +1,7 @@
 package com.active.services.cart.service.checkout;
 
 import com.active.services.cart.common.CartException;
+import com.active.services.cart.util.CartUtil;
 import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 
@@ -37,6 +38,7 @@ public abstract class CheckoutBaseProcessor  {
         event.setIdentifier(checkoutContext.getCart().getIdentifier().toString());
         event.setType(checkoutPhase + "_FAILED");
         event.setPayload(e == null ? null : e.getMessage());
+        CartUtil.addAuditableAttributes(event);
         eventBus.post(event);
     }
 

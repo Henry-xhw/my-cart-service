@@ -1,7 +1,6 @@
-package com.active.services.cart.service.quote.discount.coupon2;
+package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.services.cart.domain.Discount;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.product.DiscountType;
 import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
@@ -14,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-public class CouponDiscountContext {
+class CouponDiscountContext {
     private List<DiscountUsage> discountUsages;
 
     private List<CartItemDiscounts> cartItemDiscounts;

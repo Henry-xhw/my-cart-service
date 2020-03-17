@@ -1,5 +1,7 @@
 package com.active.services.cart.service.quote.discount.condition;
 
+import com.active.services.cart.service.quote.discount.coupon.UniqueUsedSpec;
+
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 

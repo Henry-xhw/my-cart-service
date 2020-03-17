@@ -1,4 +1,6 @@
-package com.active.services.cart.service.quote.discount.condition;
+package com.active.services.cart.service.quote.discount.coupon;
+
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 
 import lombok.RequiredArgsConstructor;
 

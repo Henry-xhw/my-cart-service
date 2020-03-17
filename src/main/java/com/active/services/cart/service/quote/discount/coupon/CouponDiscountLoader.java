@@ -8,21 +8,22 @@ import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.DiscountLoader;
 import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.Discount;
 import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 import com.active.services.product.nextgen.v1.req.GetDiscountUsageReq;
 import com.active.services.product.nextgen.v1.rsp.GetDiscountUsageRsp;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -41,12 +42,22 @@ import static java.util.stream.Collectors.groupingBy;
  * Batch load product service available product/coupon mapping to improve performance.
  *
  */
-@Builder
-public class CouponDiscountLoader implements DiscountLoader {
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@RequiredArgsConstructor
+public class CouponDiscountLoader {
 
-    private CartQuoteContext context;
+    private final CartQuoteContext context;
+
+    private final List<CartItem> cartItems;
+
+    @Autowired
     private SOAPClient soapClient;
+
+    @Autowired
     private TaskRunner taskRunner;
+
+    @Autowired
     private ProductService productService;
 
     /**
@@ -54,12 +65,8 @@ public class CouponDiscountLoader implements DiscountLoader {
      *
      * @return CartItemDiscounts
      */
-    @Override
-    public List<CartItemDiscounts> load() {
+    public List<CartItemDiscounts> loadDiscounts() {
         // Filter qualified cart items
-        List<CartItem> cartItems = context.getCart().getFlattenCartItems().stream()
-                .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
-                .collect(Collectors.toList());
         // Group cart item by productId + couponCodes.
         Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey =
                 cartItems.stream().filter(cartItem -> cartItemCouponKey(context, cartItem).isPresent())
@@ -166,6 +173,7 @@ public class CouponDiscountLoader implements DiscountLoader {
 
         return Optional.of(key);
     }
+
 
     @Data
     class FindLatestDiscountsByProductIdAndCouponCodesKey {

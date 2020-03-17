@@ -1,4 +1,4 @@
-package com.active.services.cart.service.quote.discount.coupon2;
+package com.active.services.cart.service.quote.discount.coupon;
 
 import com.active.services.DiscountModel;
 import com.active.services.cart.domain.CartItem;
@@ -6,15 +6,12 @@ import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.CouponMode;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.quote.discount.CartItemDiscountBasePricer;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
 import com.active.services.cart.service.quote.discount.DiscountFeeLoader;
 import com.active.services.cart.service.quote.discount.algorithm.BestDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.DiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.algorithm.StackableFlatFirstDiscountAlgorithm;
 import com.active.services.cart.service.quote.discount.condition.DiscountSequentialSpecs;
 import com.active.services.cart.service.quote.discount.condition.NotExpiredSpec;
-import com.active.services.cart.service.quote.discount.condition.UniqueUsedSpec;
-import com.active.services.cart.service.quote.discount.condition.UsageLimitSpec;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

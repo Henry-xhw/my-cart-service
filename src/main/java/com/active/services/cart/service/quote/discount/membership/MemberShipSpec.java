@@ -1,6 +1,7 @@
-package com.active.services.cart.service.quote.discount.condition;
+package com.active.services.cart.service.quote.discount.membership;
 
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.service.quote.discount.condition.DiscountSpecification;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
