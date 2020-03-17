@@ -52,7 +52,14 @@ IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
 
 GO
 
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+           WHERE TABLE_NAME = 'cart_discounts' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
+    BEGIN
+        DROP TABLE cart_discounts
+        PRINT 'table cart_discounts is dropped.'
+    END
 
+GO
 
 IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES
            WHERE TABLE_NAME = 'carts' and TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'dbo')
