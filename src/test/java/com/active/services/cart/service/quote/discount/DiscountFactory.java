@@ -5,6 +5,7 @@ import com.active.services.domain.DateTime;
 import com.active.services.product.AmountType;
 import com.active.services.product.Discount;
 import com.active.services.product.DiscountAlgorithm;
+import com.active.services.product.nextgen.v1.dto.DiscountUsage;
 
 import org.apache.commons.lang.math.RandomUtils;
 
@@ -32,4 +33,13 @@ public class DiscountFactory {
                                                                                             CartQuoteContext context) {
         return DiscountMapper.MAPPER.toDiscount(getDiscount(type, amount, code, algorithm, start, end), context);
     }
+
+    public static DiscountUsage getDiscountUsage(Long discountId, int usage, int limit) {
+        DiscountUsage discountUsage = new DiscountUsage();
+        discountUsage.setDiscountId(discountId);
+        discountUsage.setUsage(usage);
+        discountUsage.setLimit(limit);
+        return discountUsage;
+    }
+
 }
