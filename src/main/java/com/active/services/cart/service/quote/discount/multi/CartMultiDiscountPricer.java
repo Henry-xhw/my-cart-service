@@ -1,7 +1,8 @@
 package com.active.services.cart.service.quote.discount.multi;
 
-import com.active.services.cart.service.quote.CartPricer;
+import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.quote.discount.CartDiscountBasePricer;
 import com.active.services.cart.service.quote.discount.multi.builder.MultiDiscountPricerBuilder;
 import com.active.services.cart.service.quote.discount.multi.loader.MultiDiscountCartItem;
 import com.active.services.cart.service.quote.discount.multi.loader.MultiDiscountLoader;
@@ -14,13 +15,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class CartMultiDiscountPricer implements CartPricer {
+public class CartMultiDiscountPricer extends CartDiscountBasePricer {
 
     @Autowired
     private MultiDiscountLoader multiDiscountLoader;
 
     @Override
-    public void quote(CartQuoteContext context) {
+    protected void doQuote(CartQuoteContext context, List<CartItem> noneZeroItems) {
         // Step1: load multi discounts
         List<MultiDiscountCartItem> mdCartItems = multiDiscountLoader.load(context.getCart());
 

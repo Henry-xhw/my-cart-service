@@ -19,6 +19,7 @@ import java.util.Map;
 public class SOAPClient {
     @Value("${url.productServiceSOAPV1}")
     private String productServiceSOAPV1;
+
     @Value("${url.productServiceSOAPOMSOnly}")
     private String productServiceSOAPOMSOnly;
 

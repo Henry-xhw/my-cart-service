@@ -1,7 +1,9 @@
 package com.active.services.cart.service.quote.discount;
 
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.domain.DateTime;
+import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -23,8 +25,16 @@ public interface DiscountMapper {
     @Mapping(target = "discountType", expression = "java(com.active.services.product.DiscountType.COUPON)")
     @Mapping(target = "algorithm", source = "discountAlgorithm")
     @Mapping(target = "cartId", expression = "java(context.getCart().getId())")
-    DiscountApplication toDiscountApplication(com.active.services.product.Discount disc,
-                                              @Context CartQuoteContext context);
+    Discount toDiscount(com.active.services.product.Discount disc,
+                                   @Context CartQuoteContext context);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "identifier", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "discountId", source = "id")
+    @Mapping(target = "discountType", expression = "java(com.active.services.product.DiscountType.MEMBERSHIP)")
+    @Mapping(target = "cartId", expression = "java(context.getCart().getId())")
+    Discount toDiscount(MembershipDiscountsHistory disc,
+                        @Context CartQuoteContext context);
 
     default Instant toInstant(DateTime dateTime) {
         return Optional.ofNullable(dateTime).map(dt -> dt.toDate().toInstant()).orElse(null);

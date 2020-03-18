@@ -4,29 +4,30 @@ import com.active.platform.concurrent.Task;
 import com.active.platform.concurrent.TaskRunner;
 import com.active.services.Context;
 import com.active.services.ContextWrapper;
+import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.CartItemDiscounts;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
-import com.active.services.cart.service.quote.discount.DiscountLoader;
-import com.active.services.cart.service.quote.discount.DiscountMapper;
 import com.active.services.product.Discount;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -35,73 +36,69 @@ import static java.util.stream.Collectors.groupingBy;
  * Batch load product service available product/coupon mapping to improve performance.
  *
  */
-@Builder
-public class CouponDiscountLoader implements DiscountLoader {
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@RequiredArgsConstructor
+public class CouponDiscountLoader {
 
-    private CartQuoteContext context;
+    private final CartQuoteContext context;
+
+    private final List<CartItem> cartItems;
+
+    @Autowired
     private SOAPClient soapClient;
+
+    @Autowired
     private TaskRunner taskRunner;
+
+    @Autowired
+    private ProductService productService;
 
     /**
      * Get product service available discounts builder for future filter.
      *
      * @return CartItemDiscounts
      */
-    @Override
-    public List<CartItemDiscounts> load() {
+    public Map<CartItem, List<Discount>> loadDiscounts() {
         // Filter qualified cart items
-        List<CartItem> cartItems = context.getCart().getFlattenCartItems().stream()
-                .filter(cartItemDisc -> cartItemDisc.getNetPrice().compareTo(BigDecimal.ZERO) >= 0)
-                .collect(Collectors.toList());
         // Group cart item by productId + couponCodes.
         Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey =
                 cartItems.stream().filter(cartItem -> cartItemCouponKey(context, cartItem).isPresent())
                         .collect(groupingBy(cartItem -> cartItemCouponKey(context, cartItem).get()));
 
         if (MapUtils.isEmpty(couponTargetsByKey)) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
+        return loadCartItemDiscounts(couponTargetsByKey);
+    }
+
+
+    @NotNull
+    private Map<CartItem, List<Discount>> loadCartItemDiscounts(
+            Map<FindLatestDiscountsByProductIdAndCouponCodesKey, List<CartItem>> couponTargetsByKey) {
         Context soapContext = ContextWrapper.get();
-        List<Task<List<CartItemDiscounts>>> tasks = new ArrayList<>();
+        Map<CartItem, List<Discount>> results = new ConcurrentHashMap<>();
+
+        List<Task<Void>> tasks = new ArrayList<>();
         couponTargetsByKey.forEach((key, items) -> {
             // Build task for each product + couponCode combination.
-            Task<List<CartItemDiscounts>> task = () -> {
+            Task<Void> task = () -> {
                 List<Discount> discounts = soapClient.getProductOMSEndpoint()
                         .findLatestDiscountsByProductIdAndCouponCodes(soapContext,
                                 key.getProductId(), new ArrayList<>(key.getCouponCodes()));
-
-                if (CollectionUtils.isEmpty(discounts)) {
-                    return new ArrayList<>();
+                if (CollectionUtils.isNotEmpty(discounts)) {
+                    items.stream().forEach(cartItem -> results.put(cartItem, discounts));
                 }
-                List<DiscountApplication> discountsWithCondition =
-                        discounts.stream()
-                                .map(disc -> DiscountMapper.MAPPER.toDiscountApplication(disc, context))
-                                .collect(Collectors.toList());
 
-                return items.stream().map(item ->
-                    CartItemDiscounts.builder().cartItem(item).discounts(discountsWithCondition).build())
-                    .collect(Collectors.toList());
+                return null;
             };
 
             tasks.add(task);
         });
+        taskRunner.run(tasks).getResults();
 
-        List<CartItemDiscounts> results = new ArrayList<>();
-        CollectionUtils.emptyIfNull(taskRunner.run(tasks).getResults()).forEach(r ->
-            results.addAll((List<CartItemDiscounts>) r)
-        );
-
-        // Sort CartItemDiscounts by cartItem net price in reverse order.
-        //
-        // For example, given the following 3 cart items and percent MOST_EXPENSIVE discount 20% <br>
-        // cart item 1 = 100 <br>
-        // cart item 2 = 200 <br>
-        // cart item 3 = 80 <br>
-        // the discount will only apply for cart item 2. cart item discount fee amount = 40.
-        return CollectionUtils.emptyIfNull(results).stream()
-                .sorted(Comparator.comparing(CartItemDiscounts::getTotalNetPrice).reversed())
-                .collect(Collectors.toList());
+        return results;
     }
 
     private Optional<FindLatestDiscountsByProductIdAndCouponCodesKey> cartItemCouponKey(CartQuoteContext context,
@@ -120,6 +117,7 @@ public class CouponDiscountLoader implements DiscountLoader {
 
         return Optional.of(key);
     }
+
 
     @Data
     class FindLatestDiscountsByProductIdAndCouponCodesKey {
