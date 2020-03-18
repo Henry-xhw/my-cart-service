@@ -42,7 +42,7 @@ public class CartItemMembershipPricer extends CartItemDiscountBasePricer {
                 .filter(discount -> {
                     DiscountSequentialSpecs spec = DiscountSequentialSpecs.allOf(
                             new NotExpiredSpec(discount.getStartDate(), discount.getEndDate(), Instant.now()),
-                            new MemberShipSpec(membershipDiscountContext.getNewItemMembershipIds(), cartItem,
+                            new MembershipSpec(membershipDiscountContext.getNewItemMembershipIds(), cartItem,
                                     discount.getMembershipId()));
                     return spec.satisfy();
                 }).collect(toList());
