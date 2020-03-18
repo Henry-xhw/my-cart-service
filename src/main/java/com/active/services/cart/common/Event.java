@@ -1,5 +1,6 @@
 package com.active.services.cart.common;
 
+import com.active.services.cart.domain.BaseDomainObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -8,11 +9,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Event {
+public class Event extends BaseDomainObject {
 
     private static ObjectMapper objectMapper;
 
-    private String identifier;
+    private String bizIdentifier;
 
     private String type;
 

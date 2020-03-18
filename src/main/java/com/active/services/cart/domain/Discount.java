@@ -32,4 +32,5 @@ public class Discount extends BaseDomainObject {
     private UUID keyerUUID;
     private Instant startDate;
     private Instant endDate;
+    private Long membershipId;
 }

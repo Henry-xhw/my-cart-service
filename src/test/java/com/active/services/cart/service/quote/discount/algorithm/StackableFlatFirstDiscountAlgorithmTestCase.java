@@ -2,8 +2,8 @@ package com.active.services.cart.service.quote.discount.algorithm;
 
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
 import com.active.services.product.AmountType;
 
@@ -40,20 +40,20 @@ public class StackableFlatFirstDiscountAlgorithmTestCase {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
-        DiscountApplication discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.PERCENT, new BigDecimal("5.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication2 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication2 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FLAT, new BigDecimal("10.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication3 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication3 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.PERCENT, new BigDecimal("10.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication4 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication4 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FIXED_AMOUNT, new BigDecimal("100.00"), "code", null, null, null, cartQuoteContext);
 
         StackableFlatFirstDiscountAlgorithm discountAlgorithm = new StackableFlatFirstDiscountAlgorithm();
-        List<DiscountApplication> results = discountAlgorithm.apply(Arrays.asList(discountApplication1,
+        List<Discount> results = discountAlgorithm.apply(Arrays.asList(discountApplication1,
                 discountApplication2, discountApplication3, discountApplication4));
         assertEquals(4, results.size());
         assertEquals(discountApplication4, results.get(0));
