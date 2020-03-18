@@ -3,7 +3,6 @@ package com.active.services.cart.service.quote.discount.membership;
 import com.active.services.ActiveEntityNotFoundException;
 import com.active.services.ContextWrapper;
 import com.active.services.ProductType;
-import com.active.services.cart.client.rest.ProductService;
 import com.active.services.cart.client.soap.SOAPClient;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.service.quote.CartQuoteContext;
@@ -30,9 +29,6 @@ import static java.util.stream.Collectors.toMap;
 @Component
 @Slf4j
 public class CartMembershipPricer extends CartDiscountBasePricer {
-
-    @Autowired
-    private ProductService productService;
 
     @Autowired
     private SOAPClient soapClient;
