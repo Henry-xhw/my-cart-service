@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.util.List;
@@ -33,7 +34,7 @@ public class CartItemMembershipPricer extends CartItemDiscountBasePricer {
 
         List<MembershipDiscountsHistory> histories =
                 membershipDiscountContext.getMembershipDiscountsHistory(cartItem.getProductId());
-        if (histories.isEmpty()) {
+        if (CollectionUtils.isEmpty(histories)) {
             return;
         }
 
