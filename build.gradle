@@ -53,9 +53,9 @@ dependencies {
     implementation group: 'com.active.springboot', name: 'active-spring-boot-starter', version: '0.0.2'
 
     implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
-    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.78'
-    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.26', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
-    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.29'
+    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.76'
+    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.22', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.50'
     implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
     implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
     implementation group: 'com.active.services', name:'membership-management-service', version: '2.38.8.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'

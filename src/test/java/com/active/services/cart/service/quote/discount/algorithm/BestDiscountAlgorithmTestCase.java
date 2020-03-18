@@ -3,8 +3,8 @@ package com.active.services.cart.service.quote.discount.algorithm;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.CartQuoteContext;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 import com.active.services.cart.service.quote.discount.DiscountFactory;
 import com.active.services.product.AmountType;
 
@@ -38,17 +38,17 @@ public class BestDiscountAlgorithmTestCase {
         cartItem.setNetPrice(new BigDecimal("80.00"));
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
-        DiscountApplication discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FLAT, new BigDecimal("20.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication2 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication2 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.PERCENT, new BigDecimal("20.00"), "code", null, null, null, cartQuoteContext);
 
-        DiscountApplication discountApplication3 = DiscountFactory.getCouponCodeDiscountApplication(
+        Discount discountApplication3 = DiscountFactory.getCouponCodeDiscountApplication(
                 AmountType.FIXED_AMOUNT, new BigDecimal("70.00"), "code", null, null, null, cartQuoteContext);
 
         BestDiscountAlgorithm discountAlgorithm = new BestDiscountAlgorithm(cartItem, Currency.getInstance("USD"));
-        List<DiscountApplication>  discountApplications = discountAlgorithm.apply(Arrays.asList(discountApplication1,
+        List<Discount>  discountApplications = discountAlgorithm.apply(Arrays.asList(discountApplication1,
                 discountApplication2,
                 discountApplication3));
         assertEquals(1, discountApplications.size());

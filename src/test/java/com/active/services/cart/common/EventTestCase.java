@@ -22,7 +22,7 @@ public class EventTestCase {
     @Test
     public void testSetPayloadSuccess() throws IOException {
         Event event = new Event();
-        event.setIdentifier(UUID.randomUUID().toString());
+        event.setIdentifier(UUID.randomUUID());
         event.setType("object");
         event.setPayload(event);
         String result = event.getPayload();

@@ -1,8 +1,8 @@
 package com.active.services.cart.service.quote.discount.algorithm;
 
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.service.quote.discount.DiscountAmountCalcUtil;
-import com.active.services.cart.service.quote.discount.DiscountApplication;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class BestDiscountAlgorithm implements DiscountAlgorithm {
     private Currency currency;
 
     @Override
-    public List<DiscountApplication> apply(List<DiscountApplication> discounts) {
+    public List<Discount> apply(List<Discount> discounts) {
         return Collections.singletonList(Collections.max(discounts,
                 comparing(disc -> DiscountAmountCalcUtil.calcFlatAmount(cartItem.getNetPrice(),
                         disc.getAmount(), disc.getAmountType(), currency))));

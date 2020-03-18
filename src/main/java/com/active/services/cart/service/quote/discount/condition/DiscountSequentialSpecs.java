@@ -13,6 +13,10 @@ public class DiscountSequentialSpecs implements DiscountSpecification {
         return ds;
     }
 
+    public void addSpecification(DiscountSpecification condition) {
+        conditions.add(condition);
+    }
+
     @Override
     public boolean satisfy() {
         return conditions.stream().allMatch(DiscountSpecification::satisfy);

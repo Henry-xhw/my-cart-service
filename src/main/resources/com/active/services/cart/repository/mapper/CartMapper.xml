@@ -399,13 +399,21 @@
             (
                 [identifier],
                 [type],
-                [payload]
+                [payload],
+                [created_by],
+                [created_dt],
+                [modified_by],
+                [modified_dt]
             )
         VALUES
         <foreach item="item" collection="list" open="(" separator="," close=")">
-            #{item.identifier},
+            #{item.bizIdentifier},
             #{item.type},
-            #{item.payload}
+            #{item.payload},
+            #{item.createdBy},
+            #{item.createdDt},
+            #{item.modifiedBy},
+            #{item.modifiedDt}
         </foreach>
     </insert>
 </mapper>
