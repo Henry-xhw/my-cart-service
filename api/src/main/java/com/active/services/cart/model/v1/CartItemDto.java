@@ -56,11 +56,10 @@ public class CartItemDto extends BaseDto {
     private BigDecimal grossPrice;
 
     /**
-     * Net Price = Gross Price - Price Hikes Amount - Discounts Amount
+     * Net price equals the total of price subtract total price discount,
+     * net price is calculated by method getNetPrice. No need for field netPrice
+     * OMS-10776
      */
-    @Min(value = 0)
-    @Digits(integer = 17, fraction = 2)
-    private BigDecimal netPrice;
 
     private Integer feeVolumeIndex;
 

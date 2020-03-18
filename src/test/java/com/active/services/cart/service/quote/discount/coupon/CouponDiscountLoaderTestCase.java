@@ -52,8 +52,8 @@ public class CouponDiscountLoaderTestCase extends BaseTestCase {
     @Test
     public void loadSuccess() {
         Cart cart = CartDataFactory.cart();
-        CartItem cartItem1 = CartDataFactory.cartItem().setNetPrice(BigDecimal.valueOf(1L));
-        CartItem cartItem2 = CartDataFactory.cartItem().setNetPrice(BigDecimal.valueOf(2L));
+        CartItem cartItem1 = CartDataFactory.cartItem();
+        CartItem cartItem2 = CartDataFactory.cartItem();
         cart.setItems(Arrays.asList(cartItem1, cartItem2));
         CartQuoteContext context = new CartQuoteContext(cart);
         Mockito.when(productOMSEndpoint.findLatestDiscountsByProductIdAndCouponCodes(any(), any(), any()))
@@ -69,7 +69,7 @@ public class CouponDiscountLoaderTestCase extends BaseTestCase {
     @Test
     public void loadWhenCartItemNetPriceIsLessThanZero() {
         Cart cart = CartDataFactory.cart();
-        CartItem cartItem = CartDataFactory.cartItem().setNetPrice(BigDecimal.valueOf(-1L));
+        CartItem cartItem = CartDataFactory.cartItem();
         cart.setItems(Collections.singletonList(cartItem));
         CartQuoteContext context = new CartQuoteContext(cart);
         CouponDiscountLoader loader = CouponDiscountLoader.builder().context(context).soapClient(soapClient)
