@@ -41,13 +41,19 @@ public class CartPriceEngine {
     @Autowired
     private CartAaDiscountPricer cartAaDiscountPricer;
 
-    private final CartAdHocDiscountPricer cartAdHocDiscountPricer;
+    @Autowired
+    private CartAdHocDiscountPricer cartAdHocDiscountPricer;
 
     public void quote(CartQuoteContext context) {
         prepare(context);
-        Arrays.asList(cartUnitPricePricer, cartMembershipPricer, cartMultiDiscountPricer, cartCouponPricer,
-            getCartProductProcessingFeePricer(FeeOwner.CONSUMER), cartAaDiscountPricer)
-            .forEach(cartPricer -> cartPricer.quote(context));
+        Arrays.asList(cartUnitPricePricer,
+                cartMembershipPricer,
+                cartMultiDiscountPricer,
+                cartCouponPricer,
+                cartAdHocDiscountPricer,
+                getCartProductProcessingFeePricer(FeeOwner.CONSUMER),
+                cartAaDiscountPricer)
+                .forEach(cartPricer -> cartPricer.quote(context));
     }
 
     private void prepare(CartQuoteContext context) {
