@@ -3,6 +3,7 @@ package com.active.services.cart.service.quote.discount.membership;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.ProductMembership;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +18,10 @@ public class MembershipDiscountContextTestCase {
 
     private MembershipDiscountContext membershipDiscountContext;
 
+    private Long productId = RandomUtils.nextLong();
+
+    private Long membershipId = RandomUtils.nextLong();
+
     @Before
     public void setUp() {
         membershipDiscountContext = new MembershipDiscountContext();
@@ -24,7 +29,6 @@ public class MembershipDiscountContextTestCase {
 
     @Test
     public void testGetMembershipDiscountsHistory() {
-        Long productId = 1L;
         Map<Long, List<MembershipDiscountsHistory>> productMembershipDiscounts = new HashMap<>();
         membershipDiscountContext.setProductMembershipDiscounts(productMembershipDiscounts);
         assertThat(membershipDiscountContext.getMembershipDiscountsHistory(productId)).isNull();
@@ -41,7 +45,7 @@ public class MembershipDiscountContextTestCase {
         assertThat(membershipDiscountContext.getNewItemMembershipIds()).hasSize(0);
 
         ProductMembership productMembership = new ProductMembership();
-        productMembership.setMembershipId(1L);
+        productMembership.setMembershipId(membershipId);
         membershipDiscountContext.setProductMemberships(Arrays.asList(productMembership));
         assertThat(membershipDiscountContext.getNewItemMembershipIds()).hasSize(1);
     }
