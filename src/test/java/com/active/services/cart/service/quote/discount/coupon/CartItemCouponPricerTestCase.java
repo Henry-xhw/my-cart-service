@@ -206,10 +206,11 @@ public class CartItemCouponPricerTestCase {
         Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("20.00"), "code2",
                 DiscountAlgorithm.MOST_EXPENSIVE, new DateTime(LocalDateTime.now().minusDays(1)),
                 new DateTime(LocalDateTime.now().plusDays(1)));
+        desc2.setUsageLimit(15);
         Discount desc3 = DiscountFactory.getDiscount(AmountType.FIXED_AMOUNT, new BigDecimal("85.00"), "code3",
                 DiscountAlgorithm.MOST_EXPENSIVE, new DateTime(LocalDateTime.now().minusDays(1)),
                 new DateTime(LocalDateTime.now().plusDays(1)));
-        desc2.setUsageLimit(15);
+        desc3.setUsageLimit(15);
         itemDiscounts.add(desc1);
         itemDiscounts.add(desc2);
         itemDiscounts.add(desc3);
@@ -237,7 +238,7 @@ public class CartItemCouponPricerTestCase {
     /**
      * price = 100
      * cart item level discount1   FLAT    10
-     * cart item level discount2   PERCENT 20%
+     * cart item level discount2   PERCENT 12%
      * cart level      discount3   FLAT    15
      * <p>
      * <p>
@@ -254,13 +255,14 @@ public class CartItemCouponPricerTestCase {
                 DiscountAlgorithm.MOST_EXPENSIVE, new DateTime(LocalDateTime.now().minusDays(1)),
                 new DateTime(LocalDateTime.now().plusDays(1)));
         desc1.setUsageLimit(20);
-        Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("20.00"), "code2",
-                DiscountAlgorithm.MOST_EXPENSIVE, new DateTime(LocalDateTime.now().minusDays(1)),
-                new DateTime(LocalDateTime.now().plusDays(1)));
-        Discount desc3 = DiscountFactory.getDiscount(AmountType.FIXED_AMOUNT, new BigDecimal("85.00"), "code3",
+        Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("12.00"), "code2",
                 DiscountAlgorithm.MOST_EXPENSIVE, new DateTime(LocalDateTime.now().minusDays(1)),
                 new DateTime(LocalDateTime.now().plusDays(1)));
         desc2.setUsageLimit(15);
+        Discount desc3 = DiscountFactory.getDiscount(AmountType.FIXED_AMOUNT, new BigDecimal("85.00"), "code3",
+                DiscountAlgorithm.MOST_EXPENSIVE, new DateTime(LocalDateTime.now().minusDays(1)),
+                new DateTime(LocalDateTime.now().plusDays(1)));
+        desc3.setUsageLimit(15);
         itemDiscounts.add(desc1);
         itemDiscounts.add(desc2);
         itemDiscounts.add(desc3);
@@ -283,7 +285,7 @@ public class CartItemCouponPricerTestCase {
         Optional<CartItemFee> priceCartItemFee = item.getPriceCartItemFee();
         Assert.assertEquals(1, priceCartItemFee.get().getSubItems().size());
         Assert.assertTrue(priceCartItemFee.get().getSubItems().stream().allMatch(cartItemFee -> cartItemFee.getType() == CartItemFeeType.COUPON_DISCOUNT));
-        Assert.assertEquals(20, priceCartItemFee.get().getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(12, priceCartItemFee.get().getSubItems().get(0).getUnitPrice().intValue());
     }
 
 
