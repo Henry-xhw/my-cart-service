@@ -13,9 +13,13 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class CartCouponPricer extends CartDiscountBasePricer {
@@ -31,6 +35,18 @@ public class CartCouponPricer extends CartDiscountBasePricer {
         if (cartItemCoupons.isEmpty()) {
             return;
         }
+
+        // Sort CartItemDiscounts by cartItem net price in reverse order.
+        //
+        // For example, given the following 3 cart items and percent MOST_EXPENSIVE discount 20% <br>
+        // cart item 1 = 100 <br>
+        // cart item 2 = 200 <br>
+        // cart item 3 = 80 <br>
+        // the discount will only apply for cart item 2. cart item discount fee amount = 40.
+        cartItemCoupons = cartItemCoupons.keySet().stream()
+                .sorted(Comparator.comparing(CartItem::getNetAmount).reversed())
+                .collect(Collectors.toMap(Function.identity(), cartItemCoupons::get, (e1, e2) -> e1,
+                        LinkedHashMap::new));
 
         CouponDiscountContext couponDiscountContext = new CouponDiscountContext();
         couponDiscountContext.setCartItemDiscountMap(cartItemCoupons);
