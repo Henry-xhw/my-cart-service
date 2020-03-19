@@ -79,5 +79,7 @@ public class CartItemDto extends BaseDto {
 
     private UUID reservationId;
 
+    private Long membershipId;
+
     private List<AdHocDiscountDto> adHocDiscounts;
 }
