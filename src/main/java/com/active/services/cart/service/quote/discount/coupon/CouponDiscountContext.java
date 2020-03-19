@@ -29,7 +29,7 @@ class CouponDiscountContext {
 
     public Set<Long> getLimitedDiscountIds() {
         return cartItemDiscountMap.values().stream().flatMap(List::stream)
-                .filter(d -> d.getUsageLimit() == -1)
+                .filter(d -> d.getUsageLimit() != -1)
                 .map(com.active.services.product.Discount::getId).collect(Collectors.toSet());
     }
 
