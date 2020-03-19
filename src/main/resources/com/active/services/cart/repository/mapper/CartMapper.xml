@@ -261,7 +261,6 @@
         item.quantity                 AS item_quantity,
         item.override_price           AS item_override_price,
         item.gross_price              AS item_gross_price,
-        item.net_price                AS item_net_price,
         item.grouping_identifier      AS item_grouping_identifier,
         item.person_identifier        AS item_person_identifier,
         item.fee_volume_index         AS item_fee_volume_index,
