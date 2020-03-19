@@ -13,275 +13,127 @@ BEGIN
         [booking_end_dt]            DATETIME            NULL,
         [trimmed_booking_start_dt]  DATETIME            NULL,
         [trimmed_booking_end_dt]    DATETIME            NULL,
-        [quantity]                  BIGINT              NOT NULL,
+        [quantity]                  INT                 NOT NULL,
         [override_price]            DECIMAL(19, 2)      NULL,
         [gross_price]               DECIMAL(19, 2)      NULL,
-        [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
-        [reservation_id]            UNIQUEIDENTIFIER    NULL,
+        [parent_id]                 BIGINT              NULL,
+        [oversold]                  BIT                 CONSTRAINT df_cart_items_oversold DEFAULT ((0)) NOT NULL,
+        [person_identifier]         NVARCHAR(50)        NULL,
+        [coupon_mode]               NVARCHAR(255)       NULL,
+        [ignore_multi_discounts]    BIT                 CONSTRAINT df_cart_items_ignore_multi_discounts DEFAULT ((0)) NOT NULL,
+        [reservation_guid]          UNIQUEIDENTIFIER    NULL,
         [membership_id]             BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL,
-        CONSTRAINT [pk_cart_item] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_cart_items] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_cart_items_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.cart_items'
 END
 GO
 
-IF NOT EXISTS(SELECT 1
-              FROM INFORMATION_SCHEMA.COLUMNS
-              WHERE TABLE_NAME = 'cart_items'
-                AND COLUMN_NAME = 'parent_id')
-    BEGIN
-        ALTER TABLE dbo.cart_items
-            ADD parent_id BIGINT NULL;
-        PRINT 'Added new column parent_id into table cart_items.';
-    END
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='cart_items' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.cart_items ADD CONSTRAINT [pk_cart_item]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_cart_item on table dbo.cart_items'
-END
-GO
-
 IF NOT EXISTS(
     SELECT TOP 1 1
     FROM
         sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_identifier'
+        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_cart_id'
     WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
 BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_item_identifier] ON [dbo].[cart_items] ([identifier])
+    CREATE NONCLUSTERED INDEX [ix_cart_items_cart_id] ON [dbo].[cart_items] ([cart_id])
     WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_item_identifier to dbo.cart.'
+    PRINT 'Added index ix_cart_items_cart_id to dbo.cart_items.'
 END
+GO
 
 IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_item_cart_id'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_item_cart_id] ON [dbo].[cart_items] ([cart_id])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_item_cart_id to dbo.cart_items.'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'fee_volume_index'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.cart_items ADD fee_volume_index BIGINT NULL
-
-	PRINT 'Added column fee_volume_index to dbo.cart_items'
-END
-GO
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.cart_items DROP COLUMN reservation_id
-
-	PRINT 'Drop column reservation_id from dbo.cart_items'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'oversold'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+        SELECT TOP 1 1
+        FROM
+            sys.tables t WITH(NOLOCK)
+                JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_product_id'
+        WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD oversold BIT DEFAULT ((0)) NOT NULL
-
-        PRINT 'Added column oversold to dbo.cart_items'
+        CREATE NONCLUSTERED INDEX [ix_cart_items_product_id] ON [dbo].[cart_items] ([product_id])
+            WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+        PRINT 'Added index ix_cart_items_product_id to dbo.cart_items.'
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_codes'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-    ALTER TABLE dbo.cart_items ADD coupon_codes NVARCHAR(MAX) NULL
-
-    PRINT 'Added column coupon_codes to dbo.cart_items'
-END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'person_identifier'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+IF NOT EXISTS(
+        SELECT TOP 1 1
+        FROM
+            sys.tables t WITH(NOLOCK)
+                JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_items_parent_id'
+        WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.type = 'U')
     BEGIN
-
-        ALTER TABLE dbo.cart_items ADD person_identifier NVARCHAR(50) NULL
-
-        PRINT 'Added column person_identifier to dbo.cart_items'
+        CREATE NONCLUSTERED INDEX [ix_cart_items_parent_id] ON [dbo].[cart_items] ([parent_id])
+            WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+        PRINT 'Added index ix_cart_items_parent_id to dbo.cart_items.'
     END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_mode'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items ADD coupon_mode NVARCHAR(255) NULL
-
-        PRINT 'Added column coupon_mode to dbo.cart_items'
-    END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'override_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items ADD override_price DECIMAL(19, 2) NULL
-
-        PRINT 'Added column override_price to dbo.cart_items'
-    END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'gross_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items ADD gross_price DECIMAL(19, 2) NULL
-
-        PRINT 'Added column gross_price to dbo.cart_items'
-    END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'net_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items ADD net_price DECIMAL(19, 2) NULL
-
-        PRINT 'Added column net_price to dbo.cart_items'
-    END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'ignore_multi_discounts'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items ADD ignore_multi_discounts BIT DEFAULT ((0)) NOT NULL
-
-        PRINT 'Added column ignore_multi_discounts to dbo.cart_items'
-    END
-GO
-
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'unit_price'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-    BEGIN
-
-        ALTER TABLE dbo.cart_items DROP column unit_price
-
-        PRINT 'Droped column unit_price to dbo.cart_items'
-    END
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
-BEGIN
-
-    ALTER TABLE dbo.cart_items ADD reservation_id UNIQUEIDENTIFIER NULL
-
-    PRINT 'Added column reservation_id to dbo.cart_items'
-END
 GO
 
 IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'membership_id'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
 BEGIN
-
     ALTER TABLE dbo.cart_items ADD membership_id BIGINT NULL
-
     PRINT 'Added column membership_id to dbo.cart_items'
 END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','coupon_codes'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'coupon codes',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'coupon_codes'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', NULL, 'DC2', 'cart item is a item for shopping behavior, and the table is mapping to com.active.services.cart.domain.CartItem';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','override_price'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'override price',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'override_price'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'id', 'DC2', 'primary key';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','gross_price'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'gross price',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'gross_price'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'cart_id', 'DC2', 'cart id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','net_price'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'net price',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'net_price'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'fee_volume_index', 'DC2', 'fee volume index';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'cart_items','column','reservation_id'))
-BEGIN
-    EXEC sys.sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = N'reservation id',
-    @level0type = 'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = 'TABLE',
-    @level1name = 'cart_items',
-    @level2type = 'Column',
-    @level2name = 'reservation_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'identifier', 'DC2', 'global unique id, represent a cart item';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'product_id', 'DC2', 'product id';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'product_name', 'DC2', 'product name';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'product_description', 'DC2', 'product description';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'booking_start_dt', 'DC2', 'booking start date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'booking_end_dt', 'DC2', 'booking end date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'trimmed_booking_start_dt', 'DC2', 'trimmed booking start date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'trimmed_booking_end_dt', 'DC2', 'trimmed booking end date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'quantity', 'DC2', 'quantity';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'override_price', 'DC2', 'override price';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'gross_price', 'DC2', 'gross price';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'grouping_identifier', 'DC2', 'grouping_identifier';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'coupon_codes', 'DC2', 'coupon codes';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'parent_id', 'DC2', 'parent id';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'oversold', 'DC2', 'oversold';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'person_identifier', 'DC2', 'person identifier';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'coupon_mode', 'DC2', 'coupon mode';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'ignore_multi_discounts', 'DC2', 'ignore multiple discounts';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'created_by', 'DC2', 'created by';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'created_dt', 'DC2', 'created date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'modified_by', 'DC2', 'modified by';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'modified_dt', 'DC2', 'modified date time';
+
+exec sp_add_table_column_comment 'dbo', 'cart_items', 'reservation_guid', 'DC2', 'reservation guid';

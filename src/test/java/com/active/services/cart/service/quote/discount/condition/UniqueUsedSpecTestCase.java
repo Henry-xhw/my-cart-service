@@ -1,5 +1,7 @@
 package com.active.services.cart.service.quote.discount.condition;
 
+import com.active.services.product.DiscountAlgorithm;
+
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 
@@ -16,15 +18,15 @@ public class UniqueUsedSpecTestCase {
         Long discountId = RandomUtils.nextLong();
         List<Long> usedDiscountIds = new ArrayList<>();
 
-        UniqueUsedSpec spec = new UniqueUsedSpec(discountId, usedDiscountIds);
+        UniqueSpec spec = new UniqueSpec(usedDiscountIds, discountId, DiscountAlgorithm.MOST_EXPENSIVE);
         assertTrue(spec.satisfy());
 
         usedDiscountIds.add(RandomUtils.nextLong());
-        spec = new UniqueUsedSpec(discountId, usedDiscountIds);
+        spec = new UniqueSpec(usedDiscountIds, discountId, DiscountAlgorithm.MOST_EXPENSIVE);
         assertTrue(spec.satisfy());
 
         usedDiscountIds.add(discountId);
-        spec = new UniqueUsedSpec(discountId, usedDiscountIds);
+        spec = new UniqueSpec(usedDiscountIds, discountId, DiscountAlgorithm.MOST_EXPENSIVE);
         assertFalse(spec.satisfy());
     }
 }

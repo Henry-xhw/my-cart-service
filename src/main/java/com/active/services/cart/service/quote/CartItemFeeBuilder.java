@@ -87,7 +87,7 @@ public class CartItemFeeBuilder {
                 .unitPrice(amount)
                 .units(units)
                 .dueAmount(amount)
-                .relatedIdentifier(identifier)
+                .discountIdentifier(identifier)
                 .build();
         build.setIdentifier(UUID.randomUUID());
         return build;

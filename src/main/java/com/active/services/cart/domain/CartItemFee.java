@@ -34,7 +34,9 @@ public class CartItemFee extends BaseTree<CartItemFee> {
 
     private BigDecimal dueAmount;
 
-    private UUID relatedIdentifier;
+    private UUID discountIdentifier;
+
+    private UUID surchargeIdentifier;
 
     public CartItemFee addSubItemFee(List<CartItemFee> cartItemFeeList) {
 

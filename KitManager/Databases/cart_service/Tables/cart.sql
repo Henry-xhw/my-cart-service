@@ -4,165 +4,70 @@ BEGIN
 	 CREATE TABLE [dbo].[carts] (
         [id]                        BIGINT              IDENTITY (1, 1) NOT NULL,
         [identifier]                UNIQUEIDENTIFIER    NOT NULL,
-        [owner_id]                  UNIQUEIDENTIFIER    NULL,
-        [keyer_id]                  UNIQUEIDENTIFIER    NULL,
+        [owner_guid]                UNIQUEIDENTIFIER    NULL,
+        [keyer_guid]                UNIQUEIDENTIFIER    NULL,
         [currency_code]             CHAR(3)             NOT NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
         [modified_dt]               DATETIME            NOT NULL,
-        [version]                   INT                 DEFAULT ((0)) NOT NULL,
-        [price_version]             INT                 DEFAULT ((0)) NOT NULL,
-        [is_lock]                   BIT                 DEFAULT ((0)) NOT NULL,
+        [version]                   INT                 CONSTRAINT df_carts_version DEFAULT ((0)) NOT NULL,
+        [price_version]             INT                 CONSTRAINT df_carts_price_version DEFAULT ((0)) NOT NULL,
+        [is_lock]                   BIT                 CONSTRAINT df_carts_is_lock DEFAULT ((0)) NOT NULL,
         [cart_status]               VARCHAR (255)       NOT NULL,
-        [reservation_group_id]      UNIQUEIDENTIFIER    NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
+        [reservation_group_guid]    UNIQUEIDENTIFIER    NULL,
         [sales_channel]             VARCHAR (255)       NULL,
-        CONSTRAINT [pk_cart] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_carts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_carts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.carts'
 END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'cart_status'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD cart_status NVARCHAR(255) NOT NULL
-
-	PRINT 'Added column cart_status to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'version'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD version INT DEFAULT ((0)) NOT NULL
-
-	PRINT 'Added column version to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'price_version'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD price_version INT DEFAULT ((0)) NOT NULL
-
-	PRINT 'Added column price_version to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'is_lock'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
-
-	ALTER TABLE dbo.carts ADD is_lock BIT DEFAULT ((0)) NOT NULL
-
-	PRINT 'Added column lock to dbo.carts'
-END
-
-GO
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='carts' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.carts ADD CONSTRAINT [pk_cart]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_cart on table dbo.carts'
-END
-GO
-
 IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_identifier'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_identifier] ON [dbo].[carts] ([identifier])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_identifier to dbo.carts.'
-END
+        SELECT TOP 1 1
+        FROM
+            sys.tables t WITH(NOLOCK)
+                JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_owner_guid'
+        WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.type = 'U')
+    BEGIN
+        CREATE NONCLUSTERED INDEX [ix_cart_owner_guid] ON [dbo].[carts] ([owner_guid])
+            WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+        PRINT 'Added index ix_cart_owner_guid to dbo.carts.'
+    END
 GO
 
-IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_cart_owner_id'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_cart_owner_id] ON [dbo].[carts] ([owner_id])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_cart_owner_id to dbo.carts.'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'carts', NULL, 'DC2', 'cart is a shopping behavior, the table is mapping to com.active.services.cart.domain.Cart';
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'coupon_codes'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
+exec sp_add_table_column_comment 'dbo', 'carts', 'id', 'DC2', 'primary key';
 
-  ALTER TABLE dbo.carts ADD coupon_codes NVARCHAR(MAX) NULL
+exec sp_add_table_column_comment 'dbo', 'carts', 'identifier', 'DC2', 'global unique id, represent a cart';
 
-  PRINT 'Added column coupon_codes to dbo.carts'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'carts', 'owner_guid', 'DC2', 'owner guid, also called epid';
 
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'reservation_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
+exec sp_add_table_column_comment 'dbo', 'carts', 'keyer_guid', 'DC2', 'keyer guid, also called keyer epid';
 
-  EXEC sys.sp_rename 'carts.reservation_id','reservation_group_id','column'
+exec sp_add_table_column_comment 'dbo', 'carts', 'currency_code', 'DC2', 'currency code';
 
-  PRINT 'Alter column reservation_id name to reservation_group_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'carts', 'created_by', 'DC2', 'created by';
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'sales_channel'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'carts' AND t.[type] = 'U')
-BEGIN
+exec sp_add_table_column_comment 'dbo', 'carts', 'created_dt', 'DC2', 'created date time';
 
-  ALTER TABLE dbo.carts ADD sales_channel VARCHAR (255) NULL
+exec sp_add_table_column_comment 'dbo', 'carts', 'modified_by', 'DC2', 'modified by';
 
-  PRINT 'Added column sales_channel to dbo.carts'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'carts', 'modified_dt', 'DC2', 'modified date time';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','coupon_codes'))
-BEGIN
-  EXEC sys.sp_addextendedproperty
-  @name = N'MS_Description',
-  @value = N'coupon codes',
-  @level0type = 'SCHEMA',
-  @level0name = 'dbo',
-  @level1type = 'TABLE',
-  @level1name = 'carts',
-  @level2type = 'Column',
-  @level2name = 'coupon_codes'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'carts', 'version', 'DC2', 'version';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'carts','column','sales_channel'))
-BEGIN
-  EXEC sys.sp_addextendedproperty
-  @name = N'MS_Description',
-  @value = N'sales channel',
-  @level0type = 'SCHEMA',
-  @level0name = 'dbo',
-  @level1type = 'TABLE',
-  @level1name = 'carts',
-  @level2type = 'Column',
-  @level2name = 'sales_channel'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'carts', 'price_version', 'DC2', 'price version';
+
+exec sp_add_table_column_comment 'dbo', 'carts', 'is_lock', 'DC2', 'lock or not lock';
+
+exec sp_add_table_column_comment 'dbo', 'carts', 'cart_status', 'DC2', 'cart status, as CREATED or FINALIZED';
+
+exec sp_add_table_column_comment 'dbo', 'carts', 'coupon_codes', 'DC2', 'coupon codes';
+
+exec sp_add_table_column_comment 'dbo', 'carts', 'sales_channel', 'DC2', 'sales channel';
+
+exec sp_add_table_column_comment 'dbo', 'carts', 'reservation_group_guid', 'DC2', 'reservation group guid';

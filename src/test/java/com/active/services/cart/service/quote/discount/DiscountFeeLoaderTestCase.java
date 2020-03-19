@@ -4,6 +4,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
+import com.active.services.cart.domain.Discount;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.domain.DateTime;
@@ -23,7 +24,7 @@ public class DiscountFeeLoaderTestCase {
     public void apply() {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        DiscountApplication code = DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT,
+        Discount code = DiscountFactory.getCouponCodeDiscountApplication(AmountType.FLAT,
                 new BigDecimal("2.00"), "code",
                 DiscountAlgorithm.MOST_EXPENSIVE,
                 new DateTime(LocalDateTime.now().minusDays(1)), new DateTime(LocalDateTime.now().plusDays(1)),
@@ -36,6 +37,6 @@ public class DiscountFeeLoaderTestCase {
         CartItemFee cartItemFee = item.getPriceCartItemFee().get();
         CartItemFee cartItemFee1 = cartItemFee.getSubItems().stream()
                 .filter(f -> CartItemFeeType.isPriceDiscount(f.getType())).findAny().get();
-        assertEquals(cartItemFee1.getRelatedIdentifier(), code.getIdentifier());
+        assertEquals(cartItemFee1.getDiscountIdentifier(), code.getIdentifier());
     }
 }

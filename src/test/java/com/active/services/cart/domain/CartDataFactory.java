@@ -121,7 +121,7 @@ public class CartDataFactory {
         cartItemFee.setUnitPrice(price);
         cartItemFee.setDescription(description);
         cartItemFee.setName(name);
-        cartItemFee.setRelatedIdentifier(relatedIdentifier);
+        cartItemFee.setDiscountIdentifier(relatedIdentifier);
         return cartItemFee;
     }
 
@@ -140,7 +140,7 @@ public class CartDataFactory {
         cartItemFeesInCart.setUnitPrice(price);
         cartItemFeesInCart.setDescription(description);
         cartItemFeesInCart.setName(name);
-        cartItemFeesInCart.setRelatedIdentifier(relatedIdentifier);
+        cartItemFeesInCart.setDiscountIdentifier(relatedIdentifier);
         return cartItemFeesInCart;
     }
 
@@ -164,7 +164,6 @@ public class CartDataFactory {
         cartItem.setFeeVolumeIndex(0);
         cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));
         cartItem.setReservationId(UUID.randomUUID());
-        cartItem.setNetPrice(price);
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(cartItemFee(price));
         cartItem.setFees(cartItemFees);
@@ -191,7 +190,6 @@ public class CartDataFactory {
         cartItem.setGroupingIdentifier("grouping identifier");
         cartItem.setFeeVolumeIndex(0);
         cartItem.setCouponCodes(Collections.singleton("FDSAFSA"));
-        cartItem.setNetPrice(price);
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(cartItemFeesInCart(price));
         cartItem.setFees(cartItemFees);

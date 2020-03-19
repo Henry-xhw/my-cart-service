@@ -48,8 +48,6 @@ public class CartItem extends BaseTree<CartItem> {
 
     private BigDecimal grossPrice;
 
-    private BigDecimal netPrice;
-
     private Integer feeVolumeIndex;
 
     private boolean oversold;
@@ -67,6 +65,8 @@ public class CartItem extends BaseTree<CartItem> {
     private UUID reservationId;
 
     private Long membershipId;
+
+    private List<AdHocDiscount> adHocDiscounts;
 
     public Optional<CartItemFee> getPriceCartItemFee() {
         return getFees().stream()
