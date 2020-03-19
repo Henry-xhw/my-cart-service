@@ -70,7 +70,6 @@ public class ContractCalculationItemBuilder implements Builder<CalculationItem> 
         item.setBusinessDate(businessDate);
         item.setContractSetting(buildContractSetting());
         item.setListPrice(cartItem.getGrossPrice());
-        item.setNetPrice(cartItem.getNetPrice());
         // need to confirm surcharge in cartItem
         item.setSurcharge(null);
         item.setProductType(product.getProductType());

@@ -16,7 +16,6 @@ BEGIN
         [quantity]                  INT                 NOT NULL,
         [override_price]            DECIMAL(19, 2)      NULL,
         [gross_price]               DECIMAL(19, 2)      NULL,
-        [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
         [parent_id]                 BIGINT              NULL,
@@ -104,8 +103,6 @@ exec sp_add_table_column_comment 'dbo', 'cart_items', 'quantity', 'DC2', 'quanti
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'override_price', 'DC2', 'override price';
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'gross_price', 'DC2', 'gross price';
-
-exec sp_add_table_column_comment 'dbo', 'cart_items', 'net_price', 'DC2', 'net price';
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'grouping_identifier', 'DC2', 'grouping_identifier';
 
