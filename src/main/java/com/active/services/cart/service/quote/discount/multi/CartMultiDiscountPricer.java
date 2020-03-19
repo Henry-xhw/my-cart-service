@@ -23,7 +23,7 @@ public class CartMultiDiscountPricer extends CartDiscountBasePricer {
     @Override
     protected void doQuote(CartQuoteContext context, List<CartItem> noneZeroItems) {
         // Step1: load multi discounts
-        List<MultiDiscountCartItem> mdCartItems = multiDiscountLoader.load(context.getCart());
+        List<MultiDiscountCartItem> mdCartItems = multiDiscountLoader.load(context.getFlattenCartItems());
 
         // Step2: build pricer by MultiDiscountComparator order.
         Collections.sort(mdCartItems);

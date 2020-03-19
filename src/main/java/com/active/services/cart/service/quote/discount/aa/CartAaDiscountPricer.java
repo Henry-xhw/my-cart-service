@@ -48,7 +48,7 @@ public class CartAaDiscountPricer implements CartPricer {
         AADiscountContext aaDiscountContext = new AADiscountContext(aaDiscount);
 
         List<CartItem> qualifyingCartItem =
-                context.getCart().getFlattenCartItems().stream().filter(cartItem -> isQualifyingCartItem(context,
+                context.getFlattenCartItems().stream().filter(cartItem -> isQualifyingCartItem(context,
                 cartItem)).collect(Collectors.toList());
         for (CartItem cartItem : qualifyingCartItem) {
             if (!aaDiscountContext.hasRemainingAmt()) {

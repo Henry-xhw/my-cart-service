@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -33,4 +34,19 @@ public class Discount extends BaseDomainObject {
     private Instant startDate;
     private Instant endDate;
     private Long membershipId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Discount discount = (Discount) o;
+        return Objects.equals(discountId, discount.discountId) &&
+                discountType == discount.discountType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(discountId, discountType);
+    }
 }
