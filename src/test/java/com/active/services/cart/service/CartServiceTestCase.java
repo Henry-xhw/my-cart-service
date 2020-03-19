@@ -12,6 +12,7 @@ import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.PaymentAccountResult;
 import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CheckoutResult;
+import com.active.services.cart.repository.AdHocDiscountRepository;
 import com.active.services.cart.repository.CartItemFeeRepository;
 import com.active.services.cart.repository.CartRepository;
 import com.active.services.cart.repository.DiscountRepository;
@@ -69,6 +70,9 @@ public class CartServiceTestCase extends BaseTestCase {
 
     @Mock
     private DataAccess dataAccess;
+
+    @Mock
+    AdHocDiscountRepository adHocDiscountRepository;
 
     @InjectMocks
     private CartService cartService;
@@ -200,7 +204,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                discountRepository, dataAccess);
+                discountRepository, dataAccess, adHocDiscountRepository);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);
@@ -222,7 +226,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = spy(new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                discountRepository, dataAccess));
+                discountRepository, dataAccess, adHocDiscountRepository));
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         CartItem childCartItem = CartDataFactory.cartItem();
@@ -249,7 +253,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                discountRepository, dataAccess);
+                discountRepository, dataAccess, adHocDiscountRepository);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);
@@ -299,7 +303,7 @@ public class CartServiceTestCase extends BaseTestCase {
         PlatformTransactionManager mock = mock(PlatformTransactionManager.class);
         DataAccess dataAccess = new DataAccess(mock);
         CartService cartService = new CartService(cartRepository, cartItemFeeRepository, cartPriceEngine,
-                discountRepository, dataAccess);
+                discountRepository, dataAccess, adHocDiscountRepository);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         cartItem.setId(1L);

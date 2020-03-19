@@ -37,6 +37,6 @@ public class DiscountFeeLoaderTestCase {
         CartItemFee cartItemFee = item.getPriceCartItemFee().get();
         CartItemFee cartItemFee1 = cartItemFee.getSubItems().stream()
                 .filter(f -> CartItemFeeType.isPriceDiscount(f.getType())).findAny().get();
-        assertEquals(cartItemFee1.getRelatedIdentifier(), code.getIdentifier());
+        assertEquals(cartItemFee1.getDiscountIdentifier(), code.getIdentifier());
     }
 }

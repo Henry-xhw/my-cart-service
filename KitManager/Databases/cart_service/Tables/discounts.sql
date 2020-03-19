@@ -7,168 +7,76 @@ BEGIN
         [cart_id]                           BIGINT              NOT NULL,
         [name]                              NVARCHAR(255)       NULL,
         [description]                       NVARCHAR(255)       NULL,
-        [amount]                            DECIMAL(19, 2)      NULL,
+        [amount]                            DECIMAL(19, 2)      NOT NULL,
         [amount_type]                       NVARCHAR(25)        NULL,
-        [discount_id]                       BIGINT              NOT NULL,
+        [discount_id]                       BIGINT              NULL,
         [discount_type]                     NVARCHAR(25)        NOT NULL,
         [coupon_code]                       NVARCHAR(255)       NULL,
         [algorithm]                         NVARCHAR(25)        NULL,
-        [apply_to_recurring_billing]        BIT                 NULL,
+        [apply_to_recurring_billing]        BIT                 CONSTRAINT df_discounts_apply_to_recurring_billing DEFAULT ((0)) NOT NULL,
         [discount_group_id]                 BIGINT              NULL,
         [origin]                            NVARCHAR(25)        NULL,
+        [keyer_uuid]                        UNIQUEIDENTIFIER    NULL,
         [created_by]                        NVARCHAR(255)       NOT NULL,
         [created_dt]                        DATETIME            NOT NULL,
         [modified_by]                       NVARCHAR(255)       NOT NULL,
         [modified_dt]                       DATETIME            NOT NULL,
-        CONSTRAINT [pk_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (STATISTICS_NORECOMPUTE = ON)
+        CONSTRAINT [pk_discounts] PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE),
+        CONSTRAINT [uq_discounts_identifier] UNIQUE ([identifier]) WITH (DATA_COMPRESSION= PAGE)
     )
 	 PRINT 'CREATE TABLE dbo.discounts'
 END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1 WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) ='discounts' AND t.type = 'U')
-BEGIN
-	 ALTER TABLE dbo.discounts ADD CONSTRAINT [pk_discounts]  PRIMARY KEY CLUSTERED ([id]) WITH (DATA_COMPRESSION= PAGE)
-	 PRINT 'Created primary key pk_discounts on table dbo.discounts'
-END
-GO
-
 IF NOT EXISTS(
-    SELECT TOP 1 1
-    FROM
-        sys.tables t WITH(NOLOCK)
-        JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_discounts_identifier'
-    WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.type = 'U')
-BEGIN
-    CREATE NONCLUSTERED INDEX [ix_discounts_identifier] ON [dbo].[discounts] ([identifier])
-    WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
-    PRINT 'Added index ix_discounts_identifier to dbo.discounts.'
-END
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'discount_group_id'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
+        SELECT TOP 1 1
+        FROM
+            sys.tables t WITH(NOLOCK)
+                JOIN sys.indexes i WITH(NOLOCK) ON t.object_id = i.object_id AND i.name = 'ix_discounts_cart_id'
+        WHERE SCHEMA_NAME(t.schema_id) = 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.type = 'U')
     BEGIN
-
-        ALTER TABLE dbo.discounts ADD discount_group_id BIGINT NULL
-
-        PRINT 'Added column discount_group_id to dbo.discounts'
+        CREATE NONCLUSTERED INDEX [ix_discounts_cart_id] ON [dbo].[discounts] ([cart_id])
+            WITH (DATA_COMPRESSION= PAGE, ONLINE=ON, MAXDOP=0)
+        PRINT 'Added index ix_discounts_cart_id to dbo.discounts.'
     END
 GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','cart_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'carts table id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'cart_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', NULL, 'DC2', 'discount is mapping to com.active.services.cart.domain.Discount';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_type'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'ACTIVE_ADVANTAGE, COUPON, MULTI, AD_HOC, MEMBERSHIP',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'discount_type'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'id', 'DC2', 'primary key';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','apply_to_recurring_billing'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'is apply to recurring billing',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'apply_to_recurring_billing'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'identifier', 'DC2', 'global unique id, represent a discount';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'discounts table id',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'discount_id'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'cart_id', 'DC2', 'cart id';
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'PERCENT, FLAT, FIXED_AMOUNT',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'amount_type'
-END
-GO
 
-IF NOT EXISTS (SELECT name FROM :: fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 'discounts','column','discount_id'))
-BEGIN
-   EXEC sys.sp_addextendedproperty
- @name = N'MS_Description',
- @value = N'AUTOMATIC, OVERRIDE, AUTOMATIC_OVERRIDE, AD_HOC,ORDER_LINE_LEVEL_OVERRIDE, CARRY_OVER',
- @level0type = 'SCHEMA',
- @level0name = 'dbo',
- @level1type = 'TABLE',
- @level1name = 'discounts',
- @level2type = 'Column',
- @level2name = 'origin'
-END
-GO
+exec sp_add_table_column_comment 'dbo', 'discounts', 'name', 'DC2', 'name';
 
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'description'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [description] NVARCHAR(255)  NULL;
-	PRINT 'modify column description null, dbo.discounts'
-END
+exec sp_add_table_column_comment 'dbo', 'discounts', 'description', 'DC2', 'description';
 
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'name'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [name] NVARCHAR(255)  NULL;
-	PRINT 'modify column name null, dbo.discounts'
-END
+exec sp_add_table_column_comment 'dbo', 'discounts', 'amount', 'DC2', 'amount';
 
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount_type'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [amount_type] NVARCHAR(25) NULL;
-	PRINT 'modify column amount_type null, dbo.discounts'
-END
+exec sp_add_table_column_comment 'dbo', 'discounts', 'discount_type', 'DC2', 'discount type';
 
-IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
-JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'amount'
-WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'discounts' AND t.[type] = 'U')
-BEGIN
-    ALTER TABLE dbo.discounts ALTER COLUMN [amount] DECIMAL(19, 2) NULL;
-	PRINT 'modify column amount null, dbo.discounts'
-END
+exec sp_add_table_column_comment 'dbo', 'discounts', 'coupon_code', 'DC2', 'coupon code';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'algorithm', 'DC2', 'algorithm';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'apply_to_recurring_billing', 'DC2', 'whether apply to recurring_billing';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'discount_group_id', 'DC2', 'discount group id';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'discount_id', 'DC2', 'discount id';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'amount_type', 'DC2', 'amount type';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'origin', 'DC2', 'origin';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'created_by', 'DC2', 'created by';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'created_dt', 'DC2', 'created date time';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'modified_by', 'DC2', 'modified by';
+
+exec sp_add_table_column_comment 'dbo', 'discounts', 'modified_dt', 'DC2', 'modified date time';
+

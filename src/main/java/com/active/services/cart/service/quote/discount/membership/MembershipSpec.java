@@ -10,7 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class MemberShipSpec implements DiscountSpecification {
+public class MembershipSpec implements DiscountSpecification {
     private final List<Long> newItemMembershipIds;
     @NonNull
     private final CartItem cartItem;

@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -25,9 +26,10 @@ public class Discount extends BaseDomainObject {
     private String couponCode;
     private DiscountAlgorithm algorithm;
 
-    private Boolean applyToRecurringBilling;
+    private boolean applyToRecurringBilling;
     private OrderLineDiscountOrigin origin;
     private Long discountGroupId;
+    private UUID keyerUUID;
     private Instant startDate;
     private Instant endDate;
     private Long membershipId;

@@ -1,6 +1,7 @@
 package com.active.services.cart.domain;
 
 import com.active.platform.types.range.Range;
+import com.active.services.cart.model.AdHocDiscountDto;
 import com.active.services.cart.model.CartItemFeeType;
 import com.active.services.cart.model.FeeTransactionType;
 import com.active.services.cart.model.v1.CreateCartItemDto;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.RandomUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -87,6 +89,7 @@ public class CartDataFactory {
         updateCartItemDto.setProductName(cartItem.getProductName());
         updateCartItemDto.setCouponCodes(cartItem.getCouponCodes());
         updateCartItemDto.setReservationId(UUID.randomUUID());
+        updateCartItemDto.setAdHocDiscounts(Arrays.asList(getAdHocDiscountDto()));
         return updateCartItemDto;
     }
 
@@ -118,7 +121,7 @@ public class CartDataFactory {
         cartItemFee.setUnitPrice(price);
         cartItemFee.setDescription(description);
         cartItemFee.setName(name);
-        cartItemFee.setRelatedIdentifier(relatedIdentifier);
+        cartItemFee.setDiscountIdentifier(relatedIdentifier);
         return cartItemFee;
     }
 
@@ -137,7 +140,7 @@ public class CartDataFactory {
         cartItemFeesInCart.setUnitPrice(price);
         cartItemFeesInCart.setDescription(description);
         cartItemFeesInCart.setName(name);
-        cartItemFeesInCart.setRelatedIdentifier(relatedIdentifier);
+        cartItemFeesInCart.setDiscountIdentifier(relatedIdentifier);
         return cartItemFeesInCart;
     }
 
@@ -165,6 +168,7 @@ public class CartDataFactory {
         List<CartItemFee> cartItemFees = new ArrayList<>();
         cartItemFees.add(cartItemFee(price));
         cartItem.setFees(cartItemFees);
+        cartItem.setId(1L);
         return cartItem;
     }
 
@@ -235,6 +239,17 @@ public class CartDataFactory {
         createCartItemDto.setFeeVolumeIndex(0);
         createCartItemDto.setCouponCodes(Collections.singleton("FDSAFSA"));
         createCartItemDto.setReservationId(UUID.randomUUID());
+        createCartItemDto.setAdHocDiscounts(Arrays.asList(getAdHocDiscountDto()));
         return createCartItemDto;
+    }
+
+    public static AdHocDiscountDto getAdHocDiscountDto() {
+        AdHocDiscountDto adHocDiscountDto = new AdHocDiscountDto();
+        adHocDiscountDto.setDiscountAmount(BigDecimal.valueOf(10));
+        adHocDiscountDto.setDiscountCouponCode("test ad-hoc coupon code");
+        adHocDiscountDto.setDiscountGroupId(1L);
+        adHocDiscountDto.setDiscountKeyerId(UUID.randomUUID());
+        adHocDiscountDto.setDiscountName("test ad-hoc");
+        return adHocDiscountDto;
     }
 }

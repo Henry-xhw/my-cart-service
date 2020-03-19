@@ -177,7 +177,7 @@ public class CartRepositoryTestCase {
             }
         };
         ContextWrapper.set(context);
-        cartRepository.updateCartReservationId(UUID.randomUUID(), UUID.randomUUID());
+        cartRepository.updateCartReservationGroupId(UUID.randomUUID(), UUID.randomUUID());
         verify(cartMapper, times(1)).updateCartReservationGroupId(any(), any(), any());
     }
 
