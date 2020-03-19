@@ -48,8 +48,6 @@ public class CartItem extends BaseTree<CartItem> {
 
     private BigDecimal grossPrice;
 
-    private BigDecimal netPrice;
-
     private Integer feeVolumeIndex;
 
     private boolean oversold;

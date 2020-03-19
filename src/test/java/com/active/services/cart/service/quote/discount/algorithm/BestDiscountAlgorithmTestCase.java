@@ -35,7 +35,6 @@ public class BestDiscountAlgorithmTestCase {
 
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = cart.getFlattenCartItems().get(0);
-        cartItem.setNetPrice(new BigDecimal("80.00"));
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
 
         Discount discountApplication1 = DiscountFactory.getCouponCodeDiscountApplication(
