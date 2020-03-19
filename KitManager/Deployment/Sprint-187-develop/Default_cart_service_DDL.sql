@@ -110,7 +110,6 @@ BEGIN
         [quantity]                  INT                 NOT NULL,
         [override_price]            DECIMAL(19, 2)      NULL,
         [gross_price]               DECIMAL(19, 2)      NULL,
-        [net_price]                 DECIMAL(19, 2)      NULL,
         [grouping_identifier]       NVARCHAR(255)       NULL,
         [coupon_codes]              NVARCHAR(MAX)       NULL,
         [parent_id]                 BIGINT              NULL,
@@ -119,6 +118,7 @@ BEGIN
         [coupon_mode]               NVARCHAR(255)       NULL,
         [ignore_multi_discounts]    BIT                 CONSTRAINT df_cart_items_ignore_multi_discounts DEFAULT ((0)) NOT NULL,
         [reservation_guid]          UNIQUEIDENTIFIER    NULL,
+        [membership_id]             BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -169,6 +169,15 @@ IF NOT EXISTS(
     END
 GO
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'membership_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_items ADD membership_id BIGINT NULL
+    PRINT 'Added column membership_id to dbo.cart_items'
+END
+GO
+
 exec sp_add_table_column_comment 'dbo', 'cart_items', NULL, 'DC2', 'cart item is a item for shopping behavior, and the table is mapping to com.active.services.cart.domain.CartItem';
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'id', 'DC2', 'primary key';
@@ -198,8 +207,6 @@ exec sp_add_table_column_comment 'dbo', 'cart_items', 'quantity', 'DC2', 'quanti
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'override_price', 'DC2', 'override price';
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'gross_price', 'DC2', 'gross price';
-
-exec sp_add_table_column_comment 'dbo', 'cart_items', 'net_price', 'DC2', 'net price';
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'grouping_identifier', 'DC2', 'grouping_identifier';
 
