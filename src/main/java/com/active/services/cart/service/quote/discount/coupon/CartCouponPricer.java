@@ -8,6 +8,7 @@ import com.active.services.product.Discount;
 import com.active.services.product.nextgen.v1.req.GetDiscountUsageReq;
 import com.active.services.product.nextgen.v1.rsp.GetDiscountUsageRsp;
 
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class CartCouponPricer extends CartDiscountBasePricer {
 
         CouponDiscountLoader loader = getCouponDiscountLoader(context, noneZeroItems);
         Map<CartItem, List<Discount>> cartItemCoupons = loader.loadDiscounts();
-        if (cartItemCoupons.isEmpty()) {
+        if (MapUtils.isEmpty(cartItemCoupons)) {
             return;
         }
 
