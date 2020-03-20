@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -18,6 +19,7 @@ public class AdHocDiscountDto extends BaseDto {
     private String discountName;
     private UUID discountKeyerId;
     @NotNull
+    @Min(value = 0)
     private BigDecimal discountAmount;
     private String discountCouponCode;
     private Long discountGroupId;
