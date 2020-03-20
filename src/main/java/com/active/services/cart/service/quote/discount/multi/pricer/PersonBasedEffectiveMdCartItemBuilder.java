@@ -86,7 +86,7 @@ public class PersonBasedEffectiveMdCartItemBuilder implements Builder<List<CartI
                 });
             }
         });
-
+        results.sort(Comparator.comparing(CartItem::getId));
         return results;
     }
 
