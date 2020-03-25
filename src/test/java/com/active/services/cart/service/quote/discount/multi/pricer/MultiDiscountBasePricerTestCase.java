@@ -260,6 +260,120 @@ public class MultiDiscountBasePricerTestCase {
 
     }
 
+    @Test
+    public void priceByMultiProductPricerWhenTierTypePercentSamePersonAllProduct() {
+
+        multiDiscount = new MultiDiscount();
+        multiDiscount.setId(1L);
+        multiDiscount.setDiscountType(MultiDiscountType.MULTI_PRODUCT);
+        multiDiscount.setThreshold(2);
+        multiDiscount.setTierSortOrder(DiscountTierSortOrder.ASCENDING_TIER_LEVEL);
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.ALL_PRODUCTS);
+        multiDiscount.setAvailability(Availability.ONLINE);
+        multiDiscount.setStartDate(new DateTime(LocalDateTime.now().minusDays(1)));
+        multiDiscount.setEndDate(new DateTime(LocalDateTime.now().plusDays(1)));
+
+        mdCartItem = new MultiDiscountCartItem(multiDiscount);
+
+        // case 7: add item net price, multiDiscountThresholdSetting type:Flat, all items belong to the same preson
+        toPriceCartItems.clear();
+        CartItem item1 = buildCartItem();
+        item1.setId(1L);
+        CartItem item2 = buildCartItem();
+        item2.setId(2L);
+        CartItem item3 = buildCartItem();
+        item3.setId(3L);
+
+        CartItemFee fee1 = CartDataFactory.cartItemFee(BigDecimal.valueOf(50));
+        item1.setFees(Collections.singletonList(fee1));
+        item1.setQuantity(5);
+        item1.setProductName("REG 50*5");
+        CartItemFee fee2 = CartDataFactory.cartItemFee(BigDecimal.valueOf(100));
+        item2.setFees(Collections.singletonList(fee2));
+        item2.setQuantity(3);
+        item2.setProductName("REG 100*3");
+        CartItemFee fee3 = CartDataFactory.cartItemFee(BigDecimal.valueOf(200));
+        item3.setFees(Collections.singletonList(fee3));
+        item3.setQuantity(1);
+        item3.setProductName("REG 200");
+        // set same person
+        item2.setPersonIdentifier(item1.getPersonIdentifier());
+        item3.setPersonIdentifier(item1.getPersonIdentifier());
+
+        CartItem item4 = buildCartItem();
+        item4.setId(4L);
+        CartItem item5 = buildCartItem();
+        item5.setId(5L);
+        CartItem item6 = buildCartItem();
+        item6.setId(6L);
+
+        CartItemFee fee4 = CartDataFactory.cartItemFee(BigDecimal.valueOf(50));
+        item4.setFees(Collections.singletonList(fee4));
+        item4.setQuantity(8);
+        item4.setProductName("REG2 50*8");
+        CartItemFee fee5 = CartDataFactory.cartItemFee(BigDecimal.valueOf(100));
+        item5.setFees(Collections.singletonList(fee5));
+        item5.setQuantity(3);
+        item5.setProductName("REG2 100*3");
+        CartItemFee fee6 = CartDataFactory.cartItemFee(BigDecimal.valueOf(200));
+        item6.setFees(Collections.singletonList(fee6));
+        item6.setQuantity(1);
+        item6.setProductName("REG2 200");
+        // set same person
+        item5.setPersonIdentifier(item4.getPersonIdentifier());
+        item6.setPersonIdentifier(item4.getPersonIdentifier());
+        toPriceCartItems.addAll(Arrays.asList(item3, item2, item1, item6, item5, item4));
+
+        mdCartItem.addCartItems(toPriceCartItems);
+        loadCartQuoteContext();
+
+        // prepare DiscountThresholdSetting
+        multiDiscountThresholdSetting = new MultiDiscountThresholdSetting();
+        DiscountTier discountTier = new DiscountTier();
+        discountTier.setId(1L);
+        discountTier.setAmountType(AmountType.PERCENT);
+        discountTier.setAmount(BigDecimal.valueOf(5));
+        discountTier.setTierLevel(1);
+        DiscountTier discountTier1 = new DiscountTier();
+        discountTier1.setId(2L);
+        discountTier1.setAmountType(AmountType.PERCENT);
+        discountTier1.setAmount(BigDecimal.valueOf(10));
+        discountTier1.setTierLevel(2);
+        DiscountTier discountTier2 = new DiscountTier();
+        discountTier2.setId(3L);
+        discountTier2.setAmountType(AmountType.PERCENT);
+        discountTier2.setAmount(BigDecimal.valueOf(20));
+        discountTier2.setTierLevel(3);
+
+        Set<DiscountTier> discountTiers = new HashSet<>();
+        discountTiers.add(discountTier);
+        discountTiers.add(discountTier1);
+        discountTiers.add(discountTier2);
+        multiDiscountThresholdSetting.setTiers(discountTiers);
+        multiDiscount.setAlgorithm(MultiDiscountAlgorithm.ALL_PRODUCTS);
+        multiDiscountBasePricer = new MultiProductDiscountPricer(mdCartItem, multiDiscountThresholdSetting);
+        multiDiscountBasePricer.getMdCartItem().getCartItems().clear();
+        multiDiscountBasePricer.getMdCartItem().addCartItems(toPriceCartItems);
+        multiDiscountBasePricer.price();
+
+        assertMultiDiscountFeeByID(1L, 5);
+        assertMultiDiscountFeeByID(2L, 20);
+        assertMultiDiscountFeeByID(3L, 10);
+        assertMultiDiscountFeeByID(4L, 10);
+        assertMultiDiscountFeeByID(5L, 20);
+        assertMultiDiscountFeeByID(6L, 40);
+    }
+
+    private void assertMultiDiscountFeeByID(Long id, int expectDiscount) {
+        CartItemFee checkFee = toPriceCartItems
+                .stream()
+                .filter(cartItem -> cartItem.getId() == id)
+                .collect(Collectors.toList()).get(0).getFees().get(0);
+        Assert.assertTrue(checkFee.getSubItems().size() != 0);
+        Assert.assertEquals(CartItemFeeType.MULTI_DISCOUNT, checkFee.getSubItems().get(0).getType());
+        Assert.assertEquals(expectDiscount, checkFee.getSubItems().get(0).getUnitPrice().intValue());
+        Assert.assertEquals(1, checkFee.getSubItems().get(0).getUnits().intValue());
+    }
 
     private void loadCartItems(boolean fillFee, boolean isSamePerson) {
         toPriceCartItems.clear();
