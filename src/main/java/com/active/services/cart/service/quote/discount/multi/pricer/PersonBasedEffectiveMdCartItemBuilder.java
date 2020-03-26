@@ -59,6 +59,7 @@ public class PersonBasedEffectiveMdCartItemBuilder implements Builder<List<CartI
     private List<CartItem> buildAllProductsEffectiveSortedCartItems() {
         Map<String, List<CartItem>> itemsByIdentifier = itemsByPersonIdentifier(mdCartItem.getCartItems());
         List<List<CartItem>> cartItemss = new ArrayList<>(itemsByIdentifier.values());
+        cartItemss.forEach(list->totalPriceThenDbIndex(list, true));
         Collections.sort(cartItemss, allProductsComparator);
 
         return cartItemss.stream().flatMap(List::stream).collect(toList());
