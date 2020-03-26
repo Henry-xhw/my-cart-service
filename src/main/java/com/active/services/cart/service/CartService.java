@@ -19,6 +19,7 @@ import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.validator.CartItemsCurrencyFormatValidator;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 
@@ -93,6 +94,7 @@ public class CartService {
         items.forEach(it -> cart.findCartItem(it.getIdentifier())
                 .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
                         "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
+        new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), items).validate();
         Map<UUID, Long> identifierMap = cart.getCartItemIdentifierMap();
         List<Long> cartItemIds = items.stream()
                 .map(cartItem -> identifierMap.get(cartItem.getIdentifier()))
