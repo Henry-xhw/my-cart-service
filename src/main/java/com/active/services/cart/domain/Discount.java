@@ -37,8 +37,12 @@ public class Discount extends BaseDomainObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Discount discount = (Discount) o;
         return Objects.equals(discountId, discount.discountId) &&

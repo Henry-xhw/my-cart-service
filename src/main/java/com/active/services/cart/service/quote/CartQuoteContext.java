@@ -8,6 +8,7 @@ import com.active.services.cart.domain.Discount;
 import com.active.services.product.Product;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -35,13 +36,13 @@ public class CartQuoteContext {
 
     private Set<Discount> appliedDiscounts = new HashSet<>();
 
-    public CartQuoteContext(Cart cart) {
+    @Setter
+    private boolean isAaMember;
+
+    public CartQuoteContext(@NonNull Cart cart) {
         this.cart = cart;
         this.flattenCartItems = emptyIfNull(cart.getFlattenCartItems());
     }
-
-    @Setter
-    private boolean isAaMember;
 
     public List<Long> getProductIds() {
         return flattenCartItems.stream().map(CartItem::getProductId).distinct().collect(Collectors.toList());
