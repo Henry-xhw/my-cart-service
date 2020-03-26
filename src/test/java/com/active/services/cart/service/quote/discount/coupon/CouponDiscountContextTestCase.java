@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -50,7 +51,7 @@ public class CouponDiscountContextTestCase {
         Discount discount2 = new Discount();
         discount2.setDiscountId(2L);
         discount2.setDiscountType(DiscountType.AD_HOC);
-        List<Discount> appliedDiscount = Lists.list(discount1, discount2);
+        Set<Discount> appliedDiscount = Sets.newHashSet(discount1, discount2);
         assertEquals(Lists.list(discount1.getDiscountId()),
                 new CouponDiscountContext().getUsedDiscountIds(appliedDiscount));
     }

@@ -54,7 +54,7 @@ public class CartProductProcessingFeePricer implements CartPricer {
      */
     public void quote(CartQuoteContext context) {
 
-        List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
+        List<CartItem> flattenCartItems = context.getFlattenCartItems();
         Instant businessDate = Instant.now();
         final Map<UUID, CartItem> foundCartItemByIdentifier =
                 flattenCartItems.stream().collect(toMap(CartItem::getIdentifier,

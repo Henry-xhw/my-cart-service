@@ -48,7 +48,6 @@ public class CartItemMembershipPricerTestCase {
         CartItem cartItem = context.getCart().getItems().get(0);
         cartItemMembershipPricer.doQuote(context, cartItem);
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
     }
 
     @Test
@@ -64,7 +63,6 @@ public class CartItemMembershipPricerTestCase {
         CartItem cartItem = context.getCart().getItems().get(0);
         cartItemMembershipPricer.doQuote(context, cartItem);
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
     }
 
     @Test

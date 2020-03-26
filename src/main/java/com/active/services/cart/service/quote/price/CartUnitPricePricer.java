@@ -38,7 +38,7 @@ public class CartUnitPricePricer implements CartPricer {
 
     @Override
     public void quote(CartQuoteContext context) {
-        List<CartItem> flattenCartItems = context.getCart().getFlattenCartItems();
+        List<CartItem> flattenCartItems = context.getFlattenCartItems();
         Map<Long, FeeDto> feeMap = getProductFeeMap(flattenCartItems);
         flattenCartItems.forEach(cartItem -> getCartItemPricer(feeMap).quote(context, cartItem));
     }

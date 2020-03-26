@@ -33,7 +33,7 @@ class CouponDiscountContext {
                 .map(com.active.services.product.Discount::getId).collect(Collectors.toSet());
     }
 
-    public List<Long> getUsedDiscountIds(List<Discount> appliedDiscount) {
+    public List<Long> getUsedDiscountIds(Set<Discount> appliedDiscount) {
         return CollectionUtils.emptyIfNull(appliedDiscount).stream()
                 .filter(disc -> disc.getDiscountType() == DiscountType.COUPON)
                 .map(Discount::getDiscountId).collect(Collectors.toList());

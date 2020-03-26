@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toList;
 public abstract class CartDiscountBasePricer implements CartPricer {
     @Override
     public final void quote(CartQuoteContext context) {
-        List<CartItem> noneZeroItems = context.getCart().getFlattenCartItems().stream()
+        List<CartItem> noneZeroItems = context.getFlattenCartItems().stream()
                 .filter(CartItem::isNetPriceNotZero).collect(toList());
 
         if (!noneZeroItems.isEmpty()) {

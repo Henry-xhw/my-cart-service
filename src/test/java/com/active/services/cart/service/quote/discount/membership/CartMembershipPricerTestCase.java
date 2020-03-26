@@ -66,7 +66,6 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
         List<CartItem> cartItems = new ArrayList<>();
         cartMembershipPricer.doQuote(context, cartItems);
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
 
         Product product = mock(Product.class);
         when(product.getId()).thenReturn(productId);
@@ -74,7 +73,6 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
         context.setProducts(Arrays.asList(product));
         cartMembershipPricer.doQuote(context, cartItems);
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
     }
 
     @Test
@@ -89,7 +87,6 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
 
         cartMembershipPricer.doQuote(context, context.getCart().getItems());
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
     }
 
     @Test
