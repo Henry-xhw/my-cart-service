@@ -38,8 +38,8 @@ public class DiscountFeeLoader {
             return;
         }
 
-        cartQuoteContext.addAppliedDiscount(disc);
-        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(disc, discAmount,
+        Discount discount = cartQuoteContext.addAppliedDiscount(disc);
+        CartItemFee discountFee = CartItemFeeBuilder.buildDiscountItemFee(discount, discAmount,
                 priceFeeItems.get().getUnits());
         priceFeeItems.get().addSubItemFee(Arrays.asList(discountFee));
     }

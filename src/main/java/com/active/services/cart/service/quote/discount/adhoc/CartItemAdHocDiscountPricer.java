@@ -44,10 +44,10 @@ public class CartItemAdHocDiscountPricer extends CartItemDiscountBasePricer {
                         return;
                     }
                     disc.setAmount(discAmount);
-                    context.addAppliedDiscount(disc);
+                    Discount discount = context.addAppliedDiscount(disc);
                     cartItem.getPriceCartItemFee().get()
-                            .addSubItemFee(Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(disc,
-                                    disc.getAmount(), 1)));
+                            .addSubItemFee(Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(discount,
+                                    discAmount, 1)));
                 });
         }
     }

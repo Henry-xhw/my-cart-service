@@ -51,7 +51,7 @@ public class CouponDiscountContextTestCase {
         Discount discount2 = new Discount();
         discount2.setDiscountId(2L);
         discount2.setDiscountType(DiscountType.AD_HOC);
-        Set<Discount> appliedDiscount = Sets.newHashSet(discount1, discount2);
+        List<Discount> appliedDiscount = Lists.newArrayList(discount1, discount2);
         assertEquals(Lists.list(discount1.getDiscountId()),
                 new CouponDiscountContext().getUsedDiscountIds(appliedDiscount));
     }
