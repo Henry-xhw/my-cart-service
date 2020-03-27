@@ -5,6 +5,7 @@ import com.active.services.ProductType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
 import lombok.Getter;
@@ -12,11 +13,12 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,7 +36,7 @@ public class CartQuoteContext {
 
     private Map<Long, Product> productsMap = new HashMap<>();
 
-    private Set<Discount> appliedDiscounts = new HashSet<>();
+    private List<Discount> appliedDiscounts = new ArrayList<>();
 
     @Setter
     private boolean isAaMember;
@@ -62,8 +64,28 @@ public class CartQuoteContext {
         return cart.getCouponCodes();
     }
 
-    public void addAppliedDiscount(Discount discount) {
+    /**
+     * Add discount to applied list.
+     *
+     * @param discount
+     * @return existing discountId + type discount or else new one
+     */
+    public Discount addAppliedDiscount(Discount discount) {
+        if (discount.getDiscountType() != DiscountType.MULTI) {
+            // Multi discount should not check uniqueness, as the discount is from tier.
+            Optional<Discount> foundDiscOpt = appliedDiscounts.stream().filter(target ->
+                    Objects.equals(target.getDiscountId(), discount.getDiscountId()) &&
+                            target.getDiscountType() == discount.getDiscountType()).findAny();
+
+            if (foundDiscOpt.isPresent()) {
+                return foundDiscOpt.get();
+            }
+        }
+
+        // Multi discount and not added discount will be always added to applied list.
         appliedDiscounts.add(discount);
+
+        return discount;
     }
 
     public boolean hasCartItemWithType(ProductType type) {

@@ -50,8 +50,8 @@ public class CartItemAaDiscountPricer implements CartItemPricer {
         disc.setDiscountId(aaDiscount.getId());
         disc.setDiscountType(DiscountType.ACTIVE_ADVANTAGE);
         disc.setCartId(context.getCart().getId());
-        context.addAppliedDiscount(disc);
+        Discount discount = context.addAppliedDiscount(disc);
         cartItem.getPriceCartItemFee().get().addSubItemFee(
-                Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(disc, discountAmt, 1)));
+                Arrays.asList(CartItemFeeBuilder.buildDiscountItemFee(discount, discountAmt, 1)));
     }
 }

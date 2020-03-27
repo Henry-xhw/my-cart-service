@@ -46,12 +46,11 @@ public class Discount extends BaseDomainObject {
 
         Discount discount = (Discount) o;
         return Objects.equals(discountId, discount.discountId) &&
-                discountType == discount.discountType &&
-                Objects.equals(getIdentifier(), discount.getIdentifier());
+                discountType == discount.discountType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(discountId, discountType, getIdentifier());
+        return Objects.hash(discountId, discountType);
     }
 }
