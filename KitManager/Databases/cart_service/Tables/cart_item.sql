@@ -24,7 +24,7 @@ BEGIN
         [coupon_mode]               NVARCHAR(255)       NULL,
         [ignore_multi_discounts]    BIT                 CONSTRAINT df_cart_items_ignore_multi_discounts DEFAULT ((0)) NOT NULL,
         [reservation_guid]          UNIQUEIDENTIFIER    NULL,
-        [membership_id]             BIGINT              NULL,
+        [membership_ids]            NVARCHAR(MAX)       NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
