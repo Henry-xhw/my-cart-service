@@ -84,6 +84,25 @@ BEGIN
 END
 GO
 
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'membership_id'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_items Drop column membership_id
+    PRINT 'Dropped column membership_id to dbo.cart_items'
+END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'membership_ids'
+WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
+BEGIN
+    ALTER TABLE dbo.cart_items ADD membership_ids NVARCHAR(255)       NULL
+    PRINT 'Added column membership_ids to dbo.cart_items'
+END
+GO
+
+
 exec sp_add_table_column_comment 'dbo', 'cart_items', NULL, 'DC2', 'cart item is a item for shopping behavior, and the table is mapping to com.active.services.cart.domain.CartItem';
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', 'id', 'DC2', 'primary key';

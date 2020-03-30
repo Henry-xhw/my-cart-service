@@ -106,7 +106,7 @@
              #{item.couponMode},
              #{item.ignoreMultiDiscounts},
              #{item.reservationId},
-             #{item.membershipId},
+             #{item.membershipIds,typeHandler=com.active.services.cart.common.mybatis.types.LongSetTypeHandler},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -199,7 +199,7 @@
         [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
         [coupon_mode] = #{item.couponMode},
         [reservation_guid] = #{item.reservationId},
-        [membership_id] = #{item.membershipId},
+        [membership_ids] = #{item.membershipIds,typeHandler=com.active.services.cart.common.mybatis.types.LongSetTypeHandler},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -268,7 +268,7 @@
         item.coupon_mode              AS item_coupon_mode,
         item.ignore_multi_discounts   AS item_ignore_multi_discounts,
         item.coupon_codes             AS item_coupon_codes,
-        item.membership_id            AS item_membership_id,
+        item.membership_ids           AS item_membership_ids,
         item.reservation_guid         AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,

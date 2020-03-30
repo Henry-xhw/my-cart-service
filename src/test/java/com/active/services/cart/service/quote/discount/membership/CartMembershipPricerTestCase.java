@@ -28,6 +28,7 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -93,7 +94,7 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
     public void testDoQuoteHasMembershipDiscountsHistory() throws ActiveEntityNotFoundException {
         CartQuoteContext context = buildCartQuoteContext();
         CartItem cartItem = context.getCart().getItems().get(0);
-        cartItem.setMembershipId(membershipId);
+        cartItem.setMembershipIds(Collections.singleton(membershipId));
 
         Product product = mock(Product.class);
         when(product.getId()).thenReturn(productId);

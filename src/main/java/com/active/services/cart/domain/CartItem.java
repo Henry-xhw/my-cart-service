@@ -64,7 +64,7 @@ public class CartItem extends BaseTree<CartItem> {
 
     private UUID reservationId;
 
-    private Long membershipId;
+    private Set<Long> membershipIds;
 
     private List<AdHocDiscount> adHocDiscounts;
 

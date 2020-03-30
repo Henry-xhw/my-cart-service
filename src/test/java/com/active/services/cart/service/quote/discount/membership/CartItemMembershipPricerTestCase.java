@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -79,7 +80,7 @@ public class CartItemMembershipPricerTestCase {
         when(mockMembershipContext.getMembershipDiscountsHistory(productId)).thenReturn(membershipDiscountsHistories);
 
         CartItem cartItem = context.getCart().getItems().get(0);
-        cartItem.setMembershipId(membershipId);
+        cartItem.setMembershipIds(Collections.singleton(membershipId));
         cartItemMembershipPricer.doQuote(context, cartItem);
 
         Predicate<Discount> membershipPredicate = d -> d.getDiscountType() == DiscountType.MEMBERSHIP &&
