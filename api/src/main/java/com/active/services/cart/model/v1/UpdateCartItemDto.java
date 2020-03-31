@@ -1,8 +1,17 @@
 package com.active.services.cart.model.v1;
 
+import com.active.platform.types.range.Range;
+import com.active.services.cart.model.AdHocDiscountDto;
+import com.active.services.cart.model.CouponMode;
+
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -10,15 +19,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.active.services.cart.model.Range;
-
-import lombok.Data;
-
 @Data
 public class UpdateCartItemDto {
 
     @NotNull(message = "cartItem's identifier can not be null")
     private UUID identifier;
+
+    private Long parentId;
 
     private Long productId;
 
@@ -38,10 +45,30 @@ public class UpdateCartItemDto {
     @Min(value = 1, message = "cartItem's quantity can not less than 1")
     private Integer quantity;
 
-    @Min(value = 0, message = "cartItem's unit price can not less than 0")
+    @Min(value = 0, message = "cartItem's override price can not less than 0")
     @Digits(integer = 17, fraction = 2)
-    private BigDecimal unitPrice;
+    private BigDecimal overridePrice;
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    private Integer feeVolumeIndex;
+
+    private boolean oversold;
+
+    private Set<String> couponCodes;
+
+    @Size(max = 50)
+    private String personIdentifier;
+
+    private boolean ignoreMultiDiscounts;
+
+    private CouponMode couponMode;
+
+    private UUID reservationId;
+
+    private Long membershipId;
+
+    @Valid
+    private List<AdHocDiscountDto> adHocDiscounts;
 }

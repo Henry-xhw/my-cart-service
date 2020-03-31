@@ -1,15 +1,22 @@
 package com.active.services.cart.repository.mybatis;
 
+import com.active.services.ContextWrapper;
 import com.active.services.cart.domain.BaseDomainObject;
-import com.active.services.cart.util.AuditorAwareUtil;
+
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Properties;
 
 @Component
@@ -32,14 +39,16 @@ public class AuditingInterceptor implements Interceptor {
 
     private void setAuditingInfo(Object parameter, SqlCommandType sqlCommandType) {
         if (parameter instanceof BaseDomainObject) {
-            BaseDomainObject baseDomain = (BaseDomainObject) parameter;
-            if (SqlCommandType.INSERT.equals(sqlCommandType)) {
-                baseDomain.setCreatedBy(AuditorAwareUtil.getAuditor().orElse("system"));
-                baseDomain.setCreatedDt(Instant.now());
-            }
-            if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
-                baseDomain.setModifiedBy(AuditorAwareUtil.getAuditor().orElse("system"));
-                baseDomain.setModifiedDt(Instant.now());
+            execute((BaseDomainObject) parameter, sqlCommandType);
+        } else if (parameter instanceof DefaultSqlSession.StrictMap) {
+            DefaultSqlSession.StrictMap paramMap = (DefaultSqlSession.StrictMap) parameter;
+            if (paramMap.get("collection") instanceof List) {
+                List list = (List) paramMap.get("collection");
+                list.stream().forEach(obj -> {
+                    if (obj instanceof BaseDomainObject) {
+                        execute((BaseDomainObject) obj, sqlCommandType);
+                    }
+                });
             }
         }
     }
@@ -54,5 +63,23 @@ public class AuditingInterceptor implements Interceptor {
     }
 
     @Override
-    public void setProperties(Properties properties) {}
+    public void setProperties(Properties properties) {
+
+    }
+
+    private void execute(BaseDomainObject baseDomain, SqlCommandType sqlCommandType) {
+        String actorId = ContextWrapper.get().getActorId();
+        Instant nowInstant = Instant.now();
+
+        if (SqlCommandType.INSERT.equals(sqlCommandType)) {
+            baseDomain.setCreatedBy(actorId);
+            baseDomain.setCreatedDt(nowInstant);
+            baseDomain.setModifiedBy(actorId);
+            baseDomain.setModifiedDt(nowInstant);
+        }
+        if (SqlCommandType.UPDATE.equals(sqlCommandType)) {
+            baseDomain.setModifiedBy(actorId);
+            baseDomain.setModifiedDt(nowInstant);
+        }
+    }
 }

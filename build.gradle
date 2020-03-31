@@ -4,14 +4,9 @@ buildscript {
     }
 }
 plugins {
-    id 'com.active.aw-service' version '2.0.10'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'com.active.aw-service' version '2.0.13'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.3'
-}
-
-ext {
-    mapstructVersion = "1.3.1.Final"
-    lombokVersion = "1.18.4"
 }
 
 apply plugin: 'com.epages.restdocs-api-spec'
@@ -21,8 +16,8 @@ allprojects {
 
     dependencyManagement {
         imports {
-            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE'
-            mavenBom 'com.active.platform:platform-dependencies:+'
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.13.RELEASE'
+            mavenBom 'com.active.platform:platform-dependencies:0.0.21'
         }
     }
     dependencies {
@@ -35,21 +30,48 @@ dependencies {
     implementation project(':api')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
-    implementation 'org.aspectj:aspectjweaver:1.9.2'
-    implementation group: 'org.mybatis', name: 'mybatis-typehandlers-jsr310', version: '1.0.2'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
+    implementation 'org.aspectj:aspectjweaver'
+    implementation 'org.mybatis:mybatis-typehandlers-jsr310'
+    implementation 'org.apache.commons:commons-collections4'
+    implementation 'com.google.guava:guava'
+    implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws'
+    implementation 'org.apache.cxf:cxf-rt-features-logging'
+
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    implementation "org.mapstruct:mapstruct", "org.projectlombok:lombok"
+    annotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
 
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
+    implementation group: 'io.github.openfeign', name: 'feign-core'
+    implementation group: 'io.github.openfeign', name: 'feign-slf4j'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson'
+    implementation group: 'io.github.openfeign', name: 'feign-okhttp'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp'
+    implementation group: 'com.squareup.okio', name: 'okio'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
+    implementation group: 'com.active.platform', name: 'platform-lib', version: '1.0.21'
+    implementation group: 'com.active.springboot', name: 'active-spring-boot-starter', version: '0.0.2'
 
-    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
+    implementation group: 'com.active.services', name:'core-services-api', version: '5.2.22', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'inventory-service-api', version: '1.0.76'
+    implementation group: 'com.active.services', name:'order-management-service', version: '4.3.0.27', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'product-service-api', version: '4.0.51'
+    implementation group: 'com.active.services', name:'contract-service-api', version:'1.0.3'
+    implementation group: 'com.active.services', name:'active-spring-boot-autoconfigure', version:'0.0.2'
+    implementation group: 'com.active.services', name:'membership-management-service', version: '2.38.8.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'waiver-service', version: '4.2.9', classifier: 'api', configuration: 'runtime-published', ext: 'jar'
+    implementation group: 'com.active.services', name:'api-lib', version: '1.0.0.7', configuration: 'runtime-published', ext: 'jar'
+
+    testImplementation "org.unitils:unitils-core"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor", "org.projectlombok:lombok"
+    testImplementation group: 'org.powermock', name: 'powermock-module-junit4'
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    testCompile 'com.epages:restdocs-api-spec-mockmvc:0.9.4'
+    testCompile 'com.epages:restdocs-api-spec-mockmvc'
 }
 
 active {

@@ -1,16 +1,15 @@
 package com.active.services.cart.model.v1.req;
 
+import lombok.Data;
+
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
-
-import com.active.services.cart.model.CurrencyCode;
-import com.active.services.cart.model.v1.BaseDto;
-
-import lombok.Data;
+import javax.validation.constraints.Size;
 
 @Data
-public class CreateCartReq extends BaseDto {
+public class CreateCartReq {
 
     @NotNull
     private UUID ownerId;
@@ -19,5 +18,12 @@ public class CreateCartReq extends BaseDto {
     private UUID keyerId;
 
     @NotNull
-    private CurrencyCode currencyCode;
+    private String currencyCode;
+
+    private UUID reservationGroupId;
+
+    private Set<String> couponCodes;
+
+    @Size(max = 255)
+    private String salesChannel;
 }

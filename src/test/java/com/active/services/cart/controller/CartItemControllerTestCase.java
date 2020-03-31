@@ -2,18 +2,18 @@ package com.active.services.cart.controller;
 
 import com.active.services.cart.common.CartException;
 import com.active.services.cart.controller.v1.CartItemController;
-import com.active.services.cart.controller.v1.CartMapper;
+import com.active.services.cart.controller.v1.mapper.CartMapper;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
+import com.active.services.cart.model.ErrorCode;
 import com.active.services.cart.model.v1.CartDto;
 import com.active.services.cart.model.v1.CartItemDto;
 import com.active.services.cart.model.v1.UpdateCartItemDto;
 import com.active.services.cart.model.v1.req.CreateCartItemReq;
 import com.active.services.cart.model.v1.req.UpdateCartItemReq;
-import com.active.services.cart.model.v1.rsp.CreateCartItemRsp;
-import com.active.services.cart.model.v1.rsp.UpdateCartItemRsp;
 import com.active.services.cart.service.CartService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.active.services.cart.controller.v1.Constants.V1_MEDIA;
+import static com.active.services.cart.controller.Constants.V1_MEDIA;
 import static com.active.services.cart.restdocs.RestDocument.autoPathParameterDoc;
 import static com.active.services.cart.restdocs.RestDocument.autoRequestFieldsDoc;
-import static com.active.services.cart.restdocs.RestDocument.autoResponseFieldsDoc;
 import static com.active.services.cart.restdocs.RestDocument.newErrorDocument;
 import static com.active.services.cart.restdocs.RestDocument.newSuccessDocument;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,11 +65,9 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void createCartItemSuccess() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(CartDataFactory.cart());
+        when(cartService.getCartByUuid(any(UUID.class))).thenReturn(CartDataFactory.cart());
         CreateCartItemReq req = new CreateCartItemReq();
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
-        CreateCartItemRsp rsp = new CreateCartItemRsp();
-        rsp.setCartId(UUID.randomUUID());
+        req.setItems(Collections.singletonList(CartDataFactory.getCreateCartItemDto()));
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
@@ -78,16 +75,15 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
           .andExpect(status().isOk())
           .andDo(newSuccessDocument("Cart-Item", "Create-Cart-Item",
             pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
-            autoRequestFieldsDoc(req),
-            autoResponseFieldsDoc(rsp)));
+            autoRequestFieldsDoc(req)));
     }
 
     @Test
     public void createCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-          OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
+                "not found"));
         CreateCartItemReq req = new CreateCartItemReq();
-        req.setItems(Collections.singletonList(CartMapper.INSTANCE.toDto(CartDataFactory.cartItem())));
+        req.setItems(Collections.singletonList(CartDataFactory.getCreateCartItemDto()));
         mockMvc.perform(post("/carts/{cart-id}/items", cartId)
           .contentType(V1_MEDIA)
           .headers(actorIdHeader())
@@ -98,7 +94,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartItemSuccess() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(cart);
+        when(cartService.getCartByUuid(any(UUID.class))).thenReturn(cart);
         mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
@@ -111,8 +107,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartItemWhenCartNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + cartId));
+        when(cartService.getCartByUuid(any(UUID.class))).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart " +
+                "no found"));
         mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId1)
                 .headers(actorIdHeader())
@@ -123,7 +119,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
 
     @Test
     public void deleteCartItemWhenCartItemNotExistThrowException() throws Exception {
-        when(cartService.get(any(UUID.class))).thenReturn(cart);
+        when(cartService.getCartByUuid(any(UUID.class))).thenReturn(cart);
         mockMvc.perform(delete("/carts/{cart-id}/items/{cart-item-id}",
                 cartId, cartItemId2)
                 .headers(actorIdHeader())
@@ -135,9 +131,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartItemSuccess() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
@@ -145,8 +139,8 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         items.add(cartItem);
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
-        when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.getCartByUuid(identifier)).thenReturn(cart);
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
@@ -154,16 +148,13 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
                 .andExpect(status().isOk())
                 .andDo(newSuccessDocument("Cart-Item", "Update-Cart-Item",
                         pathParameters(autoPathParameterDoc("cart-id", CartDto.class, "identifier")),
-                        autoRequestFieldsDoc(req),
-                        autoResponseFieldsDoc(rsp)));
+                        autoRequestFieldsDoc(req)));
     }
 
     @Test
     public void updateCartItemWhenCartItemNotExistThrowException() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
@@ -171,9 +162,9 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         items.add(cartItem);
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
-        when(cartService.get(identifier)).thenThrow(new CartException(OperationResultCode.CART_NOT_EXIST.getCode(),
-                OperationResultCode.CART_NOT_EXIST.getDescription() + " cart id: " + identifier));
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.getCartByUuid(identifier)).thenThrow(new CartException(ErrorCode.CART_NOT_FOUND, "cart not " +
+                "found"));
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
@@ -185,9 +176,7 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
     @Test
     public void updateCartItemWhenIdentifierIsNullThrowException() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem);
@@ -196,23 +185,21 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         items.add(cartItem);
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
-        when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.getCartByUuid(identifier)).thenReturn(cart);
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Identifier-Is-Null"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").hasJsonPath());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").hasJsonPath());
     }
 
     @Test
     public void updateCartItemWhenCartItemIsNotBelongCartThrowException() throws Exception {
         UpdateCartItemReq req = new UpdateCartItemReq();
-        UpdateCartItemRsp rsp = new UpdateCartItemRsp();
         UUID identifier = UUID.randomUUID();
-        rsp.setCartId(identifier);
         Cart cart = CartDataFactory.cart();
         CartItem cartItem1 = CartDataFactory.cartItem();
         UpdateCartItemDto updateCartItemDto = CartDataFactory.updateCartItemDto(cartItem1);
@@ -225,20 +212,19 @@ public class CartItemControllerTestCase extends BaseControllerTestCase {
         cartItem2.setBookingRange(null);
         cartItem2.setTrimmedBookingRange(null);
         cartItem2.setQuantity(2);
-        cartItem2.setUnitPrice(BigDecimal.ONE);
+        cartItem2.setOverridePrice(BigDecimal.ONE);
         cartItem2.setGroupingIdentifier("grouping identifier");
         List<CartItem> items = new ArrayList<>();
         items.add(cartItem2);
         cart.setItems(items);
         req.setItems(Collections.singletonList(updateCartItemDto));
-        when(cartService.get(identifier)).thenReturn(cart);
-        when(cartService.updateCartItems(items)).thenReturn(items);
+        when(cartService.getCartByUuid(identifier)).thenReturn(cart);
+        when(cartService.updateCartItems(identifier, items)).thenReturn(items);
         mockMvc.perform(put("/carts/{cart-id}/items", identifier)
                 .contentType(V1_MEDIA)
                 .headers(actorIdHeader())
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
-                .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Cart-Item-Is-Not-Belong-Cart"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errorMsg").value("cart item not exist: " + cartItem1.getIdentifier().toString()));
+                .andDo(newErrorDocument("Cart-Item", "Update-Cart-Item", "Cart-Item-Is-Not-Belong-Cart"));
     }
 }

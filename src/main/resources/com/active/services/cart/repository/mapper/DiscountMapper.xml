@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active.services.cart.repository.mapper.DiscountMapper">
+    <insert id="createDiscount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO [dbo].[discounts]
+        (identifier,
+        cart_id,
+        name,
+        description,
+        amount,
+        amount_type,
+        discount_id,
+        discount_type,
+        coupon_code,
+        algorithm,
+        apply_to_recurring_billing,
+        origin,
+        discount_group_id,
+        keyer_uuid,
+        created_by,
+        created_dt,
+        modified_by,
+        modified_dt)
+        VALUES
+        (#{identifier},
+        #{cartId},
+        #{name},
+        #{description},
+        #{amount},
+        #{amountType},
+        #{discountId},
+        #{discountType},
+        #{couponCode},
+        #{algorithm},
+        #{applyToRecurringBilling},
+        #{origin},
+        #{discountGroupId},
+        #{keyerUUID},
+        #{createdBy},
+        #{createdDt},
+        #{modifiedBy},
+        #{modifiedDt}
+        )
+    </insert>
+
+    <delete id="deletePreviousDiscountByCartId">
+        DELETE
+        FROM dbo.discounts
+        WHERE
+        cart_id = #{cartId}
+    </delete>
+</mapper>

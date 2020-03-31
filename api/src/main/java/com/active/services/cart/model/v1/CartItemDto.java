@@ -1,7 +1,19 @@
 package com.active.services.cart.model.v1;
 
+import com.active.platform.types.range.Range;
+import com.active.services.cart.model.AdHocDiscountDto;
+import com.active.services.cart.model.CouponMode;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -9,11 +21,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.active.services.cart.model.Range;
-
-import lombok.Data;
-
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CartItemDto extends BaseDto {
 
     @NotNull
@@ -37,8 +46,40 @@ public class CartItemDto extends BaseDto {
 
     @Min(value = 0)
     @Digits(integer = 17, fraction = 2)
-    private BigDecimal unitPrice;
+    private BigDecimal overridePrice;
 
     @Size(max = 255)
     private String groupingIdentifier;
+
+    @Min(value = 0)
+    @Digits(integer = 17, fraction = 2)
+    private BigDecimal grossPrice;
+
+    /**
+     * Net price equals the total of price subtract total price discount,
+     * net price is calculated by method getNetPrice. No need for field netPrice
+     * OMS-10776
+     */
+
+    private Integer feeVolumeIndex;
+
+    @Valid
+    private List<CartItemDto> subItems = new ArrayList<>();
+
+    private boolean oversold;
+
+    private Set<String> couponCodes;
+
+    @Size(max = 50)
+    private String personIdentifier;
+
+    private boolean ignoreMultiDiscounts;
+
+    private CouponMode couponMode;
+
+    private UUID reservationId;
+
+    private Long membershipId;
+
+    private List<AdHocDiscountDto> adHocDiscounts;
 }

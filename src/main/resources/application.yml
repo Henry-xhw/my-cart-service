@@ -24,6 +24,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
+    default-executor-type: simple
   type-handlers-package: com.active.services.cart.common.mybatis.types
 
 server:
@@ -38,3 +39,25 @@ management:
   endpoint:
     shutdown:
       enabled: false
+  server:
+    port: 9090
+
+ok-http:
+  connect-timeout: 10
+  read-write-timeout: ${ok-http.connect-timeout}
+
+aw-context:
+  url-patterns:
+    - /carts/*
+
+url:
+  orderManagementServiceRest: ${url.orderManagementBase}/order-management-service/api/place-order
+  inventoryServiceBase: http://inventory
+  productServiceRest: ${url.productServiceBase}/product-service
+  inventoryReservationServiceRest: ${url.inventoryServiceBase}/api
+  productServiceSOAPV1: ${url.productServiceBase}/product-service/services/soap/v1/internal
+  productServiceSOAPOMSOnly: ${url.productServiceBase}/product-service/services/soap/omsOnly/internal
+  orderManagementBase: http://order-vip.int.aw.dev.activenetwork.com
+  contractServiceRest: ${url.contractServiceBase}/contract-service
+  accountServiceSOAPV1: ${url.accountServiceBase}/foundation-user-service/account/v1/internal/soap
+  memberShipServiceSOAPV1: ${url.memberShipServiceBase}/membership-management-service/membership/v1/internal/soap

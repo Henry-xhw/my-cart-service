@@ -5,20 +5,23 @@ import com.active.services.cart.model.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.text.MessageFormat;
+
 @Getter
 @Setter
 public class CartException extends RuntimeException {
 
     private ErrorCode errorCode;
-
     private String errorMessage;
 
-    public CartException(ErrorCode errorCode) {
-        this(errorCode, null);
+    public CartException(ErrorCode errorCode, String message, Object... args) {
+        this.errorCode = errorCode;
+        this.errorMessage = MessageFormat.format(message, args);
     }
 
-    public CartException(ErrorCode errorCode, String errorMessage) {
+    public CartException(Exception cause, ErrorCode errorCode, String message, Object... args) {
+        super(cause);
         this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+        this.errorMessage = MessageFormat.format(message, args);
     }
 }

@@ -5,30 +5,45 @@
 <mapper namespace="com.active.services.cart.repository.mapper.CartMapper">
 
     <insert id="createCart" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO [dbo].[cart]
+        INSERT INTO [dbo].[carts]
             (identifier,
-            owner_id,
-            keyer_id,
+            owner_guid,
+            keyer_guid,
             currency_code,
             created_by,
             created_dt,
             modified_by,
-            modified_dt)
+            modified_dt,
+            version,
+            price_version,
+            is_lock,
+            cart_status,
+            reservation_group_guid,
+            coupon_codes,
+            sales_channel)
         VALUES
             (#{identifier},
             #{ownerId},
             #{keyerId},
             #{currencyCode},
             #{createdBy},
-            #{createdDt},
+            getutcdate(),
             #{modifiedBy},
-            #{modifiedDt}
-            )
+            getutcdate(),
+            #{version},
+            #{priceVersion},
+            #{lock},
+            #{cartStatus},
+            #{reservationGroupId},
+            #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
+            #{salesChannel})
     </insert>
 
     <insert id="createCartItem" useGeneratedKeys="true" keyProperty="item.id">
-        INSERT INTO [dbo].[cart_item] (
+        INSERT INTO [dbo].[cart_items] (
             [cart_id],
+            [fee_volume_index],
+            [parent_id],
             [identifier],
             [product_id],
             [product_name],
@@ -38,8 +53,16 @@
             [trimmed_booking_start_dt],
             [trimmed_booking_end_dt],
             [quantity],
-            [unit_price],
+            [override_price],
+            [gross_price],
             [grouping_identifier],
+            [oversold],
+            [coupon_codes],
+            [person_identifier],
+            [coupon_mode],
+            [ignore_multi_discounts],
+            [reservation_guid],
+            [membership_id],
             [created_by],
             [created_dt],
             [modified_by],
@@ -47,14 +70,16 @@
         )
         VALUES (
              #{cartId},
+             #{item.feeVolumeIndex},
+             #{item.parentId},
              #{item.identifier},
              #{item.productId},
              #{item.productName},
              #{item.productDescription},
             <choose>
                 <when test="item.bookingRange != null">
-                    #{item.bookingRange.lower},
-                    #{item.bookingRange.upper},
+                    #{item.bookingRange.lowerInclusive},
+                    #{item.bookingRange.upperExclusive},
                 </when>
                 <otherwise>
                     null,
@@ -63,8 +88,8 @@
             </choose>
             <choose>
                 <when test="item.trimmedBookingRange != null">
-                    #{item.trimmedBookingRange.lower},
-                    #{item.trimmedBookingRange.upper},
+                    #{item.trimmedBookingRange.lowerInclusive},
+                    #{item.trimmedBookingRange.upperExclusive},
                 </when>
                 <otherwise>
                     null,
@@ -72,8 +97,16 @@
                 </otherwise>
             </choose>
              #{item.quantity},
-             #{item.unitPrice},
+             #{item.overridePrice},
+             #{item.grossPrice},
              #{item.groupingIdentifier},
+             #{item.oversold},
+             #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
+             #{item.personIdentifier},
+             #{item.couponMode},
+             #{item.ignoreMultiDiscounts},
+             #{item.reservationId},
+             #{item.membershipId},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -81,8 +114,19 @@
         )
     </insert>
 
+    <update id="updateCart">
+        UPDATE [dbo].[carts]
+        SET
+            reservation_group_guid = #{reservationGroupId},
+            coupon_codes = #{couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
+            sales_channel = #{salesChannel},
+            [modified_by] = #{modifiedBy},
+            [modified_dt] = #{modifiedDt}
+        WHERE id = #{id}
+    </update>
+
     <update id="updateCartItem">
-        UPDATE [dbo].[cart_item]
+        UPDATE [dbo].[cart_items]
         SET
         <if test="item.productName!=null and item.productName!=''">
             [product_name] = #{item.productName},
@@ -97,8 +141,8 @@
         </choose>
         <choose>
             <when test="item.bookingRange != null">
-                [booking_start_dt] = #{item.bookingRange.lower},
-                [booking_end_dt] = #{item.bookingRange.upper},
+                [booking_start_dt] = #{item.bookingRange.lowerInclusive},
+                [booking_end_dt] = #{item.bookingRange.upperExclusive},
             </when>
             <otherwise>
                 [booking_start_dt] = null,
@@ -107,8 +151,8 @@
         </choose>
         <choose>
             <when test="item.trimmedBookingRange != null">
-                [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lower},
-                [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upper},
+                [trimmed_booking_start_dt] = #{item.trimmedBookingRange.lowerInclusive},
+                [trimmed_booking_end_dt] = #{item.trimmedBookingRange.upperExclusive},
             </when>
             <otherwise>
                 [trimmed_booking_start_dt] = null,
@@ -119,11 +163,19 @@
             [quantity] = #{item.quantity},
         </if>
         <choose>
-            <when test="item.unitPrice!=null">
-                [unit_price] = #{item.unitPrice},
+            <when test="item.overridePrice!=null">
+                [override_price] = #{item.overridePrice},
             </when>
             <otherwise>
-                [unit_price] = null,
+                [override_price] = null,
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="item.grossPrice!=null">
+                [gross_price] = #{item.grossPrice},
+            </when>
+            <otherwise>
+                [gross_price] = null,
             </otherwise>
         </choose>
         <choose>
@@ -134,6 +186,20 @@
                 [grouping_identifier] = null,
             </otherwise>
         </choose>
+        <choose>
+            <when test="item.personIdentifier!=null">
+                [person_identifier] = #{item.personIdentifier},
+            </when>
+            <otherwise>
+                [person_identifier] = null,
+            </otherwise>
+        </choose>
+        [oversold] = #{item.oversold},
+        [coupon_codes] = #{item.couponCodes,typeHandler=com.active.services.cart.common.mybatis.types.StringSetTypeHandler},
+        [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
+        [coupon_mode] = #{item.couponMode},
+        [reservation_guid] = #{item.reservationId},
+        [membership_id] = #{item.membershipId},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -143,64 +209,204 @@
         <id property="id" column="id"/>
         <collection property="items" ofType="CartItem" notNullColumn="id" columnPrefix="item_">
             <id property="id" column="id"/>
-            <association property="bookingRange" javaType="com.active.services.cart.model.Range">
-                <result property="lower" column="booking_start_dt"
+            <association property="bookingRange" javaType="com.active.platform.types.range.Range">
+                <result property="lowerInclusive" column="booking_start_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
-                <result property="upper" column="booking_end_dt"
-                        typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
-            </association>
-            <association property="trimmedBookingRange" javaType="com.active.services.cart.model.Range">
-                <result property="lower" column="trimmed_booking_start_dt"
-                        typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
-                <result property="upper" column="trimmed_booking_end_dt"
+                <result property="upperExclusive" column="booking_end_dt"
                         typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
             </association>
+            <association property="trimmedBookingRange" javaType="com.active.platform.types.range.Range">
+                <result property="lowerInclusive" column="trimmed_booking_start_dt"
+                        typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
+                <result property="upperExclusive" column="trimmed_booking_end_dt"
+                        typeHandler="org.apache.ibatis.type.InstantTypeHandler"/>
+            </association>
+            <collection property="adHocDiscounts" ofType="AdHocDiscount" notNullColumn="id" columnPrefix="adhoc_">
+                <id property="id" column="id"/>
+            </collection>
+        </collection>
+        <collection property="discounts" ofType="Discount" notNullColumn="id" columnPrefix="discount_">
+            <id property="id" column="id"/>
+            <result column="keyer_uuid" property="keyerUUID" />
         </collection>
     </resultMap>
+
     <select id="getCart" resultMap="CartResultMap">
-        SELECT cart.id                       as id,
-               cart.identifier               as identifier,
-               cart.owner_id                 as owner_id,
-               cart.keyer_id                 as keyer_id,
-               cart.currency_code            as currency_code,
-               cart.created_by               as created_by,
-               cart.created_dt               as created_dt,
-               cart.modified_by              as modified_by,
-               cart.modified_dt              as modified_dt,
-               item.id                       AS item_id,
-               item.identifier               AS item_identifier,
-               item.product_id               AS item_product_id,
-               item.product_name             AS item_product_name,
-               item.product_description      AS item_product_description,
-               item.booking_start_dt         As item_booking_start_dt,
-               item.booking_end_dt           AS item_booking_end_dt,
-               item.trimmed_booking_start_dt AS item_trimmed_booking_start_dt,
-               item.trimmed_booking_end_dt   AS item_trimmed_booking_end_dt,
-               item.quantity                 AS item_quantity,
-               item.unit_price               AS item_unit_price,
-               item.grouping_identifier      AS item_grouping_identifier,
-               item.created_by               AS item_createdBy,
-               item.created_dt               AS item_createdDt,
-               item.modified_by              AS item_modifiedBy,
-               item.modified_dt              AS item_modifiedDt
-        FROM dbo.cart cart
-                 LEFT JOIN dbo.cart_item item ON cart.id = item.cart_id
-        WHERE cart.identifier = #{cartId}
+        SELECT cart.id                as id,
+        cart.identifier               as identifier,
+        cart.owner_guid               as owner_id,
+        cart.keyer_guid               as keyer_id,
+        cart.currency_code            as currency_code,
+        cart.created_by               as created_by,
+        cart.created_dt               as created_dt,
+        cart.modified_by              as modified_by,
+        cart.modified_dt              as modified_dt,
+        cart.version                  as version,
+        cart.price_version            as price_version,
+        cart.is_lock                  as lock,
+        cart.cart_status              as cart_status,
+        cart.reservation_group_guid     as reservation_group_id,
+        cart.coupon_codes             as coupon_codes,
+        cart.sales_channel            as sales_channel,
+        item.id                       AS item_id,
+        item.parent_id                AS item_parent_id,
+        item.identifier               AS item_identifier,
+        item.product_id               AS item_product_id,
+        item.product_name             AS item_product_name,
+        item.product_description      AS item_product_description,
+        item.booking_start_dt         As item_booking_start_dt,
+        item.booking_end_dt           AS item_booking_end_dt,
+        item.trimmed_booking_start_dt AS item_trimmed_booking_start_dt,
+        item.trimmed_booking_end_dt   AS item_trimmed_booking_end_dt,
+        item.quantity                 AS item_quantity,
+        item.override_price           AS item_override_price,
+        item.gross_price              AS item_gross_price,
+        item.grouping_identifier      AS item_grouping_identifier,
+        item.person_identifier        AS item_person_identifier,
+        item.fee_volume_index         AS item_fee_volume_index,
+        item.oversold                 AS item_oversold,
+        item.coupon_mode              AS item_coupon_mode,
+        item.ignore_multi_discounts   AS item_ignore_multi_discounts,
+        item.coupon_codes             AS item_coupon_codes,
+        item.membership_id            AS item_membership_id,
+        item.reservation_guid         AS item_reservation_id,
+        item.created_by               AS item_createdBy,
+        item.created_dt               AS item_createdDt,
+        item.modified_by              AS item_modifiedBy,
+        item.modified_dt              AS item_modifiedDt,
+        discount.id                   AS discount_id,
+        discount.identifier           AS discount_identifier,
+        discount.cart_id              AS discount_cart_id,
+        discount.name                 AS discount_name,
+        discount.description          AS discount_description,
+        discount.amount               AS discount_amount,
+        discount.amount_type          AS discount_amount_type,
+        discount.discount_id          AS discount_discount_id,
+        discount.discount_type        AS discount_discount_type,
+        discount.coupon_code          AS discount_coupon_code,
+        discount.algorithm            AS discount_algorithm,
+        discount.apply_to_recurring_billing  AS discount_apply_to_recurring_billing,
+        discount.origin               AS discount_origin,
+        discount.keyer_uuid           AS discount_keyer_uuid,
+        discount.created_by           AS discount_createdBy,
+        discount.created_dt           AS discount_createdDt,
+        discount.modified_by          AS discount_modifiedBy,
+        discount.modified_dt          AS discount_modifiedDt,
+        adhoc.id                      AS item_adhoc_id,
+        adhoc.identifier              AS item_adhoc_identifier,
+        adhoc.cart_item_id            AS item_adhoc_cart_item_id,
+        adhoc.discount_name           AS item_adhoc_discount_name,
+        adhoc.discount_keyer_id       AS item_adhoc_discount_keyer_id,
+        adhoc.discount_amount         AS item_adhoc_discount_amount,
+        adhoc.discount_coupon_code    AS item_adhoc_discount_coupon_code,
+        adhoc.discount_group_id       AS item_adhoc_discount_group_id
+        FROM dbo.carts cart
+        LEFT JOIN dbo.cart_items item ON cart.id = item.cart_id
+        LEFT JOIN dbo.ad_hoc_discounts adhoc ON item.id = adhoc.cart_item_id
+        LEFT JOIN dbo.discounts discount ON cart.id = discount.cart_id
+        WHERE cart.identifier = #{cartId} and cart_status != 'FINALIZED'
     </select>
 
     <delete id="deleteCart">
-        DELETE FROM cart WHERE id = #{cartId}
+        DELETE FROM carts WHERE id = #{cartId} and cart_status != 'FINALIZED'
     </delete>
 
     <delete id="deleteCartItem">
-        DELETE FROM cart_item WHERE identifier = #{cartItemId}
+        DELETE FROM cart_items WHERE id = #{cartItemId}
     </delete>
 
-    <delete id="deleteCartItemByCartId">
-        DELETE FROM cart_item WHERE cart_id = #{cartId}
+    <delete id="batchDeleteCartItems" parameterType="java.util.List">
+        DELETE FROM cart_items WHERE identifier in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </delete>
 
     <select id="search" resultType="java.util.UUID">
-        SELECT identifier FROM cart WHERE owner_id = #{ownerId}
+        SELECT identifier FROM carts WHERE owner_guid = #{ownerId} and cart_status != 'FINALIZED'
     </select>
+
+    <select id="getCartItemIdByCartItemUuid" resultType="Long">
+        SELECT id
+        FROM cart_items
+        WHERE identifier = #{cartItemId}
+    </select>
+
+    <update id="finalizeCart">
+        UPDATE [dbo].[carts]
+        SET
+        cart_status = 'FINALIZED',
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier} AND cart_status != 'FINALIZED'
+    </update>
+
+    <update id="acquireLock">
+        UPDATE [dbo].[carts]
+        SET
+        [is_lock] = 1,
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier} and is_lock != 1 and cart_status != 'FINALIZED'
+    </update>
+
+    <update id="releaseLock">
+        UPDATE [dbo].[carts]
+        SET
+        [is_lock] = 0,
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
+    </update>
+
+    <update id="incrementVersion">
+        UPDATE [dbo].[carts]
+        SET
+        version = version + 1,
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
+    </update>
+
+    <update id="incrementPriceVersion">
+        UPDATE [dbo].[carts]
+        SET
+        price_version = version,
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier} and cart_status != 'FINALIZED'
+    </update>
+
+
+    <update id="updateCartReservationGroupId">
+        UPDATE [dbo].[carts]
+        SET
+        [reservation_group_guid] = #{reservationGroupId},
+        [modified_dt] = getutcdate(),
+        [modified_by] = #{modifiedBy}
+        WHERE identifier = #{identifier}
+    </update>
+
+    <insert id="createEvents">
+        INSERT INTO [dbo].[transaction_log]
+            (
+                [identifier],
+                [type],
+                [payload],
+                [created_by],
+                [created_dt],
+                [modified_by],
+                [modified_dt]
+            )
+        VALUES
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item.bizIdentifier},
+            #{item.type},
+            #{item.payload},
+            #{item.createdBy},
+            #{item.createdDt},
+            #{item.modifiedBy},
+            #{item.modifiedDt}
+        </foreach>
+    </insert>
 </mapper>

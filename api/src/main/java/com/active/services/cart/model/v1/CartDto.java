@@ -1,17 +1,18 @@
 package com.active.services.cart.model.v1;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.active.services.cart.model.CurrencyCode;
-
-import lombok.Data;
-
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CartDto extends BaseDto {
 
     @NotNull
@@ -21,7 +22,13 @@ public class CartDto extends BaseDto {
     private UUID keyerId;
 
     @NotNull
-    private CurrencyCode currencyCode;
+    private String currencyCode;
+
+    private UUID reservationGroupId;
+
+    private Set<String> couponCodes;
+
+    private String salesChannel;
 
     @Valid
     private List<CartItemDto> items = new ArrayList<>();
