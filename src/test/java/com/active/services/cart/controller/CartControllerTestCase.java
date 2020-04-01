@@ -8,6 +8,7 @@ import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.CartItemFee;
 import com.active.services.cart.mock.MockCart;
 import com.active.services.cart.model.ErrorCode;
+import com.active.services.cart.model.MembershipMetaData;
 import com.active.services.cart.model.PaymentAccount;
 import com.active.services.cart.model.PaymentType;
 import com.active.services.cart.model.v1.CartDto;
@@ -22,6 +23,7 @@ import com.active.services.cart.model.v1.rsp.FindCartByIdRsp;
 import com.active.services.cart.model.v1.rsp.QuoteRsp;
 import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
+import com.active.services.cart.service.quote.CartQuoteContext;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -227,6 +229,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
     public void quoteCartSuccess() throws Exception {
         QuoteReq req = new QuoteReq();
         req.setAaMember(false);
+        MembershipMetaData membershipMetaData = new MembershipMetaData("abc", 1L);
+        req.setMembershipMetas(Arrays.asList(membershipMetaData));
+
         QuoteRsp rsp = new QuoteRsp();
         rsp.setCartDto(MockCart.mockQuoteCartDto());
         Cart cart = CartDataFactory.cart();
@@ -236,7 +241,9 @@ public class CartControllerTestCase extends BaseControllerTestCase {
         CartItemFee cartItemFee = CartDataFactory.cartItemFee();
         cartItem.setFees(Arrays.asList(cartItemFee));
         cart.setItems(Arrays.asList(cartItem));
-        when(cartService.quote(cartId, req.isAaMember())).thenReturn(cart);
+
+        when(cartService.getCartByUuid(cartId)).thenReturn(cart);
+        when(cartService.quote(any(CartQuoteContext.class))).thenReturn(cart);
         String result = mockMvc.perform(post("/carts/{cart-id}/quote", cartId)
                 .contentType(V1_MEDIA).accept(V1_MEDIA)
                 .headers(actorIdHeader())

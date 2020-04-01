@@ -69,8 +69,6 @@ public class CreateCartItemDto extends BaseDto {
 
     private UUID reservationId;
 
-    private Long membershipId;
-
     @Valid
     private List<AdHocDiscountDto> adHocDiscounts;
 }

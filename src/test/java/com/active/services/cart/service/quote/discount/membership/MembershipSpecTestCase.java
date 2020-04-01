@@ -18,24 +18,24 @@ public class MembershipSpecTestCase {
     @Test
     public void testSatisfy() {
         CartItem cartItem = new CartItem();
-        cartItem.setMembershipIds(Collections.singleton(requiredMembershipId));
+        List<Long> membershipIds = Collections.singletonList(requiredMembershipId);
 
         List<Long> newItemMembershipIds = null;
-        MembershipSpec membershipSpec = new MembershipSpec(newItemMembershipIds, cartItem, requiredMembershipId);
+        MembershipSpec membershipSpec = new MembershipSpec(newItemMembershipIds, membershipIds, requiredMembershipId);
         assertThat(membershipSpec.satisfy()).isEqualTo(true);
 
-        cartItem.setMembershipIds(Collections.singleton(requiredMembershipId + 1));
-        membershipSpec = new MembershipSpec(newItemMembershipIds, cartItem, requiredMembershipId);
+        membershipIds = Collections.singletonList(requiredMembershipId + 1);
+        membershipSpec = new MembershipSpec(newItemMembershipIds, membershipIds, requiredMembershipId);
         assertThat(membershipSpec.satisfy()).isEqualTo(false);
 
-        cartItem.setMembershipIds(Collections.singleton(requiredMembershipId + 1));
+        membershipIds = Collections.singletonList(requiredMembershipId + 1);
         newItemMembershipIds = Arrays.asList(requiredMembershipId + 2);
-        membershipSpec = new MembershipSpec(newItemMembershipIds, cartItem, requiredMembershipId);
+        membershipSpec = new MembershipSpec(newItemMembershipIds, membershipIds, requiredMembershipId);
         assertThat(membershipSpec.satisfy()).isEqualTo(false);
 
-        cartItem.setMembershipIds(Collections.singleton(requiredMembershipId));
+        membershipIds = Collections.singletonList(requiredMembershipId);
         newItemMembershipIds = Arrays.asList(requiredMembershipId + 1, requiredMembershipId);
-        membershipSpec = new MembershipSpec(newItemMembershipIds, cartItem, requiredMembershipId);
+        membershipSpec = new MembershipSpec(newItemMembershipIds, membershipIds, requiredMembershipId);
         assertThat(membershipSpec.satisfy()).isEqualTo(true);
     }
 }
