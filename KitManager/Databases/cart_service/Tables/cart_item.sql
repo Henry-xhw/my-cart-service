@@ -24,7 +24,6 @@ BEGIN
         [coupon_mode]               NVARCHAR(255)       NULL,
         [ignore_multi_discounts]    BIT                 CONSTRAINT df_cart_items_ignore_multi_discounts DEFAULT ((0)) NOT NULL,
         [reservation_guid]          UNIQUEIDENTIFIER    NULL,
-        [membership_id]             BIGINT              NULL,
         [created_by]                NVARCHAR(255)       NOT NULL,
         [created_dt]                DATETIME            NOT NULL,
         [modified_by]               NVARCHAR(255)       NOT NULL,
@@ -75,14 +74,16 @@ IF NOT EXISTS(
     END
 GO
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
+IF EXISTS(SELECT TOP 1 1 FROM sys.tables t WITH(NOLOCK)
 JOIN sys.columns c WITH(NOLOCK) ON t.object_id = c.object_id AND c.name = 'membership_id'
 WHERE SCHEMA_NAME(t.schema_id) LIKE 'dbo' AND OBJECT_NAME(t.object_id) = 'cart_items' AND t.[type] = 'U')
 BEGIN
-    ALTER TABLE dbo.cart_items ADD membership_id BIGINT NULL
-    PRINT 'Added column membership_id to dbo.cart_items'
+    ALTER TABLE dbo.cart_items Drop column membership_id
+    PRINT 'Dropped column membership_id to dbo.cart_items'
 END
 GO
+
+
 
 exec sp_add_table_column_comment 'dbo', 'cart_items', NULL, 'DC2', 'cart item is a item for shopping behavior, and the table is mapping to com.active.services.cart.domain.CartItem';
 

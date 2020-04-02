@@ -17,6 +17,7 @@ import com.active.services.cart.model.v1.rsp.SearchCartRsp;
 import com.active.services.cart.service.CartService;
 import com.active.services.cart.service.CartStatus;
 import com.active.services.cart.service.checkout.CheckoutContext;
+import com.active.services.cart.service.quote.CartQuoteContext;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -93,7 +94,12 @@ public class CartController {
     @PostMapping(QUOTE_PATH)
     public QuoteRsp quote(@PathVariable(CART_ID_PARAM) UUID cartId, @RequestBody @Validated QuoteReq req) {
         QuoteRsp rsp = new QuoteRsp();
-        Cart cart = cartService.quote(cartId, req.isAaMember());
+        Cart originCart = cartService.getCartByUuid(cartId);
+        CartQuoteContext quoteContext = new CartQuoteContext(originCart);
+        quoteContext.setAaMember(req.isAaMember());
+        quoteContext.setMembershipMetas(req.getMembershipMetas());
+
+        Cart cart = cartService.quote(quoteContext);
         rsp.setCartDto(QuoteCartMapper.INSTANCE.toDto(cart));
         return rsp;
     }

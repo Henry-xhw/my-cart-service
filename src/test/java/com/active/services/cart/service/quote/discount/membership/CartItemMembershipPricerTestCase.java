@@ -4,6 +4,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.cart.model.MembershipMetaData;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.AmountType;
@@ -18,7 +19,9 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +39,8 @@ public class CartItemMembershipPricerTestCase {
     private Long productId = RandomUtils.nextLong();
 
     private Long membershipId = RandomUtils.nextLong();
+
+    private String personIdentifier = UUID.randomUUID().toString();
 
     @Before
     public void setUp() {
@@ -79,7 +84,11 @@ public class CartItemMembershipPricerTestCase {
         when(mockMembershipContext.getMembershipDiscountsHistory(productId)).thenReturn(membershipDiscountsHistories);
 
         CartItem cartItem = context.getCart().getItems().get(0);
-        cartItem.setMembershipId(membershipId);
+        cartItem.setPersonIdentifier(personIdentifier);
+
+        MembershipMetaData membershipMetaData = new MembershipMetaData(personIdentifier, membershipId);
+        context.setMembershipMetas(Arrays.asList(membershipMetaData));
+
         cartItemMembershipPricer.doQuote(context, cartItem);
 
         Predicate<Discount> membershipPredicate = d -> d.getDiscountType() == DiscountType.MEMBERSHIP &&

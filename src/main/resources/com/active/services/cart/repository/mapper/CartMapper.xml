@@ -62,7 +62,6 @@
             [coupon_mode],
             [ignore_multi_discounts],
             [reservation_guid],
-            [membership_id],
             [created_by],
             [created_dt],
             [modified_by],
@@ -106,7 +105,6 @@
              #{item.couponMode},
              #{item.ignoreMultiDiscounts},
              #{item.reservationId},
-             #{item.membershipId},
              #{item.createdBy},
              #{item.createdDt},
              #{item.modifiedBy},
@@ -199,7 +197,6 @@
         [ignore_multi_discounts] = #{item.ignoreMultiDiscounts},
         [coupon_mode] = #{item.couponMode},
         [reservation_guid] = #{item.reservationId},
-        [membership_id] = #{item.membershipId},
         [modified_by] = #{item.modifiedBy},
         [modified_dt] = #{item.modifiedDt}
         WHERE identifier = #{item.identifier}
@@ -268,7 +265,6 @@
         item.coupon_mode              AS item_coupon_mode,
         item.ignore_multi_discounts   AS item_ignore_multi_discounts,
         item.coupon_codes             AS item_coupon_codes,
-        item.membership_id            AS item_membership_id,
         item.reservation_guid         AS item_reservation_id,
         item.created_by               AS item_createdBy,
         item.created_dt               AS item_createdDt,
