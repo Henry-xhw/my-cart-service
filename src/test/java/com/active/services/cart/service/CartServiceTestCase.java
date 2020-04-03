@@ -19,6 +19,7 @@ import com.active.services.cart.repository.DiscountRepository;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
+import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 
@@ -215,7 +216,10 @@ public class CartServiceTestCase extends BaseTestCase {
         when(cartRepository.getCart(identifier)).thenReturn(Optional.of(cart));
         doNothing().when(discountRepository).createDiscount(any());
         doNothing().when(discountRepository).deletePreviousDiscountByCartId(any());
-        Cart quote = cartService.quote(identifier, false);
+
+        CartQuoteContext quoteContext = new CartQuoteContext(cart);
+        quoteContext.setAaMember(false);
+        Cart quotedCart = cartService.quote(quoteContext);
         Mockito.verify(cartItemFeeRepository).deleteLastQuoteResult(cartItem.getId());
         Mockito.verify(cartItemFeeRepository).createCartItemFee(cartItemFee);
         Mockito.verify(cartItemFeeRepository).createCartItemCartItemFee(any());

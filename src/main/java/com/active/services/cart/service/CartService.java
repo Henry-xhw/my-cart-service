@@ -167,18 +167,15 @@ public class CartService {
         return null;
     }
 
-    public Cart quote(UUID cartId, boolean isAaMember) {
-        Cart cart = getCartByUuid(cartId);
-        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        cartQuoteContext.setAaMember(isAaMember);
-
+    public Cart quote(CartQuoteContext quoteContext) {
+        Cart cart = quoteContext.getCart();
         try {
-            CartQuoteContext.set(cartQuoteContext);
-            cartPriceEngine.quote(cartQuoteContext);
+            CartQuoteContext.set(quoteContext);
+            cartPriceEngine.quote(quoteContext);
             // Manual control the tx
             dataAccess.doInTx(() -> {
-                saveQuoteResult(cartQuoteContext);
-                incrementPriceVersion(cartId);
+                saveQuoteResult(quoteContext);
+                incrementPriceVersion(cart.getIdentifier());
             });
         } finally {
             CartQuoteContext.destroy();

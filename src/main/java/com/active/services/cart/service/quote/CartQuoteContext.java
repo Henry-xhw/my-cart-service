@@ -5,6 +5,7 @@ import com.active.services.ProductType;
 import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.cart.model.MembershipMetaData;
 import com.active.services.product.DiscountType;
 import com.active.services.product.Product;
 
@@ -14,6 +15,7 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Getter
@@ -37,6 +40,8 @@ public class CartQuoteContext {
     private Map<Long, Product> productsMap = new HashMap<>();
 
     private List<Discount> appliedDiscounts = new ArrayList<>();
+
+    private Map<String, List<Long>> membershipMetaMap = new HashMap<>();
 
     @Setter
     private boolean isAaMember;
@@ -53,6 +58,23 @@ public class CartQuoteContext {
     public void setProducts(List<Product> products) {
         productsMap = CollectionUtils.emptyIfNull(products).stream().collect(Collectors.toMap(Product::getId,
                 Function.identity()));
+    }
+
+    public void setMembershipMetas(List<MembershipMetaData> membershipMetas) {
+        if (membershipMetas == null) {
+            return;
+        }
+
+        membershipMetaMap = membershipMetas.stream().collect(groupingBy(MembershipMetaData::getPersonIdentifier,
+            Collectors.mapping(MembershipMetaData::getMembershipId, Collectors.toList())));
+    }
+
+    public List<Long> getMembershipIdsByPersonIdentifier(String personIdentifier) {
+        if (personIdentifier == null || !membershipMetaMap.containsKey(personIdentifier)) {
+            return Collections.emptyList();
+        }
+
+        return membershipMetaMap.get(personIdentifier);
     }
 
     public DiscountModel getDiscountModel(Long productId) {
