@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Payment extends DomainObject {
 
     private UUID identifier;

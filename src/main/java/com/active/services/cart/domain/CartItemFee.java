@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor

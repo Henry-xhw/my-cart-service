@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class CreateCartItemDto extends BaseDto {
     @NotNull
     private Long productId;
