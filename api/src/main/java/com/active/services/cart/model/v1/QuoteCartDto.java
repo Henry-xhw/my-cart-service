@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class QuoteCartDto extends BaseDto {
 
     @NotNull
