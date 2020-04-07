@@ -107,6 +107,7 @@ public class CartService {
 
             cartItemIds.add(foundCartItem.getId());
         });
+        new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), items).validate();
         deleteAdHocDiscountByCartItemId(cartItemIds);
 
         items.forEach(item -> {
