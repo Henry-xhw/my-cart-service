@@ -52,6 +52,7 @@ public class CreateCartItemsValidator {
             List<ProductDto> foundProducts = emptyIfNull(getProducts(newCartItems));
             new CartItemsProductValidator(newCartItems, foundProducts).validate();
             new CartItemsCurrencyValidator(cart, foundProducts).validate();
+            new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), newCartItems).validate();
         }
     }
 

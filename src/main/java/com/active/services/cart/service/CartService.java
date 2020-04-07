@@ -19,6 +19,7 @@ import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.checkout.CheckoutProcessor;
 import com.active.services.cart.service.quote.CartPriceEngine;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.active.services.cart.service.validator.CartItemsCurrencyFormatValidator;
 import com.active.services.cart.service.validator.CreateCartItemsValidator;
 import com.active.services.cart.util.DataAccess;
 
@@ -106,6 +107,7 @@ public class CartService {
 
             cartItemIds.add(foundCartItem.getId());
         });
+        new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), items).validate();
         deleteAdHocDiscountByCartItemId(cartItemIds);
 
         items.forEach(item -> {
