@@ -8,6 +8,7 @@ import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartDataFactory;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.cart.domain.Discount;
+import com.active.services.cart.model.MembershipMetaData;
 import com.active.services.cart.service.quote.CartQuoteContext;
 import com.active.services.order.discount.membership.MembershipDiscountsHistory;
 import com.active.services.product.AmountType;
@@ -29,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,11 +50,11 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
     @Mock
     private ProductOMSEndpoint productOMSEndpoint;
 
-
-
     private Long productId = RandomUtils.nextLong();
 
     private Long membershipId = RandomUtils.nextLong();
+
+    private String personIdentifier = UUID.randomUUID().toString();
 
     @Before
     public void setUp() {
@@ -66,7 +68,6 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
         List<CartItem> cartItems = new ArrayList<>();
         cartMembershipPricer.doQuote(context, cartItems);
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
 
         Product product = mock(Product.class);
         when(product.getId()).thenReturn(productId);
@@ -74,7 +75,6 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
         context.setProducts(Arrays.asList(product));
         cartMembershipPricer.doQuote(context, cartItems);
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
     }
 
     @Test
@@ -89,14 +89,16 @@ public class CartMembershipPricerTestCase extends BaseTestCase {
 
         cartMembershipPricer.doQuote(context, context.getCart().getItems());
         assertThat(context.getAppliedDiscounts()).isEmpty();
-        assertThat(context.getAppliedDiscountsMap()).isEmpty();
     }
 
     @Test
     public void testDoQuoteHasMembershipDiscountsHistory() throws ActiveEntityNotFoundException {
         CartQuoteContext context = buildCartQuoteContext();
         CartItem cartItem = context.getCart().getItems().get(0);
-        cartItem.setMembershipId(membershipId);
+        cartItem.setPersonIdentifier(personIdentifier);
+
+        MembershipMetaData membershipMetaData = new MembershipMetaData(personIdentifier, membershipId);
+        context.setMembershipMetas(Arrays.asList(membershipMetaData));
 
         Product product = mock(Product.class);
         when(product.getId()).thenReturn(productId);

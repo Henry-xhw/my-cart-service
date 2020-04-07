@@ -99,7 +99,7 @@ public class MultiDiscountLoaderTestCase {
         r4.addCartItems(Arrays.asList(cartItem3, cartItem4));
         expectedResults.add(r4);
 
-        List<MultiDiscountCartItem> results = multiDiscountLoader.load(cart);
+        List<MultiDiscountCartItem> results = multiDiscountLoader.load(cart.getFlattenCartItems());
 
         ReflectionAssert.assertLenientEquals(expectedResults, results);
     }

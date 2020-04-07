@@ -84,35 +84,6 @@ public class CartQuoteContextTestCase {
     }
 
     @Test
-    public void getUsedUniqueCouponDiscountsIds() {
-        Cart cart = CartDataFactory.cart();
-        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-
-        Discount desc1 = DiscountFactory.getDiscount(AmountType.FLAT, new BigDecimal("2.00"), "code1",
-                null, null, null);
-        Discount desc2 = DiscountFactory.getDiscount(AmountType.PERCENT, new BigDecimal("10.00"), "code2", null, null, null);
-
-        com.active.services.cart.domain.Discount discountApplication1 = DiscountMapper.MAPPER.toDiscount(desc1, cartQuoteContext);
-        com.active.services.cart.domain.Discount discountApplication2 = DiscountMapper.MAPPER.toDiscount(desc2, cartQuoteContext);
-
-        cartQuoteContext.addAppliedDiscount(discountApplication1);
-        cartQuoteContext.addAppliedDiscount(discountApplication2);
-
-        assertEquals(2, cartQuoteContext.getAppliedDiscounts().size());
-        assertTrue(CollectionUtils.isEmpty(cartQuoteContext.getUsedUniqueCouponDiscountsIds()));
-
-        Discount desc3 = DiscountFactory.getDiscount(AmountType.FLAT, new BigDecimal("2.00"), "code1",
-                DiscountAlgorithm.MOST_EXPENSIVE, null, null);
-
-        cartQuoteContext.addAppliedDiscount(DiscountMapper.MAPPER.toDiscount(desc3, cartQuoteContext));
-
-        assertEquals(3, cartQuoteContext.getAppliedDiscounts().size());
-
-        assertEquals(1, cartQuoteContext.getUsedUniqueCouponDiscountsIds().size());
-        assertEquals(desc3.getId(), cartQuoteContext.getUsedUniqueCouponDiscountsIds().get(0));
-    }
-
-    @Test
     public void getCurrency() {
         Cart cart = CartDataFactory.cart();
         CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);

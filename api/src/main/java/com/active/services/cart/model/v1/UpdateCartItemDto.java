@@ -67,8 +67,6 @@ public class UpdateCartItemDto {
 
     private UUID reservationId;
 
-    private Long membershipId;
-
     @Valid
     private List<AdHocDiscountDto> adHocDiscounts;
 }

@@ -32,14 +32,17 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
@@ -91,21 +94,28 @@ public class CartService {
     @Transactional
     public List<CartItem> updateCartItems(UUID cartIdentifier, List<CartItem> items) {
         Cart cart = getCartByUuid(cartIdentifier);
-        items.forEach(it -> cart.findCartItem(it.getIdentifier())
-                .orElseThrow(() -> new CartException(ErrorCode.VALIDATION_ERROR,
-                        "cart item id: {0} is not belong cart id: {1}", it.getIdentifier(), cart.getIdentifier())));
-        new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), items).validate();
-        Map<UUID, Long> identifierMap = cart.getCartItemIdentifierMap();
-        List<Long> cartItemIds = items.stream()
-                .map(cartItem -> identifierMap.get(cartItem.getIdentifier()))
-                .collect(Collectors.toList());
+
+        Map<UUID, CartItem> cartItemByIdentifier = cart.getFlattenCartItems()
+                .stream().collect(toMap(CartItem::getIdentifier, Function.identity()));
+        List<Long> cartItemIds = new ArrayList<>();
+        items.forEach(item -> {
+            CartItem foundCartItem = cartItemByIdentifier.get(item.getIdentifier());
+            if (foundCartItem == null) {
+                throw new CartException(ErrorCode.VALIDATION_ERROR,
+                        "cart item id: {0} is not belong cart id: {1}", item.getIdentifier(), cart.getIdentifier());
+            }
+
+            cartItemIds.add(foundCartItem.getId());
+        });
         deleteAdHocDiscountByCartItemId(cartItemIds);
+
         items.forEach(item -> {
             item.setCouponCodes(distinctCouponCodes(item.getCouponCodes()));
-            createAdHocDiscounts(identifierMap.get(item.getIdentifier()), item.getAdHocDiscounts());
+            createAdHocDiscounts(cartItemByIdentifier.get(item.getIdentifier()).getId(), item.getAdHocDiscounts());
         });
         cartRepository.updateCartItems(items);
         incrementVersion(cartIdentifier);
+
         return items;
     }
 
@@ -158,17 +168,15 @@ public class CartService {
         return null;
     }
 
-    public Cart quote(UUID cartId, boolean isAaMember) {
-        Cart cart = getCartByUuid(cartId);
-        CartQuoteContext cartQuoteContext = new CartQuoteContext(cart);
-        cartQuoteContext.setAaMember(isAaMember);
+    public Cart quote(CartQuoteContext quoteContext) {
+        Cart cart = quoteContext.getCart();
         try {
-            CartQuoteContext.set(cartQuoteContext);
-            cartPriceEngine.quote(cartQuoteContext);
+            CartQuoteContext.set(quoteContext);
+            cartPriceEngine.quote(quoteContext);
             // Manual control the tx
             dataAccess.doInTx(() -> {
-                saveQuoteResult(cartQuoteContext);
-                incrementPriceVersion(cartId);
+                saveQuoteResult(quoteContext);
+                incrementPriceVersion(cart.getIdentifier());
             });
         } finally {
             CartQuoteContext.destroy();
@@ -209,7 +217,7 @@ public class CartService {
         cartItemFeeRepository.deleteLastQuoteResult(cart.getId());
         discountRepository.deletePreviousDiscountByCartId(cart.getId());
         cartQuoteContext.getAppliedDiscounts().forEach(discountRepository::createDiscount);
-        cart.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
+        cartQuoteContext.getFlattenCartItems().stream().filter(Objects::nonNull).forEach(item -> {
             item.getFees().stream().filter(Objects::nonNull).forEach(cartItemFee -> {
                 createCartItemFeeAndRelationship(cartItemFee, item.getId());
             });

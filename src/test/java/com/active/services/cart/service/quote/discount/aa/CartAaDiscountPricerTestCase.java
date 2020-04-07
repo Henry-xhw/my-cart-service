@@ -63,7 +63,7 @@ public class CartAaDiscountPricerTestCase extends BaseTestCase {
         Mockito.verify(soapClient, times(0)).getProductOMSEndpoint();
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testQuoteWhenContextCartIsNull() {
         CartQuoteContext context = new CartQuoteContext(null);
         CartAaDiscountPricer cartAaDiscountPricer = new CartAaDiscountPricer(soapClient);

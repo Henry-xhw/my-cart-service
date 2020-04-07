@@ -3,7 +3,6 @@ package com.active.services.cart.service.quote.discount.multi.loader;
 import com.active.platform.concurrent.Task;
 import com.active.platform.concurrent.TaskRunner;
 import com.active.services.ContextWrapper;
-import com.active.services.cart.domain.Cart;
 import com.active.services.cart.domain.CartItem;
 import com.active.services.domain.DateTime;
 import com.active.services.product.api.omsOnly.soap.ProductOMSEndpoint;
@@ -46,12 +45,10 @@ public class MultiDiscountLoader {
     /**
      * One MultiDiscountCartItem for each multi discount.
      *
-     * @param cart
-     * @return
      */
-    public List<MultiDiscountCartItem> load(Cart cart) {
+    public List<MultiDiscountCartItem> load(List<CartItem> flattenCartItems) {
         // Group effective cart items by product id
-        Map<Long, List<CartItem>> itemsMap = cart.getFlattenCartItems().stream().filter(item ->
+        Map<Long, List<CartItem>> itemsMap = flattenCartItems.stream().filter(item ->
                 !item.isIgnoreMultiDiscounts() && item.hasPersonIdentifier())
                 .collect(Collectors.groupingBy(CartItem::getProductId));
 
