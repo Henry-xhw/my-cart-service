@@ -45,7 +45,6 @@ public class CreateCartItemsValidator {
         }
 
         new CartItemsIdentifierValidator(cart, cartItems).validate();
-        new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), cartItems).validate();
 
         List<CartItem> newCartItems = cartItems.stream().filter(item -> item.getIdentifier() == null)
                 .collect(Collectors.toList());
@@ -53,6 +52,7 @@ public class CreateCartItemsValidator {
             List<ProductDto> foundProducts = emptyIfNull(getProducts(newCartItems));
             new CartItemsProductValidator(newCartItems, foundProducts).validate();
             new CartItemsCurrencyValidator(cart, foundProducts).validate();
+            new CartItemsCurrencyFormatValidator(cart.getCurrencyCode(), newCartItems).validate();
         }
     }
 
