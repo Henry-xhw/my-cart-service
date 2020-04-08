@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class AdHocDiscountDto extends BaseDto {
     private String discountName;
     private UUID discountKeyerId;

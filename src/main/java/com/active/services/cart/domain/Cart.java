@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Cart extends BaseDomainObject {
 
     private UUID ownerId;

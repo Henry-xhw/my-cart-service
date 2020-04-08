@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class SearchCartRsp extends BaseRsp {
     private List<UUID> cartIds;
 }

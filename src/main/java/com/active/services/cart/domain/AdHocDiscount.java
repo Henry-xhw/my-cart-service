@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class AdHocDiscount extends BaseDomainObject {
     private Long cartItemId;
     private String discountName;

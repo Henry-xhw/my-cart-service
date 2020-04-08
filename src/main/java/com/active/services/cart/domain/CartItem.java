@@ -26,7 +26,7 @@ import java.util.UUID;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class CartItem extends BaseTree<CartItem> {
 
