@@ -17,7 +17,7 @@ allprojects {
     dependencyManagement {
         imports {
             mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.13.RELEASE'
-            mavenBom 'com.active.platform:platform-dependencies:0.0.21'
+            mavenBom 'com.active.platform:platform-dependencies:0.0.22'
         }
     }
     dependencies {
