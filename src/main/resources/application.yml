@@ -1,4 +1,4 @@
-spring:
+ spring:
   main:
     banner-mode: console
     allow-bean-definition-overriding: true

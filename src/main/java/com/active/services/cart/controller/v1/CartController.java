@@ -18,6 +18,7 @@ import com.active.services.cart.service.CartService;
 import com.active.services.cart.service.CartStatus;
 import com.active.services.cart.service.checkout.CheckoutContext;
 import com.active.services.cart.service.quote.CartQuoteContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -111,5 +112,9 @@ public class CartController {
         List<CheckoutResult> results = cartService.checkout(cartId, context);
         rsp.setCheckoutResults(results);
         return rsp;
+    }
+
+    public static void main(String[] args) {
+
     }
 }
