@@ -23,4 +23,5 @@ public class AdHocDiscountDto extends BaseDto {
     private BigDecimal discountAmount;
     private String discountCouponCode;
     private Long discountGroupId;
+
 }
