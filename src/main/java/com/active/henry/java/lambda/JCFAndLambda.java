@@ -2,46 +2,72 @@ package com.active.henry.java.lambda;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JCFAndLambda {
     public static void main(String[] args) {
-        // 使用增强for循环迭代
+
+
+        removeIf();
+        replaceAll();
+        showStream();
+    }
+
+    private static void showForeach() {
+
+        // 原始的for循环迭代
         ArrayList<String> list = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        for(int i = 0; i < list.size(); i++){
+            String str = list.get(i);
+            if(str.length()>3)
+                System.out.println(str);
+        }
+
+
+        // 使用增强for循环迭代
+        ArrayList<String> list2 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
         for(String str : list){
             if(str.length()>3)
                 System.out.println(str);
         }
 
-        ArrayList<String> list2 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
-        list2.forEach(t -> {
-            if(t.length()>3)
-                System.out.println(t);
-        });
-
-
-        ArrayList<String> list3 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
-        list3.forEach(JCFAndLambda::println);
-
-        ArrayList<String> list4 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
-        list4.forEach(new Consumer<String>() {
+        // 使用forEach()结合匿名内部类迭代
+        ArrayList<String> list5 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        list5.forEach(new Consumer<String>() {
             @Override public void accept(String s) {
                 if(s.length()>3)
                     System.out.println(s);
             }
         });
 
-        removeIf();
-        replaceAll();
-        showStream();
+        // 使用forEach()结合Lambda表达式迭代
+        ArrayList<String> list3 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        list2.forEach(t -> {
+            if(t.length()>3)
+                System.out.println(t);
+        });
+
+
+        // 使用forEach()结合Lambda表达式迭代(方法引用)
+        ArrayList<String> list4 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        list3.forEach(JCFAndLambda::println);
+
+
     }
     private static void println(String str) {
         if(str.length()>3)
@@ -64,9 +90,19 @@ public class JCFAndLambda {
 //        });
 //        list.forEach(System.out::println);
 
+        // 使用removeIf()结合匿名名内部类实现
         ArrayList<String> list2 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
-        list2.removeIf(str -> str.length() > 3);
-        list2.forEach(System.out::println);
+        list2.removeIf(new Predicate<String>(){ // 删除长度大于3的元素
+            @Override
+            public boolean test(String str){
+                return str.length()>3;
+            }
+        });
+
+        // 使用removeIf()结合Lambda表达式实现
+        ArrayList<String> list3 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        list3.removeIf(str -> str.length() > 3); // 删除长度大于3的元素
+        list3.forEach(System.out::println);
 
     }
 
@@ -90,6 +126,7 @@ public class JCFAndLambda {
             }
         });
 
+        // 使用Lambda表达式实现
         ArrayList<String> list3 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
         list3.replaceAll(str -> {
             if(str.length()>3)
@@ -197,4 +234,96 @@ public class JCFAndLambda {
         String joined = stream5.collect(Collectors.joining(",", "{", "}"));// "{I,love,you}"
 
     }
+
+    private static void showSort() {
+        // Collections.sort()方法
+        ArrayList<String> list = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        Collections.sort(list, new Comparator<String>(){
+            @Override
+            public int compare(String str1, String str2){
+                return str1.length()-str2.length();
+            }
+        });
+
+        // List.sort()方法结合Lambda表达式
+        ArrayList<String> list2 = new ArrayList<>(Arrays.asList("I", "love", "you", "too"));
+        list2.sort((str1, str2) -> str1.length()-str2.length());
+    }
+
+    private static void showMapForeach() {
+        // Java7以及之前迭代Map
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(1, "one");
+        map.put(2, "two");
+        map.put(3, "three");
+        for(Map.Entry<Integer, String> entry : map.entrySet()){
+            System.out.println(entry.getKey() + "=" + entry.getValue());
+        }
+
+        // 使用forEach()结合匿名内部类迭代Map
+        HashMap<Integer, String> map2 = new HashMap<>();
+        map2.put(1, "one");
+        map2.put(2, "two");
+        map2.put(3, "three");
+        map2.forEach(new BiConsumer<Integer, String>(){
+            @Override
+            public void accept(Integer k, String v){
+                System.out.println(k + "=" + v);
+            }
+        });
+
+        // 使用forEach()结合Lambda表达式迭代Map
+        HashMap<Integer, String> map3 = new HashMap<>();
+        map3.put(1, "one");
+        map3.put(2, "two");
+        map3.put(3, "three");
+        map3.forEach((k, v) -> System.out.println(k + "=" + v));
+    }
+
+    private static void showMapGetOrDefault() {
+        // 查询Map中指定的值，不存在时使用默认值
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(1, "one");
+        map.put(2, "two");
+        map.put(3, "three");
+        // Java7以及之前做法
+        if(map.containsKey(4)){ // 1
+            System.out.println(map.get(4));
+        }else{
+            System.out.println("NoValue");
+        }
+        // Java8使用Map.getOrDefault()
+        System.out.println(map.getOrDefault(4, "NoValue")); // 2
+    }
+
+    private static void showMapRemoveAll() {
+        // Java7以及之前替换所有Map中所有映射关系
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(1, "one");
+        map.put(2, "two");
+        map.put(3, "three");
+        for(Map.Entry<Integer, String> entry : map.entrySet()){
+            entry.setValue(entry.getValue().toUpperCase());
+        }
+
+        // 使用replaceAll()结合匿名内部类实现
+        HashMap<Integer, String> map2 = new HashMap<>();
+        map2.put(1, "one");
+        map2.put(2, "two");
+        map2.put(3, "three");
+        map2.replaceAll(new BiFunction<Integer, String, String>(){
+            @Override
+            public String apply(Integer k, String v){
+                return v.toUpperCase();
+            }
+        });
+
+        // 使用replaceAll()结合Lambda表达式实现
+        HashMap<Integer, String> map3 = new HashMap<>();
+        map3.put(1, "one");
+        map3.put(2, "two");
+        map3.put(3, "three");
+        map3.replaceAll((k, v) -> v.toUpperCase());
+    }
+
 }

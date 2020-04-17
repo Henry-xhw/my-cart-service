@@ -143,11 +143,10 @@ public class LambdaDemo {
     }
 
     private static void showMyStream() {
-        MyStream<String> stream2 = new MyStream<String>(Arrays.asList("henry", "yuzi"));
+        MyStream<String> stream2 = new MyStream<>(Arrays.asList("henry", "yuzi"));
         stream2.myForEach(LambdaDemo::println2);
         stream2.myForEach(t -> System.out.println("xxxyyyzzz: " + t));
-        ConsumerInterface<Integer> inte = System.out::println;
-        inte.accept(23);
+        stream2.myForEach(System.out::println);
     }
 
     private static <T> void println2(T t) {
